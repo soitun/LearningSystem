@@ -176,33 +176,50 @@ panel#login iframe {
 #header-box {
     height: 45px !important;
     display: flex;
+    justify-content: space-between;
 }
 
 #headbar {
-    height: 45px;
-    line-height: 35px;
-    color: #fff;
-    text-align: left;
-    text-shadow: 1px 1px 2px #666;
-    font-size: 22px;
+    display: flex;   
     cursor: default;
     user-select: none;
+    color: #fff;
+    height: 45px;
+    line-height: 35px;   
+    margin-right: auto;
+    min-width: 0; 
+    flex-shrink: 1; 
+}
+*[platinfo='title']{
+    height: 45px;
+    line-height: 35px;    
+    text-align: left;
+    text-shadow: 1px 1px 2px #666;
+    font-size: 25px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+*[platinfo='title']::before{
+    content: '『';
+    margin-right: 10px;
+}
+*[platinfo='title']::after{
+    content: '』';
+    margin-left: 10px;
+}
+*[platinfo='intro'],.intro {
+    font-size: 16px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    transition: all 0.3s;
-    flex: 1;
-}
-
-#headbar span {
-    font-size: 16px;
+    flex: 1; 
+    line-height: 40px;    
 }
 
 /*用户登录后的下拉菜单*/
 #user-area {
     background-color: transparent;
 }
-
 /*主区域*/
 #mainbody {
     display: flex;

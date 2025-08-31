@@ -19,12 +19,11 @@ $ctrljs(function () {
             doc.setAttribute('oncontextmenu', "javascript:return false;");
         });
     });
-    document.title = '管理中心';
     //
     $api.bat(
         $api.cache('Platform/PlatInfo:60'),
         $api.get('Organization/current')
-    ).then(([platinfo, organ]) => {
+    ).then(([platinfo, org]) => {
         //皮肤设置,默认取第一个：'Admin2025', 'Education', 'win10', 'win7'
         window.$skins.setup('', function (skin) {
             if (skin == null) return;
@@ -33,16 +32,31 @@ $ctrljs(function () {
             $dom("#backgroup_iframe").attr("src", skin.bgpage);
         });
         //获取结果    
-        window.$loyout(platinfo.data.result, organ.data.result);
+        window.$loyout(platinfo.data.result, org.data.result);
     }).catch(err => console.error(err))
         .finally(() => { });
 });
+//设置头部标题
+window.$settitle = function (platinfo, org) {
+    //管理界面的头部标题部分
+    if (org != null) $dom("*[platinfo='title']").html(org.Org_PlatformName);
+    //管理界面的头部简介部分
+    if (platinfo != null) {
+        document.title = '管理中心 - ' + platinfo.title;
+        let element = $dom("*[platinfo='intro']");
+        if (platinfo.intro != '' && platinfo.intro.length > 0) {
+            element.html(platinfo.intro).show();
+            element.prev().hide();
+        } else {
+            element.hide();
+            element.prev().show();
+        }
+    }
+
+};
 //初始布局
 window.$loyout = function (platinfo, org) {
-    //管理界面的头部标题部分
-    $dom("*[platinfo='title']").html(org.Org_PlatformName);
-    $dom("*[platinfo='intro']").html(platinfo.intro);
-
+    window.$settitle(platinfo, org);
     //创建登录框
     window.login = $login.create({
         target: '#login-area',
@@ -67,7 +81,8 @@ window.$loyout = function (platinfo, org) {
         tips: '请输入4位数字'
     }]);
     window.login.onlayout(function (s, e) {
-        //console.log('布局完成' + e.data);        
+        //console.log('布局完成' + e.data);    
+
     });
     window.login.ondragfinish(function (s, e) {
         $api.post('Helper/CheckCodeImg', { 'leng': s.vcodelen, 'acc': s.user }).then(function (req) {
@@ -183,7 +198,7 @@ window.$succeeded = function (result) {
             }
         } else throw req.data.message;
     }).catch(err => console.error(err));
-/*
+
     //左上角下拉菜单（即系统菜单）
     window.drop = window.$dropmenu.create({
         target: '#dropmenu-area',
@@ -200,7 +215,7 @@ window.$succeeded = function (result) {
             console.error(req.data.exception);
             throw req.config.way + ' ' + req.data.message;
         }
-    }).catch(err => console.error(err));*/
+    }).catch(err => console.error(err));
     //竖形工具条
     var vbar = $vbar.create({
         target: '#vbar-area', id: 'rbar-156',
@@ -264,7 +279,7 @@ window.$succeeded = function (result) {
 window.$event = {
     //节点点击事件，tree,drop,统一用这一个
     'nodeClick': function (sender, eventArgs) {
-        var data = $api.clone(eventArgs.data);      
+        var data = $api.clone(eventArgs.data);
         //如果有下级节点，则不响应事件
         if (!!data.childs && data.childs.length > 0) return; //如果有下级节点，则不响应事件
         //处理相对路径
