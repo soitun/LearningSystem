@@ -3,8 +3,10 @@
     --bg-color: rgb(139 197 255);
     /*管理界面的背景色*/
     --admin-bg-color: rgb(0, 135, 189);
+    /*标题的颜色*/
+    --title-color: rgb(255, 255, 255);
     /*时间的颜色*/
-    --time-color: rgb(105 106 106 / 80%);
+    --time-color: rgb(105 106 106 / 80%);    
     /*预载条，前景色、背景色*/
     --loading-color: rgb(255, 255, 255);
     --loading-shadow: rgb(2, 2, 2);
@@ -183,7 +185,7 @@ panel#login iframe {
     display: flex;   
     cursor: default;
     user-select: none;
-    color: #fff;
+    color: var(--title-color);
     height: 45px;
     line-height: 35px;   
     margin-right: auto;
