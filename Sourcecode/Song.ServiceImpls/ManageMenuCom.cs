@@ -297,7 +297,7 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public ManageMenu GetRootMarker(string marker)
         {
-            WhereClip wc = ManageMenu._.MM_Marker == marker && ManageMenu._.MM_PatId == 0;
+            WhereClip wc = ManageMenu._.MM_Marker == marker && ManageMenu._.MM_PatId == "0";
             return Gateway.Default.From<ManageMenu>().Where(wc).OrderBy(ManageMenu._.MM_Tax.Asc).ToFirst<ManageMenu>();
         }
         /// <summary>
@@ -326,14 +326,8 @@ namespace Song.ServiceImpls
         public List<ManageMenu> GetAll(bool? isUse, bool? isShow)
         {
             WhereClip wc = ManageMenu._.MM_Name != "";
-            if (isUse != null)
-            {
-                wc.And(ManageMenu._.MM_IsUse == isUse);
-            }
-            if (isShow != null)
-            {
-                wc.And(ManageMenu._.MM_IsShow == isShow);
-            }
+            if (isUse != null)wc.And(ManageMenu._.MM_IsUse == isUse);        
+            if (isShow != null)wc.And(ManageMenu._.MM_IsShow == isShow);
             return Gateway.Default.From<ManageMenu>().Where(wc).OrderBy(ManageMenu._.MM_Tax.Asc).ToList<ManageMenu>();
         }
         /// <summary>
@@ -348,14 +342,8 @@ namespace Song.ServiceImpls
             WhereClip wc = new WhereClip();
             if (isUse != null) wc.And(ManageMenu._.MM_IsUse == isUse);
             if (isShow != null) wc.And(ManageMenu._.MM_IsShow == isShow);
-            if (type == "sys")
-            {
-                wc.And(ManageMenu._.MM_Func == type);
-            }
-            else
-            {
-                wc.And(ManageMenu._.MM_Func == "func");
-            }
+            if (type == "sys") wc.And(ManageMenu._.MM_Func == type);
+            else wc.And(ManageMenu._.MM_Func == "func");
             return Gateway.Default.From<ManageMenu>().Where(wc).OrderBy(ManageMenu._.MM_Tax.Asc).ToList<ManageMenu>();
         }
         //public ManageMenu[] GetAll(int rootid, bool? isUse, bool? isShow, string type)
@@ -411,17 +399,17 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="identify">当前实体的主键</param>
         /// <returns></returns>
-        public ManageMenu[] GetChilds(int identify)
+        public List<ManageMenu> GetChilds(string uid)
         {
             //仅取当前对象的下一级对象；
-            return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_PatId == identify).OrderBy(ManageMenu._.MM_Tax.Asc).ToArray<ManageMenu>();
+            return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_PatId == uid).OrderBy(ManageMenu._.MM_Tax.Asc).ToList<ManageMenu>();
         }
-        public ManageMenu[] GetChilds(int identify, bool? isUse, bool? isShow)
+        public List<ManageMenu> GetChilds(string uid, bool? isUse, bool? isShow)
         {
-            WhereClip wc = ManageMenu._.MM_PatId == identify;
+            WhereClip wc = ManageMenu._.MM_PatId == uid;
             if (isUse != null) wc.And(ManageMenu._.MM_IsUse == isUse);
             if (isShow != null) wc.And(ManageMenu._.MM_IsShow == isShow);
-            return Gateway.Default.From<ManageMenu>().Where(wc).OrderBy(ManageMenu._.MM_Tax.Asc).ToArray<ManageMenu>();
+            return Gateway.Default.From<ManageMenu>().Where(wc).OrderBy(ManageMenu._.MM_Tax.Asc).ToList<ManageMenu>();
 
         }
         /// <summary>

@@ -270,6 +270,7 @@ namespace Song.ViewData.Methods
             List<Song.Entities.ManageMenu> mm = Business.Do<IPurview>().GetOrganPurview(org, marker);
             return mm.Count > 0 ? _MenuNode(null, mm,false) : null;
         }
+        #region 系统菜单
         /// <summary>
         /// 系统菜单，即超级管理左上角菜单
         /// </summary>
@@ -360,6 +361,8 @@ namespace Song.ViewData.Methods
             Business.Do<IManageMenu>().UpdateSystemTree(mlist.ToArray());
             return true;
         }
+        #endregion
+
         /// <summary>
         /// 更新功能菜单
         /// </summary>
@@ -433,10 +436,17 @@ namespace Song.ViewData.Methods
          
             if (LoginAdmin.Status.IsSuperAdmin(this.Letter))
             {
-                List<Song.Entities.ManageMenu> mm = Business.Do<IManageMenu>().GetFunctionMenu("0", true, true);
-                if (mm.Count > 0) return _MenuNode(null, mm, true);
+                List<Song.Entities.ManageMenu> list = new List<Entities.ManageMenu>();
+                Entities.ManageMenu root = Business.Do<IManageMenu>().GetRootMarker("organAdmin");
+                list.Add(root);
+                List<Song.Entities.ManageMenu> mm = Business.Do<IManageMenu>().GetFunctionMenu(root.MM_UID, true, null);
+                if (mm.Count > 0) list.AddRange(mm);
+                return _MenuNode(null, list, true);                
+            }
+            else
+            {
                 return null;
-            }                   
+            }               
             return null;
         }
     }

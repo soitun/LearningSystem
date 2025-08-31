@@ -139,10 +139,10 @@ namespace Song.ServiceInterfaces
         /// <summary>
         /// 获取当前对象的下一级子对象；
         /// </summary>
-        /// <param name="identify">当前实体的主键</param>
+        /// <param name="uid">当前实体的唯一值</param>
         /// <returns>当前对象的下一级子对象</returns>
-        ManageMenu[] GetChilds(int identify);
-        ManageMenu[] GetChilds(int identify, bool? isUse, bool? isShow);
+        List<ManageMenu> GetChilds(string uid);
+        List<ManageMenu> GetChilds(string uid, bool? isUse, bool? isShow);
         /// <summary>
         /// 当前对象名称是否重名
         /// </summary>
