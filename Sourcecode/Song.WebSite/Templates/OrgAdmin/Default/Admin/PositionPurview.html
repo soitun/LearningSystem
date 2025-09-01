@@ -8,7 +8,7 @@
 </head>
 
 <body>
-    <div id="app" v-cloak>
+    <div id="vapp" v-cloak>
         <div class="tree_area">
             <el-card class="box-card" v-for="(root,index) in datas" v-loading="loading">
                 <div slot="header" class="clearfix">
@@ -22,22 +22,19 @@
                 <el-tree :data="root.children" show-checkbox default-expand-all node-key="id" ref="tree"
                     highlight-current :props="defaultProps">
                     <span class="custom-tree-node" slot-scope="{ node, data }">
-                        <template v-if="data.MM_Type!='hr'">
-                            <span class="tree-node" :uid="data.id" :style="setTextstyle(data)">
-                                <icon v-if="data.ico==null || data.ico==''" :style="setIcostyle(data)">&#xa038;</icon>
-                                <icon v-else v-html="'&#x'+data.ico+';'" :style="setIcostyle(data)"></icon>
-                                {{ data.MM_Name }}
-                            </span>
-                        </template>
-                        <span v-else class="hr">-----------（分隔线）-----------</span>
+                        <span class="tree-node" :uid="data.id" :style="setTextstyle(data)">
+                            <icon v-if="data.ico==null || data.ico==''" :style="setIcostyle(data)">&#xa038;</icon>
+                            <icon v-else v-html="'&#x'+data.ico+';'" :style="setIcostyle(data)"></icon>
+                            {{ data.MM_Name }}
+                        </span>
                     </span>
                 </el-tree>
             </el-card>
         </div>
         <div class="footer">
-            <el-button type="primary" define="enter" native-type="submit" v-loading="loading" plain
+            <el-button type="primary" define="enter" native-type="submit" :loading="loading" plain
                 @click="btnEnter(true)"> 保存</el-button>
-            <el-button type="primary" native-type="submit" define="apply" v-loading="loading" plain
+            <el-button type="primary" native-type="submit" define="apply" :loading="loading" plain
                 @click="btnEnter(false)"> 应用
             </el-button>
             <el-button type='close'>取消</el-button>

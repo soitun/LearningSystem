@@ -647,6 +647,9 @@
     <Content Include="Templates\Mobi\_Public\Scripts\500.js" />
     <Content Include="Templates\Mobi\_Public\Scripts\Public.js" />
     <Content Include="Templates\Mobi\_Public\Styles\500.css" />
+    <Content Include="Templates\OrgAdmin\Default\Admin\PositionPurview.html" />
+    <Content Include="Templates\OrgAdmin\Default\Admin\Scripts\PositionPurview.js" />
+    <Content Include="Templates\OrgAdmin\Default\Admin\Styles\PositionPurview.css" />
     <Content Include="Templates\OrgAdmin\Default\Course\AIAgent.html" />
     <Content Include="Templates\OrgAdmin\Default\Course\Scripts\AIAgent.js" />
     <Content Include="Templates\OrgAdmin\Default\Course\Styles\AIAgent.css" />

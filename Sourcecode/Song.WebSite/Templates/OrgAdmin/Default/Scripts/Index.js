@@ -229,9 +229,11 @@ window.$succeeded = function (result) {
         .onfull((s, e) => {     //选项卡全屏时，隐藏其它控件
             window.tree.hide();
             window.drop.hide();
+            $dom("#pageboxcollect").hide();
         }).onrestore(function (s, e) {
             window.tree.show();
             window.drop.show();
+            $dom("#pageboxcollect").show();
         }).onhelp(function (s, e) {   //选项卡的帮助
             let url = e.data.help && e.data.help != '' ? e.data.help : '/help/Documents/index.html?page=' + encodeURIComponent(e.data.url);
             //父id,此处必须设置，用于判断该弹窗属于哪个选项卡
