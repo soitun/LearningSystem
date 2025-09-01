@@ -217,10 +217,12 @@ window.$succeeded = function (result) {
     }).catch(err => console.error(err));
     //竖形工具条
     var vbar = $vbar.create({
-        target: '#vbar-area', id: 'rbar-156',level: 30,
+        target: '#vbar-area', id: 'rbar-156', level: 30,
         width: 30, height: 'calc(100% - 35px)'
+    }).onmounted((s, e) => {      
+        $dom.get($dom.path() + 'Panel/Datas/vbar.json', req => s.add(req));
     }).onclick($event.nodeClick);
-    $dom.get($dom.path() + 'Panel/Datas/vbar.json', req => vbar.add(req));
+   
     //选项卡
     window.tabs = $tabs.create({
         target: '#tabs-area',

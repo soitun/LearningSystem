@@ -73,15 +73,15 @@
 		}
 		//触发事件
 		str += 'this.trigger = function(eventName, eventArgs) {\
-				return $ctrl.event.trigger.call(this, eventName, eventArgs);\
+					return $ctrl.event.trigger.call(this, eventName, eventArgs);\
 				};';
 		//移除事件
 		str += 'this.unbind=function(eventName,func){\
-				return $ctrl.event.remove.call(this, eventName, func);\
+					return $ctrl.event.remove.call(this, eventName, func);\
 				};';
 		//获取事件列表
 		str += 'this.events=function(eventName){\
-				return $ctrl.event.list.call(this, eventName);\
+					return $ctrl.event.list.call(this, eventName);\
 				};';
 		return str;
 	};

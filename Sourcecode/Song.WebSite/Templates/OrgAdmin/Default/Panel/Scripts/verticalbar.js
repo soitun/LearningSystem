@@ -22,13 +22,13 @@
 		for (var t in param) this.attrs[t] = param[t];
 		eval($ctrl.attr_generate(this.attrs));
 		/* 自定义事件 */
-		//data:数据项源变动时;click:点击菜单项
-		eval($ctrl.event_generate(['data', 'click']));
+		//mounted:挂载完成;data:数据项源变动时;click:点击菜单项
+		eval($ctrl.event_generate(['mounted', 'data', 'click']));
 
 		this.datas = new Array(); //数据源
 		this._datas = ''; //数据源的序列化字符串
 		this.dom = null; //控件的html对象
-		//this.domtit = null; //控件标签栏部分的html对象
+		this._mounted_count = 0;		//挂载事件的调用次数
 		this.dombody = null; //控件内容区
 		//初始化并生成控件
 		this._initialization();
@@ -50,9 +50,7 @@
 		if (item instanceof Array) {
 			for (var i = 0; i < item.length; i++)
 				this.add(item[i]);
-		} else {
-			this.datas.push(item);
-		}
+		} else this.datas.push(item);
 	};
 	//隐藏控件
 	fn.hide = function () {
@@ -115,6 +113,11 @@
 			this.width = this._width;
 			this.height = this._height;
 			this.level = this._level;
+			//挂载事件
+			if (this._mounted_count < 1) {
+				this.trigger('mounted', {});
+				this._mounted_count++;
+			}
 		}
 	};
 	//生成结构
