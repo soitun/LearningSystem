@@ -1,6 +1,6 @@
 $ready(function () {
     window.vapp = new Vue({
-        el: '#app',
+        el: '#vapp',
         data: {
             uid: $api.querystring('uid'),
             rootMenu: {},    //根菜单
@@ -33,6 +33,13 @@ $ready(function () {
                 }
             }
         },
+        computed: {
+            //判断是否处于pagebox控件内
+            ispagebox: function () {
+                let t = top.$pagebox ? top.$pagebox.source.self(window.name) : null;
+                return t != null ? true : false;
+            },
+        },
         created: function () {
             var th = this;
             th.loading_init = true;
@@ -49,6 +56,8 @@ $ready(function () {
                 th.error = err;
                 console.error(err);
             }).finally(() => th.loading_init = false);
+
+
         },
         methods: {
             append: function (d) {
@@ -134,7 +143,7 @@ $ready(function () {
             //设置菜单文本样式
             setTextstyle: function (data) {
                 let css = 'background-image: linear-gradient(to right, rgba(255, 255, 255,0) '
-                    + (data.MM_IsUse ? data.MM_Complete : 100) + '%,rgb(255, 0, 0) ' + (100 - data.MM_Complete) + '%);';
+                    + (data.MM_IsUse ? data.MM_Complete : 100) + '%,rgba(255, 0, 0,0.5) ' + (100 - data.MM_Complete) + '%);';
                 if (!$api.isnull(data.MM_Color) && data.MM_Color != '') css += 'color:' + data.MM_Color + ';';
                 if (data.MM_IsBold) css += 'font-weight: bold;';
                 if (data.MM_IsItalic) css += 'font-style: italic;';
