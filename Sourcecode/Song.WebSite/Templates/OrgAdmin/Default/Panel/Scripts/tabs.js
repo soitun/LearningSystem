@@ -31,8 +31,8 @@
         for (let t in param) this.attrs[t] = param[t];
         eval($ctrl.attr_generate(this.attrs));
         /* 自定义事件 */
-        //shut:关闭标签; add:添加标签；change:切换标签;load:内页加载完成; full:标签项全屏
-        eval($ctrl.event_generate(['shut', 'add', 'change', 'load', 'full', 'help']));
+        //shut:关闭标签; add:添加标签；change:切换标签;load:内页加载完成; full:标签项全屏; restore:标签项还原
+        eval($ctrl.event_generate(['shut', 'add', 'change', 'load', 'full', 'help', 'restore']));
         //以下不支持双向绑定
         this.childs = new Array(); //子级		
         this.dom = null; //控件的html对象
@@ -709,7 +709,7 @@
                 iframe.css({ 'transition': 'none', 'position': 'static', 'background-color': 'transparent' })
                     .width('100%').height('calc(100% - 35px)');
                 obj.dom.css('position', 'relative');
-                //触发全屏还事件
+                //触发全屏还原事件
                 obj.trigger('restore', {
                     tabid: tabid,
                     data: obj.getData(tabid)

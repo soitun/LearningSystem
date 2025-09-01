@@ -105,6 +105,14 @@
         this._isinit = true;
         return this;
     };
+    //隐藏控件
+    fn.hide = function () {
+        if (this.dom) this.dom.hide();
+    };
+    //显示控件
+    fn.show = function () {
+        if (this.dom) this.dom.show();
+    };
     //当属性更改时触发相应动作
     fn._watch = {
         //参数：

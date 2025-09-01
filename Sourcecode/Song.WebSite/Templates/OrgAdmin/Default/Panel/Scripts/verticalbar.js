@@ -54,6 +54,14 @@
 			this.datas.push(item);
 		}
 	};
+	//隐藏控件
+	fn.hide = function () {
+		if (this.dom) this.dom.hide();
+	};
+	//显示控件
+	fn.show = function () {
+		if (this.dom) this.dom.show();
+	};
 	//当属性更改时触发相应动作
 	fn._watch = {
 		'width': function (obj, val, old) {
@@ -246,13 +254,13 @@
 					panel.show();
 					var maxset = obj.dom.offset();
 					var maxwd = maxset.left + obj.dom.width();
-					var maxhg = maxset.top + obj.dom.height();				
+					var maxhg = maxset.top + obj.dom.height();
 					if (maxwd > window.innerWidth / 2) panel.left(offset.left - panel.width() - 20);
 					if (maxwd < window.innerWidth / 2) panel.left(offset.left + obj.width + 20);
 					//var left = offset.left + panel.width() > maxwd ? offset.left - panel.width() - 20 : offset.left + obj.width + 20;
 					var top = offset.top + panel.width() > maxhg ? offset.top - panel.height() : offset.top;
 					//当前面板的位置
-					panel.top(top);				
+					panel.top(top);
 				}
 				obj.leavetime = 3;
 				obj.leave = false;

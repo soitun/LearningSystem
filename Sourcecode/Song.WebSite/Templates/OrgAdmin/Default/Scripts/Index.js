@@ -193,7 +193,6 @@ window.$succeeded = function (result) {
                     tree.add(result[i].childs);
                 else {
                     tree.add(result[i]);
-
                 }
             }
         } else throw req.data.message;
@@ -218,7 +217,7 @@ window.$succeeded = function (result) {
     }).catch(err => console.error(err));
     //竖形工具条
     var vbar = $vbar.create({
-        target: '#vbar-area', id: 'rbar-156',
+        target: '#vbar-area', id: 'rbar-156',level: 30,
         width: 30, height: 'calc(100% - 35px)'
     }).onclick($event.nodeClick);
     $dom.get($dom.path() + 'Panel/Datas/vbar.json', req => vbar.add(req));
@@ -234,7 +233,11 @@ window.$succeeded = function (result) {
         }
     });
     tabs.onshut($event.tabsShut).onchange($event.tabChange).onfull((s, e) => {
-        //alert(s);
+        window.tree.hide();
+        window.drop.hide();
+    }).onrestore(function (s, e) {
+        window.tree.show();
+        window.drop.show();
     });
     //选项卡的帮助
     tabs.onhelp(function (s, e) {
