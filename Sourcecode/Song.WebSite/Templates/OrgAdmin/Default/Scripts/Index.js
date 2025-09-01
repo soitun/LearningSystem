@@ -130,7 +130,7 @@ window.$loyout = function (platinfo, org) {
     window.setInterval(function () {
         $api.login.fresh('admin');
     }, 1000 * 60 * 10);
-    
+
     //右上角菜单（即当前登录用户的信息）
     window.usermenu = window.$dropmenu.create({
         target: '#user-area',
@@ -225,24 +225,22 @@ window.$succeeded = function (result) {
             url: '/orgadmin/start',
             ico: 'a020'
         }
-    });
-    tabs.onshut($event.tabsShut).onchange($event.tabChange).onfull((s, e) => {
-        window.tree.hide();
-        window.drop.hide();
-    }).onrestore(function (s, e) {
-        window.tree.show();
-        window.drop.show();
-    });
-    //选项卡的帮助
-    tabs.onhelp(function (s, e) {
-        let url = e.data.help && e.data.help != '' ? e.data.help : '/help/Documents/index.html?page=' + encodeURIComponent(e.data.url);
-        //父id,此处必须设置，用于判断该弹窗属于哪个选项卡
-        $pagebox.create({
-            pid: e.data.id, id: $api.md5(e.data.url),
-            width: '800', height: '80%', ico: 'a026',
-            url: url, title: e.data.title + ' - 帮助说明'
-        }).open();
-    });
+    }).onshut($event.tabsShut).onchange($event.tabChange)
+        .onfull((s, e) => {     //选项卡全屏时，隐藏其它控件
+            window.tree.hide();
+            window.drop.hide();
+        }).onrestore(function (s, e) {
+            window.tree.show();
+            window.drop.show();
+        }).onhelp(function (s, e) {   //选项卡的帮助
+            let url = e.data.help && e.data.help != '' ? e.data.help : '/help/Documents/index.html?page=' + encodeURIComponent(e.data.url);
+            //父id,此处必须设置，用于判断该弹窗属于哪个选项卡
+            $pagebox.create({
+                pid: e.data.id, id: $api.md5(e.data.url),
+                width: '800', height: '80%', ico: 'a026',
+                url: url, title: e.data.title + ' - 帮助说明'
+            }).open();
+        });
 
     //风格切换事件
     window.$skins.onchange(function (s, e) {
