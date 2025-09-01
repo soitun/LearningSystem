@@ -20,6 +20,7 @@ namespace Song.ViewData.Methods
     [HttpPut, HttpGet]
     public class ManageMenu : ViewMethod, IViewAPI
     {
+        #region 根菜单
         /// <summary>
         /// 根菜单
         /// </summary>
@@ -57,6 +58,9 @@ namespace Song.ViewData.Methods
                 throw ex;
             }
         }
+        #endregion
+
+        #region 功能菜单的管理
         /// <summary>
         /// 获取功能菜单的对象信息
         /// </summary>
@@ -197,6 +201,8 @@ namespace Song.ViewData.Methods
                 throw ex;
             }
         }
+        #endregion
+
         /// <summary>
         /// 获取功能菜单的树
         /// </summary>
@@ -215,6 +221,7 @@ namespace Song.ViewData.Methods
             }
             return null;
         }
+
         /// <summary>
         /// 供机构等级选择权限的菜单
         /// </summary>    

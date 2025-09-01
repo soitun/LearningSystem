@@ -265,7 +265,7 @@ tabs_tagbox tab_tag close:hover {
     font-style: normal;
     width: 20px;
     text-align: left;
-    font-size: 8px;
+    font-size: 14px;
     display: inline-block;
     font-family: iconfont, sans-serif;
     font-weight: 800;
@@ -274,8 +274,8 @@ tabs_tagbox tab_tag close:hover {
 
 .tabsbox tabs_body tabpace tabpath:before {
     content: '\a011';
-    line-height: 30px;
-    font-size: 10px;
+    line-height: 35px;
+    font-size: 12px;
     width: 30px;
     height: 30px;
     color: #999;
