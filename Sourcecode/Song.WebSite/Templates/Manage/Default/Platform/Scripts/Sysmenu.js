@@ -1,6 +1,6 @@
 $ready(function () {
     window.vapp = new Vue({
-        el: '#app',
+        el: '#vapp',
         data: {
             data: [],
             curr: {},    //当前要编辑的节点          
@@ -115,13 +115,14 @@ $ready(function () {
                 }).catch(function () {
                 });
             },
+            //保存菜单项
             updateSave: function () {
                 var th = this;
                 th.loading = true;
                 $api.post('ManageMenu/SystemMenuUpdate', { 'tree': th.data }).then(function (req) {
                     if (req.data.success) {
                         var result = req.data.result;
-                        th.$notify({
+                        th.$message({
                             type: 'success',
                             message: '系统菜单保存成功！',
                             position: 'bottom-left',

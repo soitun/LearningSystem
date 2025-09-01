@@ -200,6 +200,7 @@ panel#login iframe {
     font-size: 25px;
     font-weight: bold;
     white-space: nowrap;
+    margin-right: 20px;
 }
 *[platinfo='title']::before{
     content: '『';
