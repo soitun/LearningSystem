@@ -28,8 +28,8 @@
 		for (let t in param) this.attrs[t] = param[t];
 		eval($ctrl.attr_generate(this.attrs));
 		/* 自定义事件 */
-		//fold,折叠或展开;data，数据源变化时; change，切换根菜单,click点击菜单项
-		eval($ctrl.event_generate(['fold', 'data', 'change', 'resize', 'click']));
+		//mounted:挂载完成;fold,折叠或展开;data，数据源变化时; change，切换根菜单,click点击菜单项
+		eval($ctrl.event_generate(['mounted','fold', 'data', 'change', 'resize', 'click']));
 
 		this.datas = new Array(); //子级	
 		this._datas = ''; //数据源的序列化字符串	
@@ -37,6 +37,7 @@
 		this.domtit = null; //控件标签栏部分的html对象
 		this.dombody = null; //控件内容区
 		this.domquery = null;	//查询菜单的面板
+		this._mounted_count = 0;		//挂载事件的调用次数
 		//面板是否显示，当鼠标滑过时如果为false，3秒后隐藏面板
 		this.leavetime = 3;
 		this.leaveshow = false;
@@ -213,6 +214,11 @@
 			this.width = this._width;
 			this.height = this._height;
 			this.complete = this._complete;
+			//挂载事件
+			if (this._mounted_count < 1) {
+				this.trigger('mounted', {});
+				this._mounted_count++;
+			}
 		}
 	};
 

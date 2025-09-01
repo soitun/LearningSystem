@@ -130,16 +130,14 @@ window.$loyout = function (platinfo, org) {
     window.setInterval(function () {
         $api.login.fresh('admin');
     }, 1000 * 60 * 10);
+    
     //右上角菜单（即当前登录用户的信息）
     window.usermenu = window.$dropmenu.create({
         target: '#user-area',
-        width: 110,
-        plwidth: 120,
-        level: 30
+        width: 110, plwidth: 120, level: 30
+    }).onmounted(function (s, e) { //加载数据源
+        $dom.get($dom.path() + 'Panel/Datas/usermenu.json', req => s.add(req));
     }).onclick($event.nodeClick);
-    //用户信息的下拉菜单
-    $dom.get($dom.path() + 'Panel/Datas/usermenu.json', req => usermenu.add(req));
-
 };
 //登录成功
 window.$succeeded = function (result) {
@@ -171,6 +169,13 @@ window.$succeeded = function (result) {
         target: '#treemenu-area',
         width: 200,
         taghide: false, query: true, fold: false
+    }).onmounted(function (s, e) { //加载数据源
+        $api.get('ManageMenu/Menus:60').then(function (req) {
+            if (req.data.success) {
+                var result = nodeconvert(req.data.result);
+                s.add(result[0].childs);
+            } else throw req.data.message;
+        }).catch(err => console.error(err));
     }).onresize(function (s, e) { //当宽高变更时
         $dom('#tabs-area').width('calc(100% - ' + (e.width + 35) + 'px )');
     }).onfold(function (s, e) { //当右侧树形折叠时
@@ -184,45 +189,32 @@ window.$succeeded = function (result) {
             $dom(".pagebox").css('filter', val ? 'blur(3px)' : 'none');
         }
     });
-    //加载左侧菜单树
-    $api.get('ManageMenu/Menus:60').then(function (req) {
-        if (req.data.success) {
-            var result = nodeconvert(req.data.result);
-            for (var i = 0; i < result.length; i++) {
-                if (i == 0)
-                    tree.add(result[i].childs);
-                else {
-                    tree.add(result[i]);
-                }
-            }
-        } else throw req.data.message;
-    }).catch(err => console.error(err));
+
 
     //左上角下拉菜单（即系统菜单）
     window.drop = window.$dropmenu.create({
-        target: '#dropmenu-area',
-        width: 280,
-        plwidth: 180,
-        level: 30000,
-        id: 'main_menu'
+        target: '#dropmenu-area', id: 'main_menu',
+        width: 280, plwidth: 180, level: 30000,
+    }).onmounted(function (s, e) { //加载数据源
+        $api.get('ManageMenu/SystemMenuShow:60').then(function (req) {
+            if (req.data.success) {
+                var result = nodeconvert(req.data.result);
+                s.add(result);
+            } else {
+                console.error(req.data.exception);
+                throw req.config.way + ' ' + req.data.message;
+            }
+        }).catch(err => console.error(err));
     }).onclick($event.nodeClick);
-    $api.get('ManageMenu/SystemMenuShow:60').then(function (req) {
-        if (req.data.success) {
-            var result = nodeconvert(req.data.result);
-            drop.add(result);
-        } else {
-            console.error(req.data.exception);
-            throw req.config.way + ' ' + req.data.message;
-        }
-    }).catch(err => console.error(err));
+
     //竖形工具条
-    var vbar = $vbar.create({
+    $vbar.create({
         target: '#vbar-area', id: 'rbar-156', level: 30,
         width: 30, height: 'calc(100% - 35px)'
-    }).onmounted((s, e) => {      
+    }).onmounted((s, e) => {
         $dom.get($dom.path() + 'Panel/Datas/vbar.json', req => s.add(req));
     }).onclick($event.nodeClick);
-   
+
     //选项卡
     window.tabs = $tabs.create({
         target: '#tabs-area',
@@ -251,6 +243,7 @@ window.$succeeded = function (result) {
             url: url, title: e.data.title + ' - 帮助说明'
         }).open();
     });
+
     //风格切换事件
     window.$skins.onchange(function (s, e) {
         $dom('#loading').show();
