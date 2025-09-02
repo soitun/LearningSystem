@@ -228,8 +228,15 @@ function ready(result) {
     } else {
         $api.get('ManageMenu/Menus:60').then(function (req) {
             if (req.data.success) {
-                var result = nodeconvert(req.data.result);
-                window.tree.add(result);
+                var result = nodeconvert(req.data.result);               
+                for (var i = 0; i < result.length; i++) {
+                    if (i == 0)
+                        tree.add(result[i].childs);
+                    else {
+                        tree.add(result[i]);
+                    }
+                }
+                //window.tree.add(result);
                 window.tree.complete = true;
             } else {
                 console.error(req.data.exception);

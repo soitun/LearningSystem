@@ -360,14 +360,19 @@ namespace Song.ServiceImpls
         {
             //实际选中的菜单(即权限中选中的菜单项）
             List<ManageMenu> selected = new List<ManageMenu>();
-            //在权限表中记录的MM_UID
-            Purview[] purview = Gateway.Default.From<Purview>().Where(Purview._.Olv_ID == org.Olv_ID).ToArray<Purview>();
-            if (purview == null || purview.Length < 1) return selected;
             //marker标识下的所有菜单项
             ManageMenu root = Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_Marker == marker && ManageMenu._.MM_PatId == "0").ToFirst<ManageMenu>();
             List<ManageMenu> mms = Business.Do<IManageMenu>().GetFunctionMenu(root.MM_UID, true, false);
             if (mms == null || mms.Count < 1) return selected;
+            else if(!mms.Exists(x => x.MM_Id == root.MM_Id)) mms.Add(root);
+          
+            //if ( mms.Count < 1) return selected;
 
+            //在权限表中记录的MM_UID
+            List<Purview> purview = Gateway.Default.From<Purview>().Where(Purview._.Olv_ID == org.Olv_ID).ToList<Purview>();
+            if (purview == null || purview.Count < 1) return selected;
+
+            //如果设置了权限，则按权限进行过滤
             foreach (Purview p in purview)
             {
                 //当前菜单的所有父级（因为Purview表中记录了最底一级菜单，所以要上溯直到root菜单）
@@ -383,13 +388,13 @@ namespace Song.ServiceImpls
                 //将当前菜单所有父级菜单添加到selected
                 foreach (ManageMenu m in parents)
                 {
-                    if (selected.Exists(i => i.MM_UID == m.MM_UID))
-                        continue;
+                    if (selected.Exists(i => i.MM_UID == m.MM_UID)) continue;
                     selected.Add(m);
                 }
             }
-            selected.Add(root);
-            return selected;
-        }       
+            if (!selected.Exists(x => x.MM_Id == root.MM_Id)) selected.Insert(0, root);
+            //
+            return selected.Count<1 || (selected.Count==1 && selected[0].MM_Id == root.MM_Id) ? mms : selected;
+        }    
     }
 }

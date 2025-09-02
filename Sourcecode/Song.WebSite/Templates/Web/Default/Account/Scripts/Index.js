@@ -104,6 +104,9 @@ $ready(function () {
                     .then(function (req) {
                         if (req.data.success) {
                             var result = req.data.result;
+                            //th.menus=result;
+                            //console.error(result);
+                            
                             if (result != null && result.length > 0
                                 && (result[0].children && result[0].children.length > 0)) {
                                 th.menus = result[0].children;

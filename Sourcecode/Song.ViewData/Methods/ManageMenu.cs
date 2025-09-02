@@ -28,7 +28,7 @@ namespace Song.ViewData.Methods
         [HttpGet, SuperAdmin]
         public Song.Entities.ManageMenu[] Root()
         {
-            return  Business.Do<IManageMenu>().GetRoot("func");
+            return Business.Do<IManageMenu>().GetRoot("func");
         }
         /// <summary>
         /// 所有启用的根菜单
@@ -89,7 +89,7 @@ namespace Song.ViewData.Methods
         public bool Modify(Song.Entities.ManageMenu mm)
         {
             Song.Entities.ManageMenu old = Business.Do<IManageMenu>().GetSingle(mm.MM_Id);
-            if (old == null) throw new Exception("对象不存在！");           
+            if (old == null) throw new Exception("对象不存在！");
             old.Copy<Song.Entities.ManageMenu>(mm);
             Business.Do<IManageMenu>().Save(old);
             return true;
@@ -113,13 +113,13 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="id">可以是多个，用逗号分隔</param>
         /// <returns>返回删除的个数</returns>
-        [HttpDelete,SuperAdmin]
+        [HttpDelete, SuperAdmin]
         public int Delete(string id)
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
             string[] arr = id.Split(',');
-            foreach(string s in arr)
+            foreach (string s in arr)
             {
                 int idval = 0;
                 int.TryParse(s, out idval);
@@ -141,7 +141,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="mm">菜单对象</param>
         /// <returns></returns>
-        [HttpPost,SuperAdmin]
+        [HttpPost, SuperAdmin]
         public bool AddFuncRoot(Song.Entities.ManageMenu mm)
         {
             try
@@ -164,7 +164,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         [SuperAdmin]
         [HttpPost]
-        public bool FuncMoveRoot(string cuid,string puid)
+        public bool FuncMoveRoot(string cuid, string puid)
         {
             Song.Entities.ManageMenu mm = Business.Do<IManageMenu>().GetSingle(cuid);
             if (mm == null) return false;
@@ -173,7 +173,8 @@ namespace Song.ViewData.Methods
             {
                 Business.Do<IManageMenu>().Save(mm);
                 return true;
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -215,7 +216,7 @@ namespace Song.ViewData.Methods
             List<Song.Entities.ManageMenu> mm = Business.Do<IManageMenu>().GetFunctionMenu(uid, null, null);
             if (mm.Count > 0)
             {
-                Song.Entities.ManageMenu root=Business.Do<IManageMenu>().GetSingle(uid);
+                Song.Entities.ManageMenu root = Business.Do<IManageMenu>().GetSingle(uid);
                 JArray ja = _MenuNode(root, mm, false);
                 return ja;
             }
@@ -245,7 +246,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         [HttpPost]
         [SuperAdmin]
-        public bool OrganPurviewSelected(int lvid,string[] mms)
+        public bool OrganPurviewSelected(int lvid, string[] mms)
         {
             Business.Do<IPurview>().BatchAdd(lvid, mms, "orglevel");
             return true;
@@ -259,24 +260,13 @@ namespace Song.ViewData.Methods
         {
             Purview[] pur = Business.Do<IPurview>().OrganLevelItems(lvid);
             JArray ja = new JArray();
-            for(int i = 0; i < pur.Length; i++)
+            for (int i = 0; i < pur.Length; i++)
             {
                 ja.Add(pur[i].MM_UID);
             }
             return ja;
         }
-        /// <summary>
-        /// 机构下某一类marker标识的菜单项
-        /// </summary>
-        /// <param name="marker"></param>
-        /// <returns></returns>
-        //[Cache(AdminDisable = true, Expires = 1440)]
-        public JArray OrganMarkerMenus(string marker)
-        {
-            Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
-            List<Song.Entities.ManageMenu> mm = Business.Do<IPurview>().GetOrganPurview(org, marker);
-            return mm.Count > 0 ? _MenuNode(null, mm,false) : null;
-        }
+        
         #region 系统菜单
         /// <summary>
         /// 系统菜单，即超级管理左上角菜单
@@ -287,7 +277,7 @@ namespace Song.ViewData.Methods
         public JArray SystemMenu()
         {
             List<Song.Entities.ManageMenu> mm = Business.Do<IManageMenu>().GetAll(null, null, "sys");
-            return mm.Count > 0 ? _MenuNode(null, mm,false) : null;
+            return mm.Count > 0 ? _MenuNode(null, mm, false) : null;
         }
         /// <summary>
         /// 显示系统菜单项
@@ -298,7 +288,7 @@ namespace Song.ViewData.Methods
         public JArray SystemMenuShow()
         {
             List<Song.Entities.ManageMenu> mm = Business.Do<IManageMenu>().GetAll(true, true, "sys");
-            return mm.Count > 0 ? _MenuNode(null, mm,true) : null;
+            return mm.Count > 0 ? _MenuNode(null, mm, true) : null;
         }
         /// <summary>
         /// 生成菜单子节点
@@ -307,7 +297,7 @@ namespace Song.ViewData.Methods
         /// <param name="items">所有菜单项</param>
         /// <param name="simplify">简化的，如果为true则去除一些字段，false取全部字段</param>
         /// <returns></returns>
-        private JArray _MenuNode(Song.Entities.ManageMenu item, List<Song.Entities.ManageMenu> items,bool simplify)
+        private JArray _MenuNode(Song.Entities.ManageMenu item, List<Song.Entities.ManageMenu> items, bool simplify)
         {
             JArray jarr = new JArray();
             bool islocal = WeiSha.Core.Server.IsLocalIP;
@@ -385,7 +375,7 @@ namespace Song.ViewData.Methods
             Business.Do<IManageMenu>().UpdateFunctionTree(uid, mlist.ToArray());
             return true;
         }
-        private void _MenuUpdate(string tree,string pid, List<Song.Entities.ManageMenu> mlist)
+        private void _MenuUpdate(string tree, string pid, List<Song.Entities.ManageMenu> mlist)
         {
             JArray jarr = JArray.Parse(tree);
             for (int i = 0; i < jarr.Count; i++)
@@ -393,7 +383,7 @@ namespace Song.ViewData.Methods
                 string childJson = string.Empty;
                 Song.Entities.ManageMenu m = _MenuParse((JObject)jarr[i], out childJson);
                 if (string.IsNullOrWhiteSpace(m.MM_UID))
-                    m.MM_UID = WeiSha.Core.Request.UniqueID();               
+                    m.MM_UID = WeiSha.Core.Request.UniqueID();
                 m.MM_Tax = i;
                 m.MM_PatId = pid;
                 mlist.Add(m);
@@ -403,7 +393,7 @@ namespace Song.ViewData.Methods
                 }
             }
         }
-        private Song.Entities.ManageMenu _MenuParse(JObject jo,out string childJson)
+        private Song.Entities.ManageMenu _MenuParse(JObject jo, out string childJson)
         {
             childJson = string.Empty;
             Song.Entities.ManageMenu mm = new Entities.ManageMenu();
@@ -411,7 +401,7 @@ namespace Song.ViewData.Methods
             IEnumerable<JProperty> properties = jo.Properties();
             foreach (JProperty item in properties)
             {
-                string key = item.Name;             
+                string key = item.Name;
                 string val = item.Value.ToString();
 
                 PropertyInfo targetPP = target.GetProperty(key);
@@ -423,13 +413,14 @@ namespace Song.ViewData.Methods
                 if (key.Equals("children", StringComparison.InvariantCultureIgnoreCase))
                 {
                     childJson = item.Value.ToString();
-                    if (childJson != "[]")                   
-                        mm.MM_IsChilds = true;                     
+                    if (childJson != "[]")
+                        mm.MM_IsChilds = true;
                 }
             }
             return mm;
         }
 
+        #region 菜单操作权限相关
         /// <summary>
         /// 当前管理员的菜单项
         /// </summary>
@@ -439,22 +430,45 @@ namespace Song.ViewData.Methods
         public JArray Menus()
         {
             Song.Entities.EmpAccount acc = LoginAdmin.Status.User(this.Letter);
-            if (acc == null) throw new ExceptionForNoLogin();         
-         
-            if (LoginAdmin.Status.IsSuperAdmin(this.Letter))
+            if (acc == null) throw new ExceptionForNoLogin();
+            //根菜单的标识，由于菜单分为管理菜单、学员菜单、教师菜单，所以这里要区分
+            string menu_marker = "organAdmin";
+            if (LoginAdmin.Status.IsSuperAdmin(acc))
             {
                 List<Song.Entities.ManageMenu> list = new List<Entities.ManageMenu>();
-                Entities.ManageMenu root = Business.Do<IManageMenu>().GetRootMarker("organAdmin");
+                Entities.ManageMenu root = Business.Do<IManageMenu>().GetRootMarker(menu_marker);
                 list.Add(root);
                 List<Song.Entities.ManageMenu> mm = Business.Do<IManageMenu>().GetFunctionMenu(root.MM_UID, true, null);
                 if (mm.Count > 0) list.AddRange(mm);
-                return _MenuNode(null, list, true);                
+                return _MenuNode(null, list, true);
             }
-            else
+            else if(LoginAdmin.Status.IsAdmin(acc))
             {
-                return null;
-            }               
+                return this.OrganMarkerMenus(menu_marker);
+            }
             return null;
         }
+        ///// <summary>
+        ///// 机构所拥有的菜单项
+        ///// </summary>
+        ///// <param name="marker">根菜单的标识</param>
+        ///// <returns></returns>
+        //public JArray OrgMenus(string marker)
+        //{
+
+        //}
+        /// <summary>
+        /// 机构下某一类marker标识的菜单项
+        /// </summary>
+        /// <param name="marker"></param>
+        /// <returns></returns>
+        //[Cache(AdminDisable = true, Expires = 1440)]
+        public JArray OrganMarkerMenus(string marker)
+        {
+            Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
+            List<Song.Entities.ManageMenu> mm = Business.Do<IPurview>().GetOrganPurview(org, marker);
+            return mm.Count > 0 ? _MenuNode(null, mm, false) : null;
+        }
+        #endregion
     }
 }

@@ -10,7 +10,7 @@
 <body>
     <div id="vapp" v-cloak>
         <div class="tree_area">
-            <el-card class="box-card" v-for="(root,index) in datas" v-loading="loading">
+            <el-card class="box-card" v-for="(root,index) in datas" v-loading="loading" shadow="hover">
                 <div slot="header" class="clearfix">
                     <icon v-if="root.ico==null || root.ico==''">&#xa038;</icon>
                     <icon v-else v-html="'&#x'+root.ico+';'"></icon>

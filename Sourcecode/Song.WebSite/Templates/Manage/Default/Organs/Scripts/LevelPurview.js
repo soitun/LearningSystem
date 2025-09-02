@@ -75,8 +75,7 @@ $ready(function () {
             },
             //设置菜单文本样式
             setTextstyle: function (data) {
-                let css = 'background-image: linear-gradient(to right, rgba(255, 255, 255,0) '
-                    + (data.MM_IsUse ? data.MM_Complete : 100) + '%,rgb(255, 0, 0) ' + (100 - data.MM_Complete) + '%);';
+                let css = '';
                 if (!$api.isnull(data.MM_Color) && data.MM_Color != '') css += 'color:' + data.MM_Color + ';';
                 if (data.MM_IsBold) css += 'font-weight: bold;';
                 if (data.MM_IsItalic) css += 'font-style: italic;';
@@ -88,8 +87,8 @@ $ready(function () {
                 if (data.MM_IcoSize && data.MM_IcoSize != 0)
                     css += 'transform:' + 'scale(' + (1 + data.MM_IcoSize / 100) + ');';
                 if (!$api.isnull(data.MM_IcoColor) && data.MM_IcoColor != '') css += 'color:' + data.MM_IcoColor + ';'
-                css += 'margin-top:' + ($api.isnull(data.MM_IcoY) || data.MM_IcoY == 0 ? 0 : data.MM_IcoY) + 'px;';
-                css += 'margin-left:' + ($api.isnull(data.MM_IcoX) || data.MM_IcoX == 0 ? 0 : data.MM_IcoX) + 'px;';
+                //css += 'margin-top:' + ($api.isnull(data.MM_IcoY) || data.MM_IcoY == 0 ? 0 : data.MM_IcoY) + 'px;';
+                //css += 'margin-left:' + ($api.isnull(data.MM_IcoX) || data.MM_IcoX == 0 ? 0 : data.MM_IcoX) + 'px;';
                 //console.log(css);
                 return css;
             },
