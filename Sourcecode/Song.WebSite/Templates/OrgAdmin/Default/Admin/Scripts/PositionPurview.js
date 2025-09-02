@@ -13,15 +13,19 @@ $ready(function () {
             datas: [] //数据源          
         },
         created: function () {
+            console.error(this.id);
             var th = this;
             th.loading = true;
             //获取所有供选择的菜单项
-            $api.get('ManageMenu/OrganPurviewSelect').then(function (req) {
+            $api.get('ManageMenu/OrganMenus', { 'marker': 'organAdmin' }).then(function (req) {
                 if (req.data.success) {
-                    th.datas = req.data.result;
-                    console.error(th.datas);
+                    var result = req.data.result;                          
+                    if (result != null && result.length > 0
+                        && (result[0].children && result[0].children.length > 0)) {
+                        th.datas = result[0].children;
+                    }
                     //获取已经选择的菜单项
-                    $api.get('ManageMenu/OrganPurviewUID', { 'lvid': th.id }).then(function (req) {
+                    $api.get('ManageMenu/PositionPurview', { 'posid': th.id }).then(function (req) {
                         if (req.data.success) {
                             var arr = req.data.result;
                             for (var i = 0; i < arr.length; i++)
@@ -57,7 +61,7 @@ $ready(function () {
                     for (var j = 0; j < nodes.length; j++)
                         arr.push(nodes[j].MM_UID);
                 }
-                $api.post('ManageMenu/OrganPurviewSelected', { 'lvid': th.id, 'mms': arr })
+                $api.post('ManageMenu/UpdatePositionPurview', { 'posid': th.id, 'mms': arr })
                 .then(function (req) {
                     if (req.data.success) {
                         var result = req.data.result;
@@ -75,8 +79,7 @@ $ready(function () {
             },
             //设置菜单文本样式
             setTextstyle: function (data) {
-                let css = 'background-image: linear-gradient(to right, rgba(255, 255, 255,0) '
-                    + (data.MM_IsUse ? data.MM_Complete : 100) + '%,rgb(255, 0, 0) ' + (100 - data.MM_Complete) + '%);';
+                let css = '';
                 if (!$api.isnull(data.MM_Color) && data.MM_Color != '') css += 'color:' + data.MM_Color + ';';
                 if (data.MM_IsBold) css += 'font-weight: bold;';
                 if (data.MM_IsItalic) css += 'font-style: italic;';
@@ -106,7 +109,7 @@ $ready(function () {
             operateSuccess: function (isclose) {
                 //更新后触发的事件
                 for (let i = 0; i < this.datas.length; i++) {
-                    $api.cache('ManageMenu/OrganMarkerMenus:update', { 'marker': this.datas[i].MM_Marker });
+                    $api.cache('ManageMenu/OrganMenus:update', { 'marker': this.datas[i].MM_Marker });
                 }
                 if (window.top && window.top.$pagebox)
                     window.top.$pagebox.source.tab(window.name, 'vapp.getlist', isclose);

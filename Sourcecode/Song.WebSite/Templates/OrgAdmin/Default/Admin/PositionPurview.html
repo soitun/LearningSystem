@@ -12,11 +12,11 @@
         <div class="tree_area">
             <el-card class="box-card" v-for="(root,index) in datas" v-loading="loading" shadow="hover">
                 <div slot="header" class="clearfix">
-                    <icon v-if="root.ico==null || root.ico==''">&#xa038;</icon>
-                    <icon v-else v-html="'&#x'+root.ico+';'"></icon>
-                    <span>{{root.MM_Name}}</span>
-                    <span style="float: right;">
-                        <el-checkbox v-model="root.MM_IsBold" @change="selected(root,index)">全选</el-checkbox>
+                    <el-checkbox v-model="root.MM_IsBold" @change="selected(root,index)"></el-checkbox>
+                    <span :style="setTextstyle(root)">
+                        <icon v-if="root.ico==null || root.ico==''" :style="setIcostyle(root)">&#xa038;</icon>
+                        <icon v-else v-html="'&#x'+root.ico+';'" :style="setIcostyle(root)"></icon>
+                        <span>{{root.MM_Name}}</span>
                     </span>
                 </div>
                 <el-tree :data="root.children" show-checkbox default-expand-all node-key="id" ref="tree"

@@ -89,12 +89,19 @@ namespace Song.ServiceInterfaces
         ///// <param name="marker">例如教师管理teacher,学生管理student,机构管理organAdmin</param>
         ///// <returns></returns>
         //ManageMenu[] GetAll4Org(int orgid, string marker);
+
         /// <summary>
         /// 获取机构等级的权限
         /// </summary>
         /// <param name="lvid">机构等级的id</param>
         /// <returns></returns>
-        Purview[] OrganLevelItems(int lvid);
+        List<Purview> OrganLevelPurview(int lvid);
+        /// <summary>
+        /// 岗位的权限
+        /// </summary>
+        /// <param name="posid">岗位的id</param>
+        /// <returns></returns>
+        List<Purview> PositionPurview(int posid);
         /// <summary>
         /// 获取某机构的某一个根菜单项的权限
         /// </summary>

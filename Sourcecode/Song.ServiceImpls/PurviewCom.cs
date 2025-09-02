@@ -342,13 +342,24 @@ namespace Song.ServiceImpls
         //    //    sql = sql.Replace("true", "1");
         //    return Gateway.Default.FromSql(sql).ToArray<ManageMenu>();
         //}
+
+
         /// <summary>
         /// 获取机构的基础权限，如果不设置机构所在等级的所权，则获取此权限
         /// </summary>
         /// <returns></returns>
-        public Purview[] OrganLevelItems(int lvid)
+        public List<Purview> OrganLevelPurview(int lvid)
         {
-            return Gateway.Default.From<Purview>().Where(Purview._.Olv_ID == lvid).ToArray<Purview>();
+            return Gateway.Default.From<Purview>().Where(Purview._.Olv_ID == lvid).ToList<Purview>();
+        }
+        /// <summary>
+        /// 岗位的权限
+        /// </summary>
+        /// <param name="posid">岗位的id</param>
+        /// <returns></returns>
+        public List<Purview> PositionPurview(int posid)
+        {
+            return Gateway.Default.From<Purview>().Where(Purview._.Posi_Id == posid).ToList<Purview>();
         }
         /// <summary>
         /// 获取机构的某一个根菜单项的权限
@@ -370,7 +381,7 @@ namespace Song.ServiceImpls
 
             //在权限表中记录的MM_UID
             List<Purview> purview = Gateway.Default.From<Purview>().Where(Purview._.Olv_ID == org.Olv_ID).ToList<Purview>();
-            if (purview == null || purview.Count < 1) return selected;
+            if (purview == null || purview.Count < 1) return mms;
 
             //如果设置了权限，则按权限进行过滤
             foreach (Purview p in purview)

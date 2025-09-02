@@ -223,50 +223,7 @@ namespace Song.ViewData.Methods
             return null;
         }
 
-        /// <summary>
-        /// 供机构等级选择权限的菜单
-        /// </summary>    
-        /// <returns></returns>
-        [HttpGet]
-        [SuperAdmin]
-        public JArray OrganPurviewSelect()
-        {
-            List<Song.Entities.ManageMenu> mm = Business.Do<IManageMenu>().GetFunctionMenu("0", true, false);
-            if (mm.Count > 0)
-            {
-                return _MenuNode(null, mm, false);
-            }
-            return null;
-        }
-        /// <summary>
-        /// 记录机构等级的权限选中信息
-        /// </summary>
-        /// <param name="lvid"></param>
-        /// <param name="mms"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [SuperAdmin]
-        public bool OrganPurviewSelected(int lvid, string[] mms)
-        {
-            Business.Do<IPurview>().BatchAdd(lvid, mms, "orglevel");
-            return true;
-        }
-        /// <summary>
-        /// 机构等级的权限菜单项的Uid
-        /// </summary>
-        /// <param name="lvid">机构等级的id</param>
-        /// <returns></returns>
-        public JArray OrganPurviewUID(int lvid)
-        {
-            Purview[] pur = Business.Do<IPurview>().OrganLevelItems(lvid);
-            JArray ja = new JArray();
-            for (int i = 0; i < pur.Length; i++)
-            {
-                ja.Add(pur[i].MM_UID);
-            }
-            return ja;
-        }
-        
+
         #region 系统菜单
         /// <summary>
         /// 系统菜单，即超级管理左上角菜单
@@ -442,32 +399,87 @@ namespace Song.ViewData.Methods
                 if (mm.Count > 0) list.AddRange(mm);
                 return _MenuNode(null, list, true);
             }
-            else if(LoginAdmin.Status.IsAdmin(acc))
+            else if (LoginAdmin.Status.IsAdmin(acc))
             {
-                return this.OrganMarkerMenus(menu_marker);
+                return this.OrganMenus(menu_marker);
             }
             return null;
         }
-        ///// <summary>
-        ///// 机构所拥有的菜单项
-        ///// </summary>
-        ///// <param name="marker">根菜单的标识</param>
-        ///// <returns></returns>
-        //public JArray OrgMenus(string marker)
-        //{
-
-        //}
         /// <summary>
-        /// 机构下某一类marker标识的菜单项
+        /// 机构下某一类marker标识的菜单项,如果在机构等级中设置了权限，则返回该权限的菜单项；
+        /// 如果未设置，则取所有菜单项
         /// </summary>
-        /// <param name="marker"></param>
+        /// <param name="marker">例如教师管理teacher,学生管理student,机构管理organAdmin，如果为空，则取所有</param>
         /// <returns></returns>
         //[Cache(AdminDisable = true, Expires = 1440)]
-        public JArray OrganMarkerMenus(string marker)
+        public JArray OrganMenus(string marker)
         {
-            Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
-            List<Song.Entities.ManageMenu> mm = Business.Do<IPurview>().GetOrganPurview(org, marker);
-            return mm.Count > 0 ? _MenuNode(null, mm, false) : null;
+            List<Song.Entities.ManageMenu> mms = null;
+            if (!string.IsNullOrWhiteSpace(marker))
+            {
+                Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
+                mms = Business.Do<IPurview>().GetOrganPurview(org, marker);
+            }
+            else mms = Business.Do<IManageMenu>().GetFunctionMenu("0", true, false);
+            //
+            return mms != null && mms.Count > 0 ? _MenuNode(null, mms, false) : null;
+        }
+
+        /// <summary>
+        /// 机构等级的权限菜单项的Uid
+        /// </summary>
+        /// <param name="lvid">机构等级的id</param>
+        /// <returns>菜单项的UID列表</returns>
+        public JArray OrganLevelPurview(int lvid)
+        {
+            List<Purview> pur = Business.Do<IPurview>().OrganLevelPurview(lvid);
+            JArray ja = new JArray();
+            for (int i = 0; i < pur.Count; i++)
+            {
+                ja.Add(pur[i].MM_UID);
+            }
+            return ja;
+        }
+        /// <summary>
+        ///修改机构等级的权限选中信息
+        /// </summary>
+        /// <param name="lvid">机构等级id</param>
+        /// <param name="mms">菜单项的uid</param>
+        /// <returns></returns>
+        [HttpPost]
+        [SuperAdmin]
+        public bool UpdateOrganLevelPurview(int lvid, string[] mms)
+        {
+            Business.Do<IPurview>().BatchAdd(lvid, mms, "orglevel");
+            return true;
+        }
+        /// <summary>
+        /// 岗位的权限
+        /// </summary>
+        /// <param name="posid">岗位的id</param>
+        /// <returns>菜单项的UID列表</returns>
+        public JArray PositionPurview(int posid)
+        {
+            List<Purview> pur = Business.Do<IPurview>().PositionPurview(posid);
+            JArray ja = new JArray();
+            for (int i = 0; i < pur.Count; i++)
+            {
+                ja.Add(pur[i].MM_UID);
+            }
+            return ja;
+        }
+        /// <summary>
+        /// 修改岗位的权限选中信息
+        /// </summary>
+        /// <param name="posid">岗位的id</param>
+        /// <param name="mms">菜单项的uid</param>
+        /// <returns></returns>
+        [HttpPost]
+        [SuperAdmin]
+        public bool UpdatePositionPurview(int posid, string[] mms)
+        {
+            Business.Do<IPurview>().BatchAdd(posid, mms, "posi");
+            return true;
         }
         #endregion
     }

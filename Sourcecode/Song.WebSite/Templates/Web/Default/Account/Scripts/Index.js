@@ -100,13 +100,10 @@ $ready(function () {
             getmenus: function () {
                 var th = this;
                 th.loading_menu = true;
-                $api.get('ManageMenu/OrganMarkerMenus', { 'marker': 'student' })
+                $api.get('ManageMenu/OrganMenus', { 'marker': 'student' })
                     .then(function (req) {
                         if (req.data.success) {
-                            var result = req.data.result;
-                            //th.menus=result;
-                            //console.error(result);
-                            
+                            var result = req.data.result;                          
                             if (result != null && result.length > 0
                                 && (result[0].children && result[0].children.length > 0)) {
                                 th.menus = result[0].children;

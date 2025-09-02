@@ -16,12 +16,12 @@ $ready(function () {
             var th = this;
             th.loading = true;
             //获取所有供选择的菜单项
-            $api.get('ManageMenu/OrganPurviewSelect').then(function (req) {
+            $api.get('ManageMenu/OrganMenus', { 'marker': ''}).then(function (req) {
                 if (req.data.success) {
                     th.datas = req.data.result;
                     console.error(th.datas);
                     //获取已经选择的菜单项
-                    $api.get('ManageMenu/OrganPurviewUID', { 'lvid': th.id }).then(function (req) {
+                    $api.get('ManageMenu/OrganLevelPurview', { 'lvid': th.id }).then(function (req) {
                         if (req.data.success) {
                             var arr = req.data.result;
                             for (var i = 0; i < arr.length; i++)
@@ -57,7 +57,7 @@ $ready(function () {
                     for (var j = 0; j < nodes.length; j++)
                         arr.push(nodes[j].MM_UID);
                 }
-                $api.post('ManageMenu/OrganPurviewSelected', { 'lvid': th.id, 'mms': arr })
+                $api.post('ManageMenu/UpdateOrganLevelPurview', { 'lvid': th.id, 'mms': arr })
                 .then(function (req) {
                     if (req.data.success) {
                         var result = req.data.result;
@@ -105,7 +105,7 @@ $ready(function () {
             operateSuccess: function (isclose) {
                 //更新后触发的事件
                 for (let i = 0; i < this.datas.length; i++) {
-                    $api.cache('ManageMenu/OrganMarkerMenus:update', { 'marker': this.datas[i].MM_Marker });
+                    $api.cache('ManageMenu/OrganMenus:update', { 'marker': this.datas[i].MM_Marker });
                 }
                 if (window.top && window.top.$pagebox)
                     window.top.$pagebox.source.tab(window.name, 'vapp.getlist', isclose);

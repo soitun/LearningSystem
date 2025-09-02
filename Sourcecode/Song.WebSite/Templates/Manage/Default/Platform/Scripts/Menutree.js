@@ -237,7 +237,7 @@ $ready(function () {
             },
             //更新后触发的事件
             updatedEvent: function () {
-                $api.cache('ManageMenu/OrganMarkerMenus:update', { 'marker': this.rootMenu.MM_Marker });
+                $api.cache('ManageMenu/OrganMenus:update', { 'marker': this.rootMenu.MM_Marker });
             }
         }
     });
