@@ -13,17 +13,17 @@ $ready(function () {
             datas: [] //数据源          
         },
         created: function () {
-            console.error(this.id);
             var th = this;
             th.loading = true;
             //获取所有供选择的菜单项
             $api.get('ManageMenu/OrganMenus', { 'marker': 'organAdmin' }).then(function (req) {
                 if (req.data.success) {
-                    var result = req.data.result;                          
+                    var result = req.data.result;
                     if (result != null && result.length > 0
                         && (result[0].children && result[0].children.length > 0)) {
                         th.datas = result[0].children;
                     }
+                    console.error(th.datas);
                     //获取已经选择的菜单项
                     $api.get('ManageMenu/PositionPurview', { 'posid': th.id }).then(function (req) {
                         if (req.data.success) {
@@ -31,9 +31,16 @@ $ready(function () {
                             for (var i = 0; i < arr.length; i++)
                                 arr[i] = 'node_' + arr[i];
                             window.setTimeout(function () {
-                                var trees = window.vapp.$refs.tree;
+                                var trees = th.$refs.tree;
                                 for (var i = 0; i < trees.length; i++)
                                     trees[i].setCheckedKeys(arr, true);
+                                th.$nextTick(() => {
+                                    //是否全部选中
+                                    for (var i = 0; i < th.datas.length; i++) {
+                                        th.isSelectedAll(i);
+                                    }
+                                });
+
                             }, 100);
                         } else {
                             console.error(req.data.exception);
@@ -49,6 +56,7 @@ $ready(function () {
                 .finally(() => { });
         },
         methods: {
+            //确定保存
             btnEnter: function (isclose) {
                 var th = this;
                 if (th.loading) return;
@@ -62,20 +70,38 @@ $ready(function () {
                         arr.push(nodes[j].MM_UID);
                 }
                 $api.post('ManageMenu/UpdatePositionPurview', { 'posid': th.id, 'mms': arr })
-                .then(function (req) {
-                    if (req.data.success) {
-                        var result = req.data.result;
-                        th.$message({
-                            type: 'success', center: true,
-                            message: '操作成功!'
-                        });
-                        th.operateSuccess(isclose);
-                    } else {
-                        console.error(req.data.exception);
-                        throw req.data.message;
-                    }
-                }).catch(err => alert(err))
+                    .then(function (req) {
+                        if (req.data.success) {
+                            var result = req.data.result;
+                            th.$message({
+                                type: 'success', center: true,
+                                message: '操作成功!'
+                            });
+                            th.operateSuccess(isclose);
+                        } else {
+                            console.error(req.data.exception);
+                            throw req.data.message;
+                        }
+                    }).catch(err => alert(err))
                     .finally(() => th.loading = false);
+            },
+            //是否全部选择
+            isSelectedAll: function (index) {
+                var tree = this.$refs.tree[index];
+                var selectedNodes = tree.getCheckedNodes(false, true);
+                // 递归获取所有节点的数量
+                let getAllNodes = function (menunode) {
+                    let total = 0;
+                    if (menunode.children && menunode.children.length > 0) {
+                        for (let i = 0; i < menunode.children.length; i++) {
+                            total++;
+                            total += getAllNodes(menunode.children[i]);
+                        }
+                    }
+                    return total;
+                };
+                this.datas[index].MM_IsBold = getAllNodes(this.datas[index]) == selectedNodes.length;
+                return this.datas[index].MM_IsBold;
             },
             //设置菜单文本样式
             setTextstyle: function (data) {

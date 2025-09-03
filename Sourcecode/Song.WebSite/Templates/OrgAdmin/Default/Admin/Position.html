@@ -54,7 +54,7 @@
                     <template slot-scope="scope">
                         <el-link type="primary" plain @click="$refs.btngroup.pagebox('PositionPurview?type=posi&id='+scope.row.Posi_Id,
                                  '“'+scope.row.Posi_Name+'”的权限设置',
-                                 'Posi_'+scope.row.Posi_Id,1200,'80%')">权限</el-link>
+                                 'Posi_'+scope.row.Posi_Id,1200,'80%')" v-show='!scope.row.Posi_IsAdmin'>权限</el-link>
                     </template>
                 </el-table-column>
                 <el-table-column label="操作"  width="120"  align="center">

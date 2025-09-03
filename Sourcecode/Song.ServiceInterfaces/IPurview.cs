@@ -108,6 +108,18 @@ namespace Song.ServiceInterfaces
         /// <param name="org"></param>
         /// <param name="marker">例如教师管理teacher,学生管理student,机构管理organAdmin</param>
         /// <returns></returns>
-        List<ManageMenu> GetOrganPurview(Song.Entities.Organization org, string marker);
+        List<ManageMenu> OrganPurviewMenu(Song.Entities.Organization org, string marker);
+        /// <summary>
+        /// 岗位的管理菜单
+        /// </summary>
+        /// <param name="posi">岗位对象</param>
+        /// <returns></returns>
+        List<ManageMenu> PosiPurviewMenu(Position posi);
+        /// <summary>
+        /// 岗位的管理菜单
+        /// </summary>
+        /// <param name="posid">岗位对象的id</param>
+        /// <returns></returns>
+        List<ManageMenu> PosiPurviewMenu(int posid);
     }
 }

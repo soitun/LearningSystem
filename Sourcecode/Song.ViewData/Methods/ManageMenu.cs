@@ -390,6 +390,7 @@ namespace Song.ViewData.Methods
             if (acc == null) throw new ExceptionForNoLogin();
             //根菜单的标识，由于菜单分为管理菜单、学员菜单、教师菜单，所以这里要区分
             string menu_marker = "organAdmin";
+            //超级管理员，取所有功能菜单
             if (LoginAdmin.Status.IsSuperAdmin(acc))
             {
                 List<Song.Entities.ManageMenu> list = new List<Entities.ManageMenu>();
@@ -399,9 +400,16 @@ namespace Song.ViewData.Methods
                 if (mm.Count > 0) list.AddRange(mm);
                 return _MenuNode(null, list, true);
             }
+            //机构管理员，取分配给当前机构的功能菜单
             else if (LoginAdmin.Status.IsAdmin(acc))
             {
                 return this.OrganMenus(menu_marker);
+            }
+            //普通管理员，取分配给所在岗位的功能菜单
+            else
+            {
+                List<Song.Entities.ManageMenu> mm = Business.Do<IPurview>().PosiPurviewMenu(acc.Posi_Id);
+                return _MenuNode(null, mm, true);
             }
             return null;
         }
@@ -418,7 +426,7 @@ namespace Song.ViewData.Methods
             if (!string.IsNullOrWhiteSpace(marker))
             {
                 Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
-                mms = Business.Do<IPurview>().GetOrganPurview(org, marker);
+                mms = Business.Do<IPurview>().OrganPurviewMenu(org, marker);
             }
             else mms = Business.Do<IManageMenu>().GetFunctionMenu("0", true, false);
             //

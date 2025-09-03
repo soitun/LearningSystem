@@ -161,7 +161,7 @@ namespace Song.ViewData.Helper
                     Dictionary<int, HashSet<string>> dic = new Dictionary<int, HashSet<string>>();
                     foreach (Organization org in orgs)
                     {
-                        List<ManageMenu> mms = Business.Do<IPurview>().GetOrganPurview(org, keys[i]);
+                        List<ManageMenu> mms = Business.Do<IPurview>().OrganPurviewMenu(org, keys[i]);
                         HashSet<string> hset = new HashSet<string>();
                         for (int j = 0; j < mms.Count; j++)
                         {
