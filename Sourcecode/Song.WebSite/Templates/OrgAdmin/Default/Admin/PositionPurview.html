@@ -21,6 +21,7 @@
                     </el-checkbox>
                 </div>
                 <el-tree :data="root.children" show-checkbox default-expand-all node-key="id" ref="tree" :check-on-click-node="true"
+                :expand-on-click-node="false"
                     highlight-current :props="defaultProps" @check-change="isSelectedAll(index)">
 
                     <span class="custom-tree-node" slot-scope="{ node, data }">
