@@ -1,4 +1,5 @@
-﻿using Song.Entities;
+﻿using ServiceStack.Common;
+using Song.Entities;
 using Song.ServiceInterfaces;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
 using WeiSha.Core;
 
 namespace Song.ViewData.Helper
@@ -27,118 +29,124 @@ namespace Song.ViewData.Helper
         /// </summary>
         public static PageCheck Instance => _instance;
 
+        #region 不受权限控制的内容，页面或模板项
+        private static readonly object _uncontrolled_items_lock = new object();
+        private Dictionary<string, HashSet<string>> _uncontrolledItems = null;
         /// <summary>
         /// 不受限制的页面项，key值为模板库名称，value为页面列表
         /// </summary>
-        public Dictionary<string, HashSet<string>> Items
+        /// <remarks></remarks>
+        public Dictionary<string, HashSet<string>> UncontrolledItems
         {
             get
             {
-                Dictionary<string, HashSet<string>> dic;
-                System.Web.Caching.Cache cache = System.Web.HttpRuntime.Cache;
-                object cachevalue = cache.Get(configFile + "Items");
-                if (cachevalue != null) dic = (Dictionary<string, HashSet<string>>)cachevalue;
-                else dic = this.InitializedData();
-                return dic;
+                if (_uncontrolledItems != null) return _uncontrolledItems;
+                lock (_uncontrolled_items_lock)
+                {
+                    //先取从缓存中读取
+                    System.Web.Caching.Cache cache = System.Web.HttpRuntime.Cache;
+                    object cachevalue = cache.Get(configFile + "_UncontrolledItems");
+                    if (cachevalue != null)
+                    {
+                        _uncontrolledItems = (Dictionary<string, HashSet<string>>)cachevalue;
+                        return _uncontrolledItems;
+                    }
+                    //如果缓存中没有，则从配置文件读取，并写入缓存
+                    var dic = new Dictionary<string, HashSet<string>>();
+                    if (!File.Exists(Path.Combine(configPath, configFile))) return dic;
+
+                    var xdoc = XDocument.Load(Path.Combine(configPath, configFile));
+                    var nodes = xdoc.Root?.Elements() ?? Enumerable.Empty<XElement>(); 
+                    foreach (var node in nodes)
+                    {
+                        var list = node.Elements()
+                            .Select(e => (string)e.Attribute("value"))
+                            .Where(v => !string.IsNullOrWhiteSpace(v))
+                            .Select(v => v.TrimEnd('/', '\\').ToLower())
+                            .ToHashSet();
+
+                        dic.Add(node.Name.LocalName, list);
+                    }
+                    //加入缓存                   
+                    cache.Insert(configFile + "_UncontrolledItems", dic, new System.Web.Caching.CacheDependency(configPath + configFile));
+                    _uncontrolledItems = dic;
+                    return _uncontrolledItems;
+                }                
             }
         }
         /// <summary>
+        /// 判断页而是否是不受控制的页面
+        /// </summary>
+        /// <param name="device">模板库名称</param>
+        /// <param name="page">页面</param>
+        /// <returns></returns>
+        public bool UncontrolledItemCheck(string device,string page)
+        {
+            Dictionary<string, HashSet<string>> items = this.UncontrolledItems;
+            HashSet<string> hashset = items != null && items.ContainsKey(device) ? items[device] : null;
+            if (hashset == null || hashset.Contains(page)) return true;
+            return false;
+        }
+
+        // 不受限制的页面项
+        private static readonly object _uncontrolled_pages_lock = new object();
+        private List<string> _uncontrolledPages = null;
+        /// <summary>
         /// 不受限制的页面项，支持正则表达式
         /// </summary>
-        public List<string> Allows
+        public List<string> UncontrolledPages
         {
             get
             {
-                List<string> list;
-                System.Web.Caching.Cache cache = System.Web.HttpRuntime.Cache;
-                object cachevalue = cache.Get(configFile + "Allows");
-                if (cachevalue != null) list = (List<string>)cachevalue;
-                else list = this.InitializedAllow();
-                return list;
+                if (_uncontrolledPages != null) return _uncontrolledPages;
+                lock (_uncontrolled_pages_lock)
+                {
+                    //先取从缓存中读取
+                    System.Web.Caching.Cache cache = System.Web.HttpRuntime.Cache;
+                    object cachevalue = cache.Get(configFile + "_UncontrolledPages");
+                    if (cachevalue != null)
+                    {
+                        _uncontrolledPages = (List<string>)cachevalue;
+                        return _uncontrolledPages;
+                    }
+                    //如果缓存中没有，则读取配置文件
+                    var list = new List<string>();
+                    if (!File.Exists(configPath + configFile)) return list;
+                    var xmldoc = new XmlDocument();
+                    xmldoc.Load(configPath + configFile);
+                    var nodes = xmldoc.SelectNodes("config/allow/*[@value]");
+                    if (nodes == null) return list;
+                    list.AddRange(                        from XmlNode node in nodes
+                        where node.NodeType == XmlNodeType.Element
+                        select node.Attributes["value"].Value
+                    );
+                    cache.Insert(configFile + "_UncontrolledPages", list, new System.Web.Caching.CacheDependency(configPath + configFile));
+                    _uncontrolledPages = list;
+                    return _uncontrolledPages;
+                }              
             }
         }
+        /// <summary>
+        /// 检测页面是否在不受控制的页面项中
+        /// </summary>
+        /// <param name="page">页面</param>
+        /// <returns></returns>
+        public bool UncontrolledPageCheck(string page)
+        {
+            //模板库之外的不限制页面，正则表达式匹配
+            foreach (string s in this.UncontrolledPages)
+                if (Regex.IsMatch(page, s, RegexOptions.IgnoreCase)) return true;
+            return false;
+        }
+        #endregion
         private PageCheck()
         {
             configPath = WeiSha.Core.Server.MapPath(configPath);
             Business.Do<IManageMenu>().OnChanged += (object sender, EventArgs e) => this.InitializedMenu();
-            Business.Do<IPurview>().OnChanged += (object sender, EventArgs e) => this.InitializedMenu();
-            this.InitializedData();
-        } 
-        /// <summary>
-        /// 获取配置项
-        /// </summary>
-        /// <returns></returns>
-        public Dictionary<string, HashSet<string>> InitializedData()
-        {
-            lock (this)
-            {
-                Dictionary<string, HashSet<string>> dic = new Dictionary<string, HashSet<string>>();
-                XmlDocument xmldoc = new XmlDocument();
-                if (!File.Exists(configPath + configFile)) return dic;
-                xmldoc.Load(configPath + configFile);
-                //需要权限管控的路由，即根节点配置项
-                XmlNodeList nodes = xmldoc.LastChild.FirstChild.ChildNodes;
-                for (int i = 0; i < nodes.Count; i++)
-                {
-                    XmlNode node = nodes[i];
-                    string key = node.Name;
-                    HashSet<string> list = new HashSet<string>();
-                    //不需要权限管理的页面
-                    XmlNodeList childs = node.ChildNodes;
-                    for (int j = 0; j < childs.Count; j++)
-                    {
-                        string page = childs[j].Attributes["value"].Value;
-                        if (!string.IsNullOrWhiteSpace(page))
-                        {
-                            if (page.EndsWith("/") || page.EndsWith("\\")) page = page.Substring(0, page.Length - 1);
-                            list.Add(page.ToLower());
-                        }
-                    }
-                    dic.Add(key, list);
-                }
-                //加入缓存
-                System.Web.Caching.Cache cache = System.Web.HttpRuntime.Cache;
-                cache.Insert(configFile + "Items", dic, new System.Web.Caching.CacheDependency(configPath + configFile));
-                return dic;
-            }
-        }
-        /// <summary>
-        /// 初始化允许通过的路由
-        /// </summary>
-        /// <returns></returns>
-        public List<string> InitializedAllow()
-        {
-            lock (this)
-            {
-                List<string> list = new List<string>();
-                XmlDocument xmldoc = new XmlDocument();
-                if (!File.Exists(configPath + configFile)) return list;
-                xmldoc.Load(configPath + configFile);
-                //不需要权限管控的路由，支持正则表达式
-                XmlNode allows= xmldoc.SelectSingleNode("config/allow");
-                XmlNodeList nodes = allows.ChildNodes;
-                for (int i = 0; i < nodes.Count; i++)
-                {
-                    XmlNode node = nodes[i];
-                    if (node.NodeType == XmlNodeType.Element)
-                        list.Add(node.Attributes["value"].Value);
-                }
-                //加入缓存
-                System.Web.Caching.Cache cache = System.Web.HttpRuntime.Cache;
-                cache.Insert(configFile + "Allows", list, new System.Web.Caching.CacheDependency(configPath + configFile));
-                return list;
-            }
-        }
-        /// <summary>
-        /// 获取某个路由下所有不受限制的页面
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public HashSet<string> PageList(string key)
-        {
-            Dictionary<string, HashSet<string>> items = this.Items;
-            return items != null && items.ContainsKey(key) ? items[key] : null;
-        }
+            Business.Do<IPurview>().OnChanged += (object sender, EventArgs e) => this.InitializedMenu();           
+        }   
+
+
         /// <summary>
         /// 菜单项，第一层key值是角色名称，第二层key值是机构id，HashSet为菜单项的link
         /// </summary>
@@ -236,15 +244,80 @@ namespace Song.ViewData.Helper
                 if (pages[i].EndsWith("/")) pages[i] = pages[i].Substring(0, pages[i].Length - 1);
             string root = pages[pages.Length - 1];  //根页面，一般是管理后台的地址，如果不处理管理框架内，则是自身
             string self = pages[0];     //自身页面
-            string purview = pages.Length >= 2 ? pages[pages.Length - 2] : root;    //需要判断权限的页面
+            string page = pages.Length >= 2 ? pages[pages.Length - 2] : root;    //需要判断权限的页面
             //页面所在控制器路由，在当前系统框架中，往往用于描述为“设备(device)”
             string controller = root.Split('/').FirstOrDefault(s => !string.IsNullOrWhiteSpace(s)); //模板库的类型
 
             //判断是否拥有权限
-            bool ispass = this.CheckPageAccess(purview, controller, letter);
+            bool ispass = this.CheckPageAccess(page, controller.ToLower(), letter);
+           
             string msg = string.Format("当前页面 {0} 没有操作权限，请确认是否登录或登录失效！", self);
             if (!ispass) throw VExcept.Verify(msg, 100);
             return true;
+        }
+        public bool CheckPageAccess2(string page, string device, Letter letter)
+        {
+            //如果不是模板库限制的页面
+            if (this.UncontrolledItemCheck(device, page)) return true;          
+            //模板库之外的不限制页面，正则表达式匹配
+            if (this.UncontrolledPageCheck(page)) return true;
+         
+
+
+            List<Song.Entities.ManageMenu> menus = new List<ManageMenu>();
+            //如果是学员账号登录
+            Song.Entities.Accounts acc = LoginAccount.Status.User(letter);
+            if (acc != null)
+            {
+                menus = OrganMenus(acc.Org_ID, "student");
+                Song.Entities.Teacher teacher = LoginAccount.Status.Teacher(letter);
+                if(teacher != null)menus.AddRange(OrganMenus(teacher.Org_ID, "teacher"));
+            }
+            //如果是管理员登录
+            Song.Entities.EmpAccount emp = LoginAdmin.Status.User(letter);
+            //根菜单的标识，由于菜单分为管理菜单、学员菜单、教师菜单，所以这里要区分
+            string menu_marker = "organAdmin";
+            //超级管理员，取所有功能菜单
+            if (LoginAdmin.Status.IsSuperAdmin(emp))
+            {
+                Entities.ManageMenu root = Business.Do<IManageMenu>().GetRootMarker(menu_marker);
+                menus.Add(root);
+                List<Song.Entities.ManageMenu> mm = Business.Do<IManageMenu>().GetFunctionMenu(root.MM_UID, true, null);
+                if (mm.Count > 0) menus.AddRange(mm);
+              
+            }
+            //机构管理员，取分配给当前机构的功能菜单
+            else if (LoginAdmin.Status.IsAdmin(emp))
+            {
+                menus.AddRange(OrganMenus(emp.Org_ID, menu_marker));
+            }
+            //普通管理员，取分配给所在岗位的功能菜单
+            else
+            {
+                List<Song.Entities.ManageMenu> posimm = Business.Do<IPurview>().PosiPurviewMenu(emp.Posi_Id);
+                if (posimm.Count > 0) menus.AddRange(posimm);
+            }
+            if (menus == null || menus.Count < 1) return false;
+            //
+            //mms.Contains(page)
+            bool exists = menus.Any(menu => page.Equals(menu.MM_Link, StringComparison.CurrentCultureIgnoreCase));
+            return exists;
+        }
+        /// <summary>
+        /// 机构下某一类marker标识的菜单项,如果在机构等级中设置了权限，则返回该权限的菜单项；
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="marker">例如教师管理teacher,学生管理student,机构管理organAdmin</param>
+        /// <returns></returns>
+        public List<Song.Entities.ManageMenu> OrganMenus(int orgid,string marker)
+        {
+            List<Song.Entities.ManageMenu> mms = null;
+            if (!string.IsNullOrWhiteSpace(marker))
+            {
+                Song.Entities.Organization org = Business.Do<IOrganization>().OrganSingle(orgid);
+                mms = Business.Do<IPurview>().OrganPurviewMenu(org, marker);
+            }              
+            return mms;
         }
         /// <summary>
         /// 检测页面是否拥有权限
@@ -256,11 +329,10 @@ namespace Song.ViewData.Helper
         public bool CheckPageAccess(string page, string device, Letter letter)
         {
             //如果不是模板库限制的页面
-            HashSet<string> list = this.PageList(device);
-            if (list == null || list.Contains(page)) return true;
+            if (this.UncontrolledItemCheck(device, page)) return true;
             //模板库之外的不限制页面，正则表达式匹配
-            foreach (string s in this.Allows)
-                if (Regex.IsMatch(page, s,RegexOptions.IgnoreCase)) return true;
+            if (this.UncontrolledPageCheck(page)) return true;
+
             //
             HashSet<string> menus = null;          
             Song.Entities.Organization org = null;

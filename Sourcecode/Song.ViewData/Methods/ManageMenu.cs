@@ -411,7 +411,7 @@ namespace Song.ViewData.Methods
                 List<Song.Entities.ManageMenu> mm = Business.Do<IPurview>().PosiPurviewMenu(acc.Posi_Id);
                 return _MenuNode(null, mm, true);
             }
-            return null;
+            //return null;
         }
         /// <summary>
         /// 机构下某一类marker标识的菜单项,如果在机构等级中设置了权限，则返回该权限的菜单项；

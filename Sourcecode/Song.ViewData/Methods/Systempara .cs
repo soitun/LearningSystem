@@ -80,14 +80,21 @@ namespace Song.ViewData.Methods
             long id = Business.Do<ISystemPara>().SerialSnow();
             return id.ToString();
         }
-        public Dictionary<string, HashSet<string>> PageCheck()
+        /// <summary>
+        /// 不受权限控制的菜单项
+        /// </summary>
+        public Dictionary<string, HashSet<string>> UncontrolledItems()
         {
             ViewData.Helper.PageCheck pageCheck = ViewData.Helper.PageCheck.Instance;
-            return pageCheck.Items;
+            return pageCheck.UncontrolledItems;
         }
-        public List<string> PageAllows()
+        /// <summary>
+        /// 不受权限控制的页面，支持正则表达式查询
+        /// </summary>
+        /// <returns></returns>
+        public List<string> UncontrolledPages()
         {
-            return ViewData.Helper.PageCheck.Instance.Allows;
+            return ViewData.Helper.PageCheck.Instance.UncontrolledPages;
         }
     }
 }
