@@ -154,8 +154,8 @@ namespace Song.ViewData.Helper
         private PageCheck()
         {
             configPath = WeiSha.Core.Server.MapPath(configPath);
-            Business.Do<IManageMenu>().OnChanged += (object sender, EventArgs e) => this.InitializedMenu();
-            Business.Do<IPurview>().OnChanged += (object sender, EventArgs e) => this.InitializedMenu();           
+            Business.Do<IManageMenu>().OnChanged += (object sender, EventArgs e) => InitializedMenu();
+            Business.Do<IPurview>().OnChanged += (object sender, EventArgs e) => InitializedMenu();           
         }   
 
 
@@ -167,11 +167,11 @@ namespace Song.ViewData.Helper
         /// <summary>
         /// 初始化权限菜单项
         /// </summary>
-        public void InitializedMenu()
+        public static void InitializedMenu()
         {
             lock (lockObj)
             {
-                _menu_hashset = new Dictionary<string, Dictionary<int, HashSet<string>>>();
+                var menupages = new Dictionary<string, Dictionary<int, HashSet<string>>>();
 
                 //管理员按岗位划分权限
                 List<Position> positions = Business.Do<IPosition>().GetAll(0);
@@ -188,7 +188,7 @@ namespace Song.ViewData.Helper
                     }
                     dic.Add(posi.Posi_Id, hset);
                 }               
-                _menu_hashset.Add("organAdmin", dic);
+                menupages.Add("organAdmin", dic);
 
                 //学员与教师的权限菜单              
                 string[] keys = { "student", "teacher" };
@@ -209,7 +209,7 @@ namespace Song.ViewData.Helper
                         }
                         dic2.Add(org.Org_ID, hset2);
                     }
-                    _menu_hashset.Add(keys[i], dic2);
+                    menupages.Add(keys[i], dic2);
                 }
 
                 Dictionary<int, HashSet<string>> dic3 = new Dictionary<int, HashSet<string>>();
@@ -221,35 +221,39 @@ namespace Song.ViewData.Helper
                     hset3.Add(m.MM_Link.ToLower());
                 }
                 dic3.Add(0, hset3);
-                _menu_hashset.Add("manage", dic3);
-
+                menupages.Add("manage", dic3);
+                //
+                _menu_hashset = menupages;
             }
         }
         /// <summary>
         /// 某一类角色的菜单项，包括各个机构的
         /// </summary>
-        /// <param name="key">角色名称</param>
+        /// <param name="role">角色名称</param>
         /// <returns></returns>
-        public Dictionary<int, HashSet<string>> Menus(string key)
+        public Dictionary<int, HashSet<string>> Menus(string role)
         {
-            if (_menu_hashset == null) this.InitializedMenu();
-            if (key.Equals("orgadmin")) return _menu_hashset.ContainsKey("organAdmin") ? _menu_hashset["organAdmin"] : null;
+            if (_menu_hashset == null)
+            {
+                lock (this) InitializedMenu();
+            }
+            if (role.Equals("orgadmin")) return _menu_hashset.ContainsKey("organAdmin") ? _menu_hashset["organAdmin"] : null;
             foreach (string str in _menu_hashset.Keys)          
-                if(String.Equals(str, key, StringComparison.OrdinalIgnoreCase))                      
+                if(String.Equals(str, role, StringComparison.OrdinalIgnoreCase))                      
                     return _menu_hashset[str];           
             return null;          
         }
         /// <summary>
         /// 某一角色在所在机构的菜单项
         /// </summary>
-        /// <param name="key">角色名称</param>
-        /// <param name="orgid">机构id</param>
+        /// <param name="role">角色名称,例如organAdmin，sutdent,teacher</param>
+        /// <param name="keyval">岗位id，或机构id</param>
         /// <returns></returns>
-        public HashSet<string> Menus(string key,int orgid)
+        public HashSet<string> Menus(string role,int keyval)
         {
-            Dictionary<int, HashSet<string>> dic = this.Menus(key);
+            Dictionary<int, HashSet<string>> dic = this.Menus(role);
             if (dic == null) return null;
-            return dic.ContainsKey(orgid) ? dic[orgid] : null;
+            return dic.ContainsKey(keyval) ? dic[keyval] : null;
         }
         #region 校验
         /// <summary>
@@ -278,54 +282,6 @@ namespace Song.ViewData.Helper
             string msg = string.Format("当前页面 {0} 没有操作权限，请确认是否登录或登录失效！", self);
             if (!ispass) throw VExcept.Verify(msg, 100);
             return true;
-        }
-        public bool CheckPageAccess2(string page, string device, Letter letter)
-        {
-            //如果不是模板库限制的页面
-            if (this.UncontrolledItemCheck(device, page)) return true;          
-            //模板库之外的不限制页面，正则表达式匹配
-            if (this.UncontrolledPageCheck(page)) return true;
-         
-
-
-            List<Song.Entities.ManageMenu> menus = new List<ManageMenu>();
-            //如果是学员账号登录
-            Song.Entities.Accounts acc = LoginAccount.Status.User(letter);
-            if (acc != null)
-            {
-                menus = OrganMenus(acc.Org_ID, "student");
-                Song.Entities.Teacher teacher = LoginAccount.Status.Teacher(letter);
-                if(teacher != null)menus.AddRange(OrganMenus(teacher.Org_ID, "teacher"));
-            }
-            //如果是管理员登录
-            Song.Entities.EmpAccount emp = LoginAdmin.Status.User(letter);
-            //根菜单的标识，由于菜单分为管理菜单、学员菜单、教师菜单，所以这里要区分
-            string menu_marker = "organAdmin";
-            //超级管理员，取所有功能菜单
-            if (LoginAdmin.Status.IsSuperAdmin(emp))
-            {
-                Entities.ManageMenu root = Business.Do<IManageMenu>().GetRootMarker(menu_marker);
-                menus.Add(root);
-                List<Song.Entities.ManageMenu> mm = Business.Do<IManageMenu>().GetFunctionMenu(root.MM_UID, true, null);
-                if (mm.Count > 0) menus.AddRange(mm);
-              
-            }
-            //机构管理员，取分配给当前机构的功能菜单
-            else if (LoginAdmin.Status.IsAdmin(emp))
-            {
-                menus.AddRange(OrganMenus(emp.Org_ID, menu_marker));
-            }
-            //普通管理员，取分配给所在岗位的功能菜单
-            else
-            {
-                List<Song.Entities.ManageMenu> posimm = Business.Do<IPurview>().PosiPurviewMenu(emp.Posi_Id);
-                if (posimm.Count > 0) menus.AddRange(posimm);
-            }
-            if (menus == null || menus.Count < 1) return false;
-            //
-            //mms.Contains(page)
-            bool exists = menus.Any(menu => page.Equals(menu.MM_Link, StringComparison.CurrentCultureIgnoreCase));
-            return exists;
         }
         /// <summary>
         /// 机构下某一类marker标识的菜单项,如果在机构等级中设置了权限，则返回该权限的菜单项；
