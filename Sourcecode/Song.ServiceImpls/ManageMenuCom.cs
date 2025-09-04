@@ -373,26 +373,36 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public List<ManageMenu> GetFunctionMenu(string uid, bool? isUse, bool? isShow)
         {
-            List<ManageMenu> list = new List<ManageMenu>();
+          
             WhereClip wc = ManageMenu._.MM_Func == "func";          
             if (isUse != null) wc.And(ManageMenu._.MM_IsUse == isUse);
             if (isShow != null) wc.And(ManageMenu._.MM_IsShow == isShow);
-            _GetFunctionMenu(uid, wc, list);
-            return list;
+            // 所有菜单项
+            List<ManageMenu> mms = Gateway.Default.From<ManageMenu>().Where(wc).OrderBy(ManageMenu._.MM_Tax.Asc).ToList<ManageMenu>();
+            return _getFunctionMenu(uid, mms);
         }
-        private List<ManageMenu> _GetFunctionMenu(string uid, WhereClip wc, List<ManageMenu> list)
-        {
-            if(list==null)list= new List<ManageMenu>();
-            WhereClip where = new WhereClip();
-            if (!string.IsNullOrWhiteSpace(uid)) where.And(ManageMenu._.MM_PatId == uid);
-            where.And(wc);
-            ManageMenu[] mms = Gateway.Default.From<ManageMenu>().Where(where).OrderBy(ManageMenu._.MM_Tax.Asc).ToArray<ManageMenu>();
-            foreach(ManageMenu m in mms)
+        private List<ManageMenu> _getFunctionMenu(string uid, List<ManageMenu> mms)
+        {        
+            List<ManageMenu> currentLvl = new List<ManageMenu>();
+            List<ManageMenu> tmlist = new List<ManageMenu>();   //临时记录          
+            for (int i = 0; i < mms.Count; i++)
             {
-                list.Add(m);
-                _GetFunctionMenu(m.MM_UID, wc, list);
+                if (mms[i].MM_PatId == uid)
+                {
+                    currentLvl.Add(mms[i]);
+                    tmlist.Add(mms[i]);
+                    mms.RemoveAt(i);
+                    i--;
+                }
             }
-            return list;
+            if (currentLvl.Count > 0)
+            {
+                for (int i = 0; i < currentLvl.Count; i++)
+                {
+                    tmlist.AddRange(_getFunctionMenu(currentLvl[i].MM_UID, mms));
+                }
+            }           
+            return tmlist;
         }
         /// <summary>
         /// 获取当前对象的子级对象；

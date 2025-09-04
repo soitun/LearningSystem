@@ -55,17 +55,26 @@ namespace Song.ViewData.Helper
                     var dic = new Dictionary<string, HashSet<string>>();
                     if (!File.Exists(Path.Combine(configPath, configFile))) return dic;
 
-                    var xdoc = XDocument.Load(Path.Combine(configPath, configFile));
-                    var nodes = xdoc.Root?.Elements() ?? Enumerable.Empty<XElement>(); 
-                    foreach (var node in nodes)
+                    var xmldoc = new XmlDocument();
+                    xmldoc.Load(configPath + configFile);
+                    XmlNodeList nodes = xmldoc.LastChild.FirstChild.ChildNodes;
+                    for (int i = 0; i < nodes.Count; i++)
                     {
-                        var list = node.Elements()
-                            .Select(e => (string)e.Attribute("value"))
-                            .Where(v => !string.IsNullOrWhiteSpace(v))
-                            .Select(v => v.TrimEnd('/', '\\').ToLower())
-                            .ToHashSet();
-
-                        dic.Add(node.Name.LocalName, list);
+                        XmlNode node = nodes[i];
+                        string key = node.Name;
+                        HashSet<string> list = new HashSet<string>();
+                        //不需要权限管理的页面
+                        XmlNodeList childs = node.ChildNodes;
+                        for (int j = 0; j < childs.Count; j++)
+                        {
+                            string page = childs[j].Attributes["value"].Value;
+                            if (!string.IsNullOrWhiteSpace(page))
+                            {
+                                if (page.EndsWith("/") || page.EndsWith("\\")) page = page.Substring(0, page.Length - 1);
+                                list.Add(page.ToLower());
+                            }
+                        }
+                        dic.Add(key, list);
                     }
                     //加入缓存                   
                     cache.Insert(configFile + "_UncontrolledItems", dic, new System.Web.Caching.CacheDependency(configPath + configFile));
@@ -83,7 +92,10 @@ namespace Song.ViewData.Helper
         public bool UncontrolledItemCheck(string device,string page)
         {
             Dictionary<string, HashSet<string>> items = this.UncontrolledItems;
-            HashSet<string> hashset = items != null && items.ContainsKey(device) ? items[device] : null;
+            if (items == null) return true;
+            HashSet<string> hashset = this.UncontrolledItems.FirstOrDefault(x => x.Key.Equals(device, StringComparison.OrdinalIgnoreCase)).Value;
+
+            //HashSet<string> hashset = value;
             if (hashset == null || hashset.Contains(page)) return true;
             return false;
         }
@@ -150,7 +162,7 @@ namespace Song.ViewData.Helper
         /// <summary>
         /// 菜单项，第一层key值是角色名称，第二层key值是机构id，HashSet为菜单项的link
         /// </summary>
-        private static Dictionary<string ,Dictionary<int, HashSet<string>>> menu = null;               
+        private static Dictionary<string ,Dictionary<int, HashSet<string>>> _menu_hashset = null;               
         private static object lockObj = new object();
         /// <summary>
         /// 初始化权限菜单项
@@ -159,46 +171,66 @@ namespace Song.ViewData.Helper
         {
             lock (lockObj)
             {
-                menu = new Dictionary<string, Dictionary<int, HashSet<string>>>();
+                _menu_hashset = new Dictionary<string, Dictionary<int, HashSet<string>>>();
 
+                ////管理员按岗位划分权限
+                List<Position> positions = Business.Do<IPosition>().GetAll(0);
+                Dictionary<int, HashSet<string>> dic = new Dictionary<int, HashSet<string>>();
+                //foreach (Position posi in positions)
+                //{
+                //    List<ManageMenu> mms = Business.Do<IPurview>().PosiPurviewMenu(posi);
+                //    HashSet<string> hset = new HashSet<string>();
+                //    for (int j = 0; j < mms.Count; j++)
+                //    {
+                //        if (string.IsNullOrWhiteSpace(mms[j].MM_Link) || mms[j].MM_Link.StartsWith("http"))
+                //            continue;
+                //        hset.Add(mms[j].MM_Link.ToLower());
+                //    }
+                //    dic.Add(posi.Posi_Id, hset);
+                //}
+                //var dic = positions.ToDictionary(
+                //    posi => posi.Posi_Id,
+                //    posi => Business.Do<IPurview>()
+                //        .PosiPurviewMenu(posi)
+                //        .Where(m => !string.IsNullOrWhiteSpace(m.MM_Link) && !m.MM_Link.StartsWith("http"))
+                //        .Select(m => m.MM_Link.ToLower())
+                //        .ToHashSet()
+                //);
+                _menu_hashset.Add("organAdmin", dic);
+
+                //学员与教师的权限菜单              
+                string[] keys = { "student", "teacher" };
                 List<Organization> orgs = Business.Do<IOrganization>().OrganAll(null, -1, string.Empty);
-                string[] keys = { "organAdmin", "student", "teacher", "manage" };
                 //取各角色、各机构的菜单项
                 for (int i = 0; i < keys.Length - 1; i++)
                 {
-                    Dictionary<int, HashSet<string>> dic = new Dictionary<int, HashSet<string>>();
+                    Dictionary<int, HashSet<string>> dic2 = new Dictionary<int, HashSet<string>>();
                     foreach (Organization org in orgs)
                     {
                         List<ManageMenu> mms = Business.Do<IPurview>().OrganPurviewMenu(org, keys[i]);
-                        HashSet<string> hset = new HashSet<string>();
+                        HashSet<string> hset2 = new HashSet<string>();
                         for (int j = 0; j < mms.Count; j++)
                         {
                             if (string.IsNullOrWhiteSpace(mms[j].MM_Link) || mms[j].MM_Link.StartsWith("http"))
                                 continue;
-                            hset.Add(mms[j].MM_Link.ToLower());
+                            hset2.Add(mms[j].MM_Link.ToLower());
                         }
-                        dic.Add(org.Org_ID, hset);
+                        dic2.Add(org.Org_ID, hset2);
                     }
-                    menu.Add(keys[i], dic);
+                    _menu_hashset.Add(keys[i], dic2);
                 }
+
+                Dictionary<int, HashSet<string>> dic3 = new Dictionary<int, HashSet<string>>();
+                HashSet<string> hset3 = new HashSet<string>();
+                //系统菜单
+                foreach (ManageMenu m in Business.Do<IManageMenu>().GetAll(true, true, "sys"))
                 {
-                    Dictionary<int, HashSet<string>> dic = new Dictionary<int, HashSet<string>>();
-                    HashSet<string> hset = new HashSet<string>();
-                    //超管菜单
-                    foreach (ManageMenu m in Business.Do<IManageMenu>().GetFunctionMenu("0", true, true))
-                    {
-                        if (string.IsNullOrWhiteSpace(m.MM_Link) || m.MM_Link.StartsWith("http")) continue;
-                        hset.Add(m.MM_Link.ToLower());
-                    }
-                    //系统菜单
-                    foreach (ManageMenu m in Business.Do<IManageMenu>().GetAll(true, true, "sys"))
-                    {
-                        if (string.IsNullOrWhiteSpace(m.MM_Link) || m.MM_Link.StartsWith("http")) continue;
-                        hset.Add(m.MM_Link.ToLower());
-                    }
-                    dic.Add(0, hset);
-                    menu.Add("manage", dic);
+                    if (string.IsNullOrWhiteSpace(m.MM_Link) || m.MM_Link.StartsWith("http")) continue;
+                    hset3.Add(m.MM_Link.ToLower());
                 }
+                dic3.Add(0, hset3);
+                _menu_hashset.Add("manage", dic3);
+
             }
         }
         /// <summary>
@@ -208,11 +240,11 @@ namespace Song.ViewData.Helper
         /// <returns></returns>
         public Dictionary<int, HashSet<string>> Menus(string key)
         {
-            if (menu == null) this.InitializedMenu();
-            if (key.Equals("orgadmin")) return menu.ContainsKey("organAdmin") ? menu["organAdmin"] : null;
-            foreach (string str in menu.Keys)          
+            if (_menu_hashset == null) this.InitializedMenu();
+            if (key.Equals("orgadmin")) return _menu_hashset.ContainsKey("organAdmin") ? _menu_hashset["organAdmin"] : null;
+            foreach (string str in _menu_hashset.Keys)          
                 if(String.Equals(str, key, StringComparison.OrdinalIgnoreCase))                      
-                    return menu[str];           
+                    return _menu_hashset[str];           
             return null;          
         }
         /// <summary>
@@ -334,32 +366,31 @@ namespace Song.ViewData.Helper
             if (this.UncontrolledPageCheck(page)) return true;
 
             //
-            HashSet<string> menus = null;          
-            Song.Entities.Organization org = null;
+            HashSet<string> menus = null; 
+            int keyval = 0; //岗位id，或机构id，如果是管理员时，取岗位id
             //根据登录状态判断权限
             switch (device)
             {
                 case "orgadmin":
                     //当前机构管理员
                     EmpAccount emp = LoginAdmin.Status.User(letter);
-                    if (emp != null) org = Business.Do<IOrganization>().OrganSingle(emp.Org_ID);
+                    if (emp != null) keyval = emp.Posi_Id;
                     break;
                 case "student":
                     Accounts acc = LoginAccount.Status.User(letter);
-                    if (acc != null) org = Business.Do<IOrganization>().OrganSingle(acc.Org_ID);
+                    if (acc != null) keyval = acc.Org_ID;
                     break;
                 case "teacher":
                     Teacher th = LoginAccount.Status.Teacher(letter);
-                    if (th != null) org = Business.Do<IOrganization>().OrganSingle(th.Org_ID);
+                    if (th != null) keyval = th.Org_ID;
                     break;
                 case "manage":
-                    org = new Organization();
+                    keyval = 0;
                     break;
                 default:
                     return true;
             }
-            if (org == null) return false;
-            menus = Menus(device, org.Org_ID);
+            menus = Menus(device, keyval);
             if (menus == null) return false;
             if( menus.Contains(page))return true;
             

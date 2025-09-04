@@ -406,6 +406,17 @@ namespace Song.ServiceImpls
             return selected.Count<1 || (selected.Count==1 && selected[0].MM_Id == root.MM_Id) ? mms : selected;
         }
         /// <summary>
+        /// 获取某机构的某一个根菜单项的权限
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="marker">例如教师管理teacher,学生管理student,机构管理organAdmin</param>
+        /// <returns></returns>
+        public List<ManageMenu> OrganPurviewMenu(int orgid, string marker)
+        {
+            Organization org = Business.Do<IOrganization>().OrganSingle(orgid);
+            return this.OrganPurviewMenu(org, marker);
+        }
+        /// <summary>
         /// 岗位的管理菜单
         /// </summary>
         /// <param name="posi">岗位对象</param>
@@ -413,6 +424,7 @@ namespace Song.ServiceImpls
         public List<ManageMenu> PosiPurviewMenu(Position posi)
         {
             if (posi == null) return null;
+            if (posi.Posi_IsAdmin) return this.OrganPurviewMenu(posi.Org_ID, "organAdmin");
             //实际选中的菜单(即权限中选中的菜单项）
             List<ManageMenu> selected = new List<ManageMenu>();
             //marker标识下的所有菜单项
@@ -456,7 +468,8 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public List<ManageMenu> PosiPurviewMenu(int posid)
         {
-            return PosiPurviewMenu(Gateway.Default.From<Position>().Where(Position._.Posi_Id == posid).ToFirst<Position>());
+            Position posi = Gateway.Default.From<Position>().Where(Position._.Posi_Id == posid).ToFirst<Position>();
+            return PosiPurviewMenu(posi);
         }
     }
 }

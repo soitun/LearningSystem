@@ -23,7 +23,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public Song.Entities.Position[] All()
+        public List<Song.Entities.Position> All()
         {
             Song.Entities.Organization org = LoginAdmin.Status.Organ(this.Letter);
             if (org == null) return null;
@@ -35,7 +35,7 @@ namespace Song.ViewData.Methods
         /// <param name="orgid">机构id</param>
         /// <returns></returns>
         [HttpGet]
-        public Song.Entities.Position[] All4Organ(int orgid)
+        public List<Song.Entities.Position> All4Organ(int orgid)
         {           
             return Business.Do<IPosition>().GetAll(orgid);
         }
@@ -44,7 +44,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public Song.Entities.Position[] EnableAll()
+        public List<Song.Entities.Position> EnableAll()
         {
             Song.Entities.Organization org = LoginAdmin.Status.Organ(this.Letter);
             return Business.Do<IPosition>().GetAll(org.Org_ID, true);
@@ -55,7 +55,7 @@ namespace Song.ViewData.Methods
         /// <param name="orgid">机构id</param>
         /// <returns></returns>
         [HttpGet]
-        public Song.Entities.Position[] Enable4Organ(int orgid)
+        public List<Song.Entities.Position> Enable4Organ(int orgid)
         {
             return Business.Do<IPosition>().GetAll(orgid, true);
         }
@@ -192,7 +192,7 @@ namespace Song.ViewData.Methods
         /// <param name="id">岗位id</param>
         /// <returns></returns>
         [HttpGet]
-        public Song.Entities.EmpAccount[] Emplyees(int id)
+        public List<EmpAccount> Emplyees(int id)
         {
             return Business.Do<IPosition>().GetAllEmplyee(id);
         }

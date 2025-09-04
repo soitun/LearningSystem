@@ -48,8 +48,9 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         Position GetSingle(int identify);
         /// <summary>
-        /// 获取单一实体对象，按职位名称
+        /// 按岗位名称，获取某个机构下的岗位
         /// </summary>
+        /// <param name="orgid">机构id</param>
         /// <param name="name">职位名称</param>
         /// <returns></returns>
         Position GetSingle(int orgid,string name);
@@ -62,21 +63,21 @@ namespace Song.ServiceInterfaces
         /// 获取对象；即所有职位；
         /// </summary>
         /// <returns></returns>
-        Position[] GetAll(int orgid);
-        Position[] GetAll(int orgid,bool? isUse);
+        List<Position> GetAll(int orgid);
+        List<Position> GetAll(int orgid,bool? isUse);
         /// <summary>
         /// 获取当前角色的所有员工
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="posid"></param>
         /// <returns></returns>
-        EmpAccount[] GetAllEmplyee(int posid);
+        List<EmpAccount> GetAllEmplyee(int posid);
         /// <summary>
         /// 获取当前角色的所有在职员工
         /// </summary>
         /// <param name="posid"></param>
         /// <param name="use">是否在职</param>
         /// <returns></returns>
-        EmpAccount[] GetAllEmplyee(int posid,bool use);
+        List<EmpAccount> GetAllEmplyee(int posid,bool use);
         /// <summary>
         /// 岗位是否已经存在
         /// </summary>

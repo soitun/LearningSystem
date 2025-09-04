@@ -117,7 +117,6 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public Position GetSingle(int orgid, string name)
         {
-
             return Gateway.Default.From<Position>().Where(Organization._.Org_ID == orgid && Position._.Posi_Name == name).ToFirst<Position>();
         }
         /// <summary>
@@ -134,28 +133,26 @@ namespace Song.ServiceImpls
         /// 获取对象；即所有职位；
         /// </summary>
         /// <returns></returns>
-        public Position[] GetAll(int orgid)
+        public List<Position> GetAll(int orgid)
         {
-            return Gateway.Default.From<Position>().Where(Position._.Org_ID == orgid).OrderBy(Position._.Posi_Tax.Asc).ToArray<Position>();
+            return GetAll(orgid, null);
         }
-        public Position[] GetAll(int orgid,bool? isUse)
+        public List<Position> GetAll(int orgid,bool? isUse)
         {
-            if (isUse == null)
-            {
-                return this.GetAll(orgid);
-            }
-            return Gateway.Default.From<Position>()
-                .Where(Position._.Org_ID == orgid && Position._.Posi_IsUse == isUse)
-                .OrderBy(Position._.Posi_Tax.Asc).ToArray<Position>();
+            WhereClip wc = new WhereClip();
+            if (orgid > 0) wc &= Position._.Org_ID == orgid;
+            if (isUse != null) wc &= Position._.Posi_IsUse == (bool)isUse;
+            if (isUse == null) return this.GetAll(orgid);
+            return Gateway.Default.From<Position>().Where(wc).OrderBy(Position._.Posi_Tax.Asc).ToList<Position>();
         }
         /// <summary>
         /// 获取当前角色的所有员工
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public EmpAccount[] GetAllEmplyee(int id)
+        public List<EmpAccount> GetAllEmplyee(int id)
         {
-            return Gateway.Default.From<EmpAccount>().Where(EmpAccount._.Posi_Id == id).ToArray<EmpAccount>();
+            return Gateway.Default.From<EmpAccount>().Where(EmpAccount._.Posi_Id == id).ToList<EmpAccount>();
         }
         /// <summary>
         /// 获取当前角色的所有在职员工
@@ -163,9 +160,9 @@ namespace Song.ServiceImpls
         /// <param name="posid"></param>
         /// <param name="use">是否在职</param>
         /// <returns></returns>
-        public EmpAccount[] GetAllEmplyee(int posid, bool use)
+        public List<EmpAccount> GetAllEmplyee(int posid, bool use)
         {
-            return Gateway.Default.From<EmpAccount>().Where(EmpAccount._.Posi_Id == posid && EmpAccount._.Acc_IsUse == use).ToArray<EmpAccount>();
+            return Gateway.Default.From<EmpAccount>().Where(EmpAccount._.Posi_Id == posid && EmpAccount._.Acc_IsUse == use).ToList<EmpAccount>();
         }
         /// <summary>
         /// 岗位是否已经存在

@@ -400,11 +400,11 @@ namespace Song.ViewData.Methods
                 if (mm.Count > 0) list.AddRange(mm);
                 return _MenuNode(null, list, true);
             }
-            //机构管理员，取分配给当前机构的功能菜单
-            else if (LoginAdmin.Status.IsAdmin(acc))
-            {
-                return this.OrganMenus(menu_marker);
-            }
+            ////机构管理员，取分配给当前机构的功能菜单
+            //else if (LoginAdmin.Status.IsAdmin(acc))
+            //{
+            //    return this.OrganMenus(menu_marker);
+            //}
             //普通管理员，取分配给所在岗位的功能菜单
             else
             {
