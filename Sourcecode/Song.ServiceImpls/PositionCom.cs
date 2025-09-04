@@ -141,8 +141,7 @@ namespace Song.ServiceImpls
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc &= Position._.Org_ID == orgid;
-            if (isUse != null) wc &= Position._.Posi_IsUse == (bool)isUse;
-            if (isUse == null) return this.GetAll(orgid);
+            if (isUse != null) wc &= Position._.Posi_IsUse == (bool)isUse;          
             return Gateway.Default.From<Position>().Where(wc).OrderBy(Position._.Posi_Tax.Asc).ToList<Position>();
         }
         /// <summary>

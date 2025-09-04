@@ -173,29 +173,21 @@ namespace Song.ViewData.Helper
             {
                 _menu_hashset = new Dictionary<string, Dictionary<int, HashSet<string>>>();
 
-                ////管理员按岗位划分权限
+                //管理员按岗位划分权限
                 List<Position> positions = Business.Do<IPosition>().GetAll(0);
                 Dictionary<int, HashSet<string>> dic = new Dictionary<int, HashSet<string>>();
-                //foreach (Position posi in positions)
-                //{
-                //    List<ManageMenu> mms = Business.Do<IPurview>().PosiPurviewMenu(posi);
-                //    HashSet<string> hset = new HashSet<string>();
-                //    for (int j = 0; j < mms.Count; j++)
-                //    {
-                //        if (string.IsNullOrWhiteSpace(mms[j].MM_Link) || mms[j].MM_Link.StartsWith("http"))
-                //            continue;
-                //        hset.Add(mms[j].MM_Link.ToLower());
-                //    }
-                //    dic.Add(posi.Posi_Id, hset);
-                //}
-                //var dic = positions.ToDictionary(
-                //    posi => posi.Posi_Id,
-                //    posi => Business.Do<IPurview>()
-                //        .PosiPurviewMenu(posi)
-                //        .Where(m => !string.IsNullOrWhiteSpace(m.MM_Link) && !m.MM_Link.StartsWith("http"))
-                //        .Select(m => m.MM_Link.ToLower())
-                //        .ToHashSet()
-                //);
+                foreach (Position posi in positions)
+                {
+                    List<ManageMenu> mms = Business.Do<IPurview>().PosiPurviewMenu(posi);
+                    HashSet<string> hset = new HashSet<string>();
+                    for (int j = 0; j < mms.Count; j++)
+                    {
+                        if (string.IsNullOrWhiteSpace(mms[j].MM_Link) || mms[j].MM_Link.StartsWith("http"))
+                            continue;
+                        hset.Add(mms[j].MM_Link.ToLower());
+                    }
+                    dic.Add(posi.Posi_Id, hset);
+                }               
                 _menu_hashset.Add("organAdmin", dic);
 
                 //学员与教师的权限菜单              
