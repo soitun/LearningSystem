@@ -43,9 +43,9 @@ namespace Song.ViewData.Methods
         /// <param name="pid">上级id</param>
         /// <param name="count">取多少条</param>
         /// <returns></returns>
-        public Song.Entities.Columns[] ColumnsShow(int orgid,string pid,int count)
+        public List<Columns> ColumnsShow(int orgid,string pid,int count)
         {
-            Song.Entities.Columns[] cols = Business.Do<IColumns>().ColumnCount(orgid, pid, "news", true, count);
+            List<Columns> cols = Business.Do<IColumns>().ColumnCount(orgid, pid, "news", true, count);
             return cols;
         }
         /// <summary>
@@ -54,7 +54,7 @@ namespace Song.ViewData.Methods
         /// <param name="pid">上级uid</param>
         /// <param name="isuse">是否启用</param>
         /// <returns></returns>
-        public Song.Entities.Columns[] ColumnsChildren(string pid, bool isuse)
+        public List<Columns> ColumnsChildren(string pid, bool isuse)
         {           
             return Business.Do<IColumns>().Children(pid, isuse);
         }
@@ -68,8 +68,8 @@ namespace Song.ViewData.Methods
         [HttpGet] 
         public JArray ColumnsTree(int orgid)
         {
-            Song.Entities.Columns[] cols = Business.Do<IColumns>().ColumnCount(orgid, null, "news", null, -1);
-            return cols.Length > 0 ? _columnsNode(null, cols.ToList<Song.Entities.Columns>()) : null;
+            List<Columns> cols = Business.Do<IColumns>().ColumnCount(orgid, null, "news", null, -1);
+            return cols.Count > 0 ? _columnsNode(null, cols.ToList<Song.Entities.Columns>()) : null;
         }
         /// <summary>
         /// 生成菜单子节点
@@ -79,6 +79,29 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         private JArray _columnsNode(Song.Entities.Columns item, List<Song.Entities.Columns> items)
         {
+            List<Song.Entities.Columns> childs = new List<Song.Entities.Columns>();
+            for (int i = 0; i < items.Count; i++)
+            {
+                Entities.Columns m = items[i];
+                if (item == null && m.Col_PID != "") continue;
+                if (item != null && m.Col_PID != item.Col_UID) continue;
+                childs.Add(m);
+                items.RemoveAt(i);
+                i--;
+            }
+            JArray jarr = new JArray();
+            for (int i = 0; i < childs.Count; i++)
+            {
+                string j = childs[i].ToJson("", "Col_CrtTime");
+                JObject jo = JObject.Parse(j);
+                jarr.Add(jo);
+                //计算下级
+                JArray charray = _columnsNode(childs[i], items);
+                if (charray.Count > 0) jo.Add("children", charray);
+            }
+            return jarr;
+
+            /*
             JArray jarr = new JArray();
 
             foreach (Song.Entities.Columns m in items)
@@ -104,7 +127,7 @@ namespace Song.ViewData.Methods
                 if (charray.Count > 0)
                     jo.Add("children", charray);              
             }
-            return jarr;
+            return jarr;*/
         }
 
         #region 更新栏目
@@ -119,7 +142,7 @@ namespace Song.ViewData.Methods
         {
             List<Song.Entities.Columns> mlist = new List<Entities.Columns>();
             _ColumnsUpdate(tree, "", mlist);
-            Business.Do<IColumns>().UpdateColumnsTree(mlist.ToArray(), orgid);
+            Business.Do<IColumns>().UpdateColumnsTree(mlist, orgid);
             return true;
         }
         private void _ColumnsUpdate(string tree, string pid, List<Song.Entities.Columns> mlist)

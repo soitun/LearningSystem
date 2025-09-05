@@ -98,7 +98,7 @@ namespace Song.ServiceImpls
         public void Delete(int identify)
         {
             Columns col = Gateway.Default.From<Columns>().Where(Columns._.Col_ID == identify).ToFirst<Columns>();
-            Columns[] child = this.Children(col.Col_UID, null);
+            List<Columns> child = this.Children(col.Col_UID, null);
             foreach (Columns n in child)
                 Delete(n.Col_ID);
            
@@ -129,19 +129,19 @@ namespace Song.ServiceImpls
         {
             return Gateway.Default.From<Columns>().Where(Columns._.Col_UID == uid).ToFirst<Columns>();
         }
-        public Song.Entities.Columns[] All(int orgid, bool? isUse)
+        public List<Columns> All(int orgid, bool? isUse)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Columns._.Org_ID == orgid);
             if (isUse != null) wc.And(Columns._.Col_IsUse == (bool)isUse);
-            return Gateway.Default.From<Columns>().Where(wc).OrderBy(Columns._.Col_Tax.Asc).ToArray<Columns>();
+            return Gateway.Default.From<Columns>().Where(wc).OrderBy(Columns._.Col_Tax.Asc).ToList<Columns>();
         }
 
-        public Columns[] ColumnCount(int orgid, string type, bool? isUse, int count)
+        public List<Columns> ColumnCount(int orgid, string type, bool? isUse, int count)
         {
             return ColumnCount(orgid, null, type, isUse, count);
         }
-        public Columns[] ColumnCount(int orgid, string pid, string type, bool? isUse, int count)
+        public List<Columns> ColumnCount(int orgid, string pid, string type, bool? isUse, int count)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Columns._.Org_ID == orgid);
@@ -152,14 +152,14 @@ namespace Song.ServiceImpls
                 type = System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(type.ToLower());
                 wc.And(Columns._.Col_Type == type);
             }
-            return Gateway.Default.From<Columns>().Where(wc).OrderBy(Columns._.Col_Tax.Asc).ToArray<Columns>(count);
+            return Gateway.Default.From<Columns>().Where(wc).OrderBy(Columns._.Col_Tax.Asc).ToList<Columns>(count);
 
         }
-        public Song.Entities.Columns[] Children(string pid, bool? isUse)
+        public List<Columns> Children(string pid, bool? isUse)
         {
             WhereClip wc = Columns._.Col_PID == pid;
             if (isUse != null) wc.And(Columns._.Col_IsUse == (bool)isUse);
-            return Gateway.Default.From<Columns>().Where(wc).OrderBy(Columns._.Col_Tax.Asc).ToArray<Columns>();
+            return Gateway.Default.From<Columns>().Where(wc).OrderBy(Columns._.Col_Tax.Asc).ToList<Columns>();
         }
         /// <summary>
         /// 是否有下级栏目
@@ -199,7 +199,7 @@ namespace Song.ServiceImpls
         /// <param name="items"></param>
         /// <param name="orgid"></param>
         /// <returns></returns>
-        public bool UpdateColumnsTree(Columns[] items, int orgid)
+        public bool UpdateColumnsTree(List<Columns> items, int orgid)
         {
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {

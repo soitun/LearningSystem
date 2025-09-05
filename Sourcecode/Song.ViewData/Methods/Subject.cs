@@ -228,8 +228,7 @@ namespace Song.ViewData.Methods
         /// <param name="items">所有菜单项</param>
         /// <returns></returns>
         private JArray _SubjectNode(Song.Entities.Subject item, List<Song.Entities.Subject> items)
-        {
-            JArray jarr = new JArray();
+        {            
             List<Song.Entities.Subject> childs = new List<Song.Entities.Subject>();
             for (int i = 0; i < items.Count; i++)
             {
@@ -240,6 +239,7 @@ namespace Song.ViewData.Methods
                 items.RemoveAt(i);
                 i--;
             }
+            JArray jarr = new JArray();
             for (int i = 0; i < childs.Count; i++)
             {
                 string j = childs[i].ToJson("", "Sbj_CrtTime");

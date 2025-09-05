@@ -44,7 +44,7 @@ namespace Song.ServiceInterfaces
         /// <param name="orgid">机构id</param>
         /// <param name="isUse"></param>
         /// <returns></returns>
-        Columns[] All(int orgid, bool? isUse);
+        List<Columns> All(int orgid, bool? isUse);
         /// <summary>
         /// 取某一类的栏目
         /// </summary>
@@ -53,7 +53,7 @@ namespace Song.ServiceInterfaces
         /// <param name="isUse"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        Columns[] ColumnCount(int orgid, string type, bool? isUse, int count);
+        List<Columns> ColumnCount(int orgid, string type, bool? isUse, int count);
         /// <summary>
         /// 取某一类的栏目
         /// </summary>
@@ -63,15 +63,15 @@ namespace Song.ServiceInterfaces
         /// <param name="isUse"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        Columns[] ColumnCount(int orgid, string pid, string type, bool? isUse, int count);      
-       
+        List<Columns> ColumnCount(int orgid, string pid, string type, bool? isUse, int count);
+
         /// <summary>
         /// 当前栏目下的子级栏目
         /// </summary>
         /// <param name="pid">当前栏目id,如果0，则取顶级栏目</param>
         /// <param name="isUse"></param>
         /// <returns></returns>
-        Columns[] Children(string pid, bool? isUse);
+        List<Columns> Children(string pid, bool? isUse);
         /// <summary>
         /// 是否有下级栏目
         /// </summary>
@@ -91,7 +91,7 @@ namespace Song.ServiceInterfaces
         /// <param name="items"></param>
         /// <param name="orgid"></param>
         /// <returns></returns>
-        bool UpdateColumnsTree(Columns[] items, int orgid);
+        bool UpdateColumnsTree(List<Columns> items, int orgid);
 
     }
 }

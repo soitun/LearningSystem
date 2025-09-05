@@ -76,9 +76,10 @@ $ready(function () {
             },
             //克隆一个新节点
             clone: function (data) {
+                let newname = 'newnode';  //新节点的名称
                 var temp = {
                     "Col_ID": -1, "Col_PID": "",
-                    "Col_Name": "newnode",
+                    "Col_Name": newname + '_' + this.getnewname(this.datas, newname),
                     "Col_ByName": "", "Col_Title": "",
                     "Col_Keywords": "", "Col_Descr": "",
                     "Col_Intro": "", "Col_Type": "News",
@@ -93,6 +94,18 @@ $ready(function () {
                 obj.children = [];
                 if (data != null) obj.Col_PID = data.Col_UID;
                 return obj;
+            },
+            //计算新节点的名称
+            getnewname: function (datas, newname) {
+                let count = 0;
+                for (let j = 0; j < datas.length; j++) {
+                    //const element = datas[j];
+                    if (datas[j].Col_Name.length >= newname.length && datas[j].Col_Name.indexOf(newname) >= 0)
+                        count++;
+                    if (datas[j].children && datas[j].children.length > 0)
+                        count += this.getnewname(datas[j].children, newname);
+                }
+                return count;
             },
             remove(node, data) {
                 const parent = node.parent;
