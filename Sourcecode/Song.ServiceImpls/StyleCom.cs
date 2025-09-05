@@ -117,7 +117,7 @@ namespace Song.ServiceImpls
             if (nav == null) return;
             WeiSha.Core.Upload.Get["Org"].DeleteFile(nav.Nav_Logo);         
             //
-            Navigation[] child = this.NaviChildren(nav.Nav_UID, null);
+            List<Navigation> child = this.NaviChildren(nav.Nav_UID, null);
             foreach (Navigation n in child)
             {
                 NaviDelete(n.Nav_ID);
@@ -174,11 +174,11 @@ namespace Song.ServiceImpls
         /// <param name="pid">父级id，如果小于等0，仍作为0使用</param>
         /// <param name="isShow">是否显示</param>
         /// <returns></returns>
-        public Navigation[] NaviChildren(string pid, bool? isShow)
+        public List<Navigation> NaviChildren(string pid, bool? isShow)
         {
             WhereClip wc = Navigation._.Nav_PID == pid;
             if (isShow != null) wc.And(Navigation._.Nav_IsShow == (bool)isShow);
-            return Gateway.Default.From<Navigation>().Where(wc).OrderBy(Navigation._.Nav_Tax.Asc).ToArray<Navigation>();
+            return Gateway.Default.From<Navigation>().Where(wc).OrderBy(Navigation._.Nav_Tax.Asc).ToList<Navigation>();
         }
         /// <summary>
         /// 更新导航菜单树

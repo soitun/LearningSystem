@@ -229,23 +229,24 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         private JArray _outlineNode(Song.Entities.Outline item, List<Song.Entities.Outline> items)
         {
-            JArray jarr = new JArray();
-            foreach (Song.Entities.Outline m in items)
+            List<Song.Entities.Outline> childs = new List<Song.Entities.Outline>();
+            for (int i = 0; i < items.Count; i++)
             {
-                if (item == null)
-                {
-                    if (m.Ol_PID != 0) continue;
-                }
-                else
-                {
-                    if (m.Ol_PID != item.Ol_ID) continue;
-                }
-                //string j = m.ToJson("", "Ol_LiveTime,Ol_Intro,Ol_Courseware");
-                JObject jo = m.ToJObject("", "Ol_Intro,Ol_Courseware");             
-                //计算下级
-                JArray charray = _outlineNode(m, items);
-                if (charray.Count > 0) jo.Add("children", charray);
+                Entities.Outline m = items[i];
+                if (item == null && m.Ol_PID != 0) continue;
+                if (item != null && m.Ol_PID != item.Ol_ID) continue;
+                childs.Add(m);
+                items.RemoveAt(i);
+                i--;
+            }
+            JArray jarr = new JArray();
+            for (int i = 0; i < childs.Count; i++)
+            {
+                JObject jo = childs[i].ToJObject("", "Ol_Intro,Ol_Courseware");
                 jarr.Add(jo);
+                //计算下级
+                JArray charray = _outlineNode(childs[i], items);
+                if (charray.Count > 0) jo.Add("children", charray);
             }
             return jarr;
         }

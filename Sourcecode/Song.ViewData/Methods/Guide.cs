@@ -114,18 +114,20 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         private JArray _childrenNode(Song.Entities.GuideColumns item, List<Song.Entities.GuideColumns> items)
         {
-            JArray jarr = new JArray();
-
-            foreach (Song.Entities.GuideColumns m in items)
+            List<Song.Entities.GuideColumns> childs = new List<Song.Entities.GuideColumns>();
+            for (int i = 0; i < items.Count; i++)
             {
-                if (item == null)
-                {
-                    if (m.Gc_PID != "0") continue;
-                }
-                else
-                {
-                    if (m.Gc_PID != item.Gc_UID) continue;
-                }
+                Entities.GuideColumns m = items[i];
+                if (item == null && m.Gc_PID != "0") continue;
+                if (item != null && m.Gc_PID != item.Gc_UID) continue;
+                childs.Add(m);
+                items.RemoveAt(i);
+                i--;
+            }
+            JArray jarr = new JArray();
+            for (int i = 0; i < childs.Count; i++)
+            {
+                Entities.GuideColumns m = childs[i];
                 string j = m.ToJson("", "Gc_CrtTime");
                 JObject jo = JObject.Parse(j);
                 jarr.Add(jo);

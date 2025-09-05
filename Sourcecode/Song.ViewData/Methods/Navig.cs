@@ -117,6 +117,38 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         private JArray _MenuNode(Song.Entities.Navigation item, List<Song.Entities.Navigation> items)
         {
+            List<Song.Entities.Navigation> childs = new List<Song.Entities.Navigation>();
+            for (int i = 0; i < items.Count; i++)
+            {
+                Entities.Navigation m = items[i];
+                if (item == null && !string.IsNullOrWhiteSpace(m.Nav_PID)) continue;
+                if (item != null && m.Nav_PID != item.Nav_UID) continue;
+                childs.Add(m);
+                items.RemoveAt(i);
+                i--;
+            }
+            JArray jarr = new JArray();
+            for (int i = 0; i < childs.Count; i++)
+            {
+                Navigation m= childs[i];
+                string j = m.ToJson("", "Nav_CrtTime");
+                JObject jo = JObject.Parse(j);
+                jo.Add("id", "node_" + m.Nav_ID.ToString());
+                jo.Add("label", m.Nav_Name);
+                //字体样式
+                JObject jfont = new JObject();
+                jfont.Add("bold", m.Nav_IsBold);
+                jfont.Add("color", m.Nav_Color);
+                jo.Add("font", jfont);
+
+                //计算下级
+                JArray charray = _MenuNode(m, items);
+                if (charray.Count > 0)
+                    jo.Add("children", charray);
+                jarr.Add(jo);
+            }
+            return jarr;
+            /*
             JArray jarr = new JArray();
             foreach (Song.Entities.Navigation m in items)
             {
@@ -144,7 +176,7 @@ namespace Song.ViewData.Methods
                     jo.Add("children", charray);
                 jarr.Add(jo);
             }
-            return jarr;
+            return jarr;*/
         }
         #endregion
 

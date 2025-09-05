@@ -100,34 +100,6 @@ namespace Song.ViewData.Methods
                 if (charray.Count > 0) jo.Add("children", charray);
             }
             return jarr;
-
-            /*
-            JArray jarr = new JArray();
-
-            foreach (Song.Entities.Columns m in items)
-            {
-
-                if (item == null)
-                {
-                    if (m.Col_PID != "" ) continue;
-                }
-                else
-                {
-                    if (m.Col_PID != item.Col_UID) continue;
-                }             
-
-                string j = m.ToJson("", "Col_CrtTime");
-
-                JObject jo = JObject.Parse(j);
-                jo.Add("id", "node_" + m.Col_UID.ToString());
-                jo.Add("label", m.Col_Name);
-                jarr.Add(jo);
-                //计算下级
-                JArray charray = _columnsNode(m, items);
-                if (charray.Count > 0)
-                    jo.Add("children", charray);              
-            }
-            return jarr;*/
         }
 
         #region 更新栏目

@@ -67,7 +67,7 @@ namespace Song.ServiceInterfaces
         /// <param name="pid">父级id</param>
         /// <param name="isShow">是否显示</param>
         /// <returns></returns>
-        Navigation[] NaviChildren(string pid, bool? isShow);
+        List<Navigation> NaviChildren(string pid, bool? isShow);
         /// <summary>
         /// 更新导航菜单树
         /// </summary>

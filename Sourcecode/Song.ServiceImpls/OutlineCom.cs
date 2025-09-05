@@ -474,16 +474,17 @@ namespace Song.ServiceImpls
             ints = _treeid(olid, list);
             return ints;
         }
-        private List<long> _treeid(long id, List<Outline> ols, int level = 1)
+        private List<long> _treeid(long id, List<Outline> ols)
         {
-            if (level > 99) return null;
             List<long> list = new List<long>();
             if (id > 0) list.Add(id);
-            foreach (Outline o in ols)
+            List<long> childs = ols.Where(s => s.Ol_PID == id).Select(s => s.Sbj_ID).ToList();
+            ols.RemoveAll(s => s.Ol_PID == id);
+            for (int i = 0; i < childs.Count; i++)
             {
-                if (o.Ol_PID != id) continue;
-                List<long> tm = _treeid(o.Ol_ID, ols, level + 1);
-                if (tm != null) list.AddRange(tm);
+                list.Add(childs[i]);
+                List<long> tm = _treeid(childs[i], ols);
+                list.AddRange(tm.Except(list));
             }
             return list;
         }

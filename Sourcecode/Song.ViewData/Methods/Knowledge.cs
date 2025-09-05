@@ -48,34 +48,31 @@ namespace Song.ViewData.Methods
         public JArray SortTree(long couid, string search, bool? isuse)
         {
             //顶级分类
-            Song.Entities.KnowledgeSort[] kns = Business.Do<IKnowledge>().GetSortAll(-1, couid, search, isuse);
-            return kns.Length > 0 ? _sortTree(null, kns) : null; ;
+            List<KnowledgeSort> kns = Business.Do<IKnowledge>().GetSortAll(-1, couid, search, isuse);
+            return kns.Count > 0 ? _sortTree(null, kns) : null; ;
         }
-        private JArray _sortTree(Song.Entities.KnowledgeSort item, Song.Entities.KnowledgeSort[] items)
+        private JArray _sortTree(Song.Entities.KnowledgeSort item, List<KnowledgeSort> items)
         {
-            JArray jarr = new JArray();
-
-            foreach (Song.Entities.KnowledgeSort m in items)
+            List<Song.Entities.KnowledgeSort> childs = new List<Song.Entities.KnowledgeSort>();
+            for (int i = 0; i < items.Count; i++)
             {
-
-                if (item == null)
-                {
-                    if (m.Kns_PID != 0) continue;
-                }
-                else
-                {
-                    if (m.Kns_PID != item.Kns_ID) continue;
-                }
-
+                Entities.KnowledgeSort m = items[i];
+                if (item == null && m.Kns_PID != 0) continue;
+                if (item != null && m.Kns_PID != item.Kns_ID) continue;
+                childs.Add(m);
+                items.RemoveAt(i);
+                i--;
+            }
+            JArray jarr = new JArray();
+            for (int i = 0; i < childs.Count; i++)
+            {
+                Entities.KnowledgeSort m = childs[i];
                 string j = m.ToJson("", "Kns_CrtTime");
-
                 JObject jo = JObject.Parse(j);
                 jarr.Add(jo);
                 //计算下级
                 JArray charray = _sortTree(m, items);
-                if (charray.Count > 0)
-                    jo.Add("children", charray);
-                //jo.Add("children", _sortTree(m, items));
+                if (charray.Count > 0) jo.Add("children", charray);
             }
             return jarr;
         }
@@ -136,7 +133,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         [HttpPost]
         [Admin]
-        public bool SortUpdateTaxis(Song.Entities.KnowledgeSort[] items)
+        public bool SortUpdateTaxis(List<KnowledgeSort> items)
         {
             try
             {
