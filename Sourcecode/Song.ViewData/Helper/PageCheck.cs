@@ -277,10 +277,13 @@ namespace Song.ViewData.Helper
             string controller = root.Split('/').FirstOrDefault(s => !string.IsNullOrWhiteSpace(s)); //模板库的类型
 
             //判断是否拥有权限
-            bool ispass = this.CheckPageAccess(page, controller.ToLower(), letter);
+            bool ispass = this.CheckPageAccess(page, controller.ToLower(), letter);           
            
-            string msg = string.Format("当前页面 {0} 没有操作权限，请确认是否登录或登录失效！", self);
-            if (!ispass) throw VExcept.Verify(msg, 100);
+            if (!ispass)
+            {
+                string msg = string.Format("当前页面 {0} 没有操作权限，请确认管理权限，或是否登录或登录失效！", self);
+                throw VExcept.Verify(msg, 100);
+            }
             return true;
         }
         /// <summary>

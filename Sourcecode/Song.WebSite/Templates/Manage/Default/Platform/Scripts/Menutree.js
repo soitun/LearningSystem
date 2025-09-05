@@ -2,7 +2,8 @@ $ready(function () {
     window.vapp = new Vue({
         el: '#vapp',
         data: {
-            uid: $api.querystring('uid'),
+            //uid: $api.querystring('uid'),
+            uid: $api.dot('uid'),   //根菜单的标识
             rootMenu: {},    //根菜单
             rootdata: [],    //所有的根菜单
             data: [],       //菜单树数据

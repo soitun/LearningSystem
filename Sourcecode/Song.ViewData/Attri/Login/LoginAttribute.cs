@@ -61,7 +61,7 @@ namespace Song.ViewData.Attri
 
             //逐个验证
             //string msg = string.Format("接口 '{0}/{1}' 需要", method.DeclaringType.Name, method.Name);
-            string msg = "接口需要登录验证，请";
+            string msg = "需要 ";
             List<string> list = new List<string>();
 
             loginattr = LoginAttribute.GetAttr<AdminAttribute>(method);
@@ -89,7 +89,7 @@ namespace Song.ViewData.Attri
                     str += "“" + list[i] + "”";
                     if (i < list.Count - 1) str += "或";
                 }
-                throw VExcept.Verify(msg + str + "登录后操作", 100);                
+                throw VExcept.Verify(msg + str + " 登录后操作，该限制由接口特性 "+ typeof(LoginAttribute).Name+ " 约束，不受管理权限控制。", 100);                
             }
             return loginattr;
         }
