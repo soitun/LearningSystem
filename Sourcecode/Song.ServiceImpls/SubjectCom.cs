@@ -11,6 +11,7 @@ using Song.ServiceInterfaces;
 using System.Data.Common;
 using System.Collections;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Song.ServiceImpls
 {
@@ -32,8 +33,8 @@ namespace Song.ServiceImpls
                 entity.Org_ID = org.Org_ID;
                 entity.Org_Name = org.Org_Name;
             }
-            entity.Sbj_Level = _ClacLevel(entity);
-            entity.Sbj_XPath = _ClacXPath(entity);
+            entity.Sbj_Level = _ClacLevel(entity, null, false);
+            entity.Sbj_XPath = _ClacXPath(entity, null, false);
             //如果图片带有多余路径，只保留文件名
             if (!string.IsNullOrWhiteSpace(entity.Sbj_Logo) && entity.Sbj_Logo.IndexOf("/") > -1)
                 entity.Sbj_Logo = entity.Sbj_Logo.Substring(entity.Sbj_Logo.LastIndexOf("/") + 1);
@@ -100,8 +101,8 @@ namespace Song.ServiceImpls
                 object obj = Gateway.Default.Max<Subject>(Subject._.Sbj_Tax, Subject._.Org_ID == entity.Org_ID && Subject._.Sbj_PID == entity.Sbj_PID);
                 entity.Sbj_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
-            entity.Sbj_Level = _ClacLevel(entity);
-            entity.Sbj_XPath = _ClacXPath(entity);
+            entity.Sbj_Level = _ClacLevel(entity, null, true);
+            entity.Sbj_XPath = _ClacXPath(entity, null, true);
             if (entity.Dep_Id > 0)
             {
                 Song.Entities.Depart depart = Gateway.Default.From<Depart>().Where(Depart._.Dep_Id == entity.Dep_Id).ToFirst<Depart>();
@@ -214,6 +215,7 @@ namespace Song.ServiceImpls
         public List<long> TreeID(long sbjid, int orgid)
         {
             List<long> list = new List<long>();
+            //如果未设置机构id，则取当前专业所属机构
             if (orgid <= 0)
             {
                 Subject sbj = Gateway.Default.From<Subject>().Where(Subject._.Sbj_ID == sbjid).ToFirst<Subject>();
@@ -225,17 +227,18 @@ namespace Song.ServiceImpls
             list = _treeid(sbjid, sbjs);
             return list;
         }
-        private List<long> _treeid(long id, List<Subject> sbjs, int level = 1)
+        private List<long> _treeid(long id, List<Subject> sbjs)
         {
-            if (level > 99) return null;
             List<long> list = new List<long>();
             if (id > 0) list.Add(id);
-            foreach (Subject o in sbjs)
+            List<long> childs = sbjs.Where(s => s.Sbj_PID == id).Select(s => s.Sbj_ID).ToList();
+            sbjs.RemoveAll(s => s.Sbj_PID == id);
+            for (int i = 0; i < childs.Count; i++)
             {
-                if (o.Sbj_PID != id) continue;
-                List<long> tm = _treeid(o.Sbj_ID, sbjs, level + 1);
-                if (tm != null) list.AddRange(tm);
-            }
+                list.Add(childs[i]);
+                List<long> tm = _treeid(childs[i], sbjs);
+                list.AddRange(tm.Except(list));
+            }            
             return list;
         }
         /// <summary>
@@ -463,55 +466,60 @@ namespace Song.ServiceImpls
         /// 计算当前对象在多级分类中的层深
         /// </summary>
         /// <param name="entity"></param>
+        /// <param name="isupdateOther">是否计算其它专业的路径，例如当专业移动后，其子级专业的路径也需要变动</param>
         /// <returns></returns>
-        private int _ClacLevel(Song.Entities.Subject entity)
+        private int _ClacLevel(Song.Entities.Subject entity, List<Subject> sbjs, bool isupdateOther)
         {
-            //if (entity.Sbj_PID == 0) return 1;
+            if (sbjs == null) sbjs = Gateway.Default.From<Subject>().Where(Subject._.Org_ID == entity.Org_ID).ToList<Subject>();
             int level = 1;
-            Song.Entities.Subject tm = Gateway.Default.From<Subject>().Where(Subject._.Sbj_ID == entity.Sbj_PID).ToFirst<Subject>();
-            while (tm != null)
+            Subject parent = sbjs.Where(p => p.Sbj_ID == entity.Sbj_PID).FirstOrDefault();
+            while (parent != null)
             {
                 level++;
-                if (tm.Sbj_PID == 0) break;
-                if (tm.Sbj_PID != 0)
-                {
-                    tm = Gateway.Default.From<Subject>().Where(Subject._.Sbj_ID == tm.Sbj_PID).ToFirst<Subject>();
-                }
+                if (parent.Sbj_PID == 0) break;
+                if (parent.Sbj_PID != 0) parent = sbjs.Where(p => p.Sbj_ID == parent.Sbj_PID).FirstOrDefault();
             }
-            entity.Sbj_Level = level;
-            Gateway.Default.Save<Subject>(entity);
-            Song.Entities.Subject[] childs = Gateway.Default.From<Subject>().Where(Subject._.Sbj_PID == entity.Sbj_ID).ToArray<Subject>();
-            foreach (Subject s in childs)
+            entity.Sbj_Level = level;           
+            if (isupdateOther)
             {
-                _ClacLevel(s);
+                List<Subject> childs = sbjs.Where(p => p.Sbj_PID == entity.Sbj_ID).ToList<Subject>();
+                foreach (Subject s in childs)
+                {
+                    _ClacLevel(s, sbjs, isupdateOther);
+                    Gateway.Default.Save<Subject>(s);
+                }
             }
             return level;
         }
         /// <summary>
         /// 计算当前对象在多级分类中的路径
         /// </summary>
-        /// <param name="entity"></param>
+        /// <param name="entity">当前专业对象</param>
+        /// <param name="sbjs">当前专业同机构的所有专业</param>
+        /// <param name="isupdateOther">是否计算其它专业的路径，例如当专业移动后，其子级专业的路径也需要变动</param>
         /// <returns></returns>
-        private string _ClacXPath(Song.Entities.Subject entity)
+        private string _ClacXPath(Subject entity, List<Subject> sbjs, bool isupdateOther)
         {
-            //if (entity.Sbj_PID == 0) return "";
-            string xpath = "";
-            Song.Entities.Subject tm = Gateway.Default.From<Subject>().Where(Subject._.Sbj_ID == entity.Sbj_PID).ToFirst<Subject>();
-            while (tm != null)
+            if (sbjs == null) sbjs = Gateway.Default.From<Subject>().Where(Subject._.Org_ID == entity.Org_ID).ToList<Subject>();
+            string xpath = entity.Sbj_ID.ToString();
+            Subject parent = sbjs.Where(p => p.Sbj_ID == entity.Sbj_PID).FirstOrDefault();
+            while (parent != null)
             {
-                xpath = tm.Sbj_ID + "," + xpath;
-                if (tm.Sbj_PID == 0) break;
-                if (tm.Sbj_PID != 0)
-                {
-                    tm = Gateway.Default.From<Subject>().Where(Subject._.Sbj_ID == tm.Sbj_PID).ToFirst<Subject>();
-                }
+                xpath = parent.Sbj_ID + "," + xpath;
+                if (parent.Sbj_PID == 0) break;
+                if (parent.Sbj_PID != 0) parent = sbjs.Where(p => p.Sbj_ID == parent.Sbj_PID).FirstOrDefault();
+
             }
             entity.Sbj_XPath = xpath;
-            Gateway.Default.Save<Subject>(entity);
-            Song.Entities.Subject[] childs = Gateway.Default.From<Subject>().Where(Subject._.Sbj_PID == entity.Sbj_ID).ToArray<Subject>();
-            foreach (Subject s in childs)
+
+            if (isupdateOther)
             {
-                _ClacXPath(s);
+                List<Subject> childs = sbjs.Where(p => p.Sbj_PID == entity.Sbj_ID).ToList<Subject>();
+                foreach (Subject s in childs)
+                {
+                    _ClacXPath(s, sbjs, isupdateOther);
+                    Gateway.Default.Save<Subject>(s);
+                }
             }
             return xpath;
         }

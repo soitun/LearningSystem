@@ -218,8 +218,7 @@ namespace Song.ViewData.Methods
         public JArray Tree(int orgid, string search, bool? isuse)
         {
             List<Song.Entities.Subject> sbjs = Business.Do<ISubject>().SubjectCount(orgid, search, isuse, -1, -1);
-            for (int i = 0; i < sbjs.Count; i++)            
-                sbjs[i] = _tran(sbjs[i]);            
+            for (int i = 0; i < sbjs.Count; i++) sbjs[i] = _tran(sbjs[i]);          
             return sbjs.Count > 0 ? _SubjectNode(null, sbjs) : null;
         }
         /// <summary>
@@ -231,23 +230,24 @@ namespace Song.ViewData.Methods
         private JArray _SubjectNode(Song.Entities.Subject item, List<Song.Entities.Subject> items)
         {
             JArray jarr = new JArray();
-            foreach (Song.Entities.Subject m in items)
+            List<Song.Entities.Subject> childs = new List<Song.Entities.Subject>();
+            for (int i = 0; i < items.Count; i++)
             {
-                if (item == null)
-                {
-                    if (m.Sbj_PID != 0) continue;
-                }
-                else
-                {
-                    if (m.Sbj_PID != item.Sbj_ID) continue;
-                }
-                string j = m.ToJson("", "Sbj_CrtTime");
+                Entities.Subject m = items[i];
+                if (item == null && m.Sbj_PID != 0) continue;
+                if (item != null && m.Sbj_PID != item.Sbj_ID) continue;
+                childs.Add(m);
+                items.RemoveAt(i);
+                i--;
+            }
+            for (int i = 0; i < childs.Count; i++)
+            {
+                string j = childs[i].ToJson("", "Sbj_CrtTime");
                 JObject jo = JObject.Parse(j);
                 jarr.Add(jo);
                 //计算下级
-                JArray charray = _SubjectNode(m, items);
-                if (charray.Count > 0)
-                    jo.Add("children", charray);
+                JArray charray = _SubjectNode(childs[i], items);
+                if (charray.Count > 0) jo.Add("children", charray);
             }
             return jarr;
         }
