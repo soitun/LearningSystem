@@ -203,7 +203,7 @@ namespace Song.ViewData.Methods
             {
                 foreach (Song.Entities.Outline ol in outlines) ol.Ol_Intro = string.Empty;
                 //树形章节输出
-                DataTable dt = Business.Do<IOutline>().OutlineTree(outlines.ToArray<Song.Entities.Outline>());              
+                DataTable dt = Business.Do<IOutline>().OutlineTree(outlines);              
                 return dt;
             }
             return null;
@@ -218,16 +218,18 @@ namespace Song.ViewData.Methods
         public JArray Tree(long couid, bool? isuse)
         {
             if (couid <= 0) return null;
-            List<Song.Entities.Outline> list = Business.Do<IOutline>().OutlineAll(couid, isuse, null, null);           
-            return list.Count > 0 ? _outlineNode(null, list) : null;
+            List<Song.Entities.Outline> list = Business.Do<IOutline>().OutlineAll(couid, isuse, null, null);
+            return list.Count > 0 ? _outlineNode(null, list, 0, string.Empty) : null;
         }
         /// <summary>
         /// 生成菜单子节点
         /// </summary>
         /// <param name="item">当前菜单项</param>
         /// <param name="items">所有菜单项</param>
+        /// <param name="level">层深</param>
+        /// <param name="prefix">序号前缀,用于生成类似1.1、1.2的序号</param>
         /// <returns></returns>
-        private JArray _outlineNode(Song.Entities.Outline item, List<Song.Entities.Outline> items)
+        private JArray _outlineNode(Song.Entities.Outline item, List<Song.Entities.Outline> items, int level, string prefix)
         {
             List<Song.Entities.Outline> childs = new List<Song.Entities.Outline>();
             for (int i = 0; i < items.Count; i++)
@@ -242,10 +244,13 @@ namespace Song.ViewData.Methods
             JArray jarr = new JArray();
             for (int i = 0; i < childs.Count; i++)
             {
-                JObject jo = childs[i].ToJObject("", "Ol_Intro,Ol_Courseware");
+                Entities.Outline tm = childs[i];
+                tm.Ol_XPath = prefix + (i + 1).ToString();
+                tm.Ol_Level = level;
+                JObject jo = tm.ToJObject("", "Ol_Intro,Ol_Courseware");
                 jarr.Add(jo);
                 //计算下级
-                JArray charray = _outlineNode(childs[i], items);
+                JArray charray = _outlineNode(tm, items, ++level, tm.Ol_XPath + ".");
                 if (charray.Count > 0) jo.Add("children", charray);
             }
             return jarr;

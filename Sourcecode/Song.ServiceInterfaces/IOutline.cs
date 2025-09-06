@@ -115,16 +115,19 @@ namespace Song.ServiceInterfaces
         /// <param name="video">是否为视频章节</param>
         /// <returns></returns>
         List<Outline> OutlineAll(long couid, bool? use, bool? finish, bool? video);
-        ///// <summary>
-        ///// 构建缓存，章节缓存以课程为单位存储
-        ///// </summary>
-        //List<Outline> BuildCache(long couid);
         /// <summary>
         /// 生成树形结构的章节列表
         /// </summary>
         /// <param name="outlines"></param>
         /// <returns></returns>
-        DataTable OutlineTree(Song.Entities.Outline[] outlines);
+        DataTable OutlineTree(List<Outline> outlines);
+        /// <summary>
+        /// 校验树形数据，主要是担心存在循环引用，导致递归栈溢出
+        /// </summary>
+        /// <param name="outlines"></param>
+        /// <param name="root">根节点id</param>
+        /// <returns></returns>
+        List<Outline> CheckTree(List<Outline> outlines);
         /// <summary>
         /// 清空章节下试题和附件
         /// </summary>

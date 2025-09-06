@@ -275,13 +275,14 @@ namespace Song.ServiceImpls
             XmlNodeList nodes = xmldoc.GetElementsByTagName("item");
             //当前课程的所有章节
             List<Outline> outls = this.OutlineCount(couid, -1, null, -1);
-            DataTable dt = WeiSha.Core.Tree.ObjectArrayToDataTable.To(outls.ToArray());
-            WeiSha.Core.Tree.DataTableTree tree = new WeiSha.Core.Tree.DataTableTree();
-            tree.IdKeyName = "OL_ID";
-            tree.ParentIdKeyName = "OL_PID";
+            outls = this.CheckTree(outls);
+            //
+            Handler.DataTableTree tree = new Handler.DataTableTree();
+            tree.IDKeyName = "OL_ID";
+            tree.ParentIDKeyName = "OL_PID";
             tree.TaxKeyName = "Ol_Tax";
             tree.Root = 0;
-            dt = tree.BuilderTree(dt);
+            DataTable dt = tree.BuilderTree(outls);
             //取最大深度
             int level = 0;
             foreach (Outline ol in outls)
@@ -536,19 +537,21 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="outlines"></param>
         /// <returns></returns>
-        public DataTable OutlineTree(Song.Entities.Outline[] outlines)
+        public DataTable OutlineTree(List<Outline> outlines)
         {
             //计算树形的运算时间
             //DateTime beforDT = System.DateTime.Now;
             //WeiSha.Core.Log.Debug(this.GetType().Name, "---开始计算章节树形：" + beforDT.ToString("yyyy年MM月dd日 hh:mm:ss"));
 
-            DataTable dt = WeiSha.Core.Tree.ObjectArrayToDataTable.To(outlines);
-            WeiSha.Core.Tree.DataTableTree tree = new WeiSha.Core.Tree.DataTableTree();
-            tree.IdKeyName = "OL_ID";
-            tree.ParentIdKeyName = "OL_PID";
+            outlines = this.CheckTree(outlines);
+
+            //
+            Handler.DataTableTree tree = new Handler.DataTableTree();
+            tree.IDKeyName = "OL_ID";
+            tree.ParentIDKeyName = "OL_PID";
             tree.TaxKeyName = "Ol_Tax";
             tree.Root = 0;
-            dt = tree.BuilderTree(dt);
+            DataTable dt = tree.BuilderTree(outlines);
 
             //DateTime afterDT = System.DateTime.Now;
             //TimeSpan ts = afterDT.Subtract(beforDT);
@@ -559,6 +562,36 @@ namespace Song.ServiceImpls
             foreach (DataRow ol in dt.Rows) ol["Ol_XPath"] = string.Empty;
             dt = buildOutlineTree(dt, 0, 0, "");
             return dt;            
+        }
+        /// <summary>
+        /// 校验树形数据，主要是担心存在循环引用，导致递归栈溢出
+        /// </summary>
+        /// <param name="outlines"></param>
+        /// <returns></returns>
+        public List<Outline> CheckTree(List<Outline> outlines)
+        {
+            return _checkTree(null, outlines);
+        }
+        private List<Outline> _checkTree(Outline item, List<Outline> items)
+        {
+            List<Song.Entities.Outline> childs = new List<Song.Entities.Outline>();
+            for (int i = 0; i < items.Count; i++)
+            {
+                Entities.Outline m = items[i];
+                if (item == null && m.Ol_PID != 0) continue;
+                if (item != null && m.Ol_PID != item.Ol_ID) continue;
+                childs.Add(m);
+                items.RemoveAt(i);
+                i--;
+            }
+            List<Outline> list = new List<Outline>();
+            for (int i = 0; i < childs.Count; i++)
+            {
+                list.Add(childs[i]);
+                List<Outline> tm = _checkTree(childs[i], items);
+                list.AddRange(tm.Except(list));
+            }
+            return list;
         }
         /// <summary>
         /// 生成章节的等级序号
