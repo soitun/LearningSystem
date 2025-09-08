@@ -15,15 +15,19 @@
     <template v-else>
       <section>
         <div class="tree_root">
-          <icon v-if="rootMenu.MM_IcoCode==null || rootMenu.MM_IcoCode==''" setup></icon>
-          <icon v-else v-html="'&#x'+rootMenu.MM_IcoCode+';'"></icon>
-          <span>{{rootMenu.MM_Name}}</span>
+          <span>
+            <icon v-if="rootMenu.MM_IcoCode==null || rootMenu.MM_IcoCode==''" setup></icon>
+            <icon v-else v-html="'&#x'+rootMenu.MM_IcoCode+';'"></icon>
+           {{rootMenu.MM_Name}}
+          </span>
+          <span class="total">({{nodetotal}}/{{total}})</span>
+          <el-input placeholder="输入关键字进行过滤" v-model="filterText" clearable> </el-input>
           <el-button type="text" size="mini" @click="() => append()" v-loading="loading">
             新增下级
           </el-button>
         </div>
-        <el-tree :data="data" node-key="id" :props="{children: 'children',label: 'label'}" default-expand-all
-          :expand-on-click-node="false" draggable v-loading="loading">
+        <el-tree ref="tree" :data="data" node-key="id" :props="{children: 'children',label: 'label'}" default-expand-all
+          :expand-on-click-node="false" draggable v-loading="loading" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ node, data }">
             <div class="tree-node draghandle" :style="setTextstyle(data)" :unfinish="data.MM_Complete<100">
               <template v-if="data.MM_Type!='hr'">

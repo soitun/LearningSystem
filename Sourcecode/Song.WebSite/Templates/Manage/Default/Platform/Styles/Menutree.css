@@ -1,6 +1,6 @@
 
 section {
-    margin: 10px 0px 60px 20px;
+    margin: 5px 0px 60px 20px;
     padding: 0px 10px 0px 0px;
     max-width: calc(100% - 10px);
     height: calc(100% - 10px);
@@ -30,18 +30,26 @@ section {
 }
 
 .tree_root {
-    height: 30px;
-    font-size: 15px;
+    height: 35px;
+    font-size: 16px;
     line-height: 30px;
-    color: #606266;
+    color: #0f50d1;
     box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
 }
-
-.tree_root *:last-child {
-    float: right;
-    margin-right: 5px;
+.tree_root icon{
+    font-size: 20px;
 }
-
+.tree_root .total{
+    margin: 0px 20px 0px 8px;
+    color: #aaa;
+    font-size: 15px;
+}
+.tree_root .el-input{
+    width: 200px !important;
+    margin-right: auto;
+}
 .drawer-title {
     padding: 10px;
     border-bottom: #d1cfcf 1px solid;
@@ -66,6 +74,7 @@ section {
     border-radius: 3px;
     height: 20px;
     padding-left: 20px;
+    font-size: 15px;   
 }
 .tree-node[unfinish]::after{
    content: '未完成';
@@ -79,6 +88,7 @@ section {
     margin-right: 5px;
     height: 20px;
     line-height: 20px;
+    transform: scale(1.05);
 }
 
 .tree-node span.hr {
@@ -87,12 +97,12 @@ section {
 }
 
 .mmlink {
-    font-size: 12px;
+    font-size: 13px;
     margin-left: 10px;
     color: #aaa;
+    line-height: 25px;
     max-width: 200px;
     display: inline-block;
-
 }
 
 .el-checkbox {

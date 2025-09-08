@@ -39,8 +39,7 @@ $ready(function () {
                         th.loading = true;
                         $api.post('Platform/PlatInfoUpdate', this.platinfo).then(function (req) {
                             if (req.data.success) {
-                                var result = req.data.result;
-                                console.error(result);
+                                var result = req.data.result;                              
                                 top.window.login.onlayout();
                                 top.window.$settitle(th.platinfo);
                                 th.$message({

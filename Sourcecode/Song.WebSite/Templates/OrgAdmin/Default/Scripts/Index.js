@@ -39,7 +39,7 @@ $ctrljs(function () {
 //设置头部标题
 window.$settitle = function (platinfo, org) {
     //管理界面的头部标题部分
-    if (org != null) $dom("*[platinfo='title']").html(org.Org_PlatformName);
+    $dom("*[platinfo='title']").html(platinfo.title);
     //管理界面的头部简介部分
     if (platinfo != null) {
         document.title = '管理中心 - ' + platinfo.title;

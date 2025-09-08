@@ -7,6 +7,8 @@ $ready(function () {
             rootMenu: {},    //根菜单
             rootdata: [],    //所有的根菜单
             data: [],       //菜单树数据
+            filterText: '',     //过滤字符
+
             curr: {},    //当前要编辑的节点
             curr_node: {},
 
@@ -32,6 +34,10 @@ $ready(function () {
                         if (!valid) this.drawer = true;
                     });
                 }
+            },
+            //过滤树形节点项
+            filterText: function (val) {
+                this.$refs.tree.filter(val);
             }
         },
         computed: {
@@ -39,6 +45,32 @@ $ready(function () {
             ispagebox: function () {
                 let t = top.$pagebox ? top.$pagebox.source.self(window.name) : null;
                 return t != null ? true : false;
+            },
+            //节点总数
+            total: function () {
+                //获取总数
+                let getTotal = function (data) {
+                    let total = 0;
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].MM_Type != 'hr') total += 1;
+                        if (data[i].children) total += getTotal(data[i].children);
+                    }
+                    return total;
+                }
+                return getTotal(this.data);
+            },
+            //当前菜单项的子项总数
+            nodetotal: function () { 
+                 //获取总数
+                 let getTotal = function (data) {
+                    let total = 0;
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].MM_Type != 'hr' &&(data[i].children==null || data[i].children.length==0)) total += 1;
+                        if (data[i].children) total += getTotal(data[i].children);
+                    }
+                    return total;
+                }
+                return getTotal(this.data);
             },
         },
         created: function () {
@@ -49,7 +81,8 @@ $ready(function () {
                 $api.get('ManageMenu/FuncMenu', { 'uid': this.uid }),
                 $api.get("ManageMenu/Root")     //所有根节点
             ).then(([menu, menus, root]) => {
-                th.rootMenu = menu.data.result; //当前菜单项                
+                th.rootMenu = menu.data.result; //当前菜单项    
+                if (th.rootMenu == null) throw '当前菜单项不存在！';
                 if (menus.data.result != null)
                     th.data = menus.data.result; //当前菜单树             
                 th.rootdata = root.data.result;
@@ -58,9 +91,14 @@ $ready(function () {
                 console.error(err);
             }).finally(() => th.loading_init = false);
 
-
         },
         methods: {
+            //过滤树形节点项
+            filterNode: function (value, data) {
+                if (!value) return true;
+                return data.label.indexOf(value) !== -1;
+            },
+
             append: function (d) {
                 var obj = this.clone();
                 if (d != null) {

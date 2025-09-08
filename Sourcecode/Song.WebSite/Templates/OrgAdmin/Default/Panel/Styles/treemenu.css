@@ -346,12 +346,12 @@
 
 .treemenu tree_box.current {
     font-weight: bold;
-   
+
 }
 
 .treemenu tree_box.current>tree-node {
     color: var(--node-curr-color);
-    text-shadow: 0px 0px 2px rgba(255, 255, 255, .85) ;
+    text-shadow: 0px 0px 2px rgba(255, 255, 255, .85);
 }
 
 .treemenu tree_box.current>tree-node::before {
@@ -446,7 +446,6 @@ div.querypanel>section {
     position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
     border: solid 2px;
     border-color: var(--querypanel-border-color);
     box-shadow: inset 0 0 30px 15px var(--querypanel-bg-shadow);
@@ -495,9 +494,11 @@ div.querypanel>section tree_area tree-node {
     color: var(--querypanel-treenode-color);
     text-shadow: var(--querypanel-treenode-shadow);
 }
-div.querypanel>section tree_area  tree-node.folder:after{
+
+div.querypanel>section tree_area tree-node.folder:after {
     color: var(--querypanel-treenode-color);
 }
+
 /*检索面板中的输入框*/
 div.querypanel>section header>div[query] {
     position: relative;
@@ -524,11 +525,13 @@ div.querypanel>section header>div[query] input {
     transition: all 0.3s;
     background-color: rgba(255, 255, 255, 0.3);
 }
-div.querypanel>section header>div[query] input:focus{
+
+div.querypanel>section header>div[query] input:focus {
     outline: none;
     border: 1px solid #aaa;
     background-color: #fff;
 }
+
 div.querypanel>section header>div[query] clear {
     position: absolute;
     right: 5px;
@@ -564,28 +567,19 @@ div.querypanel .query_close::before {
 
 div.querypanel>section>section {
     display: flex;
-    height: calc(100% - 40px);
-    width: 100%;
-    box-sizing: border-box;
+    gap: 15px;
+    margin: 15px;
+    height: calc(100% - 70px);
 }
 
 div.querypanel>section>section>* {
-    flex: 1;
-    margin: 15px 15px 15px 0px;
     border: 1px solid #ccc;
-    box-sizing: border-box;
-    padding: 10px;
-    position: relative;
-}
-
-div.querypanel>section>section>*:first-child {
-    margin-left: 15px;
 }
 
 div.querypanel>section>section>tree_area {
     padding: 0px;
     box-sizing: border-box;
-    height: calc(100% - 30px);
+    height: auto;
     background-color: var(--querypanel-area-bgcolor);
     background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.5) 25%,
             transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%,
