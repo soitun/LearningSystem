@@ -179,7 +179,7 @@ namespace Song.ServiceImpls
                 entity.MM_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
             if (string.IsNullOrWhiteSpace(entity.MM_UID))
-                entity.MM_UID = WeiSha.Core.Request.UniqueID();
+                entity.MM_UID = WeiSha.Core.Request.SnowID().ToString();
             Gateway.Default.Save<ManageMenu>(entity);
             entity = Gateway.Default.From<ManageMenu>().OrderBy(ManageMenu._.MM_Id.Desc).ToFirst<ManageMenu>();
             //执行事件

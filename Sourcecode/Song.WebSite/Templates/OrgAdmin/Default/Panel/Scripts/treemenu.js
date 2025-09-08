@@ -119,7 +119,7 @@
 		'querypanel': function (obj, val, old) {
 			if (obj.domquery) {
 				if (!val) return obj.domquery.hide();
-				obj.domquery.find('section:first-child').css('min-width', obj.datas.length * 180 + 'px');
+				obj.domquery.find('section:first-child').css('min-width', obj.datas.length * 200 + 'px');
 				//将树形菜单的html直接放入查询面板，不再直接生成
 				let sect = obj.domquery.find('section>section');
 				sect.html(obj.dombody.html());
