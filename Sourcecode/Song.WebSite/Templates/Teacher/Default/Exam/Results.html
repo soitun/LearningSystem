@@ -26,7 +26,7 @@
         </div>
         <template>
             <el-table ref="datatable"  border resizable  :data="datas" :height="document.documentElement.clientHeight - 60"
-                tooltip-effect="dark" :stripe="true" style="width: 100%" index-key="Exam_Tax" row-key="Exam_ID"
+                tooltip-effect="dark" style="width: 100%" index-key="Exam_Tax" row-key="Exam_ID"
                 @row-click.self="clickTable" default-expand-all>
                 <el-table-column type="index" width="50">
                     <template slot-scope="scope">
@@ -42,7 +42,7 @@
                     <template slot-scope="scope">
                         <el-tooltip content="查看成绩" placement="bottom" effect="light">
                             <el-link type="primary" @click="btnResultSummarize(scope.row)" class="theme_Name">
-                                <icon>&#xe6ef</icon> <span v-html='scope.row.Exam_Title' class="large"></span>
+                                <span v-html='scope.row.Exam_Title' class="large"></span>
                             </el-link>
                         </el-tooltip>
                     </template>
@@ -66,9 +66,9 @@
                         <group :exam="scope.row"></group>
                     </template>
                 </el-table-column>
-                <el-table-column label="成绩" width="80" align="center" v-if="false">
+                <el-table-column label="成绩" width="120" align="center">
                     <template slot-scope="scope">
-                        <el-button type="primary" plain @click.stop="btnResultView(scope.row)" disabled v-if="false">查看
+                        <el-button type="primary" plain @click.stop="btnResultSummarize(scope.row)"><icon>&#xe696</icon> 查看成绩
                         </el-button>
                     </template>
                 </el-table-column>

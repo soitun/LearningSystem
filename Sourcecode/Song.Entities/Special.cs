@@ -40,13 +40,13 @@ namespace Song.Entities {
     		
     		protected String _Sp_OutUrl;
     		
-    		protected Int32 _Sp_PatId;
+    		protected Int32? _Sp_PatId;
     		
     		protected DateTime? _Sp_PushTime;
     		
     		protected String _Sp_QrCode;
     		
-    		protected Int32 _Sp_Tax;
+    		protected Int32? _Sp_Tax;
     		
     		protected String _Sp_Tootip;
     		
@@ -212,7 +212,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32 Sp_PatId {
+    		public Int32? Sp_PatId {
     			get {
     				return this._Sp_PatId;
     			}
@@ -242,7 +242,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32 Sp_Tax {
+    		public Int32? Sp_Tax {
     			get {
     				return this._Sp_Tax;
     			}
@@ -529,7 +529,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Sp_OutUrl = new WeiSha.Data.Field<Special>("Sp_OutUrl");
     			
     			/// <summary>
-    			/// 字段名：Sp_PatId - 数据类型：Int32
+    			/// 字段名：Sp_PatId - 数据类型：Int32(可空)
     			/// </summary>
     			public static WeiSha.Data.Field Sp_PatId = new WeiSha.Data.Field<Special>("Sp_PatId");
     			
@@ -544,7 +544,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Sp_QrCode = new WeiSha.Data.Field<Special>("Sp_QrCode");
     			
     			/// <summary>
-    			/// 字段名：Sp_Tax - 数据类型：Int32
+    			/// 字段名：Sp_Tax - 数据类型：Int32(可空)
     			/// </summary>
     			public static WeiSha.Data.Field Sp_Tax = new WeiSha.Data.Field<Special>("Sp_Tax");
     			

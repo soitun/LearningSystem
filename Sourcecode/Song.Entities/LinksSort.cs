@@ -22,9 +22,9 @@ namespace Song.Entities {
     		
     		protected String _Ls_Name;
     		
-    		protected Int32 _Ls_PatId;
+    		protected Int32? _Ls_PatId;
     		
-    		protected Int32 _Ls_Tax;
+    		protected Int32? _Ls_Tax;
     		
     		protected String _Ls_Tootip;
     		
@@ -102,7 +102,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32 Ls_PatId {
+    		public Int32? Ls_PatId {
     			get {
     				return this._Ls_PatId;
     			}
@@ -112,7 +112,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32 Ls_Tax {
+    		public Int32? Ls_Tax {
     			get {
     				return this._Ls_Tax;
     			}
@@ -314,12 +314,12 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Ls_Name = new WeiSha.Data.Field<LinksSort>("Ls_Name");
     			
     			/// <summary>
-    			/// 字段名：Ls_PatId - 数据类型：Int32
+    			/// 字段名：Ls_PatId - 数据类型：Int32(可空)
     			/// </summary>
     			public static WeiSha.Data.Field Ls_PatId = new WeiSha.Data.Field<LinksSort>("Ls_PatId");
     			
     			/// <summary>
-    			/// 字段名：Ls_Tax - 数据类型：Int32
+    			/// 字段名：Ls_Tax - 数据类型：Int32(可空)
     			/// </summary>
     			public static WeiSha.Data.Field Ls_Tax = new WeiSha.Data.Field<LinksSort>("Ls_Tax");
     			

@@ -14,8 +14,6 @@ namespace Song.Entities {
     		
     		protected Int32 _Org_ID;
     		
-    		protected String _Org_Name;
-    		
     		protected Int32 _TPI_Count;
     		
     		protected Int32 _TPI_Number;
@@ -24,7 +22,7 @@ namespace Song.Entities {
     		
     		protected Int32 _TPI_Type;
     		
-    		protected String _Tp_UID;
+    		protected Int64 _Tp_Id;
     		
     		public Int32 TPI_ID {
     			get {
@@ -53,16 +51,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Org_ID, _Org_ID, value);
     				this._Org_ID = value;
-    			}
-    		}
-    		
-    		public String Org_Name {
-    			get {
-    				return this._Org_Name;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Org_Name, _Org_Name, value);
-    				this._Org_Name = value;
     			}
     		}
     		
@@ -106,13 +94,13 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public String Tp_UID {
+    		public Int64 Tp_Id {
     			get {
-    				return this._Tp_UID;
+    				return this._Tp_Id;
     			}
     			set {
-    				this.OnPropertyValueChange(_.Tp_UID, _Tp_UID, value);
-    				this._Tp_UID = value;
+    				this.OnPropertyValueChange(_.Tp_Id, _Tp_Id, value);
+    				this._Tp_Id = value;
     			}
     		}
     		
@@ -146,12 +134,11 @@ namespace Song.Entities {
     					_.TPI_ID,
     					_.Ol_ID,
     					_.Org_ID,
-    					_.Org_Name,
     					_.TPI_Count,
     					_.TPI_Number,
     					_.TPI_Percent,
     					_.TPI_Type,
-    					_.Tp_UID};
+    					_.Tp_Id};
     		}
     		
     		/// <summary>
@@ -162,12 +149,11 @@ namespace Song.Entities {
     					this._TPI_ID,
     					this._Ol_ID,
     					this._Org_ID,
-    					this._Org_Name,
     					this._TPI_Count,
     					this._TPI_Number,
     					this._TPI_Percent,
     					this._TPI_Type,
-    					this._Tp_UID};
+    					this._Tp_Id};
     		}
     		
     		/// <summary>
@@ -183,9 +169,6 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Org_ID))) {
     				this._Org_ID = reader.GetInt32(_.Org_ID);
     			}
-    			if ((false == reader.IsDBNull(_.Org_Name))) {
-    				this._Org_Name = reader.GetString(_.Org_Name);
-    			}
     			if ((false == reader.IsDBNull(_.TPI_Count))) {
     				this._TPI_Count = reader.GetInt32(_.TPI_Count);
     			}
@@ -198,8 +181,8 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.TPI_Type))) {
     				this._TPI_Type = reader.GetInt32(_.TPI_Type);
     			}
-    			if ((false == reader.IsDBNull(_.Tp_UID))) {
-    				this._Tp_UID = reader.GetString(_.Tp_UID);
+    			if ((false == reader.IsDBNull(_.Tp_Id))) {
+    				this._Tp_Id = reader.GetInt64(_.Tp_Id);
     			}
     		}
     		
@@ -243,11 +226,6 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Org_ID = new WeiSha.Data.Field<TestPaperItem>("Org_ID");
     			
     			/// <summary>
-    			/// 字段名：Org_Name - 数据类型：String
-    			/// </summary>
-    			public static WeiSha.Data.Field Org_Name = new WeiSha.Data.Field<TestPaperItem>("Org_Name");
-    			
-    			/// <summary>
     			/// 字段名：TPI_Count - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field TPI_Count = new WeiSha.Data.Field<TestPaperItem>("TPI_Count");
@@ -268,9 +246,9 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field TPI_Type = new WeiSha.Data.Field<TestPaperItem>("TPI_Type");
     			
     			/// <summary>
-    			/// 字段名：Tp_UID - 数据类型：String
+    			/// 字段名：Tp_Id - 数据类型：Int64
     			/// </summary>
-    			public static WeiSha.Data.Field Tp_UID = new WeiSha.Data.Field<TestPaperItem>("Tp_UID");
+    			public static WeiSha.Data.Field Tp_Id = new WeiSha.Data.Field<TestPaperItem>("Tp_Id");
     		}
     	}
     }

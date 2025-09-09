@@ -22,6 +22,8 @@ namespace Song.Entities {
     		
     		protected String _Exam_Intro;
     		
+    		protected Boolean _Exam_IsManual;
+    		
     		protected Boolean _Exam_IsRightClick;
     		
     		protected Boolean _Exam_IsShowBtn;
@@ -129,6 +131,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Exam_Intro, _Exam_Intro, value);
     				this._Exam_Intro = value;
+    			}
+    		}
+    		
+    		public Boolean Exam_IsManual {
+    			get {
+    				return this._Exam_IsManual;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Exam_IsManual, _Exam_IsManual, value);
+    				this._Exam_IsManual = value;
     			}
     		}
     		
@@ -366,6 +378,7 @@ namespace Song.Entities {
     					_.Exam_DateType,
     					_.Exam_GroupType,
     					_.Exam_Intro,
+    					_.Exam_IsManual,
     					_.Exam_IsRightClick,
     					_.Exam_IsShowBtn,
     					_.Exam_IsTheme,
@@ -400,6 +413,7 @@ namespace Song.Entities {
     					this._Exam_DateType,
     					this._Exam_GroupType,
     					this._Exam_Intro,
+    					this._Exam_IsManual,
     					this._Exam_IsRightClick,
     					this._Exam_IsShowBtn,
     					this._Exam_IsTheme,
@@ -446,6 +460,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Exam_Intro))) {
     				this._Exam_Intro = reader.GetString(_.Exam_Intro);
+    			}
+    			if ((false == reader.IsDBNull(_.Exam_IsManual))) {
+    				this._Exam_IsManual = reader.GetBoolean(_.Exam_IsManual);
     			}
     			if ((false == reader.IsDBNull(_.Exam_IsRightClick))) {
     				this._Exam_IsRightClick = reader.GetBoolean(_.Exam_IsRightClick);
@@ -567,6 +584,11 @@ namespace Song.Entities {
     			/// 字段名：Exam_Intro - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Exam_Intro = new WeiSha.Data.Field<Examination>("Exam_Intro");
+    			
+    			/// <summary>
+    			/// 字段名：Exam_IsManual - 数据类型：Boolean
+    			/// </summary>
+    			public static WeiSha.Data.Field Exam_IsManual = new WeiSha.Data.Field<Examination>("Exam_IsManual");
     			
     			/// <summary>
     			/// 字段名：Exam_IsRightClick - 数据类型：Boolean

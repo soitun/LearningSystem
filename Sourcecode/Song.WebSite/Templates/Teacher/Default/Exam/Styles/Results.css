@@ -37,3 +37,6 @@
 .exam_name{  
     font-size: 14px;
 }
+tr.expanded td{
+    background-color: #eeeeee78;
+}

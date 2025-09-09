@@ -20,7 +20,7 @@ namespace Song.Entities {
     		
     		protected String _Title_Name;
     		
-    		protected Int32 _Title_Tax;
+    		protected Int32? _Title_Tax;
     		
     		public Int32 Title_Id {
     			get {
@@ -82,7 +82,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32 Title_Tax {
+    		public Int32? Title_Tax {
     			get {
     				return this._Title_Tax;
     			}
@@ -224,7 +224,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Title_Name = new WeiSha.Data.Field<EmpTitle>("Title_Name");
     			
     			/// <summary>
-    			/// 字段名：Title_Tax - 数据类型：Int32
+    			/// 字段名：Title_Tax - 数据类型：Int32(可空)
     			/// </summary>
     			public static WeiSha.Data.Field Title_Tax = new WeiSha.Data.Field<EmpTitle>("Title_Tax");
     		}

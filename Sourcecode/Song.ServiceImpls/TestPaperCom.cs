@@ -288,7 +288,7 @@ namespace Song.ServiceImpls
             if (tpi == null)
             {
                 tpi = Gateway.Default.From<TestPaperItem>()
-                    .Where(TestPaperItem._.Tp_UID == tp.Tp_UID && TestPaperItem._.TPI_Count > 0)
+                    .Where(TestPaperItem._.Tp_Id == tp.Tp_Id && TestPaperItem._.TPI_Count > 0)
                     .OrderBy(TestPaperItem._.TPI_Type.Asc)
                     .ToList<TestPaperItem>();
             }

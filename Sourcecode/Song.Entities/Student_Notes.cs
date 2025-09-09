@@ -28,7 +28,7 @@ namespace Song.Entities {
     		
     		protected DateTime _Stn_CrtTime;
     		
-    		protected Int32 _Stn_PID;
+    		protected Int32? _Stn_PID;
     		
     		protected String _Stn_Title;
     		
@@ -132,7 +132,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32 Stn_PID {
+    		public Int32? Stn_PID {
     			get {
     				return this._Stn_PID;
     			}
@@ -329,7 +329,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Stn_CrtTime = new WeiSha.Data.Field<Student_Notes>("Stn_CrtTime");
     			
     			/// <summary>
-    			/// 字段名：Stn_PID - 数据类型：Int32
+    			/// 字段名：Stn_PID - 数据类型：Int32(可空)
     			/// </summary>
     			public static WeiSha.Data.Field Stn_PID = new WeiSha.Data.Field<Student_Notes>("Stn_PID");
     			

@@ -237,7 +237,12 @@
                         <el-link type="info" @click="btnAbsence(item)">{{item.absence}}</el-link>      
                     </el-tooltip> 
                 </el-col>
-                <el-col :span="2" v-if="item.manual">
+                <el-col :span="2">
+                    <el-tooltip  content="点击查看成绩" placement="bottom" effect="light">
+                        <el-link type="success" @click="btnResultView(item)"><icon>&#xe811</icon>查看成绩</el-link>      
+                    </el-tooltip>   
+                </el-col>
+                <el-col :span="2" v-if="item.manual" v-show="false">
                     <el-tooltip content="考试存在主观题，需要人工判卷" placement="bottom" effect="light">
                         <el-link type="primary" @click="btnResultManual(item)"><icon>&#xa02e</icon>批阅</el-link> 
                     </el-tooltip> 

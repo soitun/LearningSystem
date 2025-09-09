@@ -20,7 +20,7 @@ namespace Song.Entities {
     		
     		protected DateTime _Rc_CrtTime;
     		
-    		protected Boolean _Rc_IsEnable;
+    		protected Boolean? _Rc_IsEnable;
     		
     		protected Boolean _Rc_IsUsed;
     		
@@ -100,7 +100,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Boolean Rc_IsEnable {
+    		public Boolean? Rc_IsEnable {
     			get {
     				return this._Rc_IsEnable;
     			}
@@ -377,7 +377,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Rc_CrtTime = new WeiSha.Data.Field<RechargeCode>("Rc_CrtTime");
     			
     			/// <summary>
-    			/// 字段名：Rc_IsEnable - 数据类型：Boolean
+    			/// 字段名：Rc_IsEnable - 数据类型：Boolean(可空)
     			/// </summary>
     			public static WeiSha.Data.Field Rc_IsEnable = new WeiSha.Data.Field<RechargeCode>("Rc_IsEnable");
     			
