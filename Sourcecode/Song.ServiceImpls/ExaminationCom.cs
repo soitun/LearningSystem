@@ -331,14 +331,14 @@ namespace Song.ServiceImpls
             }
             return true;
         }
-        public Examination[] ExamItem(string uid)
+        public List<Examination> ExamItem(string uid)
         {
             return Gateway.Default.From<Examination>()
                 .Where(Examination._.Exam_UID == uid && Examination._.Exam_IsTheme == false)
-                .OrderBy(Examination._.Exam_ID.Asc).ToArray<Examination>();
+                .OrderBy(Examination._.Exam_ID.Asc).ToList<Examination>();
         }
 
-        public Examination[] ExamItem(int id)
+        public List<Examination> ExamItem(int id)
         {
             Song.Entities.Examination exam = this.ExamSingle(id);
             if (exam == null) return null;
@@ -475,7 +475,7 @@ namespace Song.ServiceImpls
             }
             return false;
         }
-        public Examination[] GetPager(int orgid, DateTime? start, DateTime? end, bool? isUse, string searName, int size, int index, out int countSum)
+        public List<Examination> ThemePager(int orgid, DateTime? start, DateTime? end, bool? isUse, string searName, int size, int index, out int countSum)
         {
             WhereClip wc = Examination._.Exam_IsTheme == true;
             if (orgid > 0) wc.And(Examination._.Org_ID == orgid);
@@ -484,9 +484,34 @@ namespace Song.ServiceImpls
             if (start != null) wc.And(Examination._.Exam_Date >= (DateTime)start);
             if (end != null) wc.And(Examination._.Exam_Date < (DateTime)end);
             countSum = Gateway.Default.Count<Examination>(wc);
-            return Gateway.Default.From<Examination>().Where(wc).OrderBy(Examination._.Exam_Date.Desc && Examination._.Exam_ID.Desc).ToArray<Examination>(size, (index - 1) * size);
+            return Gateway.Default.From<Examination>().Where(wc).OrderBy(Examination._.Exam_Date.Desc && Examination._.Exam_ID.Desc).ToList<Examination>(size, (index - 1) * size);
         }
-        public ExamResults[] GetAttendPager(int stid, long sbjid, int orgid, string sear, int size, int index, out int countSum)
+        /// <summary>
+        /// 获取指定时间内容的考试,这里是考试场次
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="isUse"></param>
+        /// <param name="ismanual">是否需要人工批阅</param>
+        /// <param name="searName"></param>
+        /// <param name="size"></param>
+        /// <param name="index"></param>
+        /// <param name="countSum"></param>
+        /// <returns></returns>
+        public List<Examination> ExamPager(int orgid, DateTime? start, DateTime? end, bool? isUse, bool? ismanual, string searName, int size, int index, out int countSum)
+        {
+            WhereClip wc = Examination._.Exam_IsTheme == false;
+            if (orgid > 0) wc.And(Examination._.Org_ID == orgid);
+            if (isUse != null) wc.And(Examination._.Exam_IsUse == (bool)isUse);
+            if (ismanual != null) wc.And(Examination._.Exam_IsManual == (bool)ismanual);
+            if (searName != null && searName != "") wc.And(Examination._.Exam_Title.Contains(searName));
+            if (start != null) wc.And(Examination._.Exam_Date >= (DateTime)start);
+            if (end != null) wc.And(Examination._.Exam_Date < (DateTime)end);
+            countSum = Gateway.Default.Count<Examination>(wc);
+            return Gateway.Default.From<Examination>().Where(wc).OrderBy(Examination._.Exam_Date.Desc && Examination._.Exam_ID.Desc).ToList<Examination>(size, (index - 1) * size);
+        }
+        public List<ExamResults> GetAttendPager(int stid, long sbjid, int orgid, string sear, int size, int index, out int countSum)
         {
             WhereClip wc = new WhereClip();
             if (stid > 0) wc.And(ExamResults._.Ac_ID == stid);
@@ -497,8 +522,8 @@ namespace Song.ServiceImpls
 
             if (sear != null && sear != "") wc.And(ExamResults._.Exam_Name.Contains(sear));
             countSum = Gateway.Default.Count<ExamResults>(wc);
-            ExamResults[] exr = Gateway.Default.From<ExamResults>().Where(wc).OrderBy(ExamResults._.Exr_CrtTime.Desc).ToArray<ExamResults>(size, (index - 1) * size);
-            for (int i = 0; i < exr.Length; i++)
+            List<ExamResults> exr = Gateway.Default.From<ExamResults>().Where(wc).OrderBy(ExamResults._.Exr_CrtTime.Desc).ToList<ExamResults>(size, (index - 1) * size);
+            for (int i = 0; i < exr.Count; i++)
             {
                 if (exr[i].Exr_Score < 0 || exr[i].Exr_IsCalc==false)
                     exr[i] = ResultClacScore(exr[i]);
@@ -978,7 +1003,7 @@ namespace Song.ServiceImpls
         public DataTable Result4Theme(int examid, long stsid)
         {
             Examination theme = this.ExamSingle(examid);
-            Examination[] exams = this.ExamItem(theme.Exam_UID);    //当前考试下的多场考试
+            List<Examination> exams = this.ExamItem(theme.Exam_UID);    //当前考试下的多场考试
             DataTable dt = new DataTable("DataBase");
             //人员id与姓名
             dt.Columns.Add(new DataColumn("ID", typeof(int)));
@@ -1124,7 +1149,7 @@ namespace Song.ServiceImpls
         {
             if (!isAll) return Result4Theme(id, stsid);
             Examination theme = this.ExamSingle(id);
-            Examination[] exams = this.ExamItem(theme.Exam_UID);    //当前考试下的多场考试
+            List<Examination> exams = this.ExamItem(theme.Exam_UID);    //当前考试下的多场考试
             //构建表结构
             DataTable dt = new DataTable("DataBase");
             //人员id与姓名
@@ -1347,10 +1372,10 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public double PassRate4Theme(string uid)
         {
-            Examination[] exam = this.ExamItem(uid);
+            List<Examination> exam = this.ExamItem(uid);
             double rate = 0;
             foreach (Examination ex in exam) rate += this.PassRate4Exam(ex);
-            return rate / exam.Length;
+            return rate / exam.Count;
         }
         /// <summary>
         /// 计算某场考试的及极率
@@ -1388,13 +1413,13 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public double Avg4Theme(string uid)
         {
-            Examination[] exam = this.ExamItem(uid);
+            List<Examination> exam = this.ExamItem(uid);
             double avg = 0;
             foreach (Examination ex in exam)
             {
                 avg += this.Avg4Exam(ex.Exam_ID);
             }
-            return avg / exam.Length;
+            return avg / exam.Count;
         }
         /// <summary>
         /// 计算某场考试的平均分
@@ -1454,11 +1479,11 @@ namespace Song.ServiceImpls
                             MAX(""Exr_OverTime"") as Exr_OverTime, MAX(""Sts_ID"") as Sts_ID
             from ""ExamResults"" where {where} and ({examid}) group by ""Ac_ID""";
             //考试id的判断条件            
-            Examination[] items = this.ExamItem(examid);
+            List<Examination> items = this.ExamItem(examid);
             //if (items.Length < 1) return null;
             string exam_id = string.Empty;
-            for (int i = 0; items != null && i < items.Length; i++)
-                exam_id += @"""Exam_ID""=" + items[0].Exam_ID + (i < items.Length - 1 ? " or " : "");
+            for (int i = 0; items != null && i < items.Count; i++)
+                exam_id += @"""Exam_ID""=" + items[0].Exam_ID + (i < items.Count - 1 ? " or " : "");
             sql = sql.Replace("{examid}", string.IsNullOrWhiteSpace(exam_id) ? "1=0" : exam_id);
 
             //查询条件
@@ -2127,8 +2152,8 @@ namespace Song.ServiceImpls
             Examination exam = this.ExamSingle(examid);
             if (!exam.Exam_IsTheme) return this.Numbertimes4Exam(examid);
             //考试主题下的所有考试场次
-            Examination[] exams = this.ExamItem(exam.Exam_UID);
-            if (exams.Length < 1) return 0;
+            List<Examination> exams = this.ExamItem(exam.Exam_UID);
+            if (exams.Count < 1) return 0;
             WhereClip wc = new WhereClip();
             foreach (Examination em in exams) wc.Or(ExamResults._.Exam_ID == em.Exam_ID);
             return Gateway.Default.Count<ExamResults>(wc);
@@ -2143,8 +2168,8 @@ namespace Song.ServiceImpls
             Examination exam = this.ExamSingle(examid);
             if (!exam.Exam_IsTheme) return this.Number4Exam(examid);
             //考试主题下的所有考试场次
-            Examination[] exams = this.ExamItem(exam.Exam_UID);
-            if (exams.Length < 1) return 0;
+            List<Examination> exams = this.ExamItem(exam.Exam_UID);
+            if (exams.Count < 1) return 0;
             WhereClip wc = new WhereClip();
             foreach (Examination em in exams) wc.Or(ExamResults._.Exam_ID == em.Exam_ID);
             //

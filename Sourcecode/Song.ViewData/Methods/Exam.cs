@@ -674,7 +674,7 @@ namespace Song.ViewData.Methods
         public ListResult ThemePager(int orgid, DateTime? start, DateTime? end, string search, int size, int index)
         {
             int count = 0;
-            Song.Entities.Examination[] datas = Business.Do<IExamination>().GetPager(orgid, start, end, true, search, size, index, out count);
+            List<Examination>  datas = Business.Do<IExamination>().ThemePager(orgid, start, end, true, search, size, index, out count);
             ListResult result = new ListResult(datas);
             result.Index = index;
             result.Size = size;
@@ -696,7 +696,7 @@ namespace Song.ViewData.Methods
         public ListResult ThemeAdminPager(int orgid, DateTime? start, DateTime? end, bool? use, string search, int size, int index)
         {
             int count = 0;
-            Song.Entities.Examination[] datas = Business.Do<IExamination>().GetPager(orgid, start, end, use, search, size, index, out count);
+            List<Examination> datas = Business.Do<IExamination>().ThemePager(orgid, start, end, use, search, size, index, out count);
             ListResult result = new ListResult(datas);
             result.Index = index;
             result.Size = size;
@@ -708,10 +708,10 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="uid">考试主题的uid</param>
         /// <returns></returns>
-        public Song.Entities.Examination[] Exams(string uid)
+        public List<Examination> Exams(string uid)
         {
-            Song.Entities.Examination[] exams = Business.Do<IExamination>().ExamItem(uid);
-            for (int i = 0; i < exams.Length; i++)
+            List<Examination> exams = Business.Do<IExamination>().ExamItem(uid);
+            for (int i = 0; i < exams.Count; i++)
             {
                 DateTime examDate = exams[i].Exam_Date < DateTime.Now.AddYears(-100) ? DateTime.Now : (DateTime)exams[i].Exam_Date;
                 exams[i].Exam_Date = examDate.AddYears(100) < DateTime.Now ? DateTime.Now : examDate;
@@ -1166,7 +1166,7 @@ namespace Song.ViewData.Methods
         public ListResult Result4Student(int acid, int orgid, long sbjid, string search, int size, int index)
         {
             int count = 0;
-            Song.Entities.ExamResults[] datas = null;
+            List<ExamResults> datas = null;
             datas = Business.Do<IExamination>().GetAttendPager(acid, sbjid, orgid, search, size, index, out count);
             ListResult result = new ListResult(datas);
             result.Index = index;

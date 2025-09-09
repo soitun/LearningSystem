@@ -60,12 +60,17 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         Examination ExamLast();
         /// <summary>
-        /// 获取当前考试的考试项目
+        /// 获取当前考试主题的考试项目
         /// </summary>
-        /// <param name="uid"></param>
+        /// <param name="uid">考试主题的uid</param>
         /// <returns></returns>
-        Examination[] ExamItem(string uid);
-        Examination[] ExamItem(int id);
+        List<Examination> ExamItem(string uid);
+        /// <summary>
+        /// 获取当前考试主题的考试项目
+        /// </summary>
+        /// <param name="id">考试主题的id</param>
+        /// <returns></returns>
+        List<Examination> ExamItem(int id);
         /// <summary>
         /// 当前考试主题关联的学员组
         /// </summary>
@@ -105,8 +110,9 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         bool ExamIsForStudent(int examid, int stid);
         /// <summary>
-        /// 获取指定时间内容的考试
+        /// 获取指定时间内容的考试,这里是考试主题
         /// </summary>
+        /// <param name="orgid"></param>
         /// <param name="start">时间区间检索的开始时间</param>
         /// <param name="end">时间区间检索的末尾时间</param>
         /// <param name="isUse"></param>
@@ -115,7 +121,21 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        Examination[] GetPager(int orgid, DateTime? start, DateTime? end, bool? isUse, string searName, int size, int index, out int countSum);
+        List<Examination> ThemePager(int orgid, DateTime? start, DateTime? end, bool? isUse, string searName, int size, int index, out int countSum);
+        /// <summary>
+        /// 获取指定时间内容的考试,这里是考试场次
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="isUse"></param>
+        /// <param name="ismanual">是否需要人工批阅</param>
+        /// <param name="searName"></param>
+        /// <param name="size"></param>
+        /// <param name="index"></param>
+        /// <param name="countSum"></param>
+        /// <returns></returns>
+        List<Examination> ExamPager(int orgid, DateTime? start, DateTime? end, bool? isUse, bool? ismanual, string searName, int size, int index, out int countSum);
         /// <summary>
         /// 获取当前学生参加的的考试
         /// </summary>
@@ -127,7 +147,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        ExamResults[] GetAttendPager(int stid, long  sbjid, int orgid, string sear, int size, int index, out int countSum);
+        List<ExamResults> GetAttendPager(int stid, long  sbjid, int orgid, string sear, int size, int index, out int countSum);
         #endregion
 
         #region 考试成绩提交等
