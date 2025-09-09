@@ -35,12 +35,15 @@ namespace Song.ServiceImpls
         public long PaperAdd(TestPaper entity)
         {
             if (entity.Tp_Id <= 0) entity.Tp_Id = WeiSha.Core.Request.SnowID();
-           
-            Song.Entities.Organization org = orgCom.OrganCurrent();
-            if (org != null)
+
+            if (entity.Org_ID <= 0)
             {
-                entity.Org_ID = org.Org_ID;
-                entity.Org_Name = org.Org_Name;
+                Song.Entities.Organization org = orgCom.OrganCurrent();
+                if (org != null)
+                {
+                    entity.Org_ID = org.Org_ID;
+                    entity.Org_Name = org.Org_Name;
+                }
             }
             entity.Tp_CrtTime = DateTime.Now;
             //相关联的课程名称
@@ -61,6 +64,26 @@ namespace Song.ServiceImpls
                 Gateway.Default.Update<TestPaper>(new Field[] { TestPaper._.Tp_IsFinal },
               new object[] { false }, TestPaper._.Cou_ID == entity.Cou_ID);
             }
+            //判断是否有简答题
+            entity.Tp_IsManual = false;
+            XmlDocument docxml = new XmlDocument();
+            docxml.XmlResolver = null;
+            docxml.LoadXml(entity.Tp_FromConfig, false);
+            XmlNodeList xmlNodeList = null;
+            if (entity.Tp_FromType == 0) xmlNodeList = docxml.SelectNodes("/Config/All/Items/TestPaperItem");
+            if (entity.Tp_FromType == 1) xmlNodeList = docxml.SelectNodes("/Config/Outline/Percent/TestPaperItem");
+            foreach (XmlNode n in xmlNodeList)
+            {
+                //试题类型
+                int.TryParse(n.SelectSingleNode("TPI_Type").InnerText, out int qtype);
+                if (qtype == 4)
+                {
+                    int.TryParse(n.SelectSingleNode("TPI_Count").InnerText, out int qcount);        //当前题型的试题数
+                    float.TryParse(n.SelectSingleNode("TPI_Percent").InnerText, out float percent); //当前题型的得分占比
+                    if (qcount > 0 || percent > 0) entity.Tp_IsManual = true;
+                }
+            }
+            //
             Gateway.Default.Save<TestPaper>(entity);
             //更新统计信息
             new Task(() => {
@@ -85,10 +108,29 @@ namespace Song.ServiceImpls
                 Song.Entities.Subject sbj = Gateway.Default.From<Subject>().Where(Subject._.Sbj_ID == entity.Sbj_ID).ToFirst<Subject>();
                 if (sbj != null) entity.Sbj_Name = sbj.Sbj_Name;
             }
+            //判断是否有简答题
+            entity.Tp_IsManual = false;
+            XmlDocument docxml = new XmlDocument();
+            docxml.XmlResolver = null;
+            docxml.LoadXml(entity.Tp_FromConfig, false);
+            XmlNodeList xmlNodeList = null;
+            if (entity.Tp_FromType == 0) xmlNodeList = docxml.SelectNodes("/Config/All/Items/TestPaperItem");
+            if (entity.Tp_FromType == 1) xmlNodeList = docxml.SelectNodes("/Config/Outline/Percent/TestPaperItem");
+            foreach (XmlNode n in xmlNodeList)
+            {
+                //试题类型
+                int.TryParse(n.SelectSingleNode("TPI_Type").InnerText, out int qtype);
+                if (qtype == 4)
+                {
+                    int.TryParse(n.SelectSingleNode("TPI_Count").InnerText, out int qcount);        //当前题型的试题数
+                    float.TryParse(n.SelectSingleNode("TPI_Percent").InnerText, out float percent); //当前题型的得分占比
+                    if (qcount > 0 || percent > 0) entity.Tp_IsManual = true;
+                }
+            }
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
-                {                    
+                {
                     tran.Save<TestPaper>(entity);
                     //如果为结课考试，则取消当前课程下的其它试卷状态
                     if (entity.Tp_IsFinal)
@@ -96,8 +138,8 @@ namespace Song.ServiceImpls
                         tran.Update<TestPaper>(new Field[] { TestPaper._.Tp_IsFinal },
                       new object[] { false }, TestPaper._.Cou_ID == entity.Cou_ID && TestPaper._.Tp_Id != entity.Tp_Id);
                     }
-                    tran.Update<Examination>(new Field[] { Examination._.Exam_PassScore, Examination._.Exam_Total },
-                        new object[] { entity.Tp_PassScore, entity.Tp_Total }, Examination._.Tp_Id == entity.Tp_Id);
+                    tran.Update<Examination>(new Field[] { Examination._.Exam_PassScore, Examination._.Exam_Total, Examination._.Exam_IsManual },
+                        new object[] { entity.Tp_PassScore, entity.Tp_Total, entity.Tp_IsManual }, Examination._.Tp_Id == entity.Tp_Id);
                     tran.Commit();
                 }
                 catch (Exception ex)
@@ -183,7 +225,7 @@ namespace Song.ServiceImpls
             }
             return Gateway.Default.From<TestPaper>().Where(wc).OrderBy(TestPaper._.Tp_Id.Desc).ToFirst<TestPaper>();
         }
-        public TestPaper[] PaperCount(int orgid, long sbjid, long couid, int diff, bool? isUse, int count)
+        public List<TestPaper> PaperCount(int orgid, long sbjid, long couid, int diff, bool? isUse, int count)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(TestPaper._.Org_ID == orgid);
@@ -199,10 +241,10 @@ namespace Song.ServiceImpls
             if (diff > 0) wc.And(TestPaper._.Tp_Diff == diff);
             if (isUse != null) wc.And(TestPaper._.Tp_IsUse == (bool)isUse);
             count = count > 0 ? count : int.MaxValue;
-            return Gateway.Default.From<TestPaper>().Where(wc).OrderBy(TestPaper._.Tp_CrtTime.Desc).ToArray<TestPaper>(count);
+            return Gateway.Default.From<TestPaper>().Where(wc).OrderBy(TestPaper._.Tp_CrtTime.Desc).ToList<TestPaper>(count);
         }
 
-        public TestPaper[] PaperCount(string search, int orgid, long sbjid, long couid, int diff, bool? isUse, int count)
+        public List<TestPaper> PaperCount(string search, int orgid, long sbjid, long couid, int diff, bool? isUse, int count)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(TestPaper._.Org_ID == orgid);
@@ -219,7 +261,7 @@ namespace Song.ServiceImpls
             if (isUse != null) wc.And(TestPaper._.Tp_IsUse == (bool)isUse);
             if (search != null && search.Trim() != "") wc.And(TestPaper._.Tp_Name.Contains(search));
             count = count > 0 ? count : int.MaxValue;
-            return Gateway.Default.From<TestPaper>().Where(wc).OrderBy(TestPaper._.Tp_CrtTime.Desc).ToArray<TestPaper>(count);
+            return Gateway.Default.From<TestPaper>().Where(wc).OrderBy(TestPaper._.Tp_CrtTime.Desc).ToList<TestPaper>(count);
         }
 
         public int PaperOfCount(int orgid, long sbjid, long couid, int diff, bool? isUse)
@@ -250,7 +292,7 @@ namespace Song.ServiceImpls
                 Gateway.Default.Update<Course>(new Field[] { Course._.Cou_TestCount }, new object[] { cou_count }, Course._.Cou_ID == couid);
             }
         }
-        public TestPaper[] PaperPager(int orgid, long sbjid, long couid, int diff, bool? isUse, string sear, int size, int index, out int countSum)
+        public List<TestPaper> PaperPager(int orgid, long sbjid, long couid, int diff, bool? isUse, string sear, int size, int index, out int countSum)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc &= TestPaper._.Org_ID == orgid;
@@ -267,7 +309,7 @@ namespace Song.ServiceImpls
             if (isUse != null) wc.And(TestPaper._.Tp_IsUse == (bool)isUse);
             if (string.IsNullOrWhiteSpace(sear) && sear.Trim() != "") wc.And(TestPaper._.Tp_Name.Contains(sear));
             countSum = Gateway.Default.Count<TestPaper>(wc);
-            return Gateway.Default.From<TestPaper>().Where(wc).OrderBy(TestPaper._.Tp_CrtTime.Desc).ToArray<TestPaper>(size, (index - 1) * size);
+            return Gateway.Default.From<TestPaper>().Where(wc).OrderBy(TestPaper._.Tp_CrtTime.Desc).ToList<TestPaper>(size, (index - 1) * size);
         }
 
         public List<TestPaperItem> GetItemForAll(TestPaper tp)
@@ -892,13 +934,13 @@ namespace Song.ServiceImpls
         /// <param name="search"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public TestResults[] ResultsCount(int stid, long couid, string search, int count)
+        public List<TestResults> ResultsCount(int stid, long couid, string search, int count)
         {
             WhereClip wc = TestResults._.Tr_ID > -1;
             if (stid > 0) wc.And(TestResults._.Ac_ID == stid);         
             if (couid > 0) wc.And(TestResults._.Cou_ID == couid);
             if (!string.IsNullOrWhiteSpace(search)) wc.And(TestResults._.Tp_Name.Contains(search));
-            return Gateway.Default.From<TestResults>().Where(wc).OrderBy(TestResults._.Tr_CrtTime.Desc).ToArray<TestResults>(count);
+            return Gateway.Default.From<TestResults>().Where(wc).OrderBy(TestResults._.Tr_CrtTime.Desc).ToList<TestResults>(count);
         }
         /// <summary>
         /// 获取某员工的测试成绩
@@ -906,12 +948,12 @@ namespace Song.ServiceImpls
         /// <param name="stid"></param>
         /// <param name="tpid"></param>    
         /// <returns></returns>
-        public TestResults[] ResultsCount(int stid, long tpid)
+        public List<TestResults> ResultsCount(int stid, long tpid)
         {
             WhereClip wc = new WhereClip();
             if (tpid > 0) wc.And(TestResults._.Tp_Id == tpid);
             if (stid > 0) wc.And(TestResults._.Ac_ID == stid);          
-            return Gateway.Default.From<TestResults>().Where(wc).OrderBy(TestResults._.Tr_CrtTime.Desc).ToArray<TestResults>();
+            return Gateway.Default.From<TestResults>().Where(wc).OrderBy(TestResults._.Tr_CrtTime.Desc).ToList<TestResults>();
         }
         /// <summary>
         /// 试卷的成绩数，即参加考试的人次
@@ -931,17 +973,17 @@ namespace Song.ServiceImpls
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        public TestResults[] ResultsPager(int stid, long sbjid, long couid, int size, int index, out int countSum)
+        public List<TestResults> ResultsPager(int stid, long sbjid, long couid, int size, int index, out int countSum)
         {
             WhereClip wc = TestResults._.Tr_ID > -1;
             if (stid > 0) wc.And(TestResults._.Ac_ID == stid);
             if (sbjid > 0) wc.And(TestResults._.Sbj_ID == sbjid);
             if (couid > 0) wc.And(TestResults._.Cou_ID == couid);
             countSum = Gateway.Default.Count<TestResults>(wc);
-            return Gateway.Default.From<TestResults>().Where(wc).OrderBy(TestResults._.Tr_CrtTime.Desc).ToArray<TestResults>(size, (index - 1) * size);
+            return Gateway.Default.From<TestResults>().Where(wc).OrderBy(TestResults._.Tr_CrtTime.Desc).ToList<TestResults>(size, (index - 1) * size);
         }
 
-        public TestResults[] ResultsPager(int stid, long tpid, string tpname, long couid, long sbjid, int orgid,
+        public List<TestResults> ResultsPager(int stid, long tpid, string tpname, long couid, long sbjid, int orgid,
             string acc, string cardid, float score_min, float score_max, DateTime? time_min, DateTime? time_max,
             int size, int index, out int countSum)
         {
@@ -963,7 +1005,7 @@ namespace Song.ServiceImpls
             if (time_max != null) wc.And(TestResults._.Tr_CrtTime <= (DateTime)time_max);
 
             countSum = Gateway.Default.Count<TestResults>(wc);
-            TestResults[] exr = Gateway.Default.From<TestResults>().Where(wc).OrderBy(TestResults._.Tr_CrtTime.Desc).ToArray<TestResults>(size, (index - 1) * size);
+            List<TestResults> exr = Gateway.Default.From<TestResults>().Where(wc).OrderBy(TestResults._.Tr_CrtTime.Desc).ToList<TestResults>(size, (index - 1) * size);
             return exr;
         }
         /// <summary>
@@ -975,13 +1017,13 @@ namespace Song.ServiceImpls
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        public TestResults[] ResultsPager(int stid, long tpid, int size, int index, out int countSum)
+        public List<TestResults> ResultsPager(int stid, long tpid, int size, int index, out int countSum)
         {
             WhereClip wc = new WhereClip();
             if (stid > 0) wc &= TestResults._.Ac_ID == stid;
             if (tpid > 0) wc &= TestResults._.Tp_Id == tpid;
             countSum = Gateway.Default.Count<TestResults>(wc);
-            TestResults[] exr = Gateway.Default.From<TestResults>().Where(wc).OrderBy(TestResults._.Tr_CrtTime.Desc).ToArray<TestResults>(size, (index - 1) * size);
+            List<TestResults> exr = Gateway.Default.From<TestResults>().Where(wc).OrderBy(TestResults._.Tr_CrtTime.Desc).ToList<TestResults>(size, (index - 1) * size);
             return exr;
         }
 

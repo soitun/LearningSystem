@@ -223,8 +223,8 @@ namespace Song.ViewData.Methods
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
             int orgid = org.Org_ID;
             int count = 0;
-            Song.Entities.TestPaper[] tps = Business.Do<ITestPaper>().PaperPager(orgid, -1, couid, diff, true, search, size, index, out count);
-            for (int i = 0; i < tps.Length; i++)
+            List<Song.Entities.TestPaper> tps = Business.Do<ITestPaper>().PaperPager(orgid, -1, couid, diff, true, search, size, index, out count);
+            for (int i = 0; i < tps.Count; i++)
                 tps[i] = _tran(tps[i]);
             ListResult result = new ListResult(tps);
             result.Index = index;
@@ -260,9 +260,9 @@ namespace Song.ViewData.Methods
         public ListResult Pager(int orgid, long sbjid, long couid, string search, bool? isuse, int diff, int size, int index)
         {
             int count = 0;
-            Song.Entities.TestPaper[] tps = Business.Do<ITestPaper>()
+            List<Song.Entities.TestPaper> tps = Business.Do<ITestPaper>()
                 .PaperPager(orgid, sbjid, couid, diff, isuse, search, size, index, out count);
-            for (int i = 0; i < tps.Length; i++)
+            for (int i = 0; i < tps.Count; i++)
                 tps[i] = _tran(tps[i]);
             ListResult result = new ListResult(tps);
             result.Index = index;
@@ -434,9 +434,9 @@ namespace Song.ViewData.Methods
                     throw new Exception(string.Format(txt + "试题通过率应达到{0}%，实际通过率为{1}%", condition_ques, purchase.Stc_QuesScore));              
                 //最多可以考几次
                 int finaltest_count = config["finaltest_count"].Value.Int32 ?? 1;
-                Song.Entities.TestResults[] trs = Business.Do<ITestPaper>().ResultsCount(stid, tpid);
-                if (finaltest_count <= trs.Length)               
-                    throw new Exception(string.Format("最多允许考试{0}次， 已经考了{1}次，", finaltest_count, trs.Length));               
+                List<TestResults> trs = Business.Do<ITestPaper>().ResultsCount(stid, tpid);
+                if (finaltest_count <= trs.Count)               
+                    throw new Exception(string.Format("最多允许考试{0}次， 已经考了{1}次，", finaltest_count, trs.Count));               
             }
 
             //专业id,专业名称
@@ -544,7 +544,7 @@ namespace Song.ViewData.Methods
         public ListResult ResultsPager(int stid, long tpid, int size, int index)
         {
             int count = 0;
-            Song.Entities.TestResults[] trs = Business.Do<ITestPaper>().ResultsPager(stid, tpid, size, index, out count);
+            List<TestResults> trs = Business.Do<ITestPaper>().ResultsPager(stid, tpid, size, index, out count);
             ListResult result = new ListResult(trs);
             result.Index = index;
             result.Size = size;
@@ -575,7 +575,7 @@ namespace Song.ViewData.Methods
             int size, int index)
         {
             int count = 0;
-            Song.Entities.TestResults[] trs = Business.Do<ITestPaper>().ResultsPager(stid, tpid, tpname, couid, sbjid, orgid,
+            List<TestResults> trs = Business.Do<ITestPaper>().ResultsPager(stid, tpid, tpname, couid, sbjid, orgid,
                 stname, cardid, score_min, score_max, time_min, time_max,
                 size, index, out count);
             ListResult result = new ListResult(trs);
@@ -609,12 +609,11 @@ namespace Song.ViewData.Methods
         /// <param name="stid">学员id</param>
         /// <param name="tpid">试卷id</param>
         /// <returns></returns>
-        public Song.Entities.TestResults[] ResultsAll(int stid, long tpid)
+        public List<TestResults> ResultsAll(int stid, long tpid)
         {
             if (stid <= 0) throw new Exception("学员id为空，无法获取成绩");
             if (tpid <= 0) throw new Exception("试卷id为空，无法获取成绩");
-            Song.Entities.TestResults[] trs = Business.Do<ITestPaper>().ResultsCount(stid, tpid);
-            return trs;
+            return Business.Do<ITestPaper>().ResultsCount(stid, tpid);
         }
         /// <summary>
         /// 试卷的成绩数，即参加考试的人次

@@ -66,7 +66,7 @@ namespace Song.ServiceInterfaces
         /// <param name="isUse"></param>
         /// <param name="count">指定数量</param>
         /// <returns></returns>
-        TestPaper[] PaperCount(int orgid, long sbjid, long couid, int diff, bool? isUse, int count);
+        List<TestPaper> PaperCount(int orgid, long sbjid, long couid, int diff, bool? isUse, int count);
         /// <summary>
         /// 获取指定数据的试卷
         /// </summary>
@@ -78,7 +78,7 @@ namespace Song.ServiceInterfaces
         /// <param name="isUse"></param>
         /// <param name="count">指定数量</param>
         /// <returns></returns>
-        TestPaper[] PaperCount(string search, int orgid, long sbjid, long couid, int diff, bool? isUse, int count);
+        List<TestPaper> PaperCount(string search, int orgid, long sbjid, long couid, int diff, bool? isUse, int count);
         /// <summary>
         /// 计算有多少个试卷
         /// </summary>
@@ -108,7 +108,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        TestPaper[] PaperPager(int orgid, long sbjid, long couid, int diff, bool? isUse, string sear, int size, int index, out int countSum);
+        List<TestPaper> PaperPager(int orgid, long sbjid, long couid, int diff, bool? isUse, string sear, int size, int index, out int countSum);
 
         #endregion
 
@@ -262,14 +262,14 @@ namespace Song.ServiceInterfaces
         /// <param name="search"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        TestResults[] ResultsCount(int stid, long couid, string search, int count);
+        List<TestResults> ResultsCount(int stid, long couid, string search, int count);
         /// <summary>
         /// 获取某员工的测试成绩
         /// </summary>
         /// <param name="stid"></param>
         /// <param name="tpid"></param>    
         /// <returns></returns>
-        TestResults[] ResultsCount(int stid, long tpid);
+        List<TestResults> ResultsCount(int stid, long tpid);
         /// <summary>
         /// 试卷的成绩数，即参加考试的人次
         /// </summary>
@@ -286,7 +286,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        TestResults[] ResultsPager(int stid, long sbjid, long couid, int size, int index, out int countSum);
+        List<TestResults> ResultsPager(int stid, long sbjid, long couid, int size, int index, out int countSum);
         /// <summary>
         /// 分页获取测试成绩
         /// </summary>
@@ -306,7 +306,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        TestResults[] ResultsPager(int stid, long tpid, string tpname, long couid, long sbjid, int orgid,
+        List<TestResults> ResultsPager(int stid, long tpid, string tpname, long couid, long sbjid, int orgid,
             string acc, string cardid, float score_min, float score_max, DateTime? time_min, DateTime? time_max,
             int size, int index, out int countSum);
         /// <summary>
@@ -318,7 +318,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        TestResults[] ResultsPager(int stid, long tpid, int size, int index, out int countSum);
+        List<TestResults> ResultsPager(int stid, long tpid, int size, int index, out int countSum);
 
         /// <summary>
         /// 成绩导出
