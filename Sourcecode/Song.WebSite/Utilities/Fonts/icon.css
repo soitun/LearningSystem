@@ -16,28 +16,35 @@ icon {
     font-variant: normal;
     text-transform: none;
 }
+
 icon:not([icon]) {
     margin-right: 5px;
 }
-icon[huge]:not(:empty,[size]) {
+
+icon[huge]:not(:empty, [size]) {
     font-size: 25px;
     line-height: 23px;
 }
+
 icon[large]:not(:empty) {
     font-size: 20px;
     line-height: 20px;
 }
+
 icon[medium]:not(:empty) {
     font-size: 18px;
     line-height: 18px;
 }
+
 icon[small]:not(:empty) {
     font-size: 16px;
     line-height: 16px;
 }
+
 icon[mini]:not(:empty) {
     font-size: 14px;
 }
+
 /*  图标引用方式二，显示Html标签内容的前面，但在在Vue组件代码中使用时，无法输出
 	html标签中增加icon属性， 例如：<span icon="&#xa038">内容</span>
 */
@@ -46,19 +53,24 @@ icon[mini]:not(:empty) {
     font-family: "webdesk_icon" !important;
     margin-right: 5px;
 }
-*[icon][huge]:not(:empty)::before{
+
+*[icon][huge]:not(:empty)::before {
     font-size: 25px;
 }
-*[icon][large]:not(:empty)::before{
+
+*[icon][large]:not(:empty)::before {
     font-size: 20px;
 }
-*[icon][medium]:not(:empty)::before{
+
+*[icon][medium]:not(:empty)::before {
     font-size: 18px;
 }
-*[icon][small]:not(:empty)::before{
+
+*[icon][small]:not(:empty)::before {
     font-size: 16px;
 }
-*[icon][mini]:not(:empty)::before{
+
+*[icon][mini]:not(:empty)::before {
     font-size: 14px;
 }
 
@@ -70,53 +82,66 @@ icon::before {
     font-family: "webdesk_icon" !important;
     margin-right: 5px;
 }
+
 /*带hide属性，则不显示图标*/
 icon[hide]::before {
     display: none;
 }
+
 icon[size='huge']::before {
     font-size: 25px;
 }
-icon[size='large']::before  {
+
+icon[size='large']::before {
     font-size: 20px;
 }
-icon[size='medium']::before  {
+
+icon[size='medium']::before {
     font-size: 18px;
 }
-icon[size='small']::before  {
+
+icon[size='small']::before {
     font-size: 16px;
 }
-icon[size='mini']::before  {
+
+icon[size='mini']::before {
     font-size: 14px;
 }
+
 /*首页*/
 icon[home]::before {
     content: '\a020';
     transform: scale(0.95);
     display: inline-block;
 }
+
 /*返回*/
 icon[back]::before {
     content: '\e748';
 }
+
 /*刷新*/
 icon[fresh]::before {
     content: '\e694';
 }
+
 /*禁用*/
 icon[disabled]::before {
     content: '\e7ad';
     transform: scale(0.9);
     display: inline-block;
 }
+
 /*提交*/
 icon[submit]::before {
     content: '\e84c';
 }
+
 /*确认*/
 icon[enter]::before {
     content: '\e634';
 }
+
 /*学员*/
 icon[student]::before {
     content: '\e804';
@@ -244,6 +269,7 @@ icon[copy]::before {
 icon[paste]::before {
     content: '\a061';
 }
+
 /*删除*/
 icon[delete]::before {
     content: '\e800';
@@ -252,10 +278,12 @@ icon[delete]::before {
 icon[delete] {
     cursor: pointer;
 }
+
 /*QQ*/
 icon[qq]::before {
     content: '\e82a';
 }
+
 /*微信*/
 icon[weixin]::before {
     content: '\e730';
@@ -276,12 +304,16 @@ warning, warning * {
     color: #E6A23C;
 }
 
-help, alert, help *, alert *, warning, warning * {
+empty, empty * {
+    color: #777;
+}
+
+help, alert, help *, alert *, warning, warning *, empty, empty * {
     font-size: 14px;
     cursor: default;
 }
 
-help::before, alert::before, warning::before {
+help::before, alert::before, warning::before, empty::before {
     font-family: "webdesk_icon" !important;
     display: inline-block;
     margin-right: 8px;
@@ -289,7 +321,7 @@ help::before, alert::before, warning::before {
 }
 
 /*多行帮助信息*/
-help[multi], alert[multi],warning[multi] {
+help[multi], alert[multi], warning[multi], empty[multi] {
     position: relative;
     display: block;
     padding-left: 25px;
@@ -298,29 +330,35 @@ help[multi], alert[multi],warning[multi] {
 
 }
 
-help[multi]::before, alert[multi]::before, warning[multi]::before {
+help[multi]::before, alert[multi]::before, warning[multi]::before, empty[multi]::before {
     position: absolute;
     left: 0px;
     top: 3px;
 }
 
 /*边距*/
-help[margin],alert[margin],warning[margin] {
+help[margin], alert[margin], warning[margin], empty[margin] {
     margin: 15px;
 }
+
 /*大小*/
-help[large], alert[large],warning[large], help[large] *, alert[large] *, warning[large] * {
+help[large], alert[large], warning[large],empty[large], help[large] *, alert[large] *, warning[large] *, empty[large] * {
+
     font-size: 18px;
     line-height: 30px;
 }
-help[large]::before, alert[large]::before,warning[large]::before {
+
+help[large]::before, alert[large]::before, warning[large]::before {
     font-size: 25px;
 }
-help[medium], alert[medium],warning[medium], help[medium] *, alert[medium] *, warning[medium] * {
+
+help[medium], alert[medium], warning[medium], help[medium] *, alert[medium] *, warning[medium] * {
     font-size: 16px;
     line-height: 25px;
 }
-help[medium]::before, alert[medium]::before,warning[medium]::before {
+
+help[medium]::before, alert[medium]::before, warning[medium]::before, empty[medium]::before {
+
     font-size: 20px;
 }
 
@@ -337,6 +375,13 @@ warning::before {
     content: "\f73f";
     font-size: 23px;
 }
+
+empty::before {
+    content: "\a01f";
+    font-size: 1.2rem;
+}
+
+
 /*预载*/
 loading {
     color: #999;
@@ -399,10 +444,11 @@ loading[fish]::before {
 @keyframes rotate_360 {
     from {
         transform: rotate(0deg);
-      }
-      to {
+    }
+
+    to {
         transform: rotate(360deg);
-      }
+    }
 }
 
 /*更多预载效果*/
@@ -529,7 +575,7 @@ loading[fish]::before {
     text-align: center;
     font-size: 13px;
     line-height: 25px;
-    border-radius: 20px;   
+    border-radius: 20px;
     color: #333;
     border: 2px solid #aaa;
     position: relative;
@@ -602,58 +648,73 @@ loading[fish]::before {
 }
 
 /*文件类型的样式*/
-*[filetype]::before { 
+*[filetype]::before {
     font-family: "webdesk_icon";
     display: inline-block;
     font-size: 25px;
-    content: '\a022';  
-}
-*[filetype=xls]::before {
-    content: '\e85e';  
-}
-*[filetype=xlsx]::before {
-    content: '\e6a7';  
-}
-*[filetype=doc]::before {
-    content: '\e85d';  
-}
-*[filetype=docx]::before {
-    content: '\e6a3';  
-}
-*[filetype=ppt]::before  {
-    content: '\e6a9';  
-}
-*[filetype=pptx]::before  {
-    content: '\e754';  
-}
-*[filetype=zip]::before {
-    content: '\e6a5';  
-}
-*[filetype=rar]::before {
-    content: '\e78a';  
-}
-*[filetype=pdf]::before {
-    content: '\e848';  
-}
-*[filetype=mp4]::before {
-    content: '\e859';  
+    content: '\a022';
 }
 
-*[filetype=xls],*[filetype=xlsx]{
+*[filetype=xls]::before {
+    content: '\e85e';
+}
+
+*[filetype=xlsx]::before {
+    content: '\e6a7';
+}
+
+*[filetype=doc]::before {
+    content: '\e85d';
+}
+
+*[filetype=docx]::before {
+    content: '\e6a3';
+}
+
+*[filetype=ppt]::before {
+    content: '\e6a9';
+}
+
+*[filetype=pptx]::before {
+    content: '\e754';
+}
+
+*[filetype=zip]::before {
+    content: '\e6a5';
+}
+
+*[filetype=rar]::before {
+    content: '\e78a';
+}
+
+*[filetype=pdf]::before {
+    content: '\e848';
+}
+
+*[filetype=mp4]::before {
+    content: '\e859';
+}
+
+*[filetype=xls], *[filetype=xlsx] {
     color: rgb(0 114 57) !important;
 }
-*[filetype=doc],*[filetype=docx]{
+
+*[filetype=doc], *[filetype=docx] {
     color: #1c56a9 !important;
 }
-*[filetype=ppt],*[filetype=pptx]{
+
+*[filetype=ppt], *[filetype=pptx] {
     color: #ba3e1f !important;
 }
-*[filetype=zip],*[filetype=rar]{
+
+*[filetype=zip], *[filetype=rar] {
     color: #04354c !important;
 }
-*[filetype=pdf]{
-    color: #b60b00!important;
+
+*[filetype=pdf] {
+    color: #b60b00 !important;
 }
-*[filetype=mp4]{
-    color: #700391!important;
+
+*[filetype=mp4] {
+    color: #700391 !important;
 }
