@@ -65,24 +65,8 @@ namespace Song.ServiceImpls
               new object[] { false }, TestPaper._.Cou_ID == entity.Cou_ID);
             }
             //判断是否有简答题
-            entity.Tp_IsManual = false;
-            XmlDocument docxml = new XmlDocument();
-            docxml.XmlResolver = null;
-            docxml.LoadXml(entity.Tp_FromConfig, false);
-            XmlNodeList xmlNodeList = null;
-            if (entity.Tp_FromType == 0) xmlNodeList = docxml.SelectNodes("/Config/All/Items/TestPaperItem");
-            if (entity.Tp_FromType == 1) xmlNodeList = docxml.SelectNodes("/Config/Outline/Percent/TestPaperItem");
-            foreach (XmlNode n in xmlNodeList)
-            {
-                //试题类型
-                int.TryParse(n.SelectSingleNode("TPI_Type").InnerText, out int qtype);
-                if (qtype == 4)
-                {
-                    int.TryParse(n.SelectSingleNode("TPI_Count").InnerText, out int qcount);        //当前题型的试题数
-                    float.TryParse(n.SelectSingleNode("TPI_Percent").InnerText, out float percent); //当前题型的得分占比
-                    if (qcount > 0 || percent > 0) entity.Tp_IsManual = true;
-                }
-            }
+            List<TestPaperItem> items = this.GetItemForAny(entity);
+            foreach (TestPaperItem ti in items) if (ti.TPI_Type == 4) entity.Tp_IsManual = true;
             //
             Gateway.Default.Save<TestPaper>(entity);
             //更新统计信息
@@ -110,23 +94,9 @@ namespace Song.ServiceImpls
             }
             //判断是否有简答题
             entity.Tp_IsManual = false;
-            XmlDocument docxml = new XmlDocument();
-            docxml.XmlResolver = null;
-            docxml.LoadXml(entity.Tp_FromConfig, false);
-            XmlNodeList xmlNodeList = null;
-            if (entity.Tp_FromType == 0) xmlNodeList = docxml.SelectNodes("/Config/All/Items/TestPaperItem");
-            if (entity.Tp_FromType == 1) xmlNodeList = docxml.SelectNodes("/Config/Outline/Percent/TestPaperItem");
-            foreach (XmlNode n in xmlNodeList)
-            {
-                //试题类型
-                int.TryParse(n.SelectSingleNode("TPI_Type").InnerText, out int qtype);
-                if (qtype == 4)
-                {
-                    int.TryParse(n.SelectSingleNode("TPI_Count").InnerText, out int qcount);        //当前题型的试题数
-                    float.TryParse(n.SelectSingleNode("TPI_Percent").InnerText, out float percent); //当前题型的得分占比
-                    if (qcount > 0 || percent > 0) entity.Tp_IsManual = true;
-                }
-            }
+            List<TestPaperItem> items = this.GetItemForAny(entity);
+            foreach (TestPaperItem ti in items) if (ti.TPI_Type == 4) entity.Tp_IsManual = true;
+            //
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
@@ -401,7 +371,7 @@ namespace Song.ServiceImpls
             {
                 tpi = this.GetItemForOlPercent(tp);
                 foreach (Song.Entities.TestPaperItem t in tpi)
-                    if (t.TPI_Percent > 0) list.Add(t);
+                    if (t.TPI_Percent > 0 || t.TPI_Count > 0) list.Add(t);
             }
             return _getItemCoutomOrder(list);
         }

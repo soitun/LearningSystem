@@ -42,3 +42,18 @@ UPDATE "TestPaper" set "Tp_IsManual"=true  WHERE (xpath('/Config/All/Items/TestP
 UPDATE "TestPaper" set "Tp_IsManual"=true  WHERE (xpath('/Config/Outline/Percent/TestPaperItem/TPI_Count/text()', "Tp_FromConfig"::xml ))[4]::text!='0';
 
 UPDATE "Examination" set "Exam_IsManual"=true WHERE "Tp_Id" in (SELECT "Tp_Id" FROM "TestPaper" WHERE "Tp_IsManual"=true);
+
+
+/*考试场次的记录中没有Org_ID,只有考试主题有，这里是同步数据*/
+DO $$
+DECLARE exam_record RECORD;
+BEGIN
+    -- 使用 FOR 循环直接遍历查询结果
+    FOR exam_record IN SELECT "Exam_UID", "Org_ID" FROM "Examination" WHERE "Exam_IsTheme"=TRUE
+    LOOP
+        -- 在此处对每一行数据进行处理
+        RAISE NOTICE 'Exam_UID: %, Org_ID: %', exam_record."Exam_UID", exam_record."Org_ID";
+        UPDATE "Examination" set "Org_ID"=exam_record."Org_ID" WHERE "Exam_IsTheme"=FALSE and "Exam_UID"=exam_record."Exam_UID";
+    END LOOP;
+END $$;
+

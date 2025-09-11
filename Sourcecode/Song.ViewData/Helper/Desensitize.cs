@@ -68,6 +68,14 @@ namespace Song.ViewData.Helper
         #endregion
 
         #region 字符串扩展方法
+        /// <summary>
+        /// 字符串脱敏
+        /// </summary>
+        /// <param name="character"></param>
+        /// <param name="prefix"></param>
+        /// <param name="suffix"></param>
+        /// <param name="maskChar"></param>
+        /// <returns></returns>
         public static string Mask(this string character, int prefix, int suffix, char maskChar = '*') => MaskString(character, prefix, suffix, maskChar);
         /// <summary>
         /// 姓名脱敏

@@ -77,6 +77,7 @@ namespace Song.ServiceImpls
                                 it.Exam_DateOver = theme.Exam_DateOver;
                             }
                             if (it.Sbj_ID < 1) continue;
+                            it.Org_ID = theme.Org_ID;
                             it.Exam_CrtTime = DateTime.Now;
                             it.Exam_Title = theme.Exam_Title;
                             it.Exam_GroupType = theme.Exam_GroupType;
@@ -187,6 +188,7 @@ namespace Song.ServiceImpls
                             }
                             else
                             {
+                                it.Org_ID= theme.Org_ID;
                                 it.Exam_Title = theme.Exam_Title;
                                 it.Exam_GroupType = theme.Exam_GroupType;
                                 it.Exam_IsUse = theme.Exam_IsUse;
@@ -505,7 +507,7 @@ namespace Song.ServiceImpls
             if (orgid > 0) wc.And(Examination._.Org_ID == orgid);
             if (isUse != null) wc.And(Examination._.Exam_IsUse == (bool)isUse);
             if (ismanual != null) wc.And(Examination._.Exam_IsManual == (bool)ismanual);
-            if (searName != null && searName != "") wc.And(Examination._.Exam_Title.Contains(searName));
+            if (searName != null && searName != "") wc.And(Examination._.Exam_Name.Contains(searName));
             if (start != null) wc.And(Examination._.Exam_Date >= (DateTime)start);
             if (end != null) wc.And(Examination._.Exam_Date < (DateTime)end);
             countSum = Gateway.Default.Count<Examination>(wc);

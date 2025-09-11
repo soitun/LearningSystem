@@ -169,9 +169,9 @@
                             for (var i = 0; i < th.examlist.length; i++) {
                                 $api.bat(
                                     $api.cache('Exam/Average4Exam', { 'examid': th.examlist[i].Exam_ID }),
-                                    $api.get("Exam/AttendCount", { 'examid': th.examlist[i].Exam_ID }),
-                                    $api.cache("Exam/AbsenceCount", { 'examid': th.examlist[i].Exam_ID }),
-                                    $api.cache("Exam/Manual4Exam", { 'examid': th.examlist[i].Exam_ID })
+                                    $api.get("Exam/AttendCount", { 'examid': th.examlist[i].Exam_ID }),     //参考人次
+                                    $api.cache("Exam/AbsenceCount", { 'examid': th.examlist[i].Exam_ID }),  //缺考人数
+                                    $api.cache("Exam/Manual4Exam", { 'examid': th.examlist[i].Exam_ID })    
                                 ).then(([avg, num, absence, manual]) => {
                                     for (var n = 0; n < th.examlist.length; n++) {
                                         if (th.examlist[n].Exam_ID == avg.data.result.id) {
@@ -216,7 +216,7 @@
                 <el-col :span="6">专业</el-col>
                 <el-col :span="2">及格/满分</el-col>              
                 <el-col :span="2">平均分</el-col>
-                <el-col :span="2">参考人数</el-col>
+                <el-col :span="2">参考人次</el-col>
                 <el-col :span="2">缺考人数</el-col>
                 <el-col :span="2"></el-col>
               </el-row>

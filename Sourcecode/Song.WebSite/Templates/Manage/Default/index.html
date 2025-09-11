@@ -154,7 +154,8 @@
             border: 1px solid #fff;
             box-shadow: 0px 0px 25px #fff;
         }
-        #headbar{
+
+        #headbar {
             display: flex;
         }
     </style>
@@ -174,10 +175,15 @@
             frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no"
             allowtransparency="yes"></iframe>
         <div id="Sliderbox" remark="轮换图文">
-            <iframe src="/Utilities/Panel/Slider/Slider.html" width="500px" height="200px" frameborder="no" border="0"
-                marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes"></iframe>
+            <iframe src="/Utilities/Panel/Slider/Slider.html" style="display: none;" width="500px" height="200px"
+                frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no"
+                allowtransparency="yes"></iframe>
+            <div class="alertinfo">
+                <help>该管理面板已经合并到 机构管理</help>
+                <div><a href="/orgadmin">点击此处跳转</a>，账号密码不变</div>
+            </div>
         </div>
-        <div id="login-area" remark="登录框"></div>
+        <div id="login-area" remark="登录框" style="display: none;"></div>
     </panel>
     <panel id="admin" remark="管理面板">
         <div id="header-box">

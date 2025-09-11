@@ -687,6 +687,7 @@ namespace Song.ViewData.Methods
         /// <param name="orgid"></param>
         /// <param name="start"></param>
         /// <param name="end"></param>
+        /// <param name="use"></param>
         /// <param name="search"></param>
         /// <param name="size"></param>
         /// <param name="index"></param>
@@ -697,6 +698,30 @@ namespace Song.ViewData.Methods
         {
             int count = 0;
             List<Examination> datas = Business.Do<IExamination>().ThemePager(orgid, start, end, use, search, size, index, out count);
+            ListResult result = new ListResult(datas);
+            result.Index = index;
+            result.Size = size;
+            result.Total = count;
+            return result;
+        }
+        /// <summary>
+        /// 获取考试场次
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="use">是否启用</param>
+        /// <param name="ismanual">是否需要人工批阅</param>
+        /// <param name="search">考试名称的检索</param>
+        /// <param name="size"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Admin, Teacher]
+        public ListResult ExamAdminPager(int orgid, DateTime? start, DateTime? end, bool? use, bool? ismanual, string search, int size, int index)
+        {
+            int count = 0;
+            List<Examination> datas = Business.Do<IExamination>().ExamPager(orgid, start, end, use, ismanual,search, size, index, out count);
             ListResult result = new ListResult(datas);
             result.Index = index;
             result.Size = size;

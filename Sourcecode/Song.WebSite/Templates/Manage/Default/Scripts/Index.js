@@ -30,6 +30,7 @@ window.$ctrljs = function (f) {
     }, '/Utilities/Panel/Scripts/ctrls.js');
 };
 $ctrljs(function () {
+    /*
     window.login = $login.create({
         target: '#login-area',
         ico: 'e79b',
@@ -142,6 +143,8 @@ $ctrljs(function () {
     }, function (err) {
         window.login.loading = false;
     });
+*/
+
     //右上角菜单,用户信息
     window.usermenu = window.$dropmenu.create({
         target: '#user-area',
