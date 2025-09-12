@@ -116,8 +116,6 @@
 			let first = th.domtit.find('tree_tag[type=item]').first();
 			th.switch(th, first);
 		}, 500);
-
-
 	};
 	//当属性更改时触发相应动作
 	fn._watch = {
