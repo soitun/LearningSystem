@@ -424,7 +424,13 @@ namespace Song.ServiceImpls
         public List<ManageMenu> PosiPurviewMenu(Position posi)
         {
             if (posi == null) return null;
+            //如果是管理岗，则取所有菜单
             if (posi.Posi_IsAdmin) return this.OrganPurviewMenu(posi.Org_ID, "organAdmin");
+            //
+            //当前岗位的权限
+            List<Purview> purview = Gateway.Default.From<Purview>().Where(Purview._.Posi_Id == posi.Posi_Id).ToList<Purview>();
+            if (purview == null || purview.Count < 1) return null;
+
             //实际选中的菜单(即权限中选中的菜单项）
             List<ManageMenu> selected = new List<ManageMenu>();
             //marker标识下的所有菜单项
@@ -432,10 +438,7 @@ namespace Song.ServiceImpls
             List<ManageMenu> mms = Business.Do<IManageMenu>().GetFunctionMenu(root.MM_UID, true, false);
             if (mms == null || mms.Count < 1) return selected;
             else if (!mms.Exists(x => x.MM_Id == root.MM_Id)) mms.Add(root);
-
-            //在权限表中记录的MM_UID
-            List<Purview> purview = Gateway.Default.From<Purview>().Where(Purview._.Posi_Id == posi.Posi_Id).ToList<Purview>();
-            if (purview == null || purview.Count < 1) return mms;
+           
 
             //如果设置了权限，则按权限进行过滤
             foreach (Purview p in purview)

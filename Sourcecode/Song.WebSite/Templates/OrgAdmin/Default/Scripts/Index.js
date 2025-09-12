@@ -175,7 +175,10 @@ window.$succeeded = function (result) {
                 var result = nodeconvert(req.data.result);
                 s.add(result[0].childs);
             } else throw req.data.message;
-        }).catch(err => console.error(err));
+        }).catch(err => {
+            console.error(err);
+            s.nodata();
+        });
     }).onresize(function (s, e) { //当宽高变更时
         $dom('#tabs-area').width('calc(100% - ' + (e.width + 35) + 'px )');
     }).onfold(function (s, e) { //当右侧树形折叠时
