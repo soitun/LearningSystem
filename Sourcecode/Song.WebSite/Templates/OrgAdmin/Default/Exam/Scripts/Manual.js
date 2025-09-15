@@ -81,7 +81,7 @@ $ready(function () {
             },
             //打开人工批阅
             btnResultManual: function (row) {
-                let file = $api.url.set('/teacher/exam/ResultsManual', { 'id': row.Exam_ID });
+                let file = $api.url.set('ResultsManual', { 'id': row.Exam_ID });
                 let boxid = file + "_" + row.Exam_ID;
                 let title = '考试：《' + row.Exam_Title + "》";
                 this.$refs.btngroup.pagebox(file, title, boxid, 1000, '80%', { 'ico': 'a02e' });

@@ -307,7 +307,7 @@ $ready(['Components/setscore.js'],
                 },
                 //导出的窗口
                 output: function () {
-                    let url = $api.url.set("/teacher/exam/ResultsExport", { "examid": this.form.examid });
+                    let url = $api.url.set("ResultsExport", { "examid": this.form.examid });
                     let boxid = "ResultsExport_" + this.form.examid;
                     let title = '成绩导出 - “' + this.entity.Exam_Name + "”";
                     this._openbox(url, title, boxid, 800, 600, 'e73e');
