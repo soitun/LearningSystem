@@ -39,7 +39,7 @@
                 </el-table-column>
                 <el-table-column label="学员"  width="120" >
                     <template slot-scope="scope">
-                        <icon :woman="scope.row.Ac_Sex==2" :man="scope.row.Ac_Sex==1">
+                        <icon :woman="scope.row.Ac_Gender==2" :man="scope.row.Ac_Gender==1">
                         {{scope.row.Ac_Name}} 
                         </icon>
                     </template>

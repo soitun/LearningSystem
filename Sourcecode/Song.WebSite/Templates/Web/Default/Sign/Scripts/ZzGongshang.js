@@ -125,7 +125,7 @@ $ready(function () {
                 obj.Ac_Name = user.name;
                 obj.Ac_Email = user.email;
                 obj.Ac_AccName = user.sub;
-                //obj.Ac_Sex = user.gender == "男" ? 1 : 2;
+                //obj.Ac_Gender = user.gender == "男" ? 1 : 2;
                 var th = this;
                 th.loading_crt = true;
                 $api.post('Account/UserCreate', { 'acc': obj, 'openid': user.userId, 'field': th.tag }).then(function (req) {

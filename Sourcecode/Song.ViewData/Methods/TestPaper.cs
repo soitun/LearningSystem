@@ -463,7 +463,7 @@ namespace Song.ViewData.Methods
             exr.St_IDCardNumber = cardid;
             exr.Sts_ID = stid;
             exr.Sts_Name = stsname;
-            exr.St_Sex = stsex;     //性别
+            exr.Ac_Gender = stsex;     //性别
             exr.Tr_IP = WeiSha.Core.Browser.IP;
             exr.Tr_Mac = "";
             exr.Tr_UID = uid;

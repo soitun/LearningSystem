@@ -44,8 +44,8 @@ Vue.component('avatar', {
         //性别
         'gender': function () {
             if (this.exist) {
-                if (!$api.isnull(this.account)) return this.account.Ac_Sex;
-                if (!$api.isnull(this.teacher)) return this.teacher.Th_Sex;
+                if (!$api.isnull(this.account)) return this.account.Ac_Gender;
+                if (!$api.isnull(this.teacher)) return this.teacher.Th_Gender;
                 return 1;
             }
         }

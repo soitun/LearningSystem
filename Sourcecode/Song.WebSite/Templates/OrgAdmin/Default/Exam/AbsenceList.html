@@ -55,9 +55,9 @@
             <el-table-column label="姓名" width="120" class-name="account">
                 <div slot-scope="scope">
                     <el-link type="primary" plain
-                        :class="{'woman': scope.row.Ac_Sex==2,'man': scope.row.Ac_Sex==1,'large':true}"
+                        :class="{'woman': scope.row.Ac_Gender==2,'man': scope.row.Ac_Gender==1,'large':true}"
                         @dblright:300="$refs['crtscore'].show(scope.row)" @click="getaccount(scope.row)">
-                        <icon :woman="scope.row.Ac_Sex==2" :man="scope.row.Ac_Sex==1">
+                        <icon :woman="scope.row.Ac_Gender==2" :man="scope.row.Ac_Gender==1">
                             <span v-html='showsearch(scope.row.Ac_Name,form.name)' v-if="scope.row.Ac_Name!=''"
                                 @dblclick.stop="copytext(scope.row.Ac_Name)"></span>
                             <span v-else class="noname">(没有名字)</span>
@@ -145,7 +145,7 @@
                 <el-col :span="24" class="accountInfo">
                     <avatar :account="account" circle="true" size="80"></avatar>
                     <div>
-                        <icon :woman="account.Ac_Sex=='2'" :man="account.Ac_Sex!='2'">
+                        <icon :woman="account.Ac_Gender=='2'" :man="account.Ac_Gender!='2'">
                             <b>{{account.Ac_Name}}</b>
                         </icon>
                         <span title="账号">({{account.Ac_AccName}})</span>

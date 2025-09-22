@@ -25,7 +25,7 @@
                     <div class="acc_photo" v-if="!!account.Ac_Photo && account.Ac_Photo!=''"
                         :style="'background-image: url('+account.Ac_Photo+');'"></div>
                     <template v-else>
-                        <div class="acc_photo woman" v-if="account.Ac_Sex==2"></div>
+                        <div class="acc_photo woman" v-if="account.Ac_Gender==2"></div>
                         <div class="acc_photo man" v-else></div>
                     </template>
                     <div class="accInfo">
@@ -112,17 +112,17 @@
                                 <span icon="&#xe804">性别 </span>
                             </template>
                             <template #value>
-                                <span v-if="account.Ac_Sex==1" class="icon_man">男</span>
-                                <span v-if="account.Ac_Sex==2" class="icon_woman">女</span>
+                                <span v-if="account.Ac_Gender==1" class="icon_man">男</span>
+                                <span v-if="account.Ac_Gender==2" class="icon_woman">女</span>
                             </template>
-                            <van-radio-group v-model="account.Ac_Sex" @change="update">
+                            <van-radio-group v-model="account.Ac_Gender" @change="update">
                                 <van-cell-group>
-                                    <van-cell title="男" clickable @click="account.Ac_Sex = '1'">
+                                    <van-cell title="男" clickable @click="account.Ac_Gender = '1'">
                                         <template #right-icon>
                                             <van-radio name="1" />
                                         </template>
                                     </van-cell>
-                                    <van-cell title="女" clickable @click="account.Ac_Sex = '2'">
+                                    <van-cell title="女" clickable @click="account.Ac_Gender = '2'">
                                         <template #right-icon>
                                             <van-radio name="2" />
                                         </template>

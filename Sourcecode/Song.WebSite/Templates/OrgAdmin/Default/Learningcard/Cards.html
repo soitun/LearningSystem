@@ -149,13 +149,13 @@
                     <el-col :span="18" class="accountInfo">
                         <img v-if="current.account.Ac_Photo!=''" :src="current.account.Ac_Photo" class="avatar photo">
                         <template v-else>
-                            <img v-if="current.account.Ac_Sex=='1'"
+                            <img v-if="current.account.Ac_Gender=='1'"
                                 class="el-icon-plus avatar-uploader-icon avatar  photo"
                                 src="/Utilities/images/head1.jpg" />
                             <img v-else class="el-icon-plus avatar-uploader-icon avatar  photo"
                                 src="/Utilities/images/head2.jpg" />
                         </template>
-                        <icon :man="current.account.Ac_Sex!='2'" :woman="current.account.Ac_Sex=='2'">
+                        <icon :man="current.account.Ac_Gender!='2'" :woman="current.account.Ac_Gender=='2'">
                             {{current.account.Ac_Name}} ({{current.account.Ac_AccName}})</icon>
 
                         <div icon="&#xe60f" title="身份证">

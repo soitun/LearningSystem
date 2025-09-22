@@ -78,7 +78,7 @@ namespace Song.ServiceImpls
                 {
                     IDCardNumber card = IDCardNumber.Get(entity.Ac_IDCardNumber);
                     entity.Ac_Age = card.Birthday.Year;
-                    entity.Ac_Sex = card.Gender;
+                    entity.Ac_Gender = card.Gender;
                     entity.Ac_Birthday = card.Birthday;
                     entity.Ac_Native = card.Province + "," + card.City + "," + card.District;
                     entity.Ac_IDCardNumber = card.CardNumber;
@@ -149,7 +149,7 @@ namespace Song.ServiceImpls
                 {
                     IDCardNumber card = IDCardNumber.Get(entity.Ac_IDCardNumber);
                     entity.Ac_Age = card.Birthday.Year;
-                    entity.Ac_Sex = card.Gender;
+                    entity.Ac_Gender = card.Gender;
                     entity.Ac_Birthday = card.Birthday;
                     entity.Ac_Native = card.Province + "," + card.City + "," + card.District;
                     entity.Ac_IDCardNumber = card.CardNumber;
@@ -185,11 +185,11 @@ namespace Song.ServiceImpls
                     //if (old != null && old.Sts_ID != entity.Sts_ID)
                     //{
                     //同步考试成绩中的学员组
-                    tran.Update<ExamResults>(new Field[] { ExamResults._.Sts_ID, ExamResults._.Ac_Sex, ExamResults._.Ac_Name, ExamResults._.Ac_IDCardNumber },
-                        new object[] { entity.Sts_ID, entity.Ac_Sex, entity.Ac_Name, entity.Ac_IDCardNumber }, ExamResults._.Ac_ID == entity.Ac_ID);
+                    tran.Update<ExamResults>(new Field[] { ExamResults._.Sts_ID, ExamResults._.Ac_Gender, ExamResults._.Ac_Name, ExamResults._.Ac_IDCardNumber },
+                        new object[] { entity.Sts_ID, entity.Ac_Gender, entity.Ac_Name, entity.Ac_IDCardNumber }, ExamResults._.Ac_ID == entity.Ac_ID);
                     //同步教师信息
-                    tran.Update<Teacher>(new Field[] { Teacher._.Th_Sex, Teacher._.Th_Birthday, Teacher._.Th_IDCardNumber, Teacher._.Th_Nation, Teacher._.Th_Native },
-                    new object[] { entity.Ac_Sex, entity.Ac_Birthday, entity.Ac_IDCardNumber, entity.Ac_Nation, entity.Ac_Native }, Teacher._.Ac_ID == entity.Ac_ID);
+                    tran.Update<Teacher>(new Field[] { Teacher._.Th_Gender, Teacher._.Th_Birthday, Teacher._.Th_IDCardNumber, Teacher._.Th_Nation, Teacher._.Th_Native },
+                    new object[] { entity.Ac_Gender, entity.Ac_Birthday, entity.Ac_IDCardNumber, entity.Ac_Nation, entity.Ac_Native }, Teacher._.Ac_ID == entity.Ac_ID);
                     //}
                     tran.Save<Accounts>(entity);
                     tran.Commit();
@@ -782,7 +782,7 @@ namespace Song.ServiceImpls
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Accounts._.Org_ID == orgid);
             if (isUse != null) wc.And(Accounts._.Ac_IsUse == isUse);
-            if (gender > 0) wc.And(Accounts._.Ac_Sex == gender);
+            if (gender > 0) wc.And(Accounts._.Ac_Gender == gender);
             return Gateway.Default.Count<Accounts>(wc);
         }
         /// <summary>
@@ -864,7 +864,7 @@ namespace Song.ServiceImpls
                 wc2.Or(Accounts._.Ac_AccName.Contains(phone.Trim()));
                 wc.And(wc2);
             }
-            if (gender > -1) wc.And(Accounts._.Ac_Sex == gender);
+            if (gender > -1) wc.And(Accounts._.Ac_Gender == gender);
            
             countSum = Gateway.Default.Count<Accounts>(wc);
             //排序方法

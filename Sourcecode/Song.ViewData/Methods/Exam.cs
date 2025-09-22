@@ -438,7 +438,7 @@ namespace Song.ViewData.Methods
                 exr.Ac_ID = stid;
                 exr.Ac_Name = stname;
                 exr.Sts_ID = stsid;
-                exr.Ac_Sex = stsex;
+                exr.Ac_Gender = stsex;
                 exr.Ac_IDCardNumber = stcardid;
                 exr.Sbj_ID = sbjid;
                 exr.Sbj_Name = sbjname;

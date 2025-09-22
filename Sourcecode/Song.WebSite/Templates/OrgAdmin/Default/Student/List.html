@@ -79,8 +79,8 @@
                 <el-table-column label="姓名/电话" width="260" class-name="account">
                     <div slot-scope="scope">
                         <avatar :account="scope.row" circle="true" size="45"></avatar>
-                        <div :class="{'woman': scope.row.Ac_Sex==2,'man': scope.row.Ac_Sex==1,'large':true}">
-                            <icon :woman="scope.row.Ac_Sex==2" :man="scope.row.Ac_Sex==1">
+                        <div :class="{'woman': scope.row.Ac_Gender==2,'man': scope.row.Ac_Gender==1,'large':true}">
+                            <icon :woman="scope.row.Ac_Gender==2" :man="scope.row.Ac_Gender==1">
                                 <span v-html='showsearch(scope.row.Ac_Name,form.name)' v-if="scope.row.Ac_Name!=''"
                                     @dblclick.stop="copytext(scope.row.Ac_Name)"></span>
                                 <span v-else class="noname">(没有名字)</span>

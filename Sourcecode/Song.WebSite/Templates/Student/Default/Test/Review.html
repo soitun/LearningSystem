@@ -32,7 +32,7 @@
                     :src="account.Ac_Photo">
                 </img>
                 <template v-else>
-                    <div class="acc_photo woman" v-if="account.Ac_Sex==2"></div>
+                    <div class="acc_photo woman" v-if="account.Ac_Gender==2"></div>
                     <div class="acc_photo man" v-else></div>
                 </template>
                 <span class="acc-name">{{account.Ac_Name}} （{{account.Ac_AccName}}） </span>

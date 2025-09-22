@@ -40,6 +40,8 @@ namespace Song.Entities {
     		
     		protected String _Th_Email;
     		
+    		protected Int32 _Th_Gender;
+    		
     		protected String _Th_IDCardNumber;
     		
     		protected String _Th_Intro;
@@ -87,8 +89,6 @@ namespace Song.Entities {
     		protected DateTime _Th_RegTime;
     		
     		protected Int32 _Th_Score;
-    		
-    		protected Int32 _Th_Sex;
     		
     		protected String _Th_Signature;
     		
@@ -263,6 +263,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Th_Email, _Th_Email, value);
     				this._Th_Email = value;
+    			}
+    		}
+    		
+    		public Int32 Th_Gender {
+    			get {
+    				return this._Th_Gender;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Th_Gender, _Th_Gender, value);
+    				this._Th_Gender = value;
     			}
     		}
     		
@@ -506,16 +516,6 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32 Th_Sex {
-    			get {
-    				return this._Th_Sex;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Th_Sex, _Th_Sex, value);
-    				this._Th_Sex = value;
-    			}
-    		}
-    		
     		public String Th_Signature {
     			get {
     				return this._Th_Signature;
@@ -639,6 +639,7 @@ namespace Song.Entities {
     					_.Th_CrtTime,
     					_.Th_Education,
     					_.Th_Email,
+    					_.Th_Gender,
     					_.Th_IDCardNumber,
     					_.Th_Intro,
     					_.Th_IsOpenMobi,
@@ -663,7 +664,6 @@ namespace Song.Entities {
     					_.Th_Qus,
     					_.Th_RegTime,
     					_.Th_Score,
-    					_.Th_Sex,
     					_.Th_Signature,
     					_.Th_Tax,
     					_.Th_Title,
@@ -695,6 +695,7 @@ namespace Song.Entities {
     					this._Th_CrtTime,
     					this._Th_Education,
     					this._Th_Email,
+    					this._Th_Gender,
     					this._Th_IDCardNumber,
     					this._Th_Intro,
     					this._Th_IsOpenMobi,
@@ -719,7 +720,6 @@ namespace Song.Entities {
     					this._Th_Qus,
     					this._Th_RegTime,
     					this._Th_Score,
-    					this._Th_Sex,
     					this._Th_Signature,
     					this._Th_Tax,
     					this._Th_Title,
@@ -781,6 +781,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Th_Email))) {
     				this._Th_Email = reader.GetString(_.Th_Email);
+    			}
+    			if ((false == reader.IsDBNull(_.Th_Gender))) {
+    				this._Th_Gender = reader.GetInt32(_.Th_Gender);
     			}
     			if ((false == reader.IsDBNull(_.Th_IDCardNumber))) {
     				this._Th_IDCardNumber = reader.GetString(_.Th_IDCardNumber);
@@ -853,9 +856,6 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Th_Score))) {
     				this._Th_Score = reader.GetInt32(_.Th_Score);
-    			}
-    			if ((false == reader.IsDBNull(_.Th_Sex))) {
-    				this._Th_Sex = reader.GetInt32(_.Th_Sex);
     			}
     			if ((false == reader.IsDBNull(_.Th_Signature))) {
     				this._Th_Signature = reader.GetString(_.Th_Signature);
@@ -988,6 +988,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Th_Email = new WeiSha.Data.Field<Teacher>("Th_Email");
     			
     			/// <summary>
+    			/// 字段名：Th_Gender - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Th_Gender = new WeiSha.Data.Field<Teacher>("Th_Gender");
+    			
+    			/// <summary>
     			/// 字段名：Th_IDCardNumber - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Th_IDCardNumber = new WeiSha.Data.Field<Teacher>("Th_IDCardNumber");
@@ -1106,11 +1111,6 @@ namespace Song.Entities {
     			/// 字段名：Th_Score - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Th_Score = new WeiSha.Data.Field<Teacher>("Th_Score");
-    			
-    			/// <summary>
-    			/// 字段名：Th_Sex - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field Th_Sex = new WeiSha.Data.Field<Teacher>("Th_Sex");
     			
     			/// <summary>
     			/// 字段名：Th_Signature - 数据类型：String

@@ -240,10 +240,10 @@ $ready(function () {
         template: `<span title="学员信息">
             <span v-if="state==-1" class="el-icon-loading"></span>
             <span v-if="state==0"><el-tag type="info">不存在</el-tag></span>
-            <span v-if="state==1"  :class="{'woman': data.Ac_Sex==2,'disable':!data.Ac_IsUse}">
-                <icon v-if="data.Ac_Sex==2" title="女性">&#xe844</icon>
-                <icon v-if="data.Ac_Sex==1" title="男性">&#xe645</icon>
-                <icon v-if="data.Ac_Sex==0" title="性别未知">&#xa043</icon>
+            <span v-if="state==1"  :class="{'woman': data.Ac_Gender==2,'disable':!data.Ac_IsUse}">
+                <icon v-if="data.Ac_Gender==2" title="女性">&#xe844</icon>
+                <icon v-if="data.Ac_Gender==1" title="男性">&#xe645</icon>
+                <icon v-if="data.Ac_Gender==0" title="性别未知">&#xa043</icon>
                 {{data.Ac_Name}}
                 <span v-if="!data.Ac_IsUse">（已经禁用）</span>
             </span>

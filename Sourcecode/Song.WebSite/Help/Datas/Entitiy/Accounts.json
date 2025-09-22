@@ -44,7 +44,7 @@
     "intro": "记录的是出生年份",
     "relation": ""
   },
-  "Ac_Sex": {
+  "Ac_Gender": {
     "mark": "性别",
     "intro": "1为男，2为女，0为未知，9为未明确",
     "relation": ""

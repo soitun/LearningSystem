@@ -29,7 +29,7 @@
                             <td title="姓名" width="120px"></td>
                             <td class="info" width="120px" v-html="acc.Ac_Name"> </td>
                             <td title="性别" width="120px"></td>
-                            <td class="info" v-html="acc.Ac_Sex== 0 ? '' : (acc.Ac_Sex== 1 ? '男' : '女')">
+                            <td class="info" v-html="acc.Ac_Gender== 0 ? '' : (acc.Ac_Gender== 1 ? '男' : '女')">
                             </td>
                             <td rowspan="5" valign="middle" class="photo">
                                 <img :src='acc.Ac_Photo' onerror="this.style.setProperty('display','none')" />

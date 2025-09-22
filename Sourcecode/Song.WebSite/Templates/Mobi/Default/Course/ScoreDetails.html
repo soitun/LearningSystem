@@ -23,7 +23,7 @@
                     <avatar :account="account" circle="true" size="60"></avatar>
                     <section class="account">
                         <span>
-                            <icon :woman="account.Ac_Sex==2" :man="account.Ac_Sex==1" hide>
+                            <icon :woman="account.Ac_Gender==2" :man="account.Ac_Gender==1" hide>
                                 <span v-html="account.Ac_Name"></span>
                                 <span v-else class="noname">(没有名字)</span>
                             </icon>

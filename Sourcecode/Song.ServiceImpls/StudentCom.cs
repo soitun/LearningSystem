@@ -548,7 +548,7 @@ namespace Song.ServiceImpls
             if (!string.IsNullOrWhiteSpace(name)) wc.And(Accounts._.Ac_Name.Contains(name));
             if (!string.IsNullOrWhiteSpace(acc)) wc.And(Accounts._.Ac_AccName.Contains(acc));
             if (!string.IsNullOrWhiteSpace(phone)) wc.And(Accounts._.Ac_MobiTel1.Contains(phone) || Accounts._.Ac_MobiTel2.Contains(phone));
-            if (gender >= 0) wc.And(Accounts._.Ac_Sex == gender);
+            if (gender >= 0) wc.And(Accounts._.Ac_Gender == gender);
             if (!string.IsNullOrWhiteSpace(couname)) wc.And(Course._.Cou_Name.Contains(couname));
             //查询方法
             QuerySection<LearningCard> query = Gateway.Default.From<LearningCard>()

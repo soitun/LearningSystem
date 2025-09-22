@@ -1468,9 +1468,9 @@ namespace Song.ViewData.Methods
                 string column = dr[mathing[i]["column"].ToString()].ToString();
                 //数据库字段的名称
                 string field = mathing[i]["field"].ToString();
-                if (field == "Ac_Sex")
+                if (field == "Ac_Gender")
                 {
-                    obj.Ac_Sex = (short)(column == "男" ? 1 : (column == "女" ? 2 : 0));
+                    obj.Ac_Gender = (short)(column == "男" ? 1 : (column == "女" ? 2 : 0));
                     continue;
                 }
                 PropertyInfo[] properties = obj.GetType().GetProperties();

@@ -10,6 +10,8 @@ namespace Song.Entities {
     		
     		protected Int32 _Tr_ID;
     		
+    		protected Int32 _Ac_Gender;
+    		
     		protected Int32 _Ac_ID;
     		
     		protected String _Ac_Name;
@@ -25,8 +27,6 @@ namespace Song.Entities {
     		protected String _Sbj_Name;
     		
     		protected String _St_IDCardNumber;
-    		
-    		protected Int32 _St_Sex;
     		
     		protected Int64 _Sts_ID;
     		
@@ -65,6 +65,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Tr_ID, _Tr_ID, value);
     				this._Tr_ID = value;
+    			}
+    		}
+    		
+    		public Int32 Ac_Gender {
+    			get {
+    				return this._Ac_Gender;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Ac_Gender, _Ac_Gender, value);
+    				this._Ac_Gender = value;
     			}
     		}
     		
@@ -145,16 +155,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.St_IDCardNumber, _St_IDCardNumber, value);
     				this._St_IDCardNumber = value;
-    			}
-    		}
-    		
-    		public Int32 St_Sex {
-    			get {
-    				return this._St_Sex;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.St_Sex, _St_Sex, value);
-    				this._St_Sex = value;
     			}
     		}
     		
@@ -336,6 +336,7 @@ namespace Song.Entities {
     		protected override WeiSha.Data.Field[] GetFields() {
     			return new WeiSha.Data.Field[] {
     					_.Tr_ID,
+    					_.Ac_Gender,
     					_.Ac_ID,
     					_.Ac_Name,
     					_.Cou_ID,
@@ -344,7 +345,6 @@ namespace Song.Entities {
     					_.Sbj_ID,
     					_.Sbj_Name,
     					_.St_IDCardNumber,
-    					_.St_Sex,
     					_.Sts_ID,
     					_.Sts_Name,
     					_.Tp_Id,
@@ -368,6 +368,7 @@ namespace Song.Entities {
     		protected override object[] GetValues() {
     			return new object[] {
     					this._Tr_ID,
+    					this._Ac_Gender,
     					this._Ac_ID,
     					this._Ac_Name,
     					this._Cou_ID,
@@ -376,7 +377,6 @@ namespace Song.Entities {
     					this._Sbj_ID,
     					this._Sbj_Name,
     					this._St_IDCardNumber,
-    					this._St_Sex,
     					this._Sts_ID,
     					this._Sts_Name,
     					this._Tp_Id,
@@ -401,6 +401,9 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Tr_ID))) {
     				this._Tr_ID = reader.GetInt32(_.Tr_ID);
     			}
+    			if ((false == reader.IsDBNull(_.Ac_Gender))) {
+    				this._Ac_Gender = reader.GetInt32(_.Ac_Gender);
+    			}
     			if ((false == reader.IsDBNull(_.Ac_ID))) {
     				this._Ac_ID = reader.GetInt32(_.Ac_ID);
     			}
@@ -424,9 +427,6 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.St_IDCardNumber))) {
     				this._St_IDCardNumber = reader.GetString(_.St_IDCardNumber);
-    			}
-    			if ((false == reader.IsDBNull(_.St_Sex))) {
-    				this._St_Sex = reader.GetInt32(_.St_Sex);
     			}
     			if ((false == reader.IsDBNull(_.Sts_ID))) {
     				this._Sts_ID = reader.GetInt64(_.Sts_ID);
@@ -505,6 +505,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Tr_ID = new WeiSha.Data.Field<TestResults>("Tr_ID");
     			
     			/// <summary>
+    			/// 字段名：Ac_Gender - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Ac_Gender = new WeiSha.Data.Field<TestResults>("Ac_Gender");
+    			
+    			/// <summary>
     			/// 字段名：Ac_ID - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Ac_ID = new WeiSha.Data.Field<TestResults>("Ac_ID");
@@ -543,11 +548,6 @@ namespace Song.Entities {
     			/// 字段名：St_IDCardNumber - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field St_IDCardNumber = new WeiSha.Data.Field<TestResults>("St_IDCardNumber");
-    			
-    			/// <summary>
-    			/// 字段名：St_Sex - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field St_Sex = new WeiSha.Data.Field<TestResults>("St_Sex");
     			
     			/// <summary>
     			/// 字段名：Sts_ID - 数据类型：Int64

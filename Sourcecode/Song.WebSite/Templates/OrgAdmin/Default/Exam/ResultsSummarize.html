@@ -44,7 +44,7 @@
                 </el-table-column>
                 <el-table-column label="姓名" width="150" class-name="left">
                     <template slot-scope="scope">
-                        <icon :woman="scope.row.Ac_Sex=='2'" :man="scope.row.Ac_Sex!='2'"
+                        <icon :woman="scope.row.Ac_Gender=='2'" :man="scope.row.Ac_Gender!='2'"
                             v-html='showsearch(scope.row.Ac_Name,form.name)' class="link large"
                             @click="getaccount(scope.row)">
                         </icon>
@@ -89,7 +89,7 @@
                 <el-col :span="24" class="accountInfo">
                     <avatar :account="account" circle="true" size="80"></avatar>
                     <div>
-                        <icon :woman="account.Ac_Sex=='2'" :man="account.Ac_Sex!='2'">
+                        <icon :woman="account.Ac_Gender=='2'" :man="account.Ac_Gender!='2'">
                             <b>{{account.Ac_Name}}</b>
                         </icon>
                         <span title="账号">({{account.Ac_AccName}})</span>

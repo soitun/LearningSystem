@@ -40,7 +40,7 @@ $ready(function () {
                 handler: function (nv, ov) {
                     this.loading = false;
                     if ($api.isnull(nv)) return;
-                    this.account.Ac_Sex = String(nv.Ac_Sex);
+                    this.account.Ac_Gender = String(nv.Ac_Gender);
                     var th = this;
                     $api.cache('Share/FriendAll:3', { 'acid': th.account.Ac_ID }).then(function (req) {
                         if (req.data.success) {

@@ -247,7 +247,7 @@ namespace Song.ViewData.Methods
                     th.Th_IsShow = true;
                     acc.Ac_IsUse = th.Th_IsUse = true;
                               
-                    acc.Ac_Sex = th.Th_Sex;        //性别
+                    acc.Ac_Gender = th.Th_Gender;        //性别
                     acc.Ac_Birthday = th.Th_Birthday;
                     acc.Ac_Qq = th.Th_Qq;
                     acc.Ac_Email = th.Th_Email;
@@ -747,9 +747,9 @@ namespace Song.ViewData.Methods
                 string column = dr[mathing[i]["column"].ToString()].ToString();
                 //数据库字段的名称
                 string field = mathing[i]["field"].ToString();
-                if (field == "Th_Sex")
+                if (field == "Th_Gender")
                 {
-                    teacher.Th_Sex = (short)(column == "男" ? 1 : 2);
+                    teacher.Th_Gender = (short)(column == "男" ? 1 : 2);
                     continue;
                 }
                 PropertyInfo[] properties = teacher.GetType().GetProperties();
@@ -778,7 +778,7 @@ namespace Song.ViewData.Methods
                 acc.Ac_AccName = teacher.Th_AccName;  //账号手机号
                 acc.Ac_Pw = new WeiSha.Core.Param.Method.ConvertToAnyValue(teacher.Th_Pw).MD5;    //密码       
                 acc.Ac_MobiTel2 = teacher.Th_PhoneMobi;
-                acc.Ac_Sex = teacher.Th_Sex;        //性别
+                acc.Ac_Gender = teacher.Th_Gender;        //性别
                 acc.Ac_Birthday = teacher.Th_Birthday;
                 acc.Ac_Qq = teacher.Th_Qq;
                 acc.Ac_Email = teacher.Th_Email;

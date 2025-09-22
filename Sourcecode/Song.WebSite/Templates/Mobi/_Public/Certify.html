@@ -21,7 +21,7 @@
         <div class="acc_photo" v-if="!!account.Ac_Photo && account.Ac_Photo!=''"
           :style="'background-image: url('+account.Ac_Photo+');'"></div>
         <template v-else>
-          <div class="acc_photo woman" v-if="account.Ac_Sex==2"></div>
+          <div class="acc_photo woman" v-if="account.Ac_Gender==2"></div>
           <div class="acc_photo man" v-else></div>
         </template>
         <div class="accInfo">
@@ -41,7 +41,7 @@
       <card v-if="isexist">
         <card-content>
           <div title="学号" v-if="account.Ac_CodeNumber!=''" v-html="account.Ac_CodeNumber"></div>
-          <div title="性别" v-html="account.Ac_Sex== 0 ? '' : (account.Ac_Sex== 1 ? '男' : '女')"> </div>
+          <div title="性别" v-html="account.Ac_Gender== 0 ? '' : (account.Ac_Gender== 1 ? '男' : '女')"> </div>
           <div title="年龄" v-html="account.Ac_Age > 200 || account.Ac_Age<=0 ? '' : account.Ac_Age"> </div>
           <div title="身份证" v-if="account.Ac_IDCardNumber!=''" v-html="account.Ac_IDCardNumber"></div>
         </card-content>

@@ -28,7 +28,7 @@
                             <el-option v-for="(item,i) in teachers" :key="item.Th_ID" :label="item.Th_Name"
                                 :value="item.Th_ID">
                                 <span>{{i+1}} .</span>
-                                <icon :woman="item.Th_Sex==2" :man="item.Th_Sex==1">{{ item.Th_Name }}</icon>
+                                <icon :woman="item.Th_Gender==2" :man="item.Th_Gender==1">{{ item.Th_Name }}</icon>
                             </el-option>
                         </el-select>
                         <help>可输入名称检索</help>

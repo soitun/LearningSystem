@@ -170,7 +170,7 @@ namespace Song.DataQuery.SQLite
             //分页查询的脚本
             string sqljquery = @"
                 select a.""Ac_ID"",sc.count as Ac_CurrCourse,""Ac_AccName"",""Ac_Name"",""Ac_IDCardNumber"",""Ac_Age"",""Ac_Photo"",
-                ""Ac_Money"",""Ac_Point"",""Ac_Coupon"",""Org_ID"",""Sts_ID"",""Sts_Name"",""Ac_Sex"",""Ac_MobiTel1"",""Ac_MobiTel2""
+                ""Ac_Money"",""Ac_Point"",""Ac_Coupon"",""Org_ID"",""Sts_ID"",""Sts_Name"",""Ac_Gender"",""Ac_MobiTel1"",""Ac_MobiTel2""
                         from
                        (
                         select * from
@@ -213,7 +213,7 @@ namespace Song.DataQuery.SQLite
             int size, int index, out int countSum)
         {
             string sql = @"
-	                    select acc.""Ac_ID"",""Ac_Name"",""Ac_AccName"",""Ac_Sex"",""Ac_Photo"",""Ac_IDCardNumber"",""Ac_MobiTel1"",""Ac_LastTime"",""Sts_ID"",""Sts_Name"",""Ac_Money""
+	                    select acc.""Ac_ID"",""Ac_Name"",""Ac_AccName"",""Ac_Gender"",""Ac_Photo"",""Ac_IDCardNumber"",""Ac_MobiTel1"",""Ac_LastTime"",""Sts_ID"",""Sts_Name"",""Ac_Money""
 		                    ,logincount,logintime
 		                    ,coursecount,rechargecount,lastrecharge,laststudy,lastexrcise,lasttest,lastexam
                             from ""Accounts"" as acc

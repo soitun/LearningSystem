@@ -104,7 +104,7 @@ Vue.component('aside_menu', {
                 </div>
                 <div class="account_info" v-if="islogin" remark="已经登录">
                     <div class="acc_photo"  @click="goself" v-if="!!account.Ac_Photo && account.Ac_Photo!=''" :style="'background-image: url('+account.Ac_Photo+');'"></div>                  
-                    <div v-else  @click="goself" :class="{'acc_photo':true,'woman':account.Ac_Sex==2,'man':account.Ac_Sex!=2}"></div>
+                    <div v-else  @click="goself" :class="{'acc_photo':true,'woman':account.Ac_Gender==2,'man':account.Ac_Gender!=2}"></div>
                     <div class="accInfo">
                     <div class="acc-name" @click="goself"> 
                         <span v-if="account.Ac_Name!=''">{{account.Ac_Name}}</span>

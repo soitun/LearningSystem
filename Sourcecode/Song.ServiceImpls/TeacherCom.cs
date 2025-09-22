@@ -109,7 +109,7 @@ namespace Song.ServiceImpls
                 {
                     IDCardNumber card = IDCardNumber.Get(entity.Th_IDCardNumber);
                     entity.Th_Age = card.Birthday.Year;
-                    entity.Th_Sex = card.Gender;
+                    entity.Th_Gender = card.Gender;
                     entity.Th_Birthday = card.Birthday;
                     entity.Th_Native = card.Province + "," + card.City + "," + card.District;
                     entity.Th_IDCardNumber = card.CardNumber;
@@ -136,8 +136,8 @@ namespace Song.ServiceImpls
                     tran.Update<Course>(new Field[] { Course._.Th_Name }, new object[] { entity.Th_Name }, Course._.Th_ID == entity.Th_ID);
                     //同步教师评价中的名称
                     tran.Update<TeacherComment>(new Field[] { TeacherComment._.Th_Name }, new object[] { entity.Th_Name }, TeacherComment._.Th_ID == entity.Th_ID);
-                    tran.Update<Accounts>(new Field[] { Accounts._.Ac_Sex, Accounts._.Ac_Birthday, Accounts._.Ac_IDCardNumber, Accounts._.Ac_Nation, Accounts._.Ac_Native },
-                        new object[] { entity.Th_Sex, entity.Th_Birthday, entity.Th_IDCardNumber, entity.Th_Nation, entity.Th_Native }, Accounts._.Ac_ID == entity.Ac_ID);
+                    tran.Update<Accounts>(new Field[] { Accounts._.Ac_Gender, Accounts._.Ac_Birthday, Accounts._.Ac_IDCardNumber, Accounts._.Ac_Nation, Accounts._.Ac_Native },
+                        new object[] { entity.Th_Gender, entity.Th_Birthday, entity.Th_IDCardNumber, entity.Th_Nation, entity.Th_Native }, Accounts._.Ac_ID == entity.Ac_ID);
                     tran.Commit();
                 }
                 catch (Exception ex)
@@ -381,7 +381,7 @@ namespace Song.ServiceImpls
             if (thsid > 0) wc.And(Teacher._.Ths_ID == thsid);
             if (isUse != null) wc.And(Teacher._.Th_IsUse == (bool)isUse);
             if (isShow != null) wc.And(Teacher._.Th_IsShow == (bool)isShow);
-            if (gender >=0) wc.And(Teacher._.Th_Sex == gender);
+            if (gender >=0) wc.And(Teacher._.Th_Gender == gender);
             if (!string.IsNullOrWhiteSpace(acc)) wc.And(Teacher._.Th_AccName.Contains(acc));
             if (!string.IsNullOrWhiteSpace(searName)) wc.And(Teacher._.Th_Name.Contains(searName));
             if (!string.IsNullOrWhiteSpace(idcard)) wc.And(Teacher._.Th_IDCardNumber.Contains(idcard));

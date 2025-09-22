@@ -24,6 +24,8 @@ namespace Song.Entities {
     		
     		protected String _Acc_EmpCode;
     		
+    		protected Int32 _Acc_Gender;
+    		
     		protected String _Acc_IDCardNumber;
     		
     		protected Boolean _Acc_IsAutoOut;
@@ -57,8 +59,6 @@ namespace Song.Entities {
     		protected String _Acc_Qus;
     		
     		protected DateTime _Acc_RegTime;
-    		
-    		protected Int32 _Acc_Sex;
     		
     		protected String _Acc_Signature;
     		
@@ -161,6 +161,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Acc_EmpCode, _Acc_EmpCode, value);
     				this._Acc_EmpCode = value;
+    			}
+    		}
+    		
+    		public Int32 Acc_Gender {
+    			get {
+    				return this._Acc_Gender;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Acc_Gender, _Acc_Gender, value);
+    				this._Acc_Gender = value;
     			}
     		}
     		
@@ -334,16 +344,6 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32 Acc_Sex {
-    			get {
-    				return this._Acc_Sex;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Acc_Sex, _Acc_Sex, value);
-    				this._Acc_Sex = value;
-    			}
-    		}
-    		
     		public String Acc_Signature {
     			get {
     				return this._Acc_Signature;
@@ -499,6 +499,7 @@ namespace Song.Entities {
     					_.Acc_CheckUID,
     					_.Acc_Email,
     					_.Acc_EmpCode,
+    					_.Acc_Gender,
     					_.Acc_IDCardNumber,
     					_.Acc_IsAutoOut,
     					_.Acc_IsOpenMobile,
@@ -516,7 +517,6 @@ namespace Song.Entities {
     					_.Acc_QQ,
     					_.Acc_Qus,
     					_.Acc_RegTime,
-    					_.Acc_Sex,
     					_.Acc_Signature,
     					_.Acc_Tel,
     					_.Acc_Weixin,
@@ -544,6 +544,7 @@ namespace Song.Entities {
     					this._Acc_CheckUID,
     					this._Acc_Email,
     					this._Acc_EmpCode,
+    					this._Acc_Gender,
     					this._Acc_IDCardNumber,
     					this._Acc_IsAutoOut,
     					this._Acc_IsOpenMobile,
@@ -561,7 +562,6 @@ namespace Song.Entities {
     					this._Acc_QQ,
     					this._Acc_Qus,
     					this._Acc_RegTime,
-    					this._Acc_Sex,
     					this._Acc_Signature,
     					this._Acc_Tel,
     					this._Acc_Weixin,
@@ -603,6 +603,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Acc_EmpCode))) {
     				this._Acc_EmpCode = reader.GetString(_.Acc_EmpCode);
+    			}
+    			if ((false == reader.IsDBNull(_.Acc_Gender))) {
+    				this._Acc_Gender = reader.GetInt32(_.Acc_Gender);
     			}
     			if ((false == reader.IsDBNull(_.Acc_IDCardNumber))) {
     				this._Acc_IDCardNumber = reader.GetString(_.Acc_IDCardNumber);
@@ -654,9 +657,6 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Acc_RegTime))) {
     				this._Acc_RegTime = reader.GetDateTime(_.Acc_RegTime);
-    			}
-    			if ((false == reader.IsDBNull(_.Acc_Sex))) {
-    				this._Acc_Sex = reader.GetInt32(_.Acc_Sex);
     			}
     			if ((false == reader.IsDBNull(_.Acc_Signature))) {
     				this._Acc_Signature = reader.GetString(_.Acc_Signature);
@@ -761,6 +761,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Acc_EmpCode = new WeiSha.Data.Field<EmpAccount>("Acc_EmpCode");
     			
     			/// <summary>
+    			/// 字段名：Acc_Gender - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Acc_Gender = new WeiSha.Data.Field<EmpAccount>("Acc_Gender");
+    			
+    			/// <summary>
     			/// 字段名：Acc_IDCardNumber - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Acc_IDCardNumber = new WeiSha.Data.Field<EmpAccount>("Acc_IDCardNumber");
@@ -844,11 +849,6 @@ namespace Song.Entities {
     			/// 字段名：Acc_RegTime - 数据类型：DateTime
     			/// </summary>
     			public static WeiSha.Data.Field Acc_RegTime = new WeiSha.Data.Field<EmpAccount>("Acc_RegTime");
-    			
-    			/// <summary>
-    			/// 字段名：Acc_Sex - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field Acc_Sex = new WeiSha.Data.Field<EmpAccount>("Acc_Sex");
     			
     			/// <summary>
     			/// 字段名：Acc_Signature - 数据类型：String

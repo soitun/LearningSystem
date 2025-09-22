@@ -1053,7 +1053,7 @@ namespace Song.ServiceImpls
                     {
                         dr["账号"] = student.Ac_AccName;
                     }
-                    dr["性别"] = er.Ac_Sex == 0 ? "未知" : (er.Ac_Sex == 1 ? "男" : "女");
+                    dr["性别"] = er.Ac_Gender == 0 ? "未知" : (er.Ac_Gender == 1 ? "男" : "女");
                     dr["身份证"] = er.Ac_IDCardNumber;
                     dt.Rows.Add(dr);
                 }
@@ -1175,7 +1175,7 @@ namespace Song.ServiceImpls
                 dr["ID"] = ac.Ac_ID;
                 dr["姓名"] = ac.Ac_Name;
                 dr["账号"] = ac.Ac_AccName;
-                dr["性别"] = ac.Ac_Sex == 0 ? "未知" : (ac.Ac_Sex == 1 ? "男" : "女");
+                dr["性别"] = ac.Ac_Gender == 0 ? "未知" : (ac.Ac_Gender == 1 ? "男" : "女");
                 dr["身份证"] = ac.Ac_IDCardNumber;
                 dt.Rows.Add(dr);
             }
@@ -1477,7 +1477,7 @@ namespace Song.ServiceImpls
         {
             //下述Sql语句，兼容Sqlserver,postgresql,sqlite
             //当前考试主题下的所有参考学员
-            string sql = @"select ""Ac_ID"",max(""Ac_Name"") as Ac_Name,MAX(""Ac_Sex"") as ac_sex,MAX(""Ac_IDCardNumber"") as Ac_IDCardNumber,
+            string sql = @"select ""Ac_ID"",max(""Ac_Name"") as Ac_Name,MAX(""Ac_Gender"") as ac_sex,MAX(""Ac_IDCardNumber"") as Ac_IDCardNumber,
                             MAX(""Exr_OverTime"") as Exr_OverTime, MAX(""Sts_ID"") as Sts_ID
             from ""ExamResults"" where {where} and ({examid}) group by ""Ac_ID""";
             //考试id的判断条件            
@@ -1720,7 +1720,7 @@ namespace Song.ServiceImpls
                 exr.Ac_ID = acc.Ac_ID;
                 exr.Ac_IDCardNumber = acc.Ac_IDCardNumber;  //身份证号
                 exr.Ac_Name = acc.Ac_Name;
-                exr.Ac_Sex = acc.Ac_Sex;
+                exr.Ac_Gender = acc.Ac_Gender;
                 exr.Sts_ID = acc.Sts_ID;    //学员组id
                 //考试的信息
                 exr.Exam_ID = exam.Exam_ID;
