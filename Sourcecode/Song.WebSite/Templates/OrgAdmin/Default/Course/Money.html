@@ -57,7 +57,7 @@
         <template v-if="prices.length>0">
             <el-table ref="prices" border resizable :data="prices" :span-method="arraySpanMethod" :show-header="true"
                 :row-class-name="tableRowClassName" v-loading="loading" element-loading-text="拼命加载中" :stripe="true"
-                tooltip-effect="dark" style="width: 850px" index-key="CP_Tax" row-key="CP_ID" draggable>
+                tooltip-effect="dark" style="width: 850px" index-key="CP_Order" row-key="CP_ID" draggable>
                 <el-table-column type="index" label="#" width="50" align="center">
                     <template slot-scope="scope">
                         <span>{{ scope.$index + 1}}</span>

@@ -448,9 +448,9 @@ namespace Song.ServiceImpls
         public void TitileAdd(EmpTitle entity)
         {
             //添加对象，并设置排序号
-            object obj = Gateway.Default.Max<EmpTitle>(EmpTitle._.Title_Tax, EmpTitle._.Title_Tax > -1);
+            object obj = Gateway.Default.Max<EmpTitle>(EmpTitle._.Title_Order, EmpTitle._.Title_Order > -1);
             int tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
-            entity.Title_Tax = tax + 1;
+            entity.Title_Order = tax + 1;
             Organization org = Gateway.Default.From<Organization>().Where(Organization._.Org_ID == entity.Org_ID).ToFirst<Organization>();
             if (org != null) entity.Org_Name = org.Org_Name; 
             Gateway.Default.Save<EmpTitle>(entity);
@@ -507,14 +507,14 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public EmpTitle[] TitleAll(int orgid)
         {
-            return Gateway.Default.From<EmpTitle>().Where(EmpTitle._.Org_ID == orgid).OrderBy(EmpTitle._.Title_Tax.Asc).ToArray<EmpTitle>();
+            return Gateway.Default.From<EmpTitle>().Where(EmpTitle._.Org_ID == orgid).OrderBy(EmpTitle._.Title_Order.Asc).ToArray<EmpTitle>();
         }
         public EmpTitle[] TitleAll(int orgid,bool? isUse)
         {
             if (isUse == null) return this.TitleAll(orgid);
             return Gateway.Default.From<EmpTitle>()
                 .Where(EmpTitle._.Org_ID == orgid && EmpTitle._.Title_IsUse == (bool)isUse)
-                .OrderBy(EmpTitle._.Title_Tax.Asc).ToArray<EmpTitle>();
+                .OrderBy(EmpTitle._.Title_Order.Asc).ToArray<EmpTitle>();
         }
         public EmpTitle[] TitlePager(int orgid, bool? isUse, string name, int size, int index, out int countSum)
         {
@@ -523,7 +523,7 @@ namespace Song.ServiceImpls
             if (isUse != null) wc.And(EmpTitle._.Title_IsUse == (bool)isUse);
             if (!string.IsNullOrWhiteSpace(name)) wc.And(EmpTitle._.Title_Name.Contains(name));
             countSum = Gateway.Default.Count<EmpTitle>(wc);
-            return Gateway.Default.From<EmpTitle>().Where(wc).OrderBy(EmpTitle._.Title_Tax.Asc).ToArray<EmpTitle>(size, (index - 1) * size);
+            return Gateway.Default.From<EmpTitle>().Where(wc).OrderBy(EmpTitle._.Title_Order.Asc).ToArray<EmpTitle>(size, (index - 1) * size);
         }
         /// <summary>
         /// 获取当前职务的所有员工
@@ -567,8 +567,8 @@ namespace Song.ServiceImpls
                     foreach (EmpTitle item in entities)
                     {
                         tran.Update<EmpTitle>(
-                            new Field[] { EmpTitle._.Title_Tax },
-                            new object[] { item.Title_Tax },
+                            new Field[] { EmpTitle._.Title_Order },
+                            new object[] { item.Title_Order },
                             EmpTitle._.Title_Id == item.Title_Id);
                     }
                     tran.Commit();

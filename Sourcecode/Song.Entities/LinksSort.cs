@@ -22,9 +22,9 @@ namespace Song.Entities {
     		
     		protected String _Ls_Name;
     		
-    		protected Int32? _Ls_PatId;
+    		protected Int32? _Ls_Order;
     		
-    		protected Int32? _Ls_Tax;
+    		protected Int32? _Ls_PatId;
     		
     		protected String _Ls_Tootip;
     		
@@ -102,6 +102,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32? Ls_Order {
+    			get {
+    				return this._Ls_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Ls_Order, _Ls_Order, value);
+    				this._Ls_Order = value;
+    			}
+    		}
+    		
     		public Int32? Ls_PatId {
     			get {
     				return this._Ls_PatId;
@@ -109,16 +119,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Ls_PatId, _Ls_PatId, value);
     				this._Ls_PatId = value;
-    			}
-    		}
-    		
-    		public Int32? Ls_Tax {
-    			get {
-    				return this._Ls_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Ls_Tax, _Ls_Tax, value);
-    				this._Ls_Tax = value;
     			}
     		}
     		
@@ -186,8 +186,8 @@ namespace Song.Entities {
     					_.Ls_IsUse,
     					_.Ls_Logo,
     					_.Ls_Name,
+    					_.Ls_Order,
     					_.Ls_PatId,
-    					_.Ls_Tax,
     					_.Ls_Tootip,
     					_.Org_ID,
     					_.Org_Name};
@@ -205,8 +205,8 @@ namespace Song.Entities {
     					this._Ls_IsUse,
     					this._Ls_Logo,
     					this._Ls_Name,
+    					this._Ls_Order,
     					this._Ls_PatId,
-    					this._Ls_Tax,
     					this._Ls_Tootip,
     					this._Org_ID,
     					this._Org_Name};
@@ -237,11 +237,11 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Ls_Name))) {
     				this._Ls_Name = reader.GetString(_.Ls_Name);
     			}
+    			if ((false == reader.IsDBNull(_.Ls_Order))) {
+    				this._Ls_Order = reader.GetInt32(_.Ls_Order);
+    			}
     			if ((false == reader.IsDBNull(_.Ls_PatId))) {
     				this._Ls_PatId = reader.GetInt32(_.Ls_PatId);
-    			}
-    			if ((false == reader.IsDBNull(_.Ls_Tax))) {
-    				this._Ls_Tax = reader.GetInt32(_.Ls_Tax);
     			}
     			if ((false == reader.IsDBNull(_.Ls_Tootip))) {
     				this._Ls_Tootip = reader.GetString(_.Ls_Tootip);
@@ -314,14 +314,14 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Ls_Name = new WeiSha.Data.Field<LinksSort>("Ls_Name");
     			
     			/// <summary>
+    			/// 字段名：Ls_Order - 数据类型：Int32(可空)
+    			/// </summary>
+    			public static WeiSha.Data.Field Ls_Order = new WeiSha.Data.Field<LinksSort>("Ls_Order");
+    			
+    			/// <summary>
     			/// 字段名：Ls_PatId - 数据类型：Int32(可空)
     			/// </summary>
     			public static WeiSha.Data.Field Ls_PatId = new WeiSha.Data.Field<LinksSort>("Ls_PatId");
-    			
-    			/// <summary>
-    			/// 字段名：Ls_Tax - 数据类型：Int32(可空)
-    			/// </summary>
-    			public static WeiSha.Data.Field Ls_Tax = new WeiSha.Data.Field<LinksSort>("Ls_Tax");
     			
     			/// <summary>
     			/// 字段名：Ls_Tootip - 数据类型：String

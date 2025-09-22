@@ -1152,10 +1152,10 @@ namespace Song.ServiceImpls
         public int TypeAdd(QuesTypes entity)
         {
             //如果没有排序号，则自动计算
-            if (entity.Qt_Tax < 1)
+            if (entity.Qt_Order < 1)
             {
-                object obj = Gateway.Default.Max<QuesTypes>(QuesTypes._.Qt_Tax, QuesTypes._.Cou_ID == entity.Cou_ID);
-                entity.Qt_Tax = obj!=null ? Convert.ToInt32(obj) + 1 : 0;
+                object obj = Gateway.Default.Max<QuesTypes>(QuesTypes._.Qt_Order, QuesTypes._.Cou_ID == entity.Cou_ID);
+                entity.Qt_Order = obj!=null ? Convert.ToInt32(obj) + 1 : 0;
             }
             Gateway.Default.Save<QuesTypes>(entity);
             return entity.Qt_ID;
@@ -1214,7 +1214,7 @@ namespace Song.ServiceImpls
             WhereClip wc = new WhereClip();
             if (couid > 0) wc.And(QuesTypes._.Cou_ID == couid);
             if (isUse != null) wc.And(QuesTypes._.Qt_IsUse == (bool)isUse);
-            return Gateway.Default.From<QuesTypes>().Where(wc).OrderBy(QuesTypes._.Qt_Tax.Asc).ToArray<QuesTypes>(count);
+            return Gateway.Default.From<QuesTypes>().Where(wc).OrderBy(QuesTypes._.Qt_Order.Asc).ToArray<QuesTypes>(count);
         }
         /// <summary>
         /// 将当前项目向上移动；仅在当前对象的同层移动，即同一父节点下的对象这前移动；
@@ -1225,15 +1225,15 @@ namespace Song.ServiceImpls
         {
             //当前对象
             QuesTypes current = Gateway.Default.From<QuesTypes>().Where(QuesTypes._.Qt_ID == id).ToFirst<QuesTypes>();
-            int tax = (int)current.Qt_Tax;
+            int tax = (int)current.Qt_Order;
             //上一个对象，即兄长对象；兄长不存则直接返回false;
             QuesTypes prev = Gateway.Default.From<QuesTypes>()
-                .Where(QuesTypes._.Qt_Tax < tax && QuesTypes._.Cou_ID == current.Cou_ID)
-                .OrderBy(QuesTypes._.Qt_Tax.Desc).ToFirst<QuesTypes>();
+                .Where(QuesTypes._.Qt_Order < tax && QuesTypes._.Cou_ID == current.Cou_ID)
+                .OrderBy(QuesTypes._.Qt_Order.Desc).ToFirst<QuesTypes>();
             if (prev == null) return false;
             //交换排序号
-            current.Qt_Tax = prev.Qt_Tax;
-            prev.Qt_Tax = tax;
+            current.Qt_Order = prev.Qt_Order;
+            prev.Qt_Order = tax;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
@@ -1259,15 +1259,15 @@ namespace Song.ServiceImpls
         {
             //当前对象
             QuesTypes current = Gateway.Default.From<QuesTypes>().Where(QuesTypes._.Qt_ID == id).ToFirst<QuesTypes>();
-            int tax = (int)current.Qt_Tax;
+            int tax = (int)current.Qt_Order;
             //下一个对象，即弟弟对象；弟弟不存则直接返回false;
             QuesTypes next = Gateway.Default.From<QuesTypes>()
-                .Where(QuesTypes._.Qt_Tax > tax && QuesTypes._.Cou_ID == current.Cou_ID)
-                .OrderBy(QuesTypes._.Qt_Tax.Asc).ToFirst<QuesTypes>();
+                .Where(QuesTypes._.Qt_Order > tax && QuesTypes._.Cou_ID == current.Cou_ID)
+                .OrderBy(QuesTypes._.Qt_Order.Asc).ToFirst<QuesTypes>();
             if (next == null) return false;
             //交换排序号
-            current.Qt_Tax = next.Qt_Tax;
-            next.Qt_Tax = tax;
+            current.Qt_Order = next.Qt_Order;
+            next.Qt_Order = tax;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try

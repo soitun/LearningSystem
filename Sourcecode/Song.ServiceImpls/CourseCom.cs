@@ -1774,8 +1774,8 @@ namespace Song.ServiceImpls
             if (cou == null) throw new Exception("价格设置项所属的课程不存在");
             entity.Cou_ID = cou.Cou_ID;
 
-            object obj = Gateway.Default.Max<CoursePrice>(CoursePrice._.CP_Tax, CoursePrice._.Cou_UID == entity.Cou_UID);
-            entity.CP_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0; 
+            object obj = Gateway.Default.Max<CoursePrice>(CoursePrice._.CP_Order, CoursePrice._.Cou_UID == entity.Cou_UID);
+            entity.CP_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0; 
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
             if (org != null) entity.Org_ID = org.Org_ID;
             //校验是否已经存在,同一个时间单位，只准设置一个
@@ -1897,7 +1897,7 @@ namespace Song.ServiceImpls
             {                
                 wc &= CoursePrice._.Cou_ID == couid;
             }
-            return Gateway.Default.From<CoursePrice>().Where(wc).OrderBy(CoursePrice._.CP_Tax.Asc).ToArray<CoursePrice>(count);
+            return Gateway.Default.From<CoursePrice>().Where(wc).OrderBy(CoursePrice._.CP_Order.Asc).ToArray<CoursePrice>(count);
         }
         public bool PriceUpdateTaxis(Song.Entities.CoursePrice[] items)
         {
@@ -1911,8 +1911,8 @@ namespace Song.ServiceImpls
                     {
                         uid = item.Cou_UID;
                         tran.Update<CoursePrice>(
-                            new Field[] { CoursePrice._.CP_Tax },
-                            new object[] { item.CP_Tax },
+                            new Field[] { CoursePrice._.CP_Order },
+                            new object[] { item.CP_Order },
                             CoursePrice._.CP_ID == item.CP_ID);
                     }
                     //第一条记录，同步到课程信息中

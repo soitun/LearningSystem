@@ -892,8 +892,7 @@
         for (let t in arr) arr[t] = '/Utilities/Scripts/' + arr[t] + '.js';
         //附加js文件
         if (jsfile != null) {
-            if (jsfile instanceof Array)
-                arr = arr.concat(jsfile);
+            if (jsfile instanceof Array) arr = arr.concat(jsfile);
             else arr.push(jsfile);
         }
         webdom.load.js(arr, func);
@@ -933,7 +932,7 @@
         //禁用鼠标右键菜单
         if (webdom('head[disabledmenu]').length > 0) {
             document.addEventListener('contextmenu', e => e.preventDefault());
-            webdom('body').attr('oncontextmenu','return false');
+            webdom('body').attr('oncontextmenu', 'return false');
         }
         //禁用文本选择
         if (webdom('head[disabledselect]').length > 0) {

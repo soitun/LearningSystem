@@ -16,11 +16,11 @@ namespace Song.Entities {
     		
     		protected Boolean _CP_IsUse;
     		
+    		protected Int32 _CP_Order;
+    		
     		protected Int32 _CP_Price;
     		
     		protected Int32 _CP_Span;
-    		
-    		protected Int32 _CP_Tax;
     		
     		protected String _CP_Unit;
     		
@@ -70,6 +70,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32 CP_Order {
+    			get {
+    				return this._CP_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.CP_Order, _CP_Order, value);
+    				this._CP_Order = value;
+    			}
+    		}
+    		
     		public Int32 CP_Price {
     			get {
     				return this._CP_Price;
@@ -87,16 +97,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.CP_Span, _CP_Span, value);
     				this._CP_Span = value;
-    			}
-    		}
-    		
-    		public Int32 CP_Tax {
-    			get {
-    				return this._CP_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.CP_Tax, _CP_Tax, value);
-    				this._CP_Tax = value;
     			}
     		}
     		
@@ -171,9 +171,9 @@ namespace Song.Entities {
     					_.CP_Coupon,
     					_.CP_Group,
     					_.CP_IsUse,
+    					_.CP_Order,
     					_.CP_Price,
     					_.CP_Span,
-    					_.CP_Tax,
     					_.CP_Unit,
     					_.Cou_ID,
     					_.Cou_UID,
@@ -189,9 +189,9 @@ namespace Song.Entities {
     					this._CP_Coupon,
     					this._CP_Group,
     					this._CP_IsUse,
+    					this._CP_Order,
     					this._CP_Price,
     					this._CP_Span,
-    					this._CP_Tax,
     					this._CP_Unit,
     					this._Cou_ID,
     					this._Cou_UID,
@@ -214,14 +214,14 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.CP_IsUse))) {
     				this._CP_IsUse = reader.GetBoolean(_.CP_IsUse);
     			}
+    			if ((false == reader.IsDBNull(_.CP_Order))) {
+    				this._CP_Order = reader.GetInt32(_.CP_Order);
+    			}
     			if ((false == reader.IsDBNull(_.CP_Price))) {
     				this._CP_Price = reader.GetInt32(_.CP_Price);
     			}
     			if ((false == reader.IsDBNull(_.CP_Span))) {
     				this._CP_Span = reader.GetInt32(_.CP_Span);
-    			}
-    			if ((false == reader.IsDBNull(_.CP_Tax))) {
-    				this._CP_Tax = reader.GetInt32(_.CP_Tax);
     			}
     			if ((false == reader.IsDBNull(_.CP_Unit))) {
     				this._CP_Unit = reader.GetString(_.CP_Unit);
@@ -282,6 +282,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field CP_IsUse = new WeiSha.Data.Field<CoursePrice>("CP_IsUse");
     			
     			/// <summary>
+    			/// 字段名：CP_Order - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field CP_Order = new WeiSha.Data.Field<CoursePrice>("CP_Order");
+    			
+    			/// <summary>
     			/// 字段名：CP_Price - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field CP_Price = new WeiSha.Data.Field<CoursePrice>("CP_Price");
@@ -290,11 +295,6 @@ namespace Song.Entities {
     			/// 字段名：CP_Span - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field CP_Span = new WeiSha.Data.Field<CoursePrice>("CP_Span");
-    			
-    			/// <summary>
-    			/// 字段名：CP_Tax - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field CP_Tax = new WeiSha.Data.Field<CoursePrice>("CP_Tax");
     			
     			/// <summary>
     			/// 字段名：CP_Unit - 数据类型：String

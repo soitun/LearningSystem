@@ -23,9 +23,9 @@ namespace Song.ServiceImpls
         {
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
             //添加对象，并设置排序号
-            object obj = Gateway.Default.Max<Links>(Links._.Lk_Tax, Links._.Ls_Id == entity.Ls_Id && Links._.Org_ID == org.Org_ID);
+            object obj = Gateway.Default.Max<Links>(Links._.Lk_Order, Links._.Ls_Id == entity.Ls_Id && Links._.Org_ID == org.Org_ID);
             int tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
-            entity.Lk_Tax = tax + 1;
+            entity.Lk_Order = tax + 1;
             LinksSort ls = Gateway.Default.From<LinksSort>().Where(LinksSort._.Ls_Id == entity.Ls_Id).ToFirst<LinksSort>();
             if (ls != null)
             {
@@ -57,7 +57,7 @@ namespace Song.ServiceImpls
         {
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
             entity.Lk_IsVerify = true;
-            entity.Lk_Tax = LinksMaxTaxis((int)entity.Ls_Id, org.Org_ID) + 1;
+            entity.Lk_Order = LinksMaxTaxis((int)entity.Ls_Id, org.Org_ID) + 1;
             LinksSort ls = Gateway.Default.From<LinksSort>().Where(LinksSort._.Ls_Id == entity.Ls_Id).ToFirst<LinksSort>();
             if (ls != null)
             {
@@ -109,7 +109,7 @@ namespace Song.ServiceImpls
         public int LinksMaxTaxis(int orgid, int sortId)
         {
             //添加对象，并设置排序号
-            object obj = Gateway.Default.Max<Links>(Links._.Lk_Tax, Links._.Ls_Id == sortId && Links._.Org_ID == orgid);
+            object obj = Gateway.Default.Max<Links>(Links._.Lk_Order, Links._.Ls_Id == sortId && Links._.Org_ID == orgid);
             return obj != null ? Convert.ToInt32(obj) + 1 : 0;
         }
         public Links[] GetLinksAll(int orgid, bool? isShow)
@@ -117,7 +117,7 @@ namespace Song.ServiceImpls
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Links._.Org_ID == orgid);
             if (isShow != null) wc.And(Links._.Lk_IsShow == isShow);
-            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Tax.Asc).ToArray<Links>();
+            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Order.Asc).ToArray<Links>();
         }
         /// <summary>
         /// 取友情链接
@@ -134,7 +134,7 @@ namespace Song.ServiceImpls
             if (sortId > 0) wc.And(Links._.Ls_Id == sortId);
             if (isShow != null) wc.And(Links._.Lk_IsShow == isShow);
             if (isUse != null) wc.And(Links._.Lk_IsUse == isUse);
-            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Tax.Asc && Links._.Lk_Id.Asc).ToArray<Links>(count);
+            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Order.Asc && Links._.Lk_Id.Asc).ToArray<Links>(count);
         }
 
         public Links[] GetLinks(int orgid, string sortName, bool? isShow, bool? isUse, int count)
@@ -150,7 +150,7 @@ namespace Song.ServiceImpls
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Links._.Org_ID == orgid);
             countSum = Gateway.Default.Count<Links>(wc);
-            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Tax.Asc).ToArray<Links>(size, (index - 1) * size);
+            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Order.Asc).ToArray<Links>(size, (index - 1) * size);
         }
         public Links[] GetLinksPager(int orgid, int sortId, int size, int index, out int countSum)
         {
@@ -158,7 +158,7 @@ namespace Song.ServiceImpls
             if (orgid > 0) wc.And(Links._.Org_ID == orgid);
             if (sortId > 0) wc.And(Links._.Ls_Id == sortId);
             countSum = Gateway.Default.Count<Links>(wc);
-            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Tax.Asc).ToArray<Links>(size, (index - 1) * size);
+            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Order.Asc).ToArray<Links>(size, (index - 1) * size);
         }
         /// <summary>
         /// 分页获取所有链接项
@@ -183,7 +183,7 @@ namespace Song.ServiceImpls
             if (!string.IsNullOrWhiteSpace(name)) wc.And(Links._.Lk_Name.Contains(name.Trim()));
             if (!string.IsNullOrWhiteSpace(link)) wc.And(Links._.Lk_Url.Contains(link.Trim()));
             countSum = Gateway.Default.Count<Links>(wc);
-            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Tax.Asc).ToArray<Links>(size, (index - 1) * size);
+            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Order.Asc).ToArray<Links>(size, (index - 1) * size);
         }       
         public Links[] GetLinksPager(int orgid, bool? isShow, int size, int index, out int countSum)
         {
@@ -191,7 +191,7 @@ namespace Song.ServiceImpls
             if (orgid > 0) wc.And(Links._.Org_ID == orgid);
             if (isShow != null) wc.And(Links._.Lk_IsShow == (bool)isShow);
             countSum = Gateway.Default.Count<Links>(wc);
-            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Tax.Asc).ToArray<Links>(size, (index - 1) * size);
+            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Order.Asc).ToArray<Links>(size, (index - 1) * size);
         }
         #endregion
 
@@ -235,8 +235,8 @@ namespace Song.ServiceImpls
                 entity.Ls_IsUse = parent.Ls_IsUse;
             }
             //添加对象，并设置排序号
-            object obj = Gateway.Default.Max<LinksSort>(LinksSort._.Ls_Tax, LinksSort._.Ls_PatId == entity.Ls_PatId);
-            entity.Ls_Tax = obj != null ? Convert.ToInt32(obj) + 1 : entity.Ls_Tax;
+            object obj = Gateway.Default.Max<LinksSort>(LinksSort._.Ls_Order, LinksSort._.Ls_PatId == entity.Ls_PatId);
+            entity.Ls_Order = obj != null ? Convert.ToInt32(obj) + 1 : entity.Ls_Order;
             if (entity.Org_ID < 1)
             {
                 Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
@@ -346,7 +346,7 @@ namespace Song.ServiceImpls
         public int SortMaxTaxis(int orgid, int parentId)
         {
             //添加对象，并设置排序号
-            object obj = Gateway.Default.Max<LinksSort>(LinksSort._.Ls_Tax, LinksSort._.Ls_PatId == parentId && LinksSort._.Org_ID == orgid);
+            object obj = Gateway.Default.Max<LinksSort>(LinksSort._.Ls_Order, LinksSort._.Ls_PatId == parentId && LinksSort._.Org_ID == orgid);
             return obj != null ? Convert.ToInt32(obj) + 1 : 0;
         }
         /// <suPsary>
@@ -358,14 +358,14 @@ namespace Song.ServiceImpls
             WhereClip wc = LinksSort._.Org_ID == orgid;
             if (isUse != null) wc.And(LinksSort._.Ls_IsUse == isUse);
             if (isShow != null) wc.And(LinksSort._.Ls_IsShow == isShow);
-            return Gateway.Default.From<LinksSort>().Where(wc).OrderBy(LinksSort._.Ls_Tax.Asc).ToArray<LinksSort>();
+            return Gateway.Default.From<LinksSort>().Where(wc).OrderBy(LinksSort._.Ls_Order.Asc).ToArray<LinksSort>();
         }
         public LinksSort[] SortCount(int orgid, bool? isUse, bool? isShow, int count)
         {
             WhereClip wc = LinksSort._.Org_ID == orgid;
             if (isUse != null) wc.And(LinksSort._.Ls_IsUse == isUse);
             if (isShow != null) wc.And(LinksSort._.Ls_IsShow == isShow);
-            return Gateway.Default.From<LinksSort>().Where(wc).OrderBy(LinksSort._.Ls_Tax.Asc).ToArray<LinksSort>(count);
+            return Gateway.Default.From<LinksSort>().Where(wc).OrderBy(LinksSort._.Ls_Order.Asc).ToArray<LinksSort>(count);
         }
         /// <summary>
         /// 当前链接分类下，有多少条链接记录
@@ -399,7 +399,7 @@ namespace Song.ServiceImpls
             if (isShow != null) wc.And(LinksSort._.Ls_IsShow == isShow);
             if (!string.IsNullOrWhiteSpace(searTxt)) wc.And(LinksSort._.Ls_Name.Contains(searTxt.Trim()));
             countSum = Gateway.Default.Count<LinksSort>(wc);
-            return Gateway.Default.From<LinksSort>().Where(wc).OrderBy(LinksSort._.Ls_Tax.Asc).ToArray<LinksSort>(size, (index - 1) * size);
+            return Gateway.Default.From<LinksSort>().Where(wc).OrderBy(LinksSort._.Ls_Order.Asc).ToArray<LinksSort>(size, (index - 1) * size);
         }
         /// <suPsary>
         /// 当前对象名称是否重名
@@ -436,8 +436,8 @@ namespace Song.ServiceImpls
                     foreach (LinksSort item in items)
                     {
                         tran.Update<LinksSort>(
-                            new Field[] { LinksSort._.Ls_Tax },
-                            new object[] { item.Ls_Tax },
+                            new Field[] { LinksSort._.Ls_Order },
+                            new object[] { item.Ls_Order },
                             LinksSort._.Ls_Id == item.Ls_Id);
                     }
                     tran.Commit();
