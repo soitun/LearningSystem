@@ -30,11 +30,11 @@ namespace Song.ServiceImpls
                 entity.Org_ID = org.Org_ID;
                 entity.Org_Name = org.Org_Name;
             }
-            if (entity.Sts_Tax <= 0)
+            if (entity.Sts_Order <= 0)
             {
                 //添加对象，并设置排序号
-                object obj = Gateway.Default.Max<StudentSort>(StudentSort._.Sts_Tax, StudentSort._.Org_ID == entity.Org_ID);
-                entity.Sts_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
+                object obj = Gateway.Default.Max<StudentSort>(StudentSort._.Sts_Order, StudentSort._.Org_ID == entity.Org_ID);
+                entity.Sts_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
             Gateway.Default.Save<StudentSort>(entity);
         }
@@ -176,7 +176,7 @@ namespace Song.ServiceImpls
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(StudentSort._.Org_ID == orgid);
             if (isUse != null) wc.And(StudentSort._.Sts_IsUse == isUse);
-            return Gateway.Default.From<StudentSort>().Where(wc).OrderBy(StudentSort._.Sts_Tax.Asc).ToArray<StudentSort>();
+            return Gateway.Default.From<StudentSort>().Where(wc).OrderBy(StudentSort._.Sts_Order.Asc).ToArray<StudentSort>();
         }
 
         public List<StudentSort> SortCount(int orgid, bool? isUse, int count)
@@ -184,7 +184,7 @@ namespace Song.ServiceImpls
             WhereClip wc = StudentSort._.Org_ID == orgid;
             if (isUse != null) wc.And(StudentSort._.Sts_IsUse == isUse);
             count = count > 0 ? count : int.MaxValue;
-            return Gateway.Default.From<StudentSort>().Where(wc).OrderBy(StudentSort._.Sts_Tax.Asc).ToList<StudentSort>(count);
+            return Gateway.Default.From<StudentSort>().Where(wc).OrderBy(StudentSort._.Sts_Order.Asc).ToList<StudentSort>(count);
         }
 
         public StudentSort Sort4Student(int studentId)
@@ -284,7 +284,7 @@ namespace Song.ServiceImpls
             if (isUse != null) wc.And(StudentSort._.Sts_IsUse == (bool)isUse);
             if (!string.IsNullOrWhiteSpace(name) && name.Trim() != "") wc.And(StudentSort._.Sts_Name.Contains(name));
             countSum = Gateway.Default.Count<StudentSort>(wc);
-            return Gateway.Default.From<StudentSort>().Where(wc).OrderBy(StudentSort._.Sts_Tax.Desc).ToArray<StudentSort>(size, (index - 1) * size);
+            return Gateway.Default.From<StudentSort>().Where(wc).OrderBy(StudentSort._.Sts_Order.Desc).ToArray<StudentSort>(size, (index - 1) * size);
         }
         /// <summary>
         /// 更改学员组的排序
@@ -300,8 +300,8 @@ namespace Song.ServiceImpls
                     foreach (StudentSort item in items)
                     {
                         tran.Update<StudentSort>(
-                            new Field[] { StudentSort._.Sts_Tax },
-                            new object[] { item.Sts_Tax },
+                            new Field[] { StudentSort._.Sts_Order },
+                            new object[] { item.Sts_Order },
                             StudentSort._.Sts_ID == item.Sts_ID);
                     }
                     tran.Commit();

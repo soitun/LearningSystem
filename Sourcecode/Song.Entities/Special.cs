@@ -38,6 +38,8 @@ namespace Song.Entities {
     		
     		protected String _Sp_Name;
     		
+    		protected Int32? _Sp_Order;
+    		
     		protected String _Sp_OutUrl;
     		
     		protected Int32? _Sp_PatId;
@@ -45,8 +47,6 @@ namespace Song.Entities {
     		protected DateTime? _Sp_PushTime;
     		
     		protected String _Sp_QrCode;
-    		
-    		protected Int32? _Sp_Tax;
     		
     		protected String _Sp_Tootip;
     		
@@ -202,6 +202,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32? Sp_Order {
+    			get {
+    				return this._Sp_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Sp_Order, _Sp_Order, value);
+    				this._Sp_Order = value;
+    			}
+    		}
+    		
     		public String Sp_OutUrl {
     			get {
     				return this._Sp_OutUrl;
@@ -239,16 +249,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Sp_QrCode, _Sp_QrCode, value);
     				this._Sp_QrCode = value;
-    			}
-    		}
-    		
-    		public Int32? Sp_Tax {
-    			get {
-    				return this._Sp_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Sp_Tax, _Sp_Tax, value);
-    				this._Sp_Tax = value;
     			}
     		}
     		
@@ -314,11 +314,11 @@ namespace Song.Entities {
     					_.Sp_Label,
     					_.Sp_Logo,
     					_.Sp_Name,
+    					_.Sp_Order,
     					_.Sp_OutUrl,
     					_.Sp_PatId,
     					_.Sp_PushTime,
     					_.Sp_QrCode,
-    					_.Sp_Tax,
     					_.Sp_Tootip,
     					_.Sp_Uid};
     		}
@@ -343,11 +343,11 @@ namespace Song.Entities {
     					this._Sp_Label,
     					this._Sp_Logo,
     					this._Sp_Name,
+    					this._Sp_Order,
     					this._Sp_OutUrl,
     					this._Sp_PatId,
     					this._Sp_PushTime,
     					this._Sp_QrCode,
-    					this._Sp_Tax,
     					this._Sp_Tootip,
     					this._Sp_Uid};
     		}
@@ -401,6 +401,9 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Sp_Name))) {
     				this._Sp_Name = reader.GetString(_.Sp_Name);
     			}
+    			if ((false == reader.IsDBNull(_.Sp_Order))) {
+    				this._Sp_Order = reader.GetInt32(_.Sp_Order);
+    			}
     			if ((false == reader.IsDBNull(_.Sp_OutUrl))) {
     				this._Sp_OutUrl = reader.GetString(_.Sp_OutUrl);
     			}
@@ -412,9 +415,6 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Sp_QrCode))) {
     				this._Sp_QrCode = reader.GetString(_.Sp_QrCode);
-    			}
-    			if ((false == reader.IsDBNull(_.Sp_Tax))) {
-    				this._Sp_Tax = reader.GetInt32(_.Sp_Tax);
     			}
     			if ((false == reader.IsDBNull(_.Sp_Tootip))) {
     				this._Sp_Tootip = reader.GetString(_.Sp_Tootip);
@@ -524,6 +524,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Sp_Name = new WeiSha.Data.Field<Special>("Sp_Name");
     			
     			/// <summary>
+    			/// 字段名：Sp_Order - 数据类型：Int32(可空)
+    			/// </summary>
+    			public static WeiSha.Data.Field Sp_Order = new WeiSha.Data.Field<Special>("Sp_Order");
+    			
+    			/// <summary>
     			/// 字段名：Sp_OutUrl - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Sp_OutUrl = new WeiSha.Data.Field<Special>("Sp_OutUrl");
@@ -542,11 +547,6 @@ namespace Song.Entities {
     			/// 字段名：Sp_QrCode - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Sp_QrCode = new WeiSha.Data.Field<Special>("Sp_QrCode");
-    			
-    			/// <summary>
-    			/// 字段名：Sp_Tax - 数据类型：Int32(可空)
-    			/// </summary>
-    			public static WeiSha.Data.Field Sp_Tax = new WeiSha.Data.Field<Special>("Sp_Tax");
     			
     			/// <summary>
     			/// 字段名：Sp_Tootip - 数据类型：String

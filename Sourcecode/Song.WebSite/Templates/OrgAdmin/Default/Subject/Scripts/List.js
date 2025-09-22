@@ -233,7 +233,7 @@ $ready(function () {
                         var obj = {
                             'Sbj_ID': d.Sbj_ID,
                             'Sbj_PID': pid,
-                            'Sbj_Tax': i + 1,
+                            'Sbj_Order': i + 1,
                             'Sbj_Level': level
                         }
                         list.push(obj);

@@ -28,9 +28,9 @@ namespace Song.Entities {
     		
     		protected String _Sts_Name;
     		
-    		protected Boolean _Sts_SwitchPlay;
+    		protected Int32 _Sts_Order;
     		
-    		protected Int32 _Sts_Tax;
+    		protected Boolean _Sts_SwitchPlay;
     		
     		public Int64 Sts_ID {
     			get {
@@ -132,6 +132,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32 Sts_Order {
+    			get {
+    				return this._Sts_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Sts_Order, _Sts_Order, value);
+    				this._Sts_Order = value;
+    			}
+    		}
+    		
     		public Boolean Sts_SwitchPlay {
     			get {
     				return this._Sts_SwitchPlay;
@@ -139,16 +149,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Sts_SwitchPlay, _Sts_SwitchPlay, value);
     				this._Sts_SwitchPlay = value;
-    			}
-    		}
-    		
-    		public Int32 Sts_Tax {
-    			get {
-    				return this._Sts_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Sts_Tax, _Sts_Tax, value);
-    				this._Sts_Tax = value;
     			}
     		}
     		
@@ -182,8 +182,8 @@ namespace Song.Entities {
     					_.Sts_IsDefault,
     					_.Sts_IsUse,
     					_.Sts_Name,
-    					_.Sts_SwitchPlay,
-    					_.Sts_Tax};
+    					_.Sts_Order,
+    					_.Sts_SwitchPlay};
     		}
     		
     		/// <summary>
@@ -201,8 +201,8 @@ namespace Song.Entities {
     					this._Sts_IsDefault,
     					this._Sts_IsUse,
     					this._Sts_Name,
-    					this._Sts_SwitchPlay,
-    					this._Sts_Tax};
+    					this._Sts_Order,
+    					this._Sts_SwitchPlay};
     		}
     		
     		/// <summary>
@@ -239,11 +239,11 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Sts_Name))) {
     				this._Sts_Name = reader.GetString(_.Sts_Name);
     			}
+    			if ((false == reader.IsDBNull(_.Sts_Order))) {
+    				this._Sts_Order = reader.GetInt32(_.Sts_Order);
+    			}
     			if ((false == reader.IsDBNull(_.Sts_SwitchPlay))) {
     				this._Sts_SwitchPlay = reader.GetBoolean(_.Sts_SwitchPlay);
-    			}
-    			if ((false == reader.IsDBNull(_.Sts_Tax))) {
-    				this._Sts_Tax = reader.GetInt32(_.Sts_Tax);
     			}
     		}
     		
@@ -322,14 +322,14 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Sts_Name = new WeiSha.Data.Field<StudentSort>("Sts_Name");
     			
     			/// <summary>
+    			/// 字段名：Sts_Order - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Sts_Order = new WeiSha.Data.Field<StudentSort>("Sts_Order");
+    			
+    			/// <summary>
     			/// 字段名：Sts_SwitchPlay - 数据类型：Boolean
     			/// </summary>
     			public static WeiSha.Data.Field Sts_SwitchPlay = new WeiSha.Data.Field<StudentSort>("Sts_SwitchPlay");
-    			
-    			/// <summary>
-    			/// 字段名：Sts_Tax - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field Sts_Tax = new WeiSha.Data.Field<StudentSort>("Sts_Tax");
     		}
     	}
     }

@@ -411,8 +411,8 @@ namespace Song.ServiceImpls
                 entity.Org_Name = org.Org_Name;
             }
             //添加对象，并设置排序号
-            object obj = Gateway.Default.Max<TeacherSort>(TeacherSort._.Ths_Tax, TeacherSort._.Org_ID == org.Org_ID);
-            entity.Ths_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
+            object obj = Gateway.Default.Max<TeacherSort>(TeacherSort._.Ths_Order, TeacherSort._.Org_ID == org.Org_ID);
+            entity.Ths_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             Gateway.Default.Save<TeacherSort>(entity);
         }
 
@@ -479,7 +479,7 @@ namespace Song.ServiceImpls
             WhereClip wc = TeacherSort._.Org_ID == orgid;
             if (isUse != null) wc.And(TeacherSort._.Ths_IsUse == isUse);
             if(!string.IsNullOrWhiteSpace(search)) wc.And(TeacherSort._.Ths_Name.Contains(search));
-            return Gateway.Default.From<TeacherSort>().Where(wc).OrderBy(TeacherSort._.Ths_Tax.Asc).ToArray<TeacherSort>();
+            return Gateway.Default.From<TeacherSort>().Where(wc).OrderBy(TeacherSort._.Ths_Order.Asc).ToArray<TeacherSort>();
         }
 
         public List<TeacherSort> SortCount(int orgid, bool? isUse, int count)
@@ -544,8 +544,8 @@ namespace Song.ServiceImpls
                     foreach (TeacherSort item in items)
                     {
                         tran.Update<TeacherSort>(
-                            new Field[] { TeacherSort._.Ths_Tax },
-                            new object[] { item.Ths_Tax },
+                            new Field[] { TeacherSort._.Ths_Order },
+                            new object[] { item.Ths_Order },
                             TeacherSort._.Ths_ID == item.Ths_ID);
                     }
                     tran.Commit();

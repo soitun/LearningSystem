@@ -72,6 +72,8 @@ namespace Song.Entities {
     		
     		protected String _Th_Native;
     		
+    		protected Int32 _Th_Order;
+    		
     		protected String _Th_Phone;
     		
     		protected String _Th_PhoneMobi;
@@ -91,8 +93,6 @@ namespace Song.Entities {
     		protected Int32 _Th_Score;
     		
     		protected String _Th_Signature;
-    		
-    		protected Int32 _Th_Tax;
     		
     		protected String _Th_Title;
     		
@@ -426,6 +426,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32 Th_Order {
+    			get {
+    				return this._Th_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Th_Order, _Th_Order, value);
+    				this._Th_Order = value;
+    			}
+    		}
+    		
     		public String Th_Phone {
     			get {
     				return this._Th_Phone;
@@ -523,16 +533,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Th_Signature, _Th_Signature, value);
     				this._Th_Signature = value;
-    			}
-    		}
-    		
-    		public Int32 Th_Tax {
-    			get {
-    				return this._Th_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Th_Tax, _Th_Tax, value);
-    				this._Th_Tax = value;
     			}
     		}
     		
@@ -655,6 +655,7 @@ namespace Song.Entities {
     					_.Th_Name,
     					_.Th_Nation,
     					_.Th_Native,
+    					_.Th_Order,
     					_.Th_Phone,
     					_.Th_PhoneMobi,
     					_.Th_Photo,
@@ -665,7 +666,6 @@ namespace Song.Entities {
     					_.Th_RegTime,
     					_.Th_Score,
     					_.Th_Signature,
-    					_.Th_Tax,
     					_.Th_Title,
     					_.Th_ViewNum,
     					_.Th_Weixin,
@@ -711,6 +711,7 @@ namespace Song.Entities {
     					this._Th_Name,
     					this._Th_Nation,
     					this._Th_Native,
+    					this._Th_Order,
     					this._Th_Phone,
     					this._Th_PhoneMobi,
     					this._Th_Photo,
@@ -721,7 +722,6 @@ namespace Song.Entities {
     					this._Th_RegTime,
     					this._Th_Score,
     					this._Th_Signature,
-    					this._Th_Tax,
     					this._Th_Title,
     					this._Th_ViewNum,
     					this._Th_Weixin,
@@ -830,6 +830,9 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Th_Native))) {
     				this._Th_Native = reader.GetString(_.Th_Native);
     			}
+    			if ((false == reader.IsDBNull(_.Th_Order))) {
+    				this._Th_Order = reader.GetInt32(_.Th_Order);
+    			}
     			if ((false == reader.IsDBNull(_.Th_Phone))) {
     				this._Th_Phone = reader.GetString(_.Th_Phone);
     			}
@@ -859,9 +862,6 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Th_Signature))) {
     				this._Th_Signature = reader.GetString(_.Th_Signature);
-    			}
-    			if ((false == reader.IsDBNull(_.Th_Tax))) {
-    				this._Th_Tax = reader.GetInt32(_.Th_Tax);
     			}
     			if ((false == reader.IsDBNull(_.Th_Title))) {
     				this._Th_Title = reader.GetString(_.Th_Title);
@@ -1068,6 +1068,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Th_Native = new WeiSha.Data.Field<Teacher>("Th_Native");
     			
     			/// <summary>
+    			/// 字段名：Th_Order - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Th_Order = new WeiSha.Data.Field<Teacher>("Th_Order");
+    			
+    			/// <summary>
     			/// 字段名：Th_Phone - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Th_Phone = new WeiSha.Data.Field<Teacher>("Th_Phone");
@@ -1116,11 +1121,6 @@ namespace Song.Entities {
     			/// 字段名：Th_Signature - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Th_Signature = new WeiSha.Data.Field<Teacher>("Th_Signature");
-    			
-    			/// <summary>
-    			/// 字段名：Th_Tax - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field Th_Tax = new WeiSha.Data.Field<Teacher>("Th_Tax");
     			
     			/// <summary>
     			/// 字段名：Th_Title - 数据类型：String

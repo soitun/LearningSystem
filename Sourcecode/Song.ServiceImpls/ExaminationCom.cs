@@ -960,7 +960,7 @@ namespace Song.ServiceImpls
                         and ""Exam_IsTheme"" = false
                     )  group by ""Ac_ID""
 				)as ac group by sts_id)  as exr
-            on sts.""Sts_ID"" = exr.""sts_id"" order by sts.""Sts_Tax"" asc";
+            on sts.""Sts_ID"" = exr.""sts_id"" order by sts.""Sts_Order"" asc";
             sql = string.Format(sql, id.ToString());
             if (Gateway.Default.DbType != DbProviderType.PostgreSQL)
                 sql = sql.Replace("true", "1").Replace("false", "0");
@@ -976,7 +976,7 @@ namespace Song.ServiceImpls
             //下述Sql语句，兼容Sqlserver,postgresql,sqlite
             string sql = @"select sts.""Sts_ID"", ""Sts_Name"",exr.count as ""Sts_Count"" from ""StudentSort"" as sts  inner join 
                         (select ""Sts_ID"", COUNT(*) as count from ""ExamResults"" where ""ExamResults"".""Exam_ID"" = {0} group by ""Sts_ID"") as exr
-                        on sts.""Sts_ID"" = exr.""Sts_ID"" order by sts.""Sts_Tax"" asc";
+                        on sts.""Sts_ID"" = exr.""Sts_ID"" order by sts.""Sts_Order"" asc";
             sql = string.Format(sql, examid);
             return Gateway.Default.FromSql(sql).ToList<StudentSort>();
         }
@@ -992,7 +992,7 @@ namespace Song.ServiceImpls
           (SELECT ""Accounts"".""Sts_ID"",COUNT(*) as count FROM ""Accounts"" WHERE 
                 NOT EXISTS (SELECT ""ExamResults"".""Ac_ID"" FROM ""ExamResults"" WHERE ""ExamResults"".""Exam_ID"" = {0} and ""ExamResults"".""Ac_ID"" = ""Accounts"".""Ac_ID"")
              GROUP BY ""Accounts"".""Sts_ID"") as acc
-        on ""StudentSort"".""Sts_ID"" = acc.""Sts_ID"" order by ""StudentSort"".""Sts_Tax"" asc";
+        on ""StudentSort"".""Sts_ID"" = acc.""Sts_ID"" order by ""StudentSort"".""Sts_Order"" asc";
             sql = string.Format(sql, examid);
             return Gateway.Default.FromSql(sql).ToList<StudentSort>();
         }

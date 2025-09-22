@@ -40,13 +40,13 @@ namespace Song.Entities {
     		
     		protected String _Sbj_Name;
     		
+    		protected Int32 _Sbj_Order;
+    		
     		protected Int64 _Sbj_PID;
     		
     		protected Int32 _Sbj_PassScore;
     		
     		protected Int32 _Sbj_QuesCount;
-    		
-    		protected Int32 _Sbj_Tax;
     		
     		protected Int32 _Sbj_TestCount;
     		
@@ -212,6 +212,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32 Sbj_Order {
+    			get {
+    				return this._Sbj_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Sbj_Order, _Sbj_Order, value);
+    				this._Sbj_Order = value;
+    			}
+    		}
+    		
     		public Int64 Sbj_PID {
     			get {
     				return this._Sbj_PID;
@@ -239,16 +249,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Sbj_QuesCount, _Sbj_QuesCount, value);
     				this._Sbj_QuesCount = value;
-    			}
-    		}
-    		
-    		public Int32 Sbj_Tax {
-    			get {
-    				return this._Sbj_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Sbj_Tax, _Sbj_Tax, value);
-    				this._Sbj_Tax = value;
     			}
     		}
     		
@@ -308,10 +308,10 @@ namespace Song.Entities {
     					_.Sbj_Logo,
     					_.Sbj_LogoSmall,
     					_.Sbj_Name,
+    					_.Sbj_Order,
     					_.Sbj_PID,
     					_.Sbj_PassScore,
     					_.Sbj_QuesCount,
-    					_.Sbj_Tax,
     					_.Sbj_TestCount,
     					_.Sbj_XPath};
     		}
@@ -337,10 +337,10 @@ namespace Song.Entities {
     					this._Sbj_Logo,
     					this._Sbj_LogoSmall,
     					this._Sbj_Name,
+    					this._Sbj_Order,
     					this._Sbj_PID,
     					this._Sbj_PassScore,
     					this._Sbj_QuesCount,
-    					this._Sbj_Tax,
     					this._Sbj_TestCount,
     					this._Sbj_XPath};
     		}
@@ -397,6 +397,9 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Sbj_Name))) {
     				this._Sbj_Name = reader.GetString(_.Sbj_Name);
     			}
+    			if ((false == reader.IsDBNull(_.Sbj_Order))) {
+    				this._Sbj_Order = reader.GetInt32(_.Sbj_Order);
+    			}
     			if ((false == reader.IsDBNull(_.Sbj_PID))) {
     				this._Sbj_PID = reader.GetInt64(_.Sbj_PID);
     			}
@@ -405,9 +408,6 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Sbj_QuesCount))) {
     				this._Sbj_QuesCount = reader.GetInt32(_.Sbj_QuesCount);
-    			}
-    			if ((false == reader.IsDBNull(_.Sbj_Tax))) {
-    				this._Sbj_Tax = reader.GetInt32(_.Sbj_Tax);
     			}
     			if ((false == reader.IsDBNull(_.Sbj_TestCount))) {
     				this._Sbj_TestCount = reader.GetInt32(_.Sbj_TestCount);
@@ -522,6 +522,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Sbj_Name = new WeiSha.Data.Field<Subject>("Sbj_Name");
     			
     			/// <summary>
+    			/// 字段名：Sbj_Order - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Sbj_Order = new WeiSha.Data.Field<Subject>("Sbj_Order");
+    			
+    			/// <summary>
     			/// 字段名：Sbj_PID - 数据类型：Int64
     			/// </summary>
     			public static WeiSha.Data.Field Sbj_PID = new WeiSha.Data.Field<Subject>("Sbj_PID");
@@ -535,11 +540,6 @@ namespace Song.Entities {
     			/// 字段名：Sbj_QuesCount - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Sbj_QuesCount = new WeiSha.Data.Field<Subject>("Sbj_QuesCount");
-    			
-    			/// <summary>
-    			/// 字段名：Sbj_Tax - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field Sbj_Tax = new WeiSha.Data.Field<Subject>("Sbj_Tax");
     			
     			/// <summary>
     			/// 字段名：Sbj_TestCount - 数据类型：Int32

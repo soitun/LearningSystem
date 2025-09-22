@@ -179,7 +179,7 @@ namespace Song.ServiceInterfaces
         /// <summary>
         /// 更改专业的排序
         /// </summary>
-        /// <param name="list">专业列表，对象中只有Sbj_ID、Sbj_PID、Sbj_Tax、Sbj_Level</param>
+        /// <param name="list">专业列表，对象中只有Sbj_ID、Sbj_PID、Sbj_Order、Sbj_Level</param>
         /// <returns></returns>
         bool UpdateTaxis(Subject[] list);
 

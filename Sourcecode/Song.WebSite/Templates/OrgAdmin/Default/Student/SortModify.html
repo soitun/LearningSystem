@@ -18,9 +18,9 @@
                     :active-text="entity.Sts_IsUse ? '启用' : '禁用'">
                 </el-switch>
             </el-form-item>
-            <el-form-item label="排序号" prop="Sts_Tax">
+            <el-form-item label="排序号" prop="Sts_Order">
                 <el-tooltip class="item" effect="dark" content="数值越小越靠前" placement="right">
-                    <el-input v-model="entity.Sts_Tax" type="number" style="width: 100px;"></el-input>
+                    <el-input v-model="entity.Sts_Order" type="number" style="width: 100px;"></el-input>
                 </el-tooltip>
             </el-form-item>
             <el-form-item label="备注" prop="Sts_Intro">

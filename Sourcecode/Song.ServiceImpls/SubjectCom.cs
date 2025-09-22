@@ -23,10 +23,10 @@ namespace Song.ServiceImpls
             entity.Sbj_CrtTime = DateTime.Now;
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
             //如果没有排序号，则自动计算
-            if (entity.Sbj_Tax < 1)
+            if (entity.Sbj_Order < 1)
             {
-                object obj = Gateway.Default.Max<Subject>(Subject._.Sbj_Tax, Subject._.Org_ID == org.Org_ID && Subject._.Sbj_PID == entity.Sbj_PID);
-                entity.Sbj_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
+                object obj = Gateway.Default.Max<Subject>(Subject._.Sbj_Order, Subject._.Org_ID == org.Org_ID && Subject._.Sbj_PID == entity.Sbj_PID);
+                entity.Sbj_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
             if (org != null)
             {
@@ -98,8 +98,8 @@ namespace Song.ServiceImpls
             Subject old = SubjectSingle(entity.Sbj_ID);
             if (old.Sbj_PID != entity.Sbj_PID)
             {
-                object obj = Gateway.Default.Max<Subject>(Subject._.Sbj_Tax, Subject._.Org_ID == entity.Org_ID && Subject._.Sbj_PID == entity.Sbj_PID);
-                entity.Sbj_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
+                object obj = Gateway.Default.Max<Subject>(Subject._.Sbj_Order, Subject._.Org_ID == entity.Org_ID && Subject._.Sbj_PID == entity.Sbj_PID);
+                entity.Sbj_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
             entity.Sbj_Level = _ClacLevel(entity, null, true);
             entity.Sbj_XPath = _ClacXPath(entity, null, true);
@@ -286,7 +286,7 @@ namespace Song.ServiceImpls
             if (isUse != null) wc.And(Subject._.Sbj_IsUse == (bool)isUse);
             if (!string.IsNullOrWhiteSpace(sear)) wc.And(Subject._.Sbj_Name.Contains(sear));
             if (pid >= 0) wc.And(Subject._.Sbj_PID == pid);
-            return Gateway.Default.From<Subject>().Where(wc).OrderBy(Subject._.Sbj_Tax.Asc && Subject._.Sbj_ID.Asc).ToList<Subject>(count);
+            return Gateway.Default.From<Subject>().Where(wc).OrderBy(Subject._.Sbj_Order.Asc && Subject._.Sbj_ID.Asc).ToList<Subject>(count);
         }
         public List<Subject> SubjectCount(int orgid, string sear, bool? isUse, long pid, string order, int index, int count)
         {
@@ -296,12 +296,12 @@ namespace Song.ServiceImpls
             if (!string.IsNullOrWhiteSpace(sear)) wc.And(Subject._.Sbj_Name.Contains(sear));
             if (pid >= 0) wc.And(Subject._.Sbj_PID == pid);
             OrderByClip wcOrder = new OrderByClip();
-            if (order == "def") wcOrder = Subject._.Sbj_IsRec.Desc & Subject._.Sbj_Tax.Asc && Subject._.Sbj_ID.Asc;
-            if (order == "tax") wcOrder = Subject._.Sbj_Tax.Asc && Subject._.Sbj_ID.Asc;
+            if (order == "def") wcOrder = Subject._.Sbj_IsRec.Desc & Subject._.Sbj_Order.Asc && Subject._.Sbj_ID.Asc;
+            if (order == "tax") wcOrder = Subject._.Sbj_Order.Asc && Subject._.Sbj_ID.Asc;
             if (order == "rec")
             {
                 //wc &= Subject._.Sbj_IsRec == true;
-                wcOrder = Subject._.Sbj_IsRec.Desc && Subject._.Sbj_Tax.Asc && Subject._.Sbj_ID.Asc;
+                wcOrder = Subject._.Sbj_IsRec.Desc && Subject._.Sbj_Order.Asc && Subject._.Sbj_ID.Asc;
             }
             return Gateway.Default.From<Subject>().Where(wc).OrderBy(wcOrder).ToList<Subject>(count, index);
         }
@@ -338,7 +338,7 @@ namespace Song.ServiceImpls
             if (isUse != null) wc.And(Subject._.Sbj_IsUse == (bool)isUse);
             if (!string.IsNullOrWhiteSpace(sear)) wc.And(Subject._.Sbj_Name.Contains(sear));
             if (pid >= 0) wc.And(Subject._.Sbj_PID == pid);
-            return Gateway.Default.From<Subject>().Where(wc).OrderBy(Subject._.Sbj_Tax.Asc && Subject._.Sbj_ID.Asc).ToList<Subject>(count);
+            return Gateway.Default.From<Subject>().Where(wc).OrderBy(Subject._.Sbj_Order.Asc && Subject._.Sbj_ID.Asc).ToList<Subject>(count);
         }
 
         public int SubjectOfCount(int orgid, long pid, bool? isUse, bool children)
@@ -409,7 +409,7 @@ namespace Song.ServiceImpls
             if (isUse != null) wc.And(Subject._.Sbj_IsUse == (bool)isUse);
             if (string.IsNullOrWhiteSpace(searTxt)) wc.And(Subject._.Sbj_Name.Contains(searTxt));
             countSum = Gateway.Default.Count<Subject>(wc);
-            return Gateway.Default.From<Subject>().Where(wc).OrderBy(Subject._.Sbj_Tax.Asc && Subject._.Sbj_ID.Asc).ToList<Subject>(size, (index - 1) * size);
+            return Gateway.Default.From<Subject>().Where(wc).OrderBy(Subject._.Sbj_Order.Asc && Subject._.Sbj_ID.Asc).ToList<Subject>(size, (index - 1) * size);
         }
 
         public List<Questions> QusForSubject(int orgid, long sbjid, int qusType, bool? isUse, int count)
@@ -435,7 +435,7 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 更改专业的排序
         /// </summary>
-        /// <param name="list">专业列表，对象中只有Sbj_ID、Sbj_PID、Sbj_Tax、Sbj_Level</param>
+        /// <param name="list">专业列表，对象中只有Sbj_ID、Sbj_PID、Sbj_Order、Sbj_Level</param>
         /// <returns></returns>
         public bool UpdateTaxis(Subject[] list)
         {
@@ -446,8 +446,8 @@ namespace Song.ServiceImpls
                     foreach (Song.Entities.Subject sbj in list)
                     {
                         tran.Update<Subject>(
-                            new Field[] { Subject._.Sbj_PID, Subject._.Sbj_Tax, Subject._.Sbj_Level },
-                            new object[] { sbj.Sbj_PID, sbj.Sbj_Tax, sbj.Sbj_Level }, 
+                            new Field[] { Subject._.Sbj_PID, Subject._.Sbj_Order, Subject._.Sbj_Level },
+                            new object[] { sbj.Sbj_PID, sbj.Sbj_Order, sbj.Sbj_Level }, 
                             Subject._.Sbj_ID == sbj.Sbj_ID);
                     }
                     tran.Commit();

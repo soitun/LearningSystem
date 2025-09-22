@@ -18,8 +18,8 @@ namespace Song.ServiceImpls
         public int SpecialAdd(Special entity)
         {
             //添加对象，并设置排序号
-            object obj = Gateway.Default.Max<Special>(Special._.Sp_Tax, Special._.Sp_Tax > -1);
-            entity.Sp_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 1;
+            object obj = Gateway.Default.Max<Special>(Special._.Sp_Order, Special._.Sp_Order > -1);
+            entity.Sp_Order = obj != null ? Convert.ToInt32(obj) + 1 : 1;
             //所在机构
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
             if (org != null)
@@ -121,7 +121,7 @@ namespace Song.ServiceImpls
             if (orgid > 0) wc.And(Special._.Org_ID == orgid);
             if (isShow != null) wc.And(Special._.Sp_IsShow == isShow);
             if (isUse != null) wc.And(Special._.Sp_IsUse == isUse); 
-            return Gateway.Default.From<Special>().Where(wc).OrderBy(Special._.Sp_Tax.Desc).ToArray<Special>(count);    
+            return Gateway.Default.From<Special>().Where(wc).OrderBy(Special._.Sp_Order.Desc).ToArray<Special>(count);    
         }
 
         public bool SpecialUp(int orgid, int id)
@@ -129,18 +129,18 @@ namespace Song.ServiceImpls
             //当前对象
             Special current = Gateway.Default.From<Special>().Where(Special._.Sp_Id == id).ToFirst<Special>();
             //当前对象排序号
-            int orderValue = (int)current.Sp_Tax; ;
+            int orderValue = (int)current.Sp_Order; ;
             //上一个对象，即兄长对象；
             Special up = Gateway.Default.From<Special>()
-                .Where(Special._.Sp_Tax > orderValue && Special._.Org_ID == orgid).OrderBy(Special._.Sp_Tax.Desc).ToFirst<Special>();
+                .Where(Special._.Sp_Order > orderValue && Special._.Org_ID == orgid).OrderBy(Special._.Sp_Order.Desc).ToFirst<Special>();
             if (up == null)
             {
                 //如果兄长对象不存在，则表示当前节点在兄弟中是老大；即是最顶点；
                 return false;
             }
             //交换排序号
-            current.Sp_Tax = up.Sp_Tax;
-            up.Sp_Tax = orderValue;
+            current.Sp_Order = up.Sp_Order;
+            up.Sp_Order = orderValue;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
@@ -163,18 +163,18 @@ namespace Song.ServiceImpls
             //当前对象
             Special current = Gateway.Default.From<Special>().Where(Special._.Sp_Id == id).ToFirst<Special>();
             //当前对象排序号
-            int orderValue = (int)current.Sp_Tax;
+            int orderValue = (int)current.Sp_Order;
             //下一个对象，即弟弟对象；
             Special down = Gateway.Default.From<Special>()
-                .Where(Special._.Sp_Tax < orderValue && Special._.Org_ID == orgid).OrderBy(Special._.Sp_Tax.Asc).ToFirst<Special>();
+                .Where(Special._.Sp_Order < orderValue && Special._.Org_ID == orgid).OrderBy(Special._.Sp_Order.Asc).ToFirst<Special>();
             if (down == null)
             {
                 //如果弟对象不存在，则表示当前节点在兄弟中是老幺；即是最底端；
                 return false;
             }
             //交换排序号
-            current.Sp_Tax = down.Sp_Tax;
-            down.Sp_Tax = orderValue;
+            current.Sp_Order = down.Sp_Order;
+            down.Sp_Order = orderValue;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
@@ -221,7 +221,7 @@ namespace Song.ServiceImpls
                 wc.And(Special._.Sp_Name.Contains(searTxt));
             }
             countSum = Gateway.Default.Count<Special>(wc);
-            return Gateway.Default.From<Special>().Where(wc).OrderBy(Special._.Sp_Tax.Desc).ToArray<Special>(size, (index - 1) * size);
+            return Gateway.Default.From<Special>().Where(wc).OrderBy(Special._.Sp_Order.Desc).ToArray<Special>(size, (index - 1) * size);
         }
 
         public Article[] SpecialArticlePager(int spId, string searTxt, int size, int index, out int countSum)
