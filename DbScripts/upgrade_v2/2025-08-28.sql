@@ -55,5 +55,45 @@ BEGIN
     END LOOP;
 END $$;
 
+/*修订一些字段，之前命名不规范*/
+
+/*修改排序字段*/
+ALTER TABLE "CoursePrice" RENAME COLUMN "CP_Tax" TO "CP_Order";
+ALTER TABLE "EmpTitle" RENAME COLUMN "Title_Tax" TO "Title_Order";
+ALTER TABLE "Links" RENAME COLUMN "Lk_Tax" TO "Lk_Order";
+ALTER TABLE "LinksSort" RENAME COLUMN "Ls_Tax" TO "Ls_Order";
+ALTER TABLE "QuesTypes" RENAME COLUMN "Qt_Tax" TO "Qt_Order";
+
+ALTER TABLE "Subject" RENAME COLUMN "Sbj_Tax" TO "Sbj_Order";
+ALTER TABLE "Teacher" RENAME COLUMN "Th_Tax" TO "Th_Order";
+ALTER TABLE "TeacherSort" RENAME COLUMN "Ths_Tax" TO "Ths_Order";
+ALTER TABLE "StudentSort" RENAME COLUMN "Sts_Tax" TO "Sts_Order";
+ALTER TABLE "Special" RENAME COLUMN "Sp_Tax" TO "Sp_Order";
+
+ALTER TABLE "Columns" RENAME COLUMN "Col_Tax" TO "Col_Order";
+ALTER TABLE "Course" RENAME COLUMN "Cou_Tax" TO "Cou_Order";
+ALTER TABLE "Depart" RENAME COLUMN "Dep_Tax" TO "Dep_Order";
+ALTER TABLE "EmpGroup" RENAME COLUMN "EGrp_Tax" TO "EGrp_Order";
+ALTER TABLE "ManageMenu" RENAME COLUMN "MM_Tax" TO "MM_Order";
+
+ALTER TABLE "Examination" RENAME COLUMN "Exam_Tax" TO "Exam_Order";
+ALTER TABLE "GuideColumns" RENAME COLUMN "Gc_Tax" TO "Gc_Order";
+ALTER TABLE "KnowledgeSort" RENAME COLUMN "Kns_Tax" TO "Kns_Order";
+ALTER TABLE "Navigation" RENAME COLUMN "Nav_Tax" TO "Nav_Order";
+ALTER TABLE "OrganLevel" RENAME COLUMN "Olv_Tax" TO "Olv_Order";
+
+ALTER TABLE "Outline" RENAME COLUMN "Ol_Tax" TO "Ol_Order";
+ALTER TABLE "PayInterface" RENAME COLUMN "Pai_Tax" TO "Pai_Order";
+ALTER TABLE "Position" RENAME COLUMN "Posi_Tax" TO "Posi_Order";
+ALTER TABLE "Questions" RENAME COLUMN "Qus_Tax" TO "Qus_Order";
+ALTER TABLE "ShowPicture" RENAME COLUMN "Shp_Tax" TO "Shp_Order";
+ALTER TABLE "ThirdpartyLogin" RENAME COLUMN "Tl_Tax" TO "Tl_Order";
+
+/*修改性别字段*/
+ALTER TABLE "Accounts" RENAME COLUMN "Ac_Sex" TO "Ac_Gender";
+ALTER TABLE "EmpAccount" RENAME COLUMN "Acc_Sex" TO "Acc_Gender";
+ALTER TABLE "ExamResults" RENAME COLUMN "Ac_Sex" TO "Ac_Gender";
+ALTER TABLE "Teacher" RENAME COLUMN "Th_Sex" TO "Th_Gender";
+ALTER TABLE "TestResults" RENAME COLUMN "St_Sex" TO "Ac_Gender";
 
 
