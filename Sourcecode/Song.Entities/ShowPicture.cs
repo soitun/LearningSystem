@@ -20,11 +20,11 @@ namespace Song.Entities {
     		
     		protected Boolean _Shp_IsShow;
     		
+    		protected Int32 _Shp_Order;
+    		
     		protected String _Shp_Site;
     		
     		protected String _Shp_Target;
-    		
-    		protected Int32 _Shp_Tax;
     		
     		protected String _Shp_Url;
     		
@@ -88,6 +88,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32 Shp_Order {
+    			get {
+    				return this._Shp_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Shp_Order, _Shp_Order, value);
+    				this._Shp_Order = value;
+    			}
+    		}
+    		
     		public String Shp_Site {
     			get {
     				return this._Shp_Site;
@@ -105,16 +115,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Shp_Target, _Shp_Target, value);
     				this._Shp_Target = value;
-    			}
-    		}
-    		
-    		public Int32 Shp_Tax {
-    			get {
-    				return this._Shp_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Shp_Tax, _Shp_Tax, value);
-    				this._Shp_Tax = value;
     			}
     		}
     		
@@ -161,9 +161,9 @@ namespace Song.Entities {
     					_.Shp_File,
     					_.Shp_Intro,
     					_.Shp_IsShow,
+    					_.Shp_Order,
     					_.Shp_Site,
     					_.Shp_Target,
-    					_.Shp_Tax,
     					_.Shp_Url};
     		}
     		
@@ -178,9 +178,9 @@ namespace Song.Entities {
     					this._Shp_File,
     					this._Shp_Intro,
     					this._Shp_IsShow,
+    					this._Shp_Order,
     					this._Shp_Site,
     					this._Shp_Target,
-    					this._Shp_Tax,
     					this._Shp_Url};
     		}
     		
@@ -206,14 +206,14 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Shp_IsShow))) {
     				this._Shp_IsShow = reader.GetBoolean(_.Shp_IsShow);
     			}
+    			if ((false == reader.IsDBNull(_.Shp_Order))) {
+    				this._Shp_Order = reader.GetInt32(_.Shp_Order);
+    			}
     			if ((false == reader.IsDBNull(_.Shp_Site))) {
     				this._Shp_Site = reader.GetString(_.Shp_Site);
     			}
     			if ((false == reader.IsDBNull(_.Shp_Target))) {
     				this._Shp_Target = reader.GetString(_.Shp_Target);
-    			}
-    			if ((false == reader.IsDBNull(_.Shp_Tax))) {
-    				this._Shp_Tax = reader.GetInt32(_.Shp_Tax);
     			}
     			if ((false == reader.IsDBNull(_.Shp_Url))) {
     				this._Shp_Url = reader.GetString(_.Shp_Url);
@@ -275,6 +275,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Shp_IsShow = new WeiSha.Data.Field<ShowPicture>("Shp_IsShow");
     			
     			/// <summary>
+    			/// 字段名：Shp_Order - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Shp_Order = new WeiSha.Data.Field<ShowPicture>("Shp_Order");
+    			
+    			/// <summary>
     			/// 字段名：Shp_Site - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Shp_Site = new WeiSha.Data.Field<ShowPicture>("Shp_Site");
@@ -283,11 +288,6 @@ namespace Song.Entities {
     			/// 字段名：Shp_Target - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Shp_Target = new WeiSha.Data.Field<ShowPicture>("Shp_Target");
-    			
-    			/// <summary>
-    			/// 字段名：Shp_Tax - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field Shp_Tax = new WeiSha.Data.Field<ShowPicture>("Shp_Tax");
     			
     			/// <summary>
     			/// 字段名：Shp_Url - 数据类型：String

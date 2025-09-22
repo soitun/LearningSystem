@@ -86,7 +86,7 @@
                         this.$nextTick(function () {
                             this.datas = arr;
                             for (var i = 0; i < this.datas.length; i++) {
-                                this.datas[i].MM_Tax = i * 1;
+                                this.datas[i].MM_Order = i * 1;
                             }
                             this.changeTax();
                         });

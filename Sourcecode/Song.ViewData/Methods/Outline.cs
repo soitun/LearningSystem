@@ -107,7 +107,7 @@ namespace Song.ViewData.Methods
         /// <summary>
         /// 更改章节的排序
         /// </summary>
-        /// <param name="list">章节列表，对像只有Ol_ID、Ol_PID、Ol_Tax、Ol_Level</param>
+        /// <param name="list">章节列表，对像只有Ol_ID、Ol_PID、Ol_Order、Ol_Level</param>
         /// <returns></returns>
         [HttpPost]
         [Admin, Teacher]

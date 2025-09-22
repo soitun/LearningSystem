@@ -38,13 +38,13 @@ namespace Song.Entities {
     		
     		protected String _Dep_Msn;
     		
+    		protected Int32 _Dep_Order;
+    		
     		protected Int32 _Dep_PatId;
     		
     		protected String _Dep_Phone;
     		
     		protected Boolean _Dep_State;
-    		
-    		protected Int32 _Dep_Tax;
     		
     		protected String _Dep_WorkAddr;
     		
@@ -202,6 +202,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32 Dep_Order {
+    			get {
+    				return this._Dep_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Dep_Order, _Dep_Order, value);
+    				this._Dep_Order = value;
+    			}
+    		}
+    		
     		public Int32 Dep_PatId {
     			get {
     				return this._Dep_PatId;
@@ -229,16 +239,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Dep_State, _Dep_State, value);
     				this._Dep_State = value;
-    			}
-    		}
-    		
-    		public Int32 Dep_Tax {
-    			get {
-    				return this._Dep_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Dep_Tax, _Dep_Tax, value);
-    				this._Dep_Tax = value;
     			}
     		}
     		
@@ -314,10 +314,10 @@ namespace Song.Entities {
     					_.Dep_IsUse,
     					_.Dep_Level,
     					_.Dep_Msn,
+    					_.Dep_Order,
     					_.Dep_PatId,
     					_.Dep_Phone,
     					_.Dep_State,
-    					_.Dep_Tax,
     					_.Dep_WorkAddr,
     					_.Org_ID,
     					_.Org_Name};
@@ -343,10 +343,10 @@ namespace Song.Entities {
     					this._Dep_IsUse,
     					this._Dep_Level,
     					this._Dep_Msn,
+    					this._Dep_Order,
     					this._Dep_PatId,
     					this._Dep_Phone,
     					this._Dep_State,
-    					this._Dep_Tax,
     					this._Dep_WorkAddr,
     					this._Org_ID,
     					this._Org_Name};
@@ -401,6 +401,9 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Dep_Msn))) {
     				this._Dep_Msn = reader.GetString(_.Dep_Msn);
     			}
+    			if ((false == reader.IsDBNull(_.Dep_Order))) {
+    				this._Dep_Order = reader.GetInt32(_.Dep_Order);
+    			}
     			if ((false == reader.IsDBNull(_.Dep_PatId))) {
     				this._Dep_PatId = reader.GetInt32(_.Dep_PatId);
     			}
@@ -409,9 +412,6 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Dep_State))) {
     				this._Dep_State = reader.GetBoolean(_.Dep_State);
-    			}
-    			if ((false == reader.IsDBNull(_.Dep_Tax))) {
-    				this._Dep_Tax = reader.GetInt32(_.Dep_Tax);
     			}
     			if ((false == reader.IsDBNull(_.Dep_WorkAddr))) {
     				this._Dep_WorkAddr = reader.GetString(_.Dep_WorkAddr);
@@ -524,6 +524,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Dep_Msn = new WeiSha.Data.Field<Depart>("Dep_Msn");
     			
     			/// <summary>
+    			/// 字段名：Dep_Order - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Dep_Order = new WeiSha.Data.Field<Depart>("Dep_Order");
+    			
+    			/// <summary>
     			/// 字段名：Dep_PatId - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Dep_PatId = new WeiSha.Data.Field<Depart>("Dep_PatId");
@@ -537,11 +542,6 @@ namespace Song.Entities {
     			/// 字段名：Dep_State - 数据类型：Boolean
     			/// </summary>
     			public static WeiSha.Data.Field Dep_State = new WeiSha.Data.Field<Depart>("Dep_State");
-    			
-    			/// <summary>
-    			/// 字段名：Dep_Tax - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field Dep_Tax = new WeiSha.Data.Field<Depart>("Dep_Tax");
     			
     			/// <summary>
     			/// 字段名：Dep_WorkAddr - 数据类型：String

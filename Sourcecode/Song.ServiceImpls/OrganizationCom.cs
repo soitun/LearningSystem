@@ -462,9 +462,9 @@ namespace Song.ServiceImpls
             if (tageexist) throw new Exception("标识已经存在");
 
             //添加对象，并设置排序号
-            object obj = Gateway.Default.Max<OrganLevel>(OrganLevel._.Olv_Tax, OrganLevel._.Olv_Tax > -1);
+            object obj = Gateway.Default.Max<OrganLevel>(OrganLevel._.Olv_Order, OrganLevel._.Olv_Order > -1);
             int tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
-            entity.Olv_Tax = tax + 1;
+            entity.Olv_Order = tax + 1;
             //判断是否默认
             obj = Gateway.Default.Count<OrganLevel>(OrganLevel._.Olv_IsDefault==true);
             bool isDef = (obj != null ? Convert.ToInt32(obj) : 0) > 0;
@@ -551,7 +551,7 @@ namespace Song.ServiceImpls
             WhereClip wc = new WhereClip();
             if (isUse != null) wc.And(OrganLevel._.Olv_IsUse == (bool)isUse);
             if (!string.IsNullOrWhiteSpace(search)) wc.And(OrganLevel._.Olv_Name.Contains(search));
-            return Gateway.Default.From<OrganLevel>().Where(wc).OrderBy(OrganLevel._.Olv_Tax.Asc).ToArray<OrganLevel>();
+            return Gateway.Default.From<OrganLevel>().Where(wc).OrderBy(OrganLevel._.Olv_Order.Asc).ToArray<OrganLevel>();
 
         }
         /// <summary>
@@ -632,8 +632,8 @@ namespace Song.ServiceImpls
                     foreach (OrganLevel item in items)
                     {
                         tran.Update<OrganLevel>(
-                            new Field[] { OrganLevel._.Olv_Tax },
-                            new object[] { item.Olv_Tax },
+                            new Field[] { OrganLevel._.Olv_Order },
+                            new object[] { item.Olv_Order },
                             OrganLevel._.Olv_ID == item.Olv_ID);
                     }
                     tran.Commit();

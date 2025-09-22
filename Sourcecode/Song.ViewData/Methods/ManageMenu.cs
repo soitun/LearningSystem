@@ -272,7 +272,7 @@ namespace Song.ViewData.Methods
                 //如果不是本机id，则显示项单项完成（因为完成度只是为了在开发时记录一下完成状态）
                 if (!islocal) m.MM_Complete = 100;
 
-                string j = m.ToJson(string.Empty, simplify ? @"MM_UID,MM_Marker,MM_IsFixed,MM_Func,MM_Tax,MM_IsChilds,MM_IsShow,
+                string j = m.ToJson(string.Empty, simplify ? @"MM_UID,MM_Marker,MM_IsFixed,MM_Func,MM_Order,MM_IsChilds,MM_IsShow,
                                                     MM_PatId,MM_Root,
                                                     MM_Font,MM_IsBold,MM_IsItalic,MM_Color,
                                                     MM_IcoCode,MM_IcoSize,MM_IcoColor,MM_IcoX,MM_IcoY" : string.Empty);
@@ -341,7 +341,7 @@ namespace Song.ViewData.Methods
                 Song.Entities.ManageMenu m = _MenuParse((JObject)jarr[i], out childJson);
                 if (string.IsNullOrWhiteSpace(m.MM_UID))
                     m.MM_UID = WeiSha.Core.Request.UniqueID();
-                m.MM_Tax = i;
+                m.MM_Order = i;
                 m.MM_PatId = pid;
                 mlist.Add(m);
                 if (m.MM_IsChilds)

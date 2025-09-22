@@ -271,10 +271,10 @@ namespace Song.ServiceImpls
             if (string.IsNullOrWhiteSpace(entity.Gc_PID)) entity.Gc_PID = "0";
             if (string.IsNullOrWhiteSpace(entity.Gc_UID)) entity.Gc_UID = WeiSha.Core.Request.UniqueID();
             //如果没有排序号，则自动计算
-            if (entity.Gc_Tax < 1)
+            if (entity.Gc_Order < 1)
             {
-                object obj = Gateway.Default.Max<GuideColumns>(GuideColumns._.Gc_Tax, GuideColumns._.Cou_ID == entity.Cou_ID && GuideColumns._.Gc_PID == entity.Gc_PID);
-                entity.Gc_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
+                object obj = Gateway.Default.Max<GuideColumns>(GuideColumns._.Gc_Order, GuideColumns._.Cou_ID == entity.Cou_ID && GuideColumns._.Gc_PID == entity.Gc_PID);
+                entity.Gc_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }            
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
             if (org != null) entity.Org_ID = org.Org_ID;
@@ -289,8 +289,8 @@ namespace Song.ServiceImpls
             Song.Entities.GuideColumns old = this.ColumnsSingle(entity.Gc_ID);
             if (old.Gc_PID != entity.Gc_PID)
             {
-                object obj = Gateway.Default.Max<GuideColumns>(GuideColumns._.Gc_Tax, GuideColumns._.Cou_ID == entity.Cou_ID && GuideColumns._.Gc_PID == entity.Gc_PID);
-                entity.Gc_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
+                object obj = Gateway.Default.Max<GuideColumns>(GuideColumns._.Gc_Order, GuideColumns._.Cou_ID == entity.Cou_ID && GuideColumns._.Gc_PID == entity.Gc_PID);
+                entity.Gc_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
             using (DbTrans trans = Gateway.Default.BeginTrans())
             {
@@ -355,7 +355,7 @@ namespace Song.ServiceImpls
             if (couid > 0) wc.And(GuideColumns._.Cou_ID == couid);
             if (isUse != null) wc.And(GuideColumns._.Gc_IsUse == (bool)isUse);
             if(!string.IsNullOrWhiteSpace(search)) wc.And(GuideColumns._.Gc_Title.Contains(search));
-            return Gateway.Default.From<GuideColumns>().Where(wc).OrderBy(GuideColumns._.Gc_Tax.Asc).ToArray<GuideColumns>();
+            return Gateway.Default.From<GuideColumns>().Where(wc).OrderBy(GuideColumns._.Gc_Order.Asc).ToArray<GuideColumns>();
         }
         /// <summary>
         /// 获取当前分类下的子分类
@@ -368,12 +368,12 @@ namespace Song.ServiceImpls
             WhereClip wc = GuideColumns._.Cou_ID == couid;
             if (!string.IsNullOrWhiteSpace(pid)) wc.And(GuideColumns._.Gc_PID == pid);
             if (isUse != null) wc.And(GuideColumns._.Gc_IsUse == (bool)isUse);
-            return Gateway.Default.From<GuideColumns>().Where(wc).OrderBy(GuideColumns._.Gc_Tax.Asc).ToArray<GuideColumns>();
+            return Gateway.Default.From<GuideColumns>().Where(wc).OrderBy(GuideColumns._.Gc_Order.Asc).ToArray<GuideColumns>();
         }
         /// <summary>
         /// 更改排序
         /// </summary>
-        /// <param name="list">对象列表，Gc_ID、Gc_PID、Gc_Tax</param>
+        /// <param name="list">对象列表，Gc_ID、Gc_PID、Gc_Order</param>
         /// <returns></returns>
         public bool ColumnsUpdateTaxis(GuideColumns[] list)
         {
@@ -384,8 +384,8 @@ namespace Song.ServiceImpls
                     foreach (Song.Entities.GuideColumns item in list)
                     {
                         tran.Update<GuideColumns>(
-                            new Field[] { GuideColumns._.Gc_PID, GuideColumns._.Gc_Tax },
-                            new object[] { item.Gc_PID, item.Gc_Tax },
+                            new Field[] { GuideColumns._.Gc_PID, GuideColumns._.Gc_Order },
+                            new object[] { item.Gc_PID, item.Gc_Order },
                             GuideColumns._.Gc_ID == item.Gc_ID);
                     }
                     tran.Commit();

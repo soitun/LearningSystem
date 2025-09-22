@@ -19,10 +19,10 @@ namespace Song.ServiceImpls
         {
             entity.Col_CrtTime = DateTime.Now;
             //如果没有排序号，则自动计算
-            if (entity.Col_Tax < 1)
+            if (entity.Col_Order < 1)
             {
-                object obj = Gateway.Default.Max<Columns>( Columns._.Col_Tax,Columns._.Col_PID == entity.Col_PID);
-                entity.Col_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 1;
+                object obj = Gateway.Default.Max<Columns>( Columns._.Col_Order,Columns._.Col_PID == entity.Col_PID);
+                entity.Col_Order = obj != null ? Convert.ToInt32(obj) + 1 : 1;
             }
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
             if (org != null)
@@ -81,7 +81,7 @@ namespace Song.ServiceImpls
                         if (nc != null)
                         {
                             nc.Col_PID = pid;
-                            nc.Col_Tax = tax;
+                            nc.Col_Order = tax;
                             tran.Save<Columns>(nc);
                         }
                     }
@@ -134,7 +134,7 @@ namespace Song.ServiceImpls
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Columns._.Org_ID == orgid);
             if (isUse != null) wc.And(Columns._.Col_IsUse == (bool)isUse);
-            return Gateway.Default.From<Columns>().Where(wc).OrderBy(Columns._.Col_Tax.Asc).ToList<Columns>();
+            return Gateway.Default.From<Columns>().Where(wc).OrderBy(Columns._.Col_Order.Asc).ToList<Columns>();
         }
 
         public List<Columns> ColumnCount(int orgid, string type, bool? isUse, int count)
@@ -152,14 +152,14 @@ namespace Song.ServiceImpls
                 type = System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(type.ToLower());
                 wc.And(Columns._.Col_Type == type);
             }
-            return Gateway.Default.From<Columns>().Where(wc).OrderBy(Columns._.Col_Tax.Asc).ToList<Columns>(count);
+            return Gateway.Default.From<Columns>().Where(wc).OrderBy(Columns._.Col_Order.Asc).ToList<Columns>(count);
 
         }
         public List<Columns> Children(string pid, bool? isUse)
         {
             WhereClip wc = Columns._.Col_PID == pid;
             if (isUse != null) wc.And(Columns._.Col_IsUse == (bool)isUse);
-            return Gateway.Default.From<Columns>().Where(wc).OrderBy(Columns._.Col_Tax.Asc).ToList<Columns>();
+            return Gateway.Default.From<Columns>().Where(wc).OrderBy(Columns._.Col_Order.Asc).ToList<Columns>();
         }
         /// <summary>
         /// 是否有下级栏目

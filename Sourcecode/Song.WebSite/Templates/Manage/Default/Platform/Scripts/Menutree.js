@@ -113,7 +113,7 @@ $ready(function () {
                 let isshow = this.rootMenu.MM_IsShow;
                 let temp = {
                     "MM_Id": -1, "MM_Name": "", "MM_Type": "", "MM_Root": 0, "MM_Link": "",
-                    "MM_Marker": "", "MM_Tax": 0, "MM_PatId": 0, "MM_Color": "",
+                    "MM_Marker": "", "MM_Order": 0, "MM_PatId": 0, "MM_Color": "",
                     "MM_Font": "", "MM_IsBold": false, "MM_IsItalic": false, "MM_IcoCode": "",
                     "MM_IcoSize": "", "MM_IsUse": true, "MM_IsShow": isshow, "MM_Intro": "",
                     "MM_IsChilds": false, "MM_Func": "func", "MM_WinWidth": 0, "MM_WinHeight": 0,

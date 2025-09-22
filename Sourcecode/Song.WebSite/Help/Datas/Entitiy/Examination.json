@@ -104,7 +104,7 @@
     "intro": "当前考试的总分",
     "relation": ""
   },
-  "Exam_Tax": {
+  "Exam_Order": {
     "mark": "排序号",
     "intro": "用于区分第几场考试",
     "relation": ""

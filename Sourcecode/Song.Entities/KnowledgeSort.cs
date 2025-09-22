@@ -22,9 +22,9 @@ namespace Song.Entities {
     		
     		protected String _Kns_Name;
     		
-    		protected Int64 _Kns_PID;
+    		protected Int32 _Kns_Order;
     		
-    		protected Int32 _Kns_Tax;
+    		protected Int64 _Kns_PID;
     		
     		protected String _Kns_Type;
     		
@@ -102,6 +102,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32 Kns_Order {
+    			get {
+    				return this._Kns_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Kns_Order, _Kns_Order, value);
+    				this._Kns_Order = value;
+    			}
+    		}
+    		
     		public Int64 Kns_PID {
     			get {
     				return this._Kns_PID;
@@ -109,16 +119,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Kns_PID, _Kns_PID, value);
     				this._Kns_PID = value;
-    			}
-    		}
-    		
-    		public Int32 Kns_Tax {
-    			get {
-    				return this._Kns_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Kns_Tax, _Kns_Tax, value);
-    				this._Kns_Tax = value;
     			}
     		}
     		
@@ -179,8 +179,8 @@ namespace Song.Entities {
     					_.Kns_Intro,
     					_.Kns_IsUse,
     					_.Kns_Name,
+    					_.Kns_Order,
     					_.Kns_PID,
-    					_.Kns_Tax,
     					_.Kns_Type,
     					_.Org_ID,
     					_.Org_Name};
@@ -198,8 +198,8 @@ namespace Song.Entities {
     					this._Kns_Intro,
     					this._Kns_IsUse,
     					this._Kns_Name,
+    					this._Kns_Order,
     					this._Kns_PID,
-    					this._Kns_Tax,
     					this._Kns_Type,
     					this._Org_ID,
     					this._Org_Name};
@@ -230,11 +230,11 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Kns_Name))) {
     				this._Kns_Name = reader.GetString(_.Kns_Name);
     			}
+    			if ((false == reader.IsDBNull(_.Kns_Order))) {
+    				this._Kns_Order = reader.GetInt32(_.Kns_Order);
+    			}
     			if ((false == reader.IsDBNull(_.Kns_PID))) {
     				this._Kns_PID = reader.GetInt64(_.Kns_PID);
-    			}
-    			if ((false == reader.IsDBNull(_.Kns_Tax))) {
-    				this._Kns_Tax = reader.GetInt32(_.Kns_Tax);
     			}
     			if ((false == reader.IsDBNull(_.Kns_Type))) {
     				this._Kns_Type = reader.GetString(_.Kns_Type);
@@ -307,14 +307,14 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Kns_Name = new WeiSha.Data.Field<KnowledgeSort>("Kns_Name");
     			
     			/// <summary>
+    			/// 字段名：Kns_Order - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Kns_Order = new WeiSha.Data.Field<KnowledgeSort>("Kns_Order");
+    			
+    			/// <summary>
     			/// 字段名：Kns_PID - 数据类型：Int64
     			/// </summary>
     			public static WeiSha.Data.Field Kns_PID = new WeiSha.Data.Field<KnowledgeSort>("Kns_PID");
-    			
-    			/// <summary>
-    			/// 字段名：Kns_Tax - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field Kns_Tax = new WeiSha.Data.Field<KnowledgeSort>("Kns_Tax");
     			
     			/// <summary>
     			/// 字段名：Kns_Type - 数据类型：String

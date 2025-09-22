@@ -46,8 +46,8 @@ namespace Song.ServiceImpls
                         if (cou != null) entity.Sbj_ID = cou.Sbj_ID;
                     }
                     //计算排序号
-                    object obj = tran.Max<Outline>(Outline._.Ol_Tax, Outline._.Cou_ID == entity.Cou_ID && Outline._.Ol_PID == entity.Ol_PID);
-                    entity.Ol_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 1;
+                    object obj = tran.Max<Outline>(Outline._.Ol_Order, Outline._.Cou_ID == entity.Cou_ID && Outline._.Ol_PID == entity.Ol_PID);
+                    entity.Ol_Order = obj != null ? Convert.ToInt32(obj) + 1 : 1;
                     //唯一id
                     entity.Ol_UID = WeiSha.Core.Request.SnowID().ToString();
                     //编辑时间
@@ -168,8 +168,8 @@ namespace Song.ServiceImpls
             Outline old = Gateway.Default.From<Outline>().Where(Outline._.Ol_ID == entity.Ol_ID).ToFirst<Outline>();
             if (old.Ol_PID != entity.Ol_PID)
             {
-                object obj = Gateway.Default.Max<Outline>(Outline._.Ol_Tax, Outline._.Org_ID == entity.Org_ID && Outline._.Ol_PID == entity.Ol_PID);
-                entity.Ol_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 1;
+                object obj = Gateway.Default.Max<Outline>(Outline._.Ol_Order, Outline._.Org_ID == entity.Org_ID && Outline._.Ol_PID == entity.Ol_PID);
+                entity.Ol_Order = obj != null ? Convert.ToInt32(obj) + 1 : 1;
             }
             //编辑时间
             //if (entity.Ol_ModifyTime < DateTime.Now.AddYears(-30))
@@ -280,7 +280,7 @@ namespace Song.ServiceImpls
             Handler.DataTableTree tree = new Handler.DataTableTree();
             tree.IDKeyName = "OL_ID";
             tree.ParentIDKeyName = "OL_PID";
-            tree.TaxKeyName = "Ol_Tax";
+            tree.TaxKeyName = "Ol_Order";
             tree.Root = 0;
             DataTable dt = tree.BuilderTree(outls);
             //取最大深度
@@ -528,7 +528,7 @@ namespace Song.ServiceImpls
             if (use != null) wc.And(Outline._.Ol_IsUse == use);
             if (finish != null) wc.And(Outline._.Ol_IsFinish == finish);
             if (video != null) wc.And(Outline._.Ol_IsVideo == video);
-            return Gateway.Default.From<Outline>().Where(wc).OrderBy(Outline._.Ol_Tax.Asc).ToList<Outline>();
+            return Gateway.Default.From<Outline>().Where(wc).OrderBy(Outline._.Ol_Order.Asc).ToList<Outline>();
         }
 
         #region 生成树形结构的章节列表
@@ -549,7 +549,7 @@ namespace Song.ServiceImpls
             Handler.DataTableTree tree = new Handler.DataTableTree();
             tree.IDKeyName = "OL_ID";
             tree.ParentIDKeyName = "OL_PID";
-            tree.TaxKeyName = "Ol_Tax";
+            tree.TaxKeyName = "Ol_Order";
             tree.Root = 0;
             DataTable dt = tree.BuilderTree(outlines);
 
@@ -723,7 +723,7 @@ namespace Song.ServiceImpls
             if (islive != null) wc.And(Outline._.Ol_IsLive == (bool)islive);
             if (isUse != null) wc.And(Outline._.Ol_IsUse == (bool)isUse);
             if(!string.IsNullOrWhiteSpace(search)) wc.And(Outline._.Ol_Name.Contains(search));
-            return Gateway.Default.From<Outline>().Where(wc).OrderBy(Outline._.Ol_Tax.Asc).ToList<Outline>(count);
+            return Gateway.Default.From<Outline>().Where(wc).OrderBy(Outline._.Ol_Order.Asc).ToList<Outline>(count);
         }
         /// <summary>
         /// 直播中的章节
@@ -853,7 +853,7 @@ namespace Song.ServiceImpls
             WhereClip wc = Outline._.Cou_ID == couid;
             if (pid >= 0) wc.And(Outline._.Ol_PID == pid);
             if (isUse != null) wc.And(Outline._.Ol_IsUse == (bool)isUse);
-            return Gateway.Default.From<Outline>().Where(wc).OrderBy(Outline._.Ol_Tax.Asc).ToArray<Outline>(count);
+            return Gateway.Default.From<Outline>().Where(wc).OrderBy(Outline._.Ol_Order.Asc).ToArray<Outline>(count);
         }
         /// <summary>
         /// 分页取课程章节的信息
@@ -871,7 +871,7 @@ namespace Song.ServiceImpls
             if (isUse != null) wc.And(Outline._.Ol_IsUse == (bool)isUse);
             if (!string.IsNullOrWhiteSpace(searTxt)) wc.And(Outline._.Ol_Name.Contains(searTxt));
             countSum = Gateway.Default.Count<Outline>(wc);
-            return Gateway.Default.From<Outline>().Where(wc).OrderBy(Outline._.Ol_Tax.Asc).ToArray<Outline>(size, (index - 1) * size);
+            return Gateway.Default.From<Outline>().Where(wc).OrderBy(Outline._.Ol_Order.Asc).ToArray<Outline>(size, (index - 1) * size);
         }
         /// <summary>
         /// 当前章节的试题
@@ -915,7 +915,7 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 更改章节的排序
         /// </summary>
-        /// <param name="list">专业列表，Ol_ID、Ol_PID、Ol_Tax、Ol_Level</param>
+        /// <param name="list">专业列表，Ol_ID、Ol_PID、Ol_Order、Ol_Level</param>
         /// <returns></returns>
         public bool UpdateTaxis(Outline[] list)
         {
@@ -926,8 +926,8 @@ namespace Song.ServiceImpls
                     foreach (Song.Entities.Outline sbj in list)
                     {
                         tran.Update<Outline>(
-                            new Field[] { Outline._.Ol_PID, Outline._.Ol_Tax, Outline._.Ol_Level },
-                            new object[] { sbj.Ol_PID, sbj.Ol_Tax, sbj.Ol_Level },
+                            new Field[] { Outline._.Ol_PID, Outline._.Ol_Order, Outline._.Ol_Level },
+                            new object[] { sbj.Ol_PID, sbj.Ol_Order, sbj.Ol_Level },
                             Outline._.Ol_ID == sbj.Ol_ID);
                     }
                     tran.Commit();

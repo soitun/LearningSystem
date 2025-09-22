@@ -48,11 +48,11 @@ namespace Song.Entities {
     		
     		protected String _Ol_Name;
     		
+    		protected Int32 _Ol_Order;
+    		
     		protected Int64 _Ol_PID;
     		
     		protected Int32 _Ol_QuesCount;
-    		
-    		protected Int32 _Ol_Tax;
     		
     		protected String _Ol_UID;
     		
@@ -264,6 +264,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32 Ol_Order {
+    			get {
+    				return this._Ol_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Ol_Order, _Ol_Order, value);
+    				this._Ol_Order = value;
+    			}
+    		}
+    		
     		public Int64 Ol_PID {
     			get {
     				return this._Ol_PID;
@@ -281,16 +291,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Ol_QuesCount, _Ol_QuesCount, value);
     				this._Ol_QuesCount = value;
-    			}
-    		}
-    		
-    		public Int32 Ol_Tax {
-    			get {
-    				return this._Ol_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Ol_Tax, _Ol_Tax, value);
-    				this._Ol_Tax = value;
     			}
     		}
     		
@@ -384,9 +384,9 @@ namespace Song.Entities {
     					_.Ol_LiveTime,
     					_.Ol_ModifyTime,
     					_.Ol_Name,
+    					_.Ol_Order,
     					_.Ol_PID,
     					_.Ol_QuesCount,
-    					_.Ol_Tax,
     					_.Ol_UID,
     					_.Ol_Video,
     					_.Ol_XPath,
@@ -419,9 +419,9 @@ namespace Song.Entities {
     					this._Ol_LiveTime,
     					this._Ol_ModifyTime,
     					this._Ol_Name,
+    					this._Ol_Order,
     					this._Ol_PID,
     					this._Ol_QuesCount,
-    					this._Ol_Tax,
     					this._Ol_UID,
     					this._Ol_Video,
     					this._Ol_XPath,
@@ -493,14 +493,14 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Ol_Name))) {
     				this._Ol_Name = reader.GetString(_.Ol_Name);
     			}
+    			if ((false == reader.IsDBNull(_.Ol_Order))) {
+    				this._Ol_Order = reader.GetInt32(_.Ol_Order);
+    			}
     			if ((false == reader.IsDBNull(_.Ol_PID))) {
     				this._Ol_PID = reader.GetInt64(_.Ol_PID);
     			}
     			if ((false == reader.IsDBNull(_.Ol_QuesCount))) {
     				this._Ol_QuesCount = reader.GetInt32(_.Ol_QuesCount);
-    			}
-    			if ((false == reader.IsDBNull(_.Ol_Tax))) {
-    				this._Ol_Tax = reader.GetInt32(_.Ol_Tax);
     			}
     			if ((false == reader.IsDBNull(_.Ol_UID))) {
     				this._Ol_UID = reader.GetString(_.Ol_UID);
@@ -644,6 +644,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Ol_Name = new WeiSha.Data.Field<Outline>("Ol_Name");
     			
     			/// <summary>
+    			/// 字段名：Ol_Order - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Ol_Order = new WeiSha.Data.Field<Outline>("Ol_Order");
+    			
+    			/// <summary>
     			/// 字段名：Ol_PID - 数据类型：Int64
     			/// </summary>
     			public static WeiSha.Data.Field Ol_PID = new WeiSha.Data.Field<Outline>("Ol_PID");
@@ -652,11 +657,6 @@ namespace Song.Entities {
     			/// 字段名：Ol_QuesCount - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Ol_QuesCount = new WeiSha.Data.Field<Outline>("Ol_QuesCount");
-    			
-    			/// <summary>
-    			/// 字段名：Ol_Tax - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field Ol_Tax = new WeiSha.Data.Field<Outline>("Ol_Tax");
     			
     			/// <summary>
     			/// 字段名：Ol_UID - 数据类型：String

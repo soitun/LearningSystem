@@ -38,11 +38,11 @@ namespace Song.Entities {
     		
     		protected String _Exam_Name;
     		
+    		protected Int32 _Exam_Order;
+    		
     		protected Int32 _Exam_PassScore;
     		
     		protected Int32 _Exam_Span;
-    		
-    		protected Int32 _Exam_Tax;
     		
     		protected String _Exam_Title;
     		
@@ -214,6 +214,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32 Exam_Order {
+    			get {
+    				return this._Exam_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Exam_Order, _Exam_Order, value);
+    				this._Exam_Order = value;
+    			}
+    		}
+    		
     		public Int32 Exam_PassScore {
     			get {
     				return this._Exam_PassScore;
@@ -231,16 +241,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Exam_Span, _Exam_Span, value);
     				this._Exam_Span = value;
-    			}
-    		}
-    		
-    		public Int32 Exam_Tax {
-    			get {
-    				return this._Exam_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Exam_Tax, _Exam_Tax, value);
-    				this._Exam_Tax = value;
     			}
     		}
     		
@@ -386,9 +386,9 @@ namespace Song.Entities {
     					_.Exam_IsUse,
     					_.Exam_Monitor,
     					_.Exam_Name,
+    					_.Exam_Order,
     					_.Exam_PassScore,
     					_.Exam_Span,
-    					_.Exam_Tax,
     					_.Exam_Title,
     					_.Exam_Total,
     					_.Exam_UID,
@@ -421,9 +421,9 @@ namespace Song.Entities {
     					this._Exam_IsUse,
     					this._Exam_Monitor,
     					this._Exam_Name,
+    					this._Exam_Order,
     					this._Exam_PassScore,
     					this._Exam_Span,
-    					this._Exam_Tax,
     					this._Exam_Title,
     					this._Exam_Total,
     					this._Exam_UID,
@@ -485,14 +485,14 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Exam_Name))) {
     				this._Exam_Name = reader.GetString(_.Exam_Name);
     			}
+    			if ((false == reader.IsDBNull(_.Exam_Order))) {
+    				this._Exam_Order = reader.GetInt32(_.Exam_Order);
+    			}
     			if ((false == reader.IsDBNull(_.Exam_PassScore))) {
     				this._Exam_PassScore = reader.GetInt32(_.Exam_PassScore);
     			}
     			if ((false == reader.IsDBNull(_.Exam_Span))) {
     				this._Exam_Span = reader.GetInt32(_.Exam_Span);
-    			}
-    			if ((false == reader.IsDBNull(_.Exam_Tax))) {
-    				this._Exam_Tax = reader.GetInt32(_.Exam_Tax);
     			}
     			if ((false == reader.IsDBNull(_.Exam_Title))) {
     				this._Exam_Title = reader.GetString(_.Exam_Title);
@@ -626,6 +626,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Exam_Name = new WeiSha.Data.Field<Examination>("Exam_Name");
     			
     			/// <summary>
+    			/// 字段名：Exam_Order - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Exam_Order = new WeiSha.Data.Field<Examination>("Exam_Order");
+    			
+    			/// <summary>
     			/// 字段名：Exam_PassScore - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Exam_PassScore = new WeiSha.Data.Field<Examination>("Exam_PassScore");
@@ -634,11 +639,6 @@ namespace Song.Entities {
     			/// 字段名：Exam_Span - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Exam_Span = new WeiSha.Data.Field<Examination>("Exam_Span");
-    			
-    			/// <summary>
-    			/// 字段名：Exam_Tax - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field Exam_Tax = new WeiSha.Data.Field<Examination>("Exam_Tax");
     			
     			/// <summary>
     			/// 字段名：Exam_Title - 数据类型：String

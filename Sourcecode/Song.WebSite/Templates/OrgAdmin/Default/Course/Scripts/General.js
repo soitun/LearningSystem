@@ -13,7 +13,7 @@
             upfile: null, //本地上传文件的对象   
 
             rules: {
-                Cou_Tax: [{ required: true, message: '不得为空', trigger: 'blur' }]
+                Cou_Order: [{ required: true, message: '不得为空', trigger: 'blur' }]
             },
             loading_obj: {},
             loading: false,

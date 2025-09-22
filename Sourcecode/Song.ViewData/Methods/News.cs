@@ -127,7 +127,7 @@ namespace Song.ViewData.Methods
                 Song.Entities.Columns m = _ColumnsParse((JObject)jarr[i], out childJson);
                 if (string.IsNullOrWhiteSpace(m.Col_UID))
                     m.Col_UID = WeiSha.Core.Request.UniqueID();
-                m.Col_Tax = i;
+                m.Col_Order = i;
                 m.Col_PID = pid;
                 mlist.Add(m);
                 if (m.Col_IsChildren)

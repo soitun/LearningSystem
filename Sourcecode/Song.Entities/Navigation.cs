@@ -36,13 +36,13 @@ namespace Song.Entities {
     		
     		protected String _Nav_Name;
     		
+    		protected Int32 _Nav_Order;
+    		
     		protected String _Nav_PID;
     		
     		protected String _Nav_Site;
     		
     		protected String _Nav_Target;
-    		
-    		protected Int32 _Nav_Tax;
     		
     		protected String _Nav_Title;
     		
@@ -196,6 +196,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32 Nav_Order {
+    			get {
+    				return this._Nav_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Nav_Order, _Nav_Order, value);
+    				this._Nav_Order = value;
+    			}
+    		}
+    		
     		public String Nav_PID {
     			get {
     				return this._Nav_PID;
@@ -223,16 +233,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Nav_Target, _Nav_Target, value);
     				this._Nav_Target = value;
-    			}
-    		}
-    		
-    		public Int32 Nav_Tax {
-    			get {
-    				return this._Nav_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Nav_Tax, _Nav_Tax, value);
-    				this._Nav_Tax = value;
     			}
     		}
     		
@@ -337,10 +337,10 @@ namespace Song.Entities {
     					_.Nav_IsShow,
     					_.Nav_Logo,
     					_.Nav_Name,
+    					_.Nav_Order,
     					_.Nav_PID,
     					_.Nav_Site,
     					_.Nav_Target,
-    					_.Nav_Tax,
     					_.Nav_Title,
     					_.Nav_Type,
     					_.Nav_UID,
@@ -368,10 +368,10 @@ namespace Song.Entities {
     					this._Nav_IsShow,
     					this._Nav_Logo,
     					this._Nav_Name,
+    					this._Nav_Order,
     					this._Nav_PID,
     					this._Nav_Site,
     					this._Nav_Target,
-    					this._Nav_Tax,
     					this._Nav_Title,
     					this._Nav_Type,
     					this._Nav_UID,
@@ -426,6 +426,9 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Nav_Name))) {
     				this._Nav_Name = reader.GetString(_.Nav_Name);
     			}
+    			if ((false == reader.IsDBNull(_.Nav_Order))) {
+    				this._Nav_Order = reader.GetInt32(_.Nav_Order);
+    			}
     			if ((false == reader.IsDBNull(_.Nav_PID))) {
     				this._Nav_PID = reader.GetString(_.Nav_PID);
     			}
@@ -434,9 +437,6 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Nav_Target))) {
     				this._Nav_Target = reader.GetString(_.Nav_Target);
-    			}
-    			if ((false == reader.IsDBNull(_.Nav_Tax))) {
-    				this._Nav_Tax = reader.GetInt32(_.Nav_Tax);
     			}
     			if ((false == reader.IsDBNull(_.Nav_Title))) {
     				this._Nav_Title = reader.GetString(_.Nav_Title);
@@ -553,6 +553,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Nav_Name = new WeiSha.Data.Field<Navigation>("Nav_Name");
     			
     			/// <summary>
+    			/// 字段名：Nav_Order - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Nav_Order = new WeiSha.Data.Field<Navigation>("Nav_Order");
+    			
+    			/// <summary>
     			/// 字段名：Nav_PID - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Nav_PID = new WeiSha.Data.Field<Navigation>("Nav_PID");
@@ -566,11 +571,6 @@ namespace Song.Entities {
     			/// 字段名：Nav_Target - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Nav_Target = new WeiSha.Data.Field<Navigation>("Nav_Target");
-    			
-    			/// <summary>
-    			/// 字段名：Nav_Tax - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field Nav_Tax = new WeiSha.Data.Field<Navigation>("Nav_Tax");
     			
     			/// <summary>
     			/// 字段名：Nav_Title - 数据类型：String

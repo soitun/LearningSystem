@@ -28,9 +28,9 @@ namespace Song.Entities {
     		
     		protected String _Col_Name;
     		
-    		protected String _Col_PID;
+    		protected Int32 _Col_Order;
     		
-    		protected Int32 _Col_Tax;
+    		protected String _Col_PID;
     		
     		protected String _Col_Title;
     		
@@ -142,6 +142,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32 Col_Order {
+    			get {
+    				return this._Col_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Col_Order, _Col_Order, value);
+    				this._Col_Order = value;
+    			}
+    		}
+    		
     		public String Col_PID {
     			get {
     				return this._Col_PID;
@@ -149,16 +159,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Col_PID, _Col_PID, value);
     				this._Col_PID = value;
-    			}
-    		}
-    		
-    		public Int32 Col_Tax {
-    			get {
-    				return this._Col_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Col_Tax, _Col_Tax, value);
-    				this._Col_Tax = value;
     			}
     		}
     		
@@ -249,8 +249,8 @@ namespace Song.Entities {
     					_.Col_IsUse,
     					_.Col_Keywords,
     					_.Col_Name,
+    					_.Col_Order,
     					_.Col_PID,
-    					_.Col_Tax,
     					_.Col_Title,
     					_.Col_Type,
     					_.Col_UID,
@@ -273,8 +273,8 @@ namespace Song.Entities {
     					this._Col_IsUse,
     					this._Col_Keywords,
     					this._Col_Name,
+    					this._Col_Order,
     					this._Col_PID,
-    					this._Col_Tax,
     					this._Col_Title,
     					this._Col_Type,
     					this._Col_UID,
@@ -316,11 +316,11 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Col_Name))) {
     				this._Col_Name = reader.GetString(_.Col_Name);
     			}
+    			if ((false == reader.IsDBNull(_.Col_Order))) {
+    				this._Col_Order = reader.GetInt32(_.Col_Order);
+    			}
     			if ((false == reader.IsDBNull(_.Col_PID))) {
     				this._Col_PID = reader.GetString(_.Col_PID);
-    			}
-    			if ((false == reader.IsDBNull(_.Col_Tax))) {
-    				this._Col_Tax = reader.GetInt32(_.Col_Tax);
     			}
     			if ((false == reader.IsDBNull(_.Col_Title))) {
     				this._Col_Title = reader.GetString(_.Col_Title);
@@ -414,14 +414,14 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Col_Name = new WeiSha.Data.Field<Columns>("Col_Name");
     			
     			/// <summary>
+    			/// 字段名：Col_Order - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Col_Order = new WeiSha.Data.Field<Columns>("Col_Order");
+    			
+    			/// <summary>
     			/// 字段名：Col_PID - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Col_PID = new WeiSha.Data.Field<Columns>("Col_PID");
-    			
-    			/// <summary>
-    			/// 字段名：Col_Tax - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field Col_Tax = new WeiSha.Data.Field<Columns>("Col_Tax");
     			
     			/// <summary>
     			/// 字段名：Col_Title - 数据类型：String

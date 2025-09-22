@@ -210,7 +210,7 @@ namespace Song.ViewData.Methods
                     Song.Entities.Navigation m = _MenuParse((JObject)jarr[i], out childJson);
                     if (string.IsNullOrWhiteSpace(m.Nav_UID))
                         m.Nav_UID = WeiSha.Core.Request.UniqueID();
-                    m.Nav_Tax = i;
+                    m.Nav_Order = i;
                     m.Nav_PID = pid;
                     mlist.Add(m);
                     if (m.Nav_Child > 0)

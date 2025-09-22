@@ -137,7 +137,7 @@ $ready(function () {
                     "Nav_Color": "",
                     "Nav_Font": "",
                     "Nav_Child": 0,
-                    "Nav_Tax": 0,
+                    "Nav_Order": 0,
                     "Nav_Intro": "",
                     "Nav_Title": "",
                     "Nav_Type": "main",

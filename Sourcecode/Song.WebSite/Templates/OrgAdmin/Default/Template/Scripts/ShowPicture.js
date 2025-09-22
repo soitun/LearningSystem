@@ -97,12 +97,12 @@ $ready(function () {
                         arr.splice(e.newIndex, 0, arr.splice(e.oldIndex, 1)[0]); // 数据处理
                         this.$nextTick(function () {
                             for (var i = 0; i < arr.length; i++) {
-                                arr[i].Shp_Tax = i + 1;
+                                arr[i].Shp_Order = i + 1;
                             }
                             var len = arr.length;
                             for (var i = 0; i < len; i++) {
                                 for (var j = 0; j < len - 1 - i; j++) {
-                                    if (arr[j].Shp_Tax > arr[j + 1].Shp_Tax) {  // 相邻元素两两对比
+                                    if (arr[j].Shp_Order > arr[j + 1].Shp_Order) {  // 相邻元素两两对比
                                         var temp = arr[j + 1];  // 元素交换
                                         arr[j + 1] = arr[j];
                                         arr[j] = temp;

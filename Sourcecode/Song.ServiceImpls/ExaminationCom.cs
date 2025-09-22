@@ -1283,7 +1283,7 @@ namespace Song.ServiceImpls
         //            results[i] = _ClacScore(results[i]);                  
         //    }
         //    Song.Entities.Depart[] deps = this.GroupForDepart(theme.Exam_UID);
-        //    if (deps.Length < 1) deps = Gateway.Default.From<Depart>().OrderBy(Depart._.Dep_Tax.Asc).ToArray<Depart>();
+        //    if (deps.Length < 1) deps = Gateway.Default.From<Depart>().OrderBy(Depart._.Dep_Order.Asc).ToArray<Depart>();
         //    foreach (Depart dep in deps)
         //    {
         //        DataRow dr = dt.NewRow();

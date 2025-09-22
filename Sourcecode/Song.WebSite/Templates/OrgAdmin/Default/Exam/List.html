@@ -23,7 +23,7 @@
         </div>
         <template>
             <el-table ref="datatable"  border resizable  :data="datas" tooltip-effect="dark" :stripe="true" style="width: 100%"
-                index-key="Exam_Tax" row-key="Exam_ID" @row-click.self="clickTable">
+                index-key="Exam_Order" row-key="Exam_ID" @row-click.self="clickTable">
                 <el-table-column type="index" width="50">
                     <template slot-scope="scope">
                         <span>{{(form.index - 1) * form.size + scope.$index + 1}}</span>

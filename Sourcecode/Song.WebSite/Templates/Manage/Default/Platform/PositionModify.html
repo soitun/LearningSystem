@@ -25,8 +25,8 @@
                 <el-switch v-model="entity.Posi_IsUse" :active-text="entity.Posi_IsUse ? '启用' : '禁用'" inactive-text="">
                 </el-switch>
             </el-form-item>
-            <el-form-item label="排序号" v-if="entity.Posi_Tax>0">
-                <el-input-number v-model="entity.Posi_Tax"></el-input-number>
+            <el-form-item label="排序号" v-if="entity.Posi_Order>0">
+                <el-input-number v-model="entity.Posi_Order"></el-input-number>
             </el-form-item>
         </el-form>
         <div class="footer">

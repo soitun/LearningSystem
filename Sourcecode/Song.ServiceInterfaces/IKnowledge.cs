@@ -159,7 +159,7 @@ namespace Song.ServiceInterfaces
         /// <summary>
         /// 更改排序
         /// </summary>
-        /// <param name="list">对象列表，Kns_ID、Kns_PID、Kns_Tax</param>
+        /// <param name="list">对象列表，Kns_ID、Kns_PID、Kns_Order</param>
         /// <returns></returns>
         bool SortUpdateTaxis(List<KnowledgeSort> list);
         /// <summary>

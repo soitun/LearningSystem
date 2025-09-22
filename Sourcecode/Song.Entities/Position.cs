@@ -22,7 +22,7 @@ namespace Song.Entities {
     		
     		protected String _Posi_Name;
     		
-    		protected Int32 _Posi_Tax;
+    		protected Int32 _Posi_Order;
     		
     		public Int32 Posi_Id {
     			get {
@@ -94,13 +94,13 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32 Posi_Tax {
+    		public Int32 Posi_Order {
     			get {
-    				return this._Posi_Tax;
+    				return this._Posi_Order;
     			}
     			set {
-    				this.OnPropertyValueChange(_.Posi_Tax, _Posi_Tax, value);
-    				this._Posi_Tax = value;
+    				this.OnPropertyValueChange(_.Posi_Order, _Posi_Order, value);
+    				this._Posi_Order = value;
     			}
     		}
     		
@@ -138,7 +138,7 @@ namespace Song.Entities {
     					_.Posi_IsAdmin,
     					_.Posi_IsUse,
     					_.Posi_Name,
-    					_.Posi_Tax};
+    					_.Posi_Order};
     		}
     		
     		/// <summary>
@@ -153,7 +153,7 @@ namespace Song.Entities {
     					this._Posi_IsAdmin,
     					this._Posi_IsUse,
     					this._Posi_Name,
-    					this._Posi_Tax};
+    					this._Posi_Order};
     		}
     		
     		/// <summary>
@@ -181,8 +181,8 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Posi_Name))) {
     				this._Posi_Name = reader.GetString(_.Posi_Name);
     			}
-    			if ((false == reader.IsDBNull(_.Posi_Tax))) {
-    				this._Posi_Tax = reader.GetInt32(_.Posi_Tax);
+    			if ((false == reader.IsDBNull(_.Posi_Order))) {
+    				this._Posi_Order = reader.GetInt32(_.Posi_Order);
     			}
     		}
     		
@@ -246,9 +246,9 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Posi_Name = new WeiSha.Data.Field<Position>("Posi_Name");
     			
     			/// <summary>
-    			/// 字段名：Posi_Tax - 数据类型：Int32
+    			/// 字段名：Posi_Order - 数据类型：Int32
     			/// </summary>
-    			public static WeiSha.Data.Field Posi_Tax = new WeiSha.Data.Field<Position>("Posi_Tax");
+    			public static WeiSha.Data.Field Posi_Order = new WeiSha.Data.Field<Position>("Posi_Order");
     		}
     	}
     }

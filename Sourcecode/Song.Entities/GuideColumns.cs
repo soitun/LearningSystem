@@ -28,9 +28,9 @@ namespace Song.Entities {
     		
     		protected String _Gc_Keywords;
     		
-    		protected String _Gc_PID;
+    		protected Int32 _Gc_Order;
     		
-    		protected Int32 _Gc_Tax;
+    		protected String _Gc_PID;
     		
     		protected String _Gc_Title;
     		
@@ -140,6 +140,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32 Gc_Order {
+    			get {
+    				return this._Gc_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Gc_Order, _Gc_Order, value);
+    				this._Gc_Order = value;
+    			}
+    		}
+    		
     		public String Gc_PID {
     			get {
     				return this._Gc_PID;
@@ -147,16 +157,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Gc_PID, _Gc_PID, value);
     				this._Gc_PID = value;
-    			}
-    		}
-    		
-    		public Int32 Gc_Tax {
-    			get {
-    				return this._Gc_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Gc_Tax, _Gc_Tax, value);
-    				this._Gc_Tax = value;
     			}
     		}
     		
@@ -237,8 +237,8 @@ namespace Song.Entities {
     					_.Gc_IsNote,
     					_.Gc_IsUse,
     					_.Gc_Keywords,
+    					_.Gc_Order,
     					_.Gc_PID,
-    					_.Gc_Tax,
     					_.Gc_Title,
     					_.Gc_Type,
     					_.Gc_UID,
@@ -260,8 +260,8 @@ namespace Song.Entities {
     					this._Gc_IsNote,
     					this._Gc_IsUse,
     					this._Gc_Keywords,
+    					this._Gc_Order,
     					this._Gc_PID,
-    					this._Gc_Tax,
     					this._Gc_Title,
     					this._Gc_Type,
     					this._Gc_UID,
@@ -302,11 +302,11 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Gc_Keywords))) {
     				this._Gc_Keywords = reader.GetString(_.Gc_Keywords);
     			}
+    			if ((false == reader.IsDBNull(_.Gc_Order))) {
+    				this._Gc_Order = reader.GetInt32(_.Gc_Order);
+    			}
     			if ((false == reader.IsDBNull(_.Gc_PID))) {
     				this._Gc_PID = reader.GetString(_.Gc_PID);
-    			}
-    			if ((false == reader.IsDBNull(_.Gc_Tax))) {
-    				this._Gc_Tax = reader.GetInt32(_.Gc_Tax);
     			}
     			if ((false == reader.IsDBNull(_.Gc_Title))) {
     				this._Gc_Title = reader.GetString(_.Gc_Title);
@@ -397,14 +397,14 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Gc_Keywords = new WeiSha.Data.Field<GuideColumns>("Gc_Keywords");
     			
     			/// <summary>
+    			/// 字段名：Gc_Order - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Gc_Order = new WeiSha.Data.Field<GuideColumns>("Gc_Order");
+    			
+    			/// <summary>
     			/// 字段名：Gc_PID - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Gc_PID = new WeiSha.Data.Field<GuideColumns>("Gc_PID");
-    			
-    			/// <summary>
-    			/// 字段名：Gc_Tax - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field Gc_Tax = new WeiSha.Data.Field<GuideColumns>("Gc_Tax");
     			
     			/// <summary>
     			/// 字段名：Gc_Title - 数据类型：String

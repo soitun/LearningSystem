@@ -137,7 +137,7 @@ namespace Song.ServiceInterfaces
         /// <summary>
         /// 更改排序
         /// </summary>
-        /// <param name="list">对象列表，Gc_ID、Gc_PID、Gc_Tax</param>
+        /// <param name="list">对象列表，Gc_ID、Gc_PID、Gc_Order</param>
         /// <returns></returns>
         bool ColumnsUpdateTaxis(GuideColumns[] list);
 

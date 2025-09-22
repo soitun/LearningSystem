@@ -31,10 +31,10 @@ namespace Song.ServiceImpls
                 entity.Org_Name = org.Org_Name;
             }
             //如果没有排序号，则自动计算
-            if (entity.Dep_Tax < 1)
+            if (entity.Dep_Order < 1)
             {
-                object obj = Gateway.Default.Max<Depart>(Depart._.Dep_Tax, Depart._.Org_ID == org.Org_ID && Depart._.Dep_PatId == entity.Dep_PatId);
-                entity.Dep_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
+                object obj = Gateway.Default.Max<Depart>(Depart._.Dep_Order, Depart._.Org_ID == org.Org_ID && Depart._.Dep_PatId == entity.Dep_PatId);
+                entity.Dep_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
             //
             Gateway.Default.Save<Depart>(entity);
@@ -97,7 +97,7 @@ namespace Song.ServiceImpls
                         if (dep != null)
                         {
                             dep.Dep_PatId = pid;
-                            dep.Dep_Tax = tax;
+                            dep.Dep_Order = tax;
                             dep.Dep_State = state;
                             tran.Save<Depart>(dep);
                         }
@@ -205,7 +205,7 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public Depart[] GetAll(int orgid)
         {
-            return Gateway.Default.From<Depart>().Where(Depart._.Org_ID==orgid).OrderBy(Depart._.Dep_Tax.Asc).ToArray<Depart>();
+            return Gateway.Default.From<Depart>().Where(Depart._.Org_ID==orgid).OrderBy(Depart._.Dep_Order.Asc).ToArray<Depart>();
         }
         public Depart[] GetAll(int orgid, bool? isUse, bool? isShow)
         {
@@ -214,7 +214,7 @@ namespace Song.ServiceImpls
             if (isShow != null) wc &= Depart._.Dep_IsShow == (bool)isShow;
             return Gateway.Default.From<Depart>()
                 .Where(Depart._.Org_ID == orgid && wc)
-                .OrderBy(Depart._.Dep_Tax.Asc).ToArray<Depart>();
+                .OrderBy(Depart._.Dep_Order.Asc).ToArray<Depart>();
         }
 
         /// <summary>
@@ -225,7 +225,7 @@ namespace Song.ServiceImpls
         public Depart[] GetChilds(int identify)
         {
             //仅取当前对象的下一级对象；
-            return Gateway.Default.From<Depart>().Where(Depart._.Dep_PatId == identify).OrderBy(Depart._.Dep_Tax.Desc).ToArray<Depart>();           
+            return Gateway.Default.From<Depart>().Where(Depart._.Dep_PatId == identify).OrderBy(Depart._.Dep_Order.Desc).ToArray<Depart>();           
         }
         /// <summary>
         /// 当前对象名称是否重名
@@ -304,15 +304,15 @@ namespace Song.ServiceImpls
             //当前对象
             Depart current = Gateway.Default.From<Depart>().Where(Depart._.Dep_Id == id).ToFirst<Depart>();
             //当前对象排序号
-            int orderValue = (int)current.Dep_Tax;
+            int orderValue = (int)current.Dep_Order;
             //上一个对象，即兄长对象；
             Depart up = Gateway.Default.From<Depart>()
-                .Where(Depart._.Dep_Tax < orderValue && Depart._.Org_ID == current.Org_ID && Depart._.Dep_PatId == current.Dep_PatId)
-                .OrderBy(Depart._.Dep_Tax.Desc).ToFirst<Depart>();
+                .Where(Depart._.Dep_Order < orderValue && Depart._.Org_ID == current.Org_ID && Depart._.Dep_PatId == current.Dep_PatId)
+                .OrderBy(Depart._.Dep_Order.Desc).ToFirst<Depart>();
             if (up == null) return false;
             //交换排序号
-            current.Dep_Tax = up.Dep_Tax;
-            up.Dep_Tax = orderValue;
+            current.Dep_Order = up.Dep_Order;
+            up.Dep_Order = orderValue;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
@@ -336,15 +336,15 @@ namespace Song.ServiceImpls
             //当前对象
             Depart current = Gateway.Default.From<Depart>().Where(Depart._.Dep_Id == id).ToFirst<Depart>();
             //当前对象排序号
-            int orderValue = (int)current.Dep_Tax;
+            int orderValue = (int)current.Dep_Order;
             //下一个对象，即弟弟对象；
             Depart down = Gateway.Default.From<Depart>()
-                .Where(Depart._.Dep_Tax > orderValue && Depart._.Org_ID == current.Org_ID && Depart._.Dep_PatId == current.Dep_PatId)
-                .OrderBy(Depart._.Dep_Tax.Asc).ToFirst<Depart>();
+                .Where(Depart._.Dep_Order > orderValue && Depart._.Org_ID == current.Org_ID && Depart._.Dep_PatId == current.Dep_PatId)
+                .OrderBy(Depart._.Dep_Order.Asc).ToFirst<Depart>();
             if (down == null) return false;
             //交换排序号
-            current.Dep_Tax = down.Dep_Tax;
-            down.Dep_Tax = orderValue;
+            current.Dep_Order = down.Dep_Order;
+            down.Dep_Order = orderValue;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try

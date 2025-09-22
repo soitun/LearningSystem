@@ -23,8 +23,8 @@ namespace Song.ServiceImpls
         public void Add(Position entity)
         {
             //添加对象，并设置排序号
-            object obj = Gateway.Default.Max<Position>(Position._.Posi_Tax, Position._.Posi_Tax > -1 && Position._.Org_ID == entity.Org_ID);
-            entity.Posi_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 1;
+            object obj = Gateway.Default.Max<Position>(Position._.Posi_Order, Position._.Posi_Order > -1 && Position._.Org_ID == entity.Org_ID);
+            entity.Posi_Order = obj != null ? Convert.ToInt32(obj) + 1 : 1;
 
             Gateway.Default.Save<Position>(entity);
         }
@@ -142,7 +142,7 @@ namespace Song.ServiceImpls
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc &= Position._.Org_ID == orgid;
             if (isUse != null) wc &= Position._.Posi_IsUse == (bool)isUse;          
-            return Gateway.Default.From<Position>().Where(wc).OrderBy(Position._.Posi_Tax.Asc).ToList<Position>();
+            return Gateway.Default.From<Position>().Where(wc).OrderBy(Position._.Posi_Order.Asc).ToList<Position>();
         }
         /// <summary>
         /// 获取当前角色的所有员工
@@ -193,8 +193,8 @@ namespace Song.ServiceImpls
                     foreach (Position item in entities)
                     {
                         tran.Update<Position>(
-                            new Field[] { Position._.Posi_Tax },
-                            new object[] { item.Posi_Tax },
+                            new Field[] { Position._.Posi_Order },
+                            new object[] { item.Posi_Order },
                             Position._.Posi_Id == item.Posi_Id);
                     }
                     tran.Commit();

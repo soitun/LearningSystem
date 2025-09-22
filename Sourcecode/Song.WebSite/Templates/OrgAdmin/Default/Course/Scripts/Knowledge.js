@@ -131,7 +131,7 @@
                         var obj = {
                             'Kns_ID': d.Kns_ID,
                             'Kns_PID': pid,
-                            'Kns_Tax': i + 1
+                            'Kns_Order': i + 1
                         }
                         list.push(obj);
                         if (d.children && d.children.length > 0) {

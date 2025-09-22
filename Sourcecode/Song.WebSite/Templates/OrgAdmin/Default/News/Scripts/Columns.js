@@ -83,7 +83,7 @@ $ready(function () {
                     "Col_ByName": "", "Col_Title": "",
                     "Col_Keywords": "", "Col_Descr": "",
                     "Col_Intro": "", "Col_Type": "News",
-                    "Col_Tax": 0,
+                    "Col_Order": 0,
                     "Col_IsUse": true, "Col_IsNote": true,
                     "Org_ID": this.organ.Org_ID,
                     "Org_Name": this.organ.Org_Name,

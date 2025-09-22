@@ -151,7 +151,7 @@
                         var obj = {
                             'Ol_ID': d.Ol_ID,
                             'Ol_PID': pid,
-                            'Ol_Tax': i + 1,
+                            'Ol_Order': i + 1,
                             'Ol_Level': level
                         }
                         list.push(obj);

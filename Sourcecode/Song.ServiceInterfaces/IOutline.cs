@@ -281,7 +281,7 @@ namespace Song.ServiceInterfaces
         /// <summary>
         /// 更改章节的排序
         /// </summary>
-        /// <param name="list">专业列表，Ol_ID、Ol_PID、Ol_Tax、Ol_Level</param>
+        /// <param name="list">专业列表，Ol_ID、Ol_PID、Ol_Order、Ol_Level</param>
         /// <returns></returns>
         bool UpdateTaxis(Outline[] list);
         #endregion

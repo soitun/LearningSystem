@@ -42,9 +42,9 @@ namespace Song.ServiceImpls
                 Subject sbj = Gateway.Default.From<Subject>().Where(Subject._.Sbj_ID == entity.Sbj_ID).ToFirst<Subject>();
                 if (sbj != null) entity.Sbj_Name = sbj.Sbj_Name;
             }
-            //object obj = Gateway.Default.Max<Course>(Course._.Cou_Tax, Course._.Org_ID == entity.Org_ID && Course._.Sbj_ID == entity.Sbj_ID && Course._.Cou_PID == entity.Cou_PID);
-            object obj = Gateway.Default.Max<Course>(Course._.Cou_Tax, new WhereClip());
-            entity.Cou_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
+            //object obj = Gateway.Default.Max<Course>(Course._.Cou_Order, Course._.Org_ID == entity.Org_ID && Course._.Sbj_ID == entity.Sbj_ID && Course._.Cou_PID == entity.Cou_PID);
+            object obj = Gateway.Default.Max<Course>(Course._.Cou_Order, new WhereClip());
+            entity.Cou_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             //默认为免费课程
             entity.Cou_IsFree = true;
             entity.Cou_Allowedit = true;    //默认允许编辑
@@ -113,8 +113,8 @@ namespace Song.ServiceImpls
             Course old = CourseSingle(entity.Cou_ID);
             if (old.Cou_PID != entity.Cou_PID)
             {
-                object obj = Gateway.Default.Max<Course>(Course._.Cou_Tax, Course._.Org_ID == entity.Org_ID && Course._.Cou_PID == entity.Cou_PID);
-                entity.Cou_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
+                object obj = Gateway.Default.Max<Course>(Course._.Cou_Order, Course._.Org_ID == entity.Org_ID && Course._.Cou_PID == entity.Cou_PID);
+                entity.Cou_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
             //如果图片带有多余路径，只保留文件名
             if (!string.IsNullOrWhiteSpace(entity.Cou_Logo) && entity.Cou_Logo.IndexOf("/") > -1)
@@ -666,12 +666,12 @@ namespace Song.ServiceImpls
             //{
             //    WhereClip wc = Course._.Org_ID == orgid;
             //    if (isUse != null) wc.And(Course._.Cou_IsUse == (bool)isUse);
-            //    return Gateway.Default.From<Course>().Where(wc).OrderBy(Course._.Cou_Tax.Desc).ToList<Course>();
+            //    return Gateway.Default.From<Course>().Where(wc).OrderBy(Course._.Cou_Order.Desc).ToList<Course>();
             //}
             //return Gateway.Default.From<Course>()
             //    .InnerJoin<Teacher_Course>(Teacher_Course._.Cou_ID == Course._.Cou_ID)
             //    .Where(Teacher_Course._.Th_ID == thid)
-            //    .OrderBy(Course._.Cou_Tax.Desc).ToList<Course>();
+            //    .OrderBy(Course._.Cou_Order.Desc).ToList<Course>();
 
         }
         public List<Course> CourseCount(int orgid, long sbjid, string sear, string order, bool? isUse, int count)
@@ -689,9 +689,9 @@ namespace Song.ServiceImpls
             OrderByClip wcOrder = new OrderByClip();
             if (order == "flux") wcOrder = Course._.Cou_ViewNum.Desc;
             if (order == "def") wcOrder = Course._.Cou_CrtTime.Desc;
-            if (order == "tax") wcOrder = Course._.Cou_Tax.Desc & Course._.Cou_CrtTime.Desc;
+            if (order == "tax") wcOrder = Course._.Cou_Order.Desc & Course._.Cou_CrtTime.Desc;
             if (order == "new") wcOrder = Course._.Cou_CrtTime.Desc;    //最新发布
-            if (order == "rec") wcOrder = Course._.Cou_IsRec.Desc & Course._.Cou_Tax.Desc & Course._.Cou_CrtTime.Desc;
+            if (order == "rec") wcOrder = Course._.Cou_IsRec.Desc & Course._.Cou_Order.Desc & Course._.Cou_CrtTime.Desc;
             if (!string.IsNullOrWhiteSpace(sear)) wc.And(Course._.Cou_Name.Contains(sear));
             if (isUse != null) wc.And(Course._.Cou_IsUse == (bool)isUse);
             wcOrder = wcOrder & Course._.Cou_ID.Desc;
@@ -755,9 +755,9 @@ namespace Song.ServiceImpls
             OrderByClip wcOrder = new OrderByClip();
             if (order == "flux") wcOrder = Course._.Cou_ViewNum.Desc;
             if (order == "def") wcOrder = Course._.Cou_CrtTime.Desc;
-            if (order == "tax") wcOrder = Course._.Cou_Tax.Desc & Course._.Cou_CrtTime.Desc;
+            if (order == "tax") wcOrder = Course._.Cou_Order.Desc & Course._.Cou_CrtTime.Desc;
             if (order == "new") wcOrder = Course._.Cou_CrtTime.Desc;    //最新发布
-            if (order == "rec") wcOrder = Course._.Cou_IsRec.Desc && Course._.Cou_Tax.Desc && Course._.Cou_CrtTime.Desc;
+            if (order == "rec") wcOrder = Course._.Cou_IsRec.Desc && Course._.Cou_Order.Desc && Course._.Cou_CrtTime.Desc;
             wcOrder = wcOrder & Course._.Cou_ID.Desc;
             return Gateway.Default.From<Course>().Where(wc).OrderBy(wcOrder).ToList<Course>(count);
         }
@@ -788,9 +788,9 @@ namespace Song.ServiceImpls
             OrderByClip wcOrder = new OrderByClip();
             if (order == "flux") wcOrder = Course._.Cou_ViewNum.Desc;
             if (order == "def") wcOrder = Course._.Cou_CrtTime.Desc;
-            if (order == "tax") wcOrder = Course._.Cou_Tax.Desc && Course._.Cou_CrtTime.Desc;
+            if (order == "tax") wcOrder = Course._.Cou_Order.Desc && Course._.Cou_CrtTime.Desc;
             if (order == "new") wcOrder = Course._.Cou_CrtTime.Desc;    //最新发布
-            if (order == "rec") wcOrder = Course._.Cou_IsRec.Desc && Course._.Cou_Tax.Desc && Course._.Cou_CrtTime.Desc;
+            if (order == "rec") wcOrder = Course._.Cou_IsRec.Desc && Course._.Cou_Order.Desc && Course._.Cou_CrtTime.Desc;
             wcOrder = wcOrder & Course._.Cou_ID.Desc;
             return Gateway.Default.From<Course>().Where(wc).OrderBy(wcOrder).ToList<Course>(size, (index - 1) * size);
         }
@@ -858,7 +858,7 @@ namespace Song.ServiceImpls
             if (order == "flux") wcOrder = Course._.Cou_ViewNum.Desc;
             if (order == "hot") wcOrder = Course._.Cou_ViewNum.Desc;
             if (order == "def") wcOrder = Course._.Cou_CrtTime.Desc;
-            if (order == "tax") wcOrder = Course._.Cou_Tax.Desc && Course._.Cou_CrtTime.Desc;
+            if (order == "tax") wcOrder = Course._.Cou_Order.Desc && Course._.Cou_CrtTime.Desc;
             if (order == "new") wcOrder = Course._.Cou_CrtTime.Desc;    //最新发布
             if (order == "last") wcOrder = Course._.Cou_CrtTime.Asc;    //最后发布
             //按试题数量的正序，倒序
@@ -868,11 +868,11 @@ namespace Song.ServiceImpls
             if ("videoAsc".Equals(order, StringComparison.CurrentCultureIgnoreCase)) wcOrder = Course._.Cou_VideoCount.Asc;
             if ("videoDesc".Equals(order, StringComparison.CurrentCultureIgnoreCase)) wcOrder = Course._.Cou_VideoCount.Desc;
             //推荐课程
-            if (order == "rec") wcOrder = Course._.Cou_IsRec.Desc && Course._.Cou_Tax.Desc && Course._.Cou_CrtTime.Desc;
+            if (order == "rec") wcOrder = Course._.Cou_IsRec.Desc && Course._.Cou_Order.Desc && Course._.Cou_CrtTime.Desc;
             if (order == "free")
             {
                 wc.And(Course._.Cou_IsFree == true);
-                wcOrder = Course._.Cou_IsFree.Desc & Course._.Cou_Tax.Desc;
+                wcOrder = Course._.Cou_IsFree.Desc & Course._.Cou_Order.Desc;
             }
             wcOrder = wcOrder & Course._.Cou_ID.Desc;
             //if (order == "live") wc.And();
@@ -887,16 +887,16 @@ namespace Song.ServiceImpls
         {
             //当前对象
             Course current = Gateway.Default.From<Course>().Where(Course._.Cou_ID == id).ToFirst<Course>();
-            int tax = (int)current.Cou_Tax;
+            int tax = (int)current.Cou_Order;
             //下一个对象，即弟弟对象；弟弟不存则直接返回false;
             Course next = Gateway.Default.From<Course>()
-                .Where(Course._.Cou_Tax > tax)
-                .OrderBy(Course._.Cou_Tax.Asc).ToFirst<Course>();
+                .Where(Course._.Cou_Order > tax)
+                .OrderBy(Course._.Cou_Order.Asc).ToFirst<Course>();
             if (next == null) return false;
 
             //交换排序号
-            current.Cou_Tax = next.Cou_Tax;
-            next.Cou_Tax = tax;
+            current.Cou_Order = next.Cou_Order;
+            next.Cou_Order = tax;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
@@ -923,15 +923,15 @@ namespace Song.ServiceImpls
         {
             //当前对象
             Course current = Gateway.Default.From<Course>().Where(Course._.Cou_ID == id).ToFirst<Course>();
-            int tax = (int)current.Cou_Tax;
+            int tax = (int)current.Cou_Order;
             //上一个对象，即兄长对象；兄长不存则直接返回false;
             Course prev = Gateway.Default.From<Course>()
-                .Where(Course._.Cou_Tax < tax)
-                .OrderBy(Course._.Cou_Tax.Desc).ToFirst<Course>();
+                .Where(Course._.Cou_Order < tax)
+                .OrderBy(Course._.Cou_Order.Desc).ToFirst<Course>();
             if (prev == null) return false;
             //交换排序号
-            current.Cou_Tax = prev.Cou_Tax;
-            prev.Cou_Tax = tax;
+            current.Cou_Order = prev.Cou_Order;
+            prev.Cou_Order = tax;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
@@ -1571,7 +1571,7 @@ namespace Song.ServiceImpls
             return Gateway.Default.From<Course>()
                     .InnerJoin<Teacher_Course>(Teacher_Course._.Cou_ID == Course._.Cou_ID)
                     .Where(Teacher_Course._.Th_ID == thid)
-                    .OrderBy(Course._.Cou_Tax.Desc).ToList<Course>(count);
+                    .OrderBy(Course._.Cou_Order.Desc).ToList<Course>(count);
         }
         /// <summary>
         /// 学习某个课程的学员

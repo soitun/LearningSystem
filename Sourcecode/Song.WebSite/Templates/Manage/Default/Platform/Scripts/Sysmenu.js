@@ -63,7 +63,7 @@ $ready(function () {
                     "MM_Id": -1, "MM_Name": "",
                     "MM_Type": "", "MM_Root": 103,
                     "MM_Link": "", "MM_Marker": "",
-                    "MM_Tax": 0, "MM_PatId": 0,
+                    "MM_Order": 0, "MM_PatId": 0,
                     "MM_Color": "", "MM_Font": "",
                     "MM_IsBold": false, "MM_IsItalic": false,
                     "MM_IcoCode": "", "MM_IcoSize": "",
