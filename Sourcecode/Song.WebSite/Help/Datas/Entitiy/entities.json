@@ -153,7 +153,7 @@
   },
   "NewsNote": {
     "mark": "新闻的评论",
-    "intro": ""
+    "intro": "考虑到留言的评审问题，新闻不再让评论"
   },
   "Notice": {
     "mark": "通知公告",
@@ -212,7 +212,7 @@
     "intro": ""
   },
   "RechargeSet": {
-    "mark": "充值码的设置",
+    "mark": "充值码的设置项",
     "intro": ""
   },
   "ShowPicture": {
