@@ -148,5 +148,36 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         bool UpdateTaxis(QuesPart[] list);
         #endregion
+
+        #region 收藏
+        /// <summary>
+        /// 添加收藏
+        /// </summary>
+        /// <param name="accid">管理员id</param>
+        /// <param name="qusid">试题id</param>
+        /// <returns></returns>
+        bool CollectAdd(int accid, long qusid);
+        /// <summary>
+        /// 取消收藏
+        /// </summary>
+        /// <param name="accid">管理员id</param>
+        /// <param name="qusid">试题id</param>
+        /// <returns></returns>
+        bool CollectDelete(int accid, long qusid);
+        /// <summary>
+        /// 获取收藏的试题
+        /// </summary>
+        /// <param name="acid">管理员id</param>
+        /// <param name="qpid">试题分类id</param>
+        /// <param name="tagid">试题标签id</param>
+        /// <param name="knlid">试题知识点id</param>
+        /// <param name="type">试题类型</param>
+        /// <param name="diff">试题难度</param>
+        /// <param name="size">分页大小</param>
+        /// <param name="index">分页索引</param>
+        /// <param name="countSum">总记录数</param>
+        /// <returns></returns>
+        List<Questions> CollectPager(int acid, long qpid, long tagid, long knlid, int type, int diff, int size, int index, out int countSum);
+        #endregion
     }
 }

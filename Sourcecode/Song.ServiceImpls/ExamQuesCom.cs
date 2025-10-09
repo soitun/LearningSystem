@@ -62,7 +62,7 @@ namespace Song.ServiceImpls
                 object obj = Gateway.Default.Max<QuesPart>(QuesPart._.Qp_Order, QuesPart._.Org_ID == entity.Org_ID && QuesPart._.Qp_PID == entity.Qp_PID);
                 entity.Qp_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
-          
+            entity.Qp_UpdateTime = DateTime.Now;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try

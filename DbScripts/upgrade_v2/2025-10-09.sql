@@ -208,6 +208,9 @@ CREATE INDEX "Questions_QTags_IX_QuesID_TagID" ON "Questions_QTags"("Ques_ID", "
 CREATE INDEX "Questions_QTags_IX_TagID_QuesID" ON "Questions_QTags"("Qtag_ID", "Ques_ID");
 
 
+/*为试题添用途的字段，默认为0，即课程使用；考试用为1*/
+ALTER TABLE "Questions" ADD COLUMN "Qus_Purpose" int NOT NULL  DEFAULT 0;
+
 --创建操作日志的记录表
 CREATE TABLE "DataOperateLog" (
     -- 主键
@@ -255,6 +258,7 @@ CREATE INDEX "DataOperateLog_IX_OrgID" ON "DataOperateLog"("Org_ID");
 CREATE INDEX "DataOperateLog_IX_Module" ON "DataOperateLog"("Dlog_Module");
 CREATE INDEX "DataOperateLog_IX_MMUID" ON "DataOperateLog"("MM_UID");
 CREATE INDEX "DataOperateLog_IX_API" ON "DataOperateLog"("Dlog_API");
+
 
 --创建操作日志的档案表
 CREATE TABLE "DataOperateLogArchive" (

@@ -130,7 +130,7 @@
     "relation": "Subject"
   },
   "Qus_Order": {
-    "mark": "",
+    "mark": "排序号",
     "intro": "",
     "relation": ""
   },
@@ -143,5 +143,10 @@
     "mark": "知识点",
     "intro": "",
     "relation": "Knowledge"
+  },
+  "Qus_Purpose": {
+    "mark": "用途",
+    "intro": "",
+    "relation": ""
   }
 }

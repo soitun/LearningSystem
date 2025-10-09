@@ -52,6 +52,8 @@ namespace Song.Entities {
     		
     		protected Int32 _Qus_Order;
     		
+    		protected Int32 _Qus_Purpose;
+    		
     		protected String _Qus_Title;
     		
     		protected Int32 _Qus_Type;
@@ -284,6 +286,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32 Qus_Purpose {
+    			get {
+    				return this._Qus_Purpose;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Qus_Purpose, _Qus_Purpose, value);
+    				this._Qus_Purpose = value;
+    			}
+    		}
+    		
     		public String Qus_Title {
     			get {
     				return this._Qus_Title;
@@ -386,6 +398,7 @@ namespace Song.Entities {
     					_.Qus_LastTime,
     					_.Qus_Number,
     					_.Qus_Order,
+    					_.Qus_Purpose,
     					_.Qus_Title,
     					_.Qus_Type,
     					_.Qus_UID,
@@ -421,6 +434,7 @@ namespace Song.Entities {
     					this._Qus_LastTime,
     					this._Qus_Number,
     					this._Qus_Order,
+    					this._Qus_Purpose,
     					this._Qus_Title,
     					this._Qus_Type,
     					this._Qus_UID,
@@ -498,6 +512,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Qus_Order))) {
     				this._Qus_Order = reader.GetInt32(_.Qus_Order);
+    			}
+    			if ((false == reader.IsDBNull(_.Qus_Purpose))) {
+    				this._Qus_Purpose = reader.GetInt32(_.Qus_Purpose);
     			}
     			if ((false == reader.IsDBNull(_.Qus_Title))) {
     				this._Qus_Title = reader.GetString(_.Qus_Title);
@@ -654,6 +671,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Qus_Order = new WeiSha.Data.Field<Questions>("Qus_Order");
     			
     			/// <summary>
+    			/// 字段名：Qus_Purpose - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Qus_Purpose = new WeiSha.Data.Field<Questions>("Qus_Purpose");
+    			
+    			/// <summary>
     			/// 字段名：Qus_Title - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Qus_Title = new WeiSha.Data.Field<Questions>("Qus_Title");
@@ -685,4 +707,3 @@ namespace Song.Entities {
     		}
     	}
     }
-    
