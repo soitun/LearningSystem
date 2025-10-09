@@ -159,6 +159,7 @@
     <Compile Include="IGuide.cs" />
     <Compile Include="IDataBase.cs" />
     <Compile Include="IManageMenu.cs" />
+    <Compile Include="IExamQues.cs" />
     <Compile Include="IRecharge.cs" />
     <Compile Include="IOutline.cs" />
     <Compile Include="IPayInterface.cs" />

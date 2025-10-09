@@ -206,6 +206,7 @@
     <Compile Include="LogsCom.cs" />
     <Compile Include="MessageCom.cs" />
     <Compile Include="LargeLanguageCom.cs" />
+    <Compile Include="ExamQuesCom.cs" />
     <Compile Include="ThirdpartyLoginCom.cs" />
     <Compile Include="SystemParaCom.cs" />
     <Compile Include="LinksCom.cs" />

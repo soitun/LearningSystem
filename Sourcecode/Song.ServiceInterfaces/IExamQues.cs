@@ -1,0 +1,152 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using Song.Entities;
+using WeiSha.Data;
+
+namespace Song.ServiceInterfaces
+{
+    /// <summary>
+    /// 在线考试中的试题管理
+    /// </summary>
+    public interface IExamQues : WeiSha.Core.IBusinessInterface
+    {
+        #region 试题分类
+        /// <summary>
+        /// 添加试题分类
+        /// </summary>
+        /// <param name="entity">业务实体</param>
+        int PartAdd(QuesPart entity);
+        /// <summary>
+        /// 是否已经存在
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="pid"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        QuesPart PartIsExist(int orgid, long pid, string name);
+        /// <summary>
+        /// 修改
+        /// </summary>
+        /// <param name="entity">业务实体</param>
+        void PartSave(QuesPart entity);
+        /// <summary>
+        /// 修改试题分类的某些项
+        /// </summary>
+        /// <param name="qpid">试题分类id</param>
+        /// <param name="fields">字段</param>
+        /// <param name="objs"></param>
+        /// <returns></returns>
+        int PartUpdate(long qpid, Field[] fields, object[] objs);
+        /// <summary>
+        /// 修改试题分类的某些项
+        /// </summary>
+        /// <param name="qpid">试题分类id</param>
+        /// <param name="field">字段</param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        int PartUpdate(long qpid, Field field, object obj);
+        /// <summary>
+        /// 删除，按主键ID；
+        /// </summary>
+        /// <param name="id">实体的主键</param>
+        void PartDelete(long id);
+        /// <summary>
+        /// 清空试题分类下的所有试题关联关联（并不删除试题）
+        /// </summary>
+        /// <param name="qpid"></param>
+        void PartClear(long qpid);
+        /// <summary>
+        /// 获取单一实体对象，按主键ID；
+        /// </summary>
+        /// <param name="id">实体的主键</param>
+        /// <returns></returns>
+        QuesPart PartSingle(long id);
+        /// <summary>
+        /// 当前试题分类下的所有子试题分类id
+        /// </summary>
+        /// <param name="qpid">当前试题分类id</param>
+        /// <param name="orgid">试题分类所属机构的ID,如果小于等于零，则取从数据库读取qpid再取orgid，所以建议正确赋值，可以减少数据库读取次数</param>
+        List<long> PartTreeID(long qpid, int orgid);
+        /// <summary>
+        /// 获取试题分类名称，如果为多级，则带上父级名称
+        /// </summary>
+        /// <param name="id">试题分类的id</param>
+        /// <returns></returns>
+        string PartName(long id);
+        /// <summary>
+        /// 当前试题分类，是否有子试题分类
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="id">当前试题分类Id</param>
+        /// <param name="isUse">是否启用</param>
+        /// <returns>有子级，返回true</returns>
+        bool PartIsChildren(int orgid, long id, bool? isUse);
+        /// <summary>
+        /// 获取试题分类
+        /// </summary>
+        /// <param name="orgid">机构ID</param>
+        /// <param name="sear">搜索关键字</param>
+        /// <param name="isUse"></param>
+        /// <param name="pid">上级ID</param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        List<QuesPart> PartCount(int orgid, string sear, bool? isUse, long pid, int count);
+        /// <summary>
+        /// 当前试题分类的上级父级
+        /// </summary>
+        /// <param name="qpid"></param>
+        /// <param name="isself">是否包括自身</param>
+        /// <returns></returns>
+        List<QuesPart> PartParents(long qpid, bool isself);
+        /// <summary>
+        /// 计算试题分类数量
+        /// </summary>
+        /// <param name="orgid">机构id</param>       
+        /// <param name="pid">上级id</param>
+        /// <param name="isUse">是否启用的，null取所有</param>
+        /// <param name="children">是否包括子级</param>
+        /// <returns></returns>
+        int PartOfCount(int orgid, long pid, bool? isUse, bool children);
+        /// <summary>
+        /// 当前试题分类下的所有试题
+        /// </summary>
+        /// <param name="orgid">当前机构</param>
+        /// <param name="qpid"></param>
+        /// <param name="qtype">试题类型</param>
+        /// <param name="isUse"></param>
+        /// <param name="children">是否包括下级，如果false，则取当前分类的试题</param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        List<Questions> PartQuestions(int orgid, long qpid, int qtype, bool? isUse,bool children,  int count);
+        /// <summary>
+        /// 获取试题分类的下的试题数量
+        /// </summary>
+        /// <param name="orgid">当前机构</param>
+        /// <param name="qpid">试题分类id</param>
+        /// <param name="qtype">题型</param>
+        /// <param name="isUse">是否启用的试题</param>
+        /// <param name="children">是否包括下级，如果false，则取当前分类的试题</param>
+        /// <returns></returns>
+        int PartQusTotal(int orgid, long qpid, int qtype, bool? isUse, bool children);
+        /// <summary>
+        /// 分页获取
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="pid">上级id</param>
+        /// <param name="isUse"></param>
+        /// <param name="searTxt"></param>
+        /// <param name="size"></param>
+        /// <param name="index"></param>
+        /// <param name="countSum"></param>
+        /// <returns></returns>
+        List<QuesPart> PartPager(int orgid, long pid, bool? isUse, string searTxt, int size, int index, out int countSum);
+        /// <summary>
+        /// 更改试题分类的排序
+        /// </summary>
+        /// <param name="list">试题分类列表，对象中只有Qp_ID、Qp_PID、Qp_Order</param>
+        /// <returns></returns>
+        bool UpdateTaxis(QuesPart[] list);
+        #endregion
+    }
+}

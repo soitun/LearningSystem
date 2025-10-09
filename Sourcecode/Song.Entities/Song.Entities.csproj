@@ -143,6 +143,8 @@
     <Compile Include="CouponAccount.cs" />
     <Compile Include="Course.cs" />
     <Compile Include="CoursePrice.cs" />
+    <Compile Include="DataOperateLog.cs" />
+    <Compile Include="DataOperateLogArchive.cs" />
     <Compile Include="Depart.cs" />
     <Compile Include="EmpAccount.cs" />
     <Compile Include="EmpAcc_Group.cs" />
@@ -187,7 +189,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Purview.cs" />
     <Compile Include="QuesAnswer.cs" />
+    <Compile Include="QuesCollect.cs" />
+    <Compile Include="QuesKnowledge.cs" />
+    <Compile Include="QuesPart.cs" />
+    <Compile Include="QuesTags.cs" />
     <Compile Include="Questions.cs" />
+    <Compile Include="Questions_QKnl.cs" />
+    <Compile Include="Questions_QPart.cs" />
+    <Compile Include="Questions_QTags.cs" />
     <Compile Include="QuesTypes.cs" />
     <Compile Include="RechargeCode.cs" />
     <Compile Include="RechargeSet.cs" />

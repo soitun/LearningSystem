@@ -87,7 +87,8 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public Subject SubjectIsExist(int orgid, long pid, string name)
         {
-            WhereClip wc = Subject._.Org_ID == orgid;
+            WhereClip wc = new WhereClip();
+            if (orgid > 0) wc &= Subject._.Org_ID == orgid;
             if (pid >= 0) wc &= Subject._.Sbj_PID == pid;
             return Gateway.Default.From<Subject>().Where(wc && Subject._.Sbj_Name == name.Trim()).ToFirst<Subject>();
         }
