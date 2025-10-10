@@ -271,7 +271,6 @@
     <Content Include="Help\Contents\Images\Deployment\1.png" />
     <Content Include="Help\Contents\Images\weixinMiniApp.jpg" />
     <Content Include="Help\Contents\Overview.html" />
-    <Content Include="Help\Contents\Scripts\Deployment.html.js" />
     <Content Include="Help\Contents\Scripts\Overview.js" />
     <Content Include="Help\Contents\Sourcecode.html" />
     <Content Include="Help\Contents\Styles\DataEntity.css" />
@@ -653,6 +652,9 @@
     <Content Include="Templates\OrgAdmin\Default\Course\AIAgent.html" />
     <Content Include="Templates\OrgAdmin\Default\Course\Scripts\AIAgent.js" />
     <Content Include="Templates\OrgAdmin\Default\Course\Styles\AIAgent.css" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\Questions.html" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\Questions.js" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\Questions.css" />
     <Content Include="Templates\OrgAdmin\Default\Exam\AbsenceList.html" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Components\createbatchscore.js" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Components\createscore.js" />

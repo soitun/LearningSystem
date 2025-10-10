@@ -329,7 +329,7 @@ namespace Song.ServiceImpls
             if (type > 0) wc.And(Questions._.Qus_Type == type);
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
             return Gateway.Default.From<Questions>().Where(wc)
-                .OrderBy(Questions._.Qus_Type.Asc && Questions._.Qus_ID.Asc)
+                .OrderBy(Questions._.Qus_Type.Asc && Questions._.Qus_ID.Desc)
                 .ToList<Questions>(count);
         }
         /// <summary>
@@ -364,7 +364,7 @@ namespace Song.ServiceImpls
             if (diff > 0) wc.And(Questions._.Qus_Diff == diff);
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
             return Gateway.Default.From<Questions>().Where(wc)
-                .OrderBy(Questions._.Qus_Type.Asc && Questions._.Qus_ID.Asc)
+                .OrderBy(Questions._.Qus_Type.Asc && Questions._.Qus_ID.Desc)
                 .ToList<Questions>(count, index);
         }
         /// <summary>

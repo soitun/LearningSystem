@@ -11,6 +11,23 @@ namespace Song.ServiceInterfaces
     /// </summary>
     public interface IExamQues : WeiSha.Core.IBusinessInterface
     {
+        #region 试题
+        /// <summary>
+        /// 获取试题
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="qpid">试题分类id</param>
+        /// <param name="tagid">标签id</param>
+        /// <param name="knlid">知识点</param>
+        /// <param name="type"></param>
+        /// <param name="diff"></param>
+        /// <param name="size"></param>
+        /// <param name="index"></param>
+        /// <param name="countSum"></param>
+        /// <returns></returns>
+        List<Questions> Pager(int orgid, long[] qpid, long[] tagid, long[] knlid, int[] type, int[] diff, int size, int index, out int countSum);
+        #endregion
+
         #region 试题分类
         /// <summary>
         /// 添加试题分类
@@ -177,7 +194,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index">分页索引</param>
         /// <param name="countSum">总记录数</param>
         /// <returns></returns>
-        List<Questions> CollectPager(int acid, long qpid, long tagid, long knlid, int type, int diff, int size, int index, out int countSum);
+        List<Questions> CollectPager(int acid, long[] qpid, long[] tagid, long[] knlid, int[] type, int[] diff, int size, int index, out int countSum);
         #endregion
     }
 }
