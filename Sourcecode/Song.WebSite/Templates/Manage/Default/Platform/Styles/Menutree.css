@@ -129,3 +129,11 @@ section {
     padding: 10px;
     text-align: right;
 }
+/*编辑面板*/
+/*菜单名称的输入框*/
+.MM_Name  .el-form-item__content{
+    display: flex;
+}
+.MM_Name  .el-form-item__content>*:first-child{
+    margin-right: 15px;
+}

@@ -17,7 +17,7 @@ $ready(function () {
                     { required: true, message: '不得为空', trigger: 'blur' }
                 ],
                 MM_Link: [
-                    { required: false, message: '不得为空', trigger: 'blur' }
+                    { required: true, message: '不得为空', trigger: 'blur' }
                 ]
             },
             MM_PatId: '',    //临时数据，用于移动菜单时的临时记录
@@ -27,6 +27,7 @@ $ready(function () {
             drawer: false  //编辑的面板         
         },
         watch: {
+            //编辑面板的显示与隐藏
             drawer: function (nl, ol) {
                 var th = this;
                 if (ol && !nl) {
@@ -60,12 +61,12 @@ $ready(function () {
                 return getTotal(this.data);
             },
             //当前菜单项的子项总数
-            nodetotal: function () { 
-                 //获取总数
-                 let getTotal = function (data) {
+            nodetotal: function () {
+                //获取总数
+                let getTotal = function (data) {
                     let total = 0;
                     for (let i = 0; i < data.length; i++) {
-                        if (data[i].MM_Type != 'hr' &&(data[i].children==null || data[i].children.length==0)) total += 1;
+                        if (data[i].MM_Type != 'hr' && (data[i].children == null || data[i].children.length == 0)) total += 1;
                         if (data[i].children) total += getTotal(data[i].children);
                     }
                     return total;
@@ -98,7 +99,7 @@ $ready(function () {
                 if (!value) return true;
                 return data.label.indexOf(value) !== -1;
             },
-
+            //添加节点
             append: function (d) {
                 var obj = this.clone();
                 if (d != null) {
