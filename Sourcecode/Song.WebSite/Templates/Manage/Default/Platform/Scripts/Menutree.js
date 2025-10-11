@@ -200,6 +200,12 @@ $ready(function () {
                 //console.log(css);
                 return css;
             },
+            //打开编辑面板
+            showedit: function (node, data) {
+                this.drawer = true;
+                this.curr_node = node;
+                this.curr = data;
+            },
             //保存菜单项
             btnSave: function () {
                 if (this.loading || this.loading_init) return;

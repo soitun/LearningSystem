@@ -33,12 +33,13 @@
               <template v-if="data.MM_Type!='hr'">
                 <icon v-if="data.MM_IcoCode==null || data.MM_IcoCode==''" :style="setIcostyle(data)">&#xa038;</icon>
                 <icon v-else v-html="'&#x'+data.MM_IcoCode+';'" :style="setIcostyle(data)"></icon>
-                <span @click="drawer=true;curr_node=node;curr=data;">{{ data.MM_Name }}</span>
+                <span @click="showedit(node,data)">{{ data.MM_Name }}</span>
                 <span class="mmlink" :title="data.MM_Link">{{data.MM_Link}}</span>
               </template>
               <span v-else class="hr">-----------（分隔线）-----------</span>
             </div>
-            <span> <span style="display: inline-block;width: 80px;">
+            <span>
+              <span style="display: inline-block;width: 80px;">
                 <el-tag type="info" v-if="data.MM_Type=='item'">菜单项</el-tag>
                 <el-tag type="primary" v-if="data.MM_Type=='link'">超链接</el-tag>
                 <el-tag type="warning" v-if="data.MM_Type=='open'">窗体</el-tag>
@@ -55,31 +56,23 @@
                 <el-tag type="danger" v-if="!data.MM_IsShow">隐藏</el-tag>
               </span>
 
-              <el-button type="text" size="mini" @click="() => append(data)">
-                新增下级
-              </el-button>
-              <el-button type="text" size="mini" @click="drawer=true;curr_node=node;curr=data;">
-                编辑
-              </el-button>
+              <el-button type="text" size="mini" @click="() => append(data)"> 新增下级 </el-button>
+              <el-button type="text" size="mini" @click="showedit(node,data)"> 编辑 </el-button>
               <el-popconfirm title="确定删除吗？" @confirm="remove(node, data)">
-                <el-button type="text" slot="reference">
-                  删除
-                </el-button>
+                <el-button type="text" slot="reference"> 删除 </el-button>
               </el-popconfirm>
             </span>
           </span>
         </el-tree>
-
-        <div class="btnFooter">
-          <el-button type="primary" define="enter" v-loading="loading" @click="btnSave()">保存菜单树</el-button>
-          <el-button type="close" v-if="ispagebox">关闭</el-button>
-        </div>
       </section>
+      <div class="footer">
+        <el-button type="primary" define="enter" v-loading="loading" @click="btnSave()">保存菜单树</el-button>
+        <el-button type="close" v-if="ispagebox">关闭</el-button>
+      </div>
       <!--编辑菜单项-->
       <el-drawer :visible.sync="drawer" :with-header="false" custom-class="drawer_item">
         <div class="drawer-title" icon="&#xa00c">编辑菜单项</div>
         <el-form ref="form" :model="curr" :rules="rules" label-width="80px">
-
           <el-form-item label="名称" prop="MM_Name" class="MM_Name">
             <el-input v-model.trim="curr.MM_Name"></el-input>
             <el-link type="primary" @click="$refs['icons'].show=true" title="选择图标" class="setup_icon">
@@ -87,20 +80,10 @@
               <icon v-else v-html="'&#x'+curr.MM_IcoCode+';'" :style="setIcostyle(curr)"></icon>
             </el-link>
           </el-form-item>
-          <el-form-item label="简称" prop="MM_AbbrName">
-            <el-input v-model="curr.MM_AbbrName"></el-input>
-          </el-form-item>
           <el-row class="row">
             <el-col :span="15">
-              <el-form-item label="菜单类型">
-                <el-select v-model="curr.MM_Type" placeholder="请选择">
-                  <el-option key="item" label="菜单项" value="item"> </el-option>
-                  <el-option key="link" label="超链接" value="link"> </el-option>
-                  <el-option key="open" label="窗体" value="open"> </el-option>
-                  <el-option key="event" label="Js事件" value="event"> </el-option>
-                  <el-option key="node" label="节点" value="node"> </el-option>
-                  <el-option key="hr" label="分隔线" value="hr"> </el-option>
-                </el-select>
+              <el-form-item label="简称" prop="MM_AbbrName">
+                <el-input v-model="curr.MM_AbbrName"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="9">
@@ -110,6 +93,16 @@
               </el-form-item>
             </el-col>
           </el-row>
+          <el-form-item label="菜单类型">
+            <el-select v-model="curr.MM_Type" placeholder="请选择" style="width: 100%;">
+              <el-option key="item" label="菜单项" value="item"> </el-option>
+              <el-option key="link" label="超链接" value="link"> </el-option>
+              <el-option key="open" label="窗体" value="open"> </el-option>
+              <el-option key="event" label="Js事件" value="event"> </el-option>
+              <el-option key="node" label="节点" value="node"> </el-option>
+              <el-option key="hr" label="分隔线" value="hr"> </el-option>
+            </el-select>
+          </el-form-item>
           <template v-if="curr.MM_Type=='open'">
             <el-form-item label="窗体尺寸">
               <el-input v-model="curr.MM_WinWidth" :style="{width: '180px'}"> <template slot="prepend">宽</template>
@@ -137,6 +130,9 @@
               </el-form-item>
             </template>
             <el-form-item label="链接" prop="MM_Link" v-if="curr.MM_Type!='event' && curr.MM_Type!='node'">
+              <template slot="label">
+                <icon>&#xa029</icon>链接
+              </template>
               <el-input v-model.trim="curr.MM_Link"></el-input>
             </el-form-item>
             <template v-if="curr.MM_Type=='item'">
@@ -152,6 +148,7 @@
             <el-form-item label="说明">
               <el-input v-model="curr.MM_Intro" type="textarea"></el-input>
             </el-form-item>
+            <el-divider></el-divider>
             <el-row class="row">
               <el-col :span="17">
                 <el-form-item label="字体">
@@ -202,7 +199,7 @@
           </template>
 
           <el-divider></el-divider>
-          <el-form-item label="移动到">
+          <el-form-item label="移动到" v-show="false">
             <el-select v-model="MM_PatId" placeholder="请选择" @change="move2Root">
               <el-option v-for="(item,index) in rootdata" :key="item.MM_UID" :label="item.MM_Name" :value="item.MM_UID">
                 <span style="float: left">
