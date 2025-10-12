@@ -36,7 +36,7 @@ Vue.component('ques_type', {
     mounted: function () {
 
     },
-    template: `<span>
+    template: `<span class="ques_type">
         <loading star v-if="isnull || typeindex==0"></loading>
         <template v-else>
             <icon v-if="showicon || !showname" ques_type v-html="seticon(typeindex)" :title="settitle(typeindex)" :showname="showname"></icon> 
