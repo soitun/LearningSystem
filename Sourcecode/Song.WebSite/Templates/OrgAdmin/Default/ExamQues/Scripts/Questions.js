@@ -1,5 +1,8 @@
 $ready([
+    '/Utilities/Components/question/function.js',
     '../Question/Components/ques_type.js',
+    'Components/ques_diff.js',
+    'Components/ques_collect.js'
 ], function () {
     window.vapp = new Vue({
         el: '#vapp',
@@ -7,6 +10,7 @@ $ready([
             organ: {},
             config: {},      //当前机构配置项    
             types: [],        //试题类型，来自web.config中配置项
+            admin: {},          //当前登录用户
             //试题的查询条件
             form: {
                 'orgid': -1, 'sbjid': '', 'couid': '', 'olid': '',
@@ -37,20 +41,26 @@ $ready([
                 th.organ = organ.data.result;
                 th.form.orgid = th.organ.Org_ID;
                 th.config = $api.organ(th.organ).config;
-                th.types = types.data.result;               
+                th.types = types.data.result;
                 th.handleCurrentChange(1);
             }).catch(function (err) {
                 alert(err);
                 console.error(err);
             }).finally(() => th.loadstate.init = false);
+
+            //当前登录的管理员
+            $api.login.current('admin', function (d) {
+                th.admin = d;
+                console.error(th.admin);
+            });
         },
         created: function () {
-          
+
         },
         computed: {
             loading: function () {
                 if (!this.loadstate) return false;
-                for (let key in this.loadstate) {                 
+                for (let key in this.loadstate) {
                     if (this.loadstate.hasOwnProperty(key)
                         && this.loadstate[key])
                         return true;
@@ -65,12 +75,13 @@ $ready([
             //加载数据页
             handleCurrentChange: function (index) {
                 var th = this;
-                if (index != null) this.form.index = index;             
+                if (index != null) this.form.index = index;
                 var loading = this.$fulloading();
                 $api.get("Question/Pager", th.form).then(function (d) {
                     if (d.data.success) {
                         var result = d.data.result;
                         for (let i = 0; i < result.length; i++) {
+                            result[i] = window.ques.parseAnswer(result[i]);
                             //result[i].Qus_Title = result[i].Qus_Title.replace(/(<([^>]+)>)/ig, "");
                         }
                         th.datas = result;

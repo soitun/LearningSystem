@@ -123,14 +123,14 @@ CREATE INDEX "QuesPart_IX_Org_ID" ON "QuesPart"("Org_ID");
 -- 创建试题与分类关联表
 CREATE TABLE "Questions_QPart" (
     "Qqp_ID" BIGINT PRIMARY KEY,          -- 主键，雪花ID
-    "Ques_ID" BIGINT NOT NULL,            -- 试题ID
+    "Qus_ID" BIGINT NOT NULL,            -- 试题ID
     "Qp_ID" BIGINT NOT NULL               -- 分类ID
 );
 
 -- 创建关联表索引
-CREATE INDEX "Questions_QPart_IX_Ques_ID" ON "Questions_QPart"("Ques_ID");
+CREATE INDEX "Questions_QPart_IX_Qus_ID" ON "Questions_QPart"("Qus_ID");
 CREATE INDEX "Questions_QPart_IX_Qp_ID" ON "Questions_QPart"("Qp_ID");
-CREATE INDEX "Questions_QPart_IX_QuesQp" ON "Questions_QPart"("Ques_ID", "Qp_ID");
+CREATE INDEX "Questions_QPart_IX_QuesQp" ON "Questions_QPart"("Qus_ID", "Qp_ID");
 
 
 /*创建试题知识点*/
@@ -162,16 +162,16 @@ CREATE INDEX "QuesKnowledge_IX_Qk_Count" ON "QuesKnowledge"("Qk_Count");
 /*试题与知识点的关联表*/
 CREATE TABLE "Questions_QKnl" (
     "Qqk_ID" BIGINT PRIMARY KEY DEFAULT 0,
-    "Ques_ID" BIGINT NOT NULL,
+    "Qus_ID" BIGINT NOT NULL,
     "Qtag_ID" BIGINT NOT NULL
 );
 -- 创建所有字段的索引
 CREATE INDEX "Questions_QKnl_IX_ID" ON "Questions_QKnl"("Qqk_ID");
-CREATE INDEX "Questions_QKnl_IX_QuesID" ON "Questions_QKnl"("Ques_ID");
+CREATE INDEX "Questions_QKnl_IX_QuesID" ON "Questions_QKnl"("Qus_ID");
 CREATE INDEX "Questions_QKnl_IX_TagID" ON "Questions_QKnl"("Qtag_ID");
 -- 复合索引
-CREATE INDEX "Questions_QKnl_IX_QuesID_TagID" ON "Questions_QKnl"("Ques_ID", "Qtag_ID");
-CREATE INDEX "Questions_QKnl_IX_TagID_QuesID" ON "Questions_QKnl"("Qtag_ID", "Ques_ID");
+CREATE INDEX "Questions_QKnl_IX_QuesID_TagID" ON "Questions_QKnl"("Qus_ID", "Qtag_ID");
+CREATE INDEX "Questions_QKnl_IX_TagID_QuesID" ON "Questions_QKnl"("Qtag_ID", "Qus_ID");
 
 
 --创建试题标签
@@ -197,15 +197,15 @@ CREATE INDEX "QuesTags_IX_Weight" ON "QuesTags"("Qtag_Weight");
 --创建试题与标签的关联表
 CREATE TABLE "Questions_QTags" (
     "Qqt_ID" BIGINT PRIMARY KEY DEFAULT 0,
-    "Ques_ID" BIGINT NOT NULL,
+    "Qus_ID" BIGINT NOT NULL,
     "Qtag_ID" BIGINT NOT NULL
 );
 -- 创建所有字段的索引
-CREATE INDEX "Questions_QTags_IX_QuesID" ON "Questions_QTags"("Ques_ID");
+CREATE INDEX "Questions_QTags_IX_QuesID" ON "Questions_QTags"("Qus_ID");
 CREATE INDEX "Questions_QTags_IX_TagID" ON "Questions_QTags"("Qtag_ID");
 -- 复合索引
-CREATE INDEX "Questions_QTags_IX_QuesID_TagID" ON "Questions_QTags"("Ques_ID", "Qtag_ID");
-CREATE INDEX "Questions_QTags_IX_TagID_QuesID" ON "Questions_QTags"("Qtag_ID", "Ques_ID");
+CREATE INDEX "Questions_QTags_IX_QuesID_TagID" ON "Questions_QTags"("Qus_ID", "Qtag_ID");
+CREATE INDEX "Questions_QTags_IX_TagID_QuesID" ON "Questions_QTags"("Qtag_ID", "Qus_ID");
 
 
 /*为试题添用途的字段，默认为0，即课程使用；考试用为1*/
@@ -312,10 +312,10 @@ CREATE INDEX "DataOperateLogArchive_IX_API" ON "DataOperateLogArchive"("Dlog_API
 CREATE TABLE "QuesCollect" (
     "Qcl_ID" BIGINT PRIMARY KEY DEFAULT 0,
     "Acc_ID" BIGINT NOT NULL DEFAULT 0,
-    "Ques_ID" BIGINT NOT NULL DEFAULT 0,
+    "Qus_ID" BIGINT NOT NULL DEFAULT 0,
     "Qcl_CrtTime" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 -- 创建索引
 CREATE INDEX "QuesCollect_IX_AccID" ON "QuesCollect"("Acc_ID");
-CREATE INDEX "QuesCollect_IX_QuesID" ON "QuesCollect"("Ques_ID");
+CREATE INDEX "QuesCollect_IX_QuesID" ON "QuesCollect"("Qus_ID");
 CREATE INDEX "QuesCollect_IX_CrtTime" ON "QuesCollect"("Qcl_CrtTime");

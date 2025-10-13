@@ -180,7 +180,14 @@ namespace Song.ServiceInterfaces
         /// <param name="accid">管理员id</param>
         /// <param name="qusid">试题id</param>
         /// <returns></returns>
-        bool CollectDelete(int accid, long qusid);
+        bool CollectRemove(int accid, long qusid);
+        /// <summary>
+        /// 试题是否被收藏
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="qusid"></param>
+        /// <returns></returns>
+        bool Collected(int accid, long qusid);
         /// <summary>
         /// 获取收藏的试题
         /// </summary>

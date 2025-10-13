@@ -14,7 +14,7 @@ namespace Song.Entities {
     		
     		protected DateTime? _Qcl_CrtTime;
     		
-    		protected Int64 _Ques_ID;
+    		protected Int64 _Qus_ID;
     		
     		public Int64 Qcl_ID {
     			get {
@@ -46,13 +46,13 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int64 Ques_ID {
+    		public Int64 Qus_ID {
     			get {
-    				return this._Ques_ID;
+    				return this._Qus_ID;
     			}
     			set {
-    				this.OnPropertyValueChange(_.Ques_ID, _Ques_ID, value);
-    				this._Ques_ID = value;
+    				this.OnPropertyValueChange(_.Qus_ID, _Qus_ID, value);
+    				this._Qus_ID = value;
     			}
     		}
     		
@@ -79,7 +79,7 @@ namespace Song.Entities {
     					_.Qcl_ID,
     					_.Acc_ID,
     					_.Qcl_CrtTime,
-    					_.Ques_ID};
+    					_.Qus_ID};
     		}
     		
     		/// <summary>
@@ -90,7 +90,7 @@ namespace Song.Entities {
     					this._Qcl_ID,
     					this._Acc_ID,
     					this._Qcl_CrtTime,
-    					this._Ques_ID};
+    					this._Qus_ID};
     		}
     		
     		/// <summary>
@@ -106,8 +106,8 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Qcl_CrtTime))) {
     				this._Qcl_CrtTime = reader.GetDateTime(_.Qcl_CrtTime);
     			}
-    			if ((false == reader.IsDBNull(_.Ques_ID))) {
-    				this._Ques_ID = reader.GetInt64(_.Ques_ID);
+    			if ((false == reader.IsDBNull(_.Qus_ID))) {
+    				this._Qus_ID = reader.GetInt64(_.Qus_ID);
     			}
     		}
     		
@@ -151,9 +151,9 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Qcl_CrtTime = new WeiSha.Data.Field<QuesCollect>("Qcl_CrtTime");
     			
     			/// <summary>
-    			/// 字段名：Ques_ID - 数据类型：Int64
+    			/// 字段名：Qus_ID - 数据类型：Int64
     			/// </summary>
-    			public static WeiSha.Data.Field Ques_ID = new WeiSha.Data.Field<QuesCollect>("Ques_ID");
+    			public static WeiSha.Data.Field Qus_ID = new WeiSha.Data.Field<QuesCollect>("Qus_ID");
     		}
     	}
     }

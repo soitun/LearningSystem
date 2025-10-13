@@ -12,7 +12,7 @@ namespace Song.Entities {
     		
     		protected Int64 _Qp_ID;
     		
-    		protected Int64 _Ques_ID;
+    		protected Int64 _Qus_ID;
     		
     		public Int64 Qqp_ID {
     			get {
@@ -34,13 +34,13 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int64 Ques_ID {
+    		public Int64 Qus_ID {
     			get {
-    				return this._Ques_ID;
+    				return this._Qus_ID;
     			}
     			set {
-    				this.OnPropertyValueChange(_.Ques_ID, _Ques_ID, value);
-    				this._Ques_ID = value;
+    				this.OnPropertyValueChange(_.Qus_ID, _Qus_ID, value);
+    				this._Qus_ID = value;
     			}
     		}
     		
@@ -66,7 +66,7 @@ namespace Song.Entities {
     			return new WeiSha.Data.Field[] {
     					_.Qqp_ID,
     					_.Qp_ID,
-    					_.Ques_ID};
+    					_.Qus_ID};
     		}
     		
     		/// <summary>
@@ -76,7 +76,7 @@ namespace Song.Entities {
     			return new object[] {
     					this._Qqp_ID,
     					this._Qp_ID,
-    					this._Ques_ID};
+    					this._Qus_ID};
     		}
     		
     		/// <summary>
@@ -89,8 +89,8 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Qp_ID))) {
     				this._Qp_ID = reader.GetInt64(_.Qp_ID);
     			}
-    			if ((false == reader.IsDBNull(_.Ques_ID))) {
-    				this._Ques_ID = reader.GetInt64(_.Ques_ID);
+    			if ((false == reader.IsDBNull(_.Qus_ID))) {
+    				this._Qus_ID = reader.GetInt64(_.Qus_ID);
     			}
     		}
     		
@@ -129,9 +129,9 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Qp_ID = new WeiSha.Data.Field<Questions_QPart>("Qp_ID");
     			
     			/// <summary>
-    			/// 字段名：Ques_ID - 数据类型：Int64
+    			/// 字段名：Qus_ID - 数据类型：Int64
     			/// </summary>
-    			public static WeiSha.Data.Field Ques_ID = new WeiSha.Data.Field<Questions_QPart>("Ques_ID");
+    			public static WeiSha.Data.Field Qus_ID = new WeiSha.Data.Field<Questions_QPart>("Qus_ID");
     		}
     	}
     }

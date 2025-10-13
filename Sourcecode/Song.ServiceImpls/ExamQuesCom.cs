@@ -406,12 +406,12 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public bool CollectAdd(int accid, long qusid)
         {
-            QuesCollect qc=Gateway.Default.From<QuesCollect>().Where(QuesCollect._.Ques_ID == qusid && QuesCollect._.Acc_ID == accid).ToFirst<QuesCollect>();
+            QuesCollect qc=Gateway.Default.From<QuesCollect>().Where(QuesCollect._.Qus_ID == qusid && QuesCollect._.Acc_ID == accid).ToFirst<QuesCollect>();
             if (qc != null) return false;
             return Gateway.Default.Insert<QuesCollect>(new QuesCollect()
             {
                 Acc_ID = accid,
-                Ques_ID = qusid,
+                Qus_ID = qusid,
                 Qcl_CrtTime = DateTime.Now
             }) > 0;
         }
@@ -421,10 +421,21 @@ namespace Song.ServiceImpls
         /// <param name="accid">管理员id</param>
         /// <param name="qusid">试题id</param>
         /// <returns></returns>
-        public bool CollectDelete(int accid, long qusid)
+        public bool CollectRemove(int accid, long qusid)
         {
-            Gateway.Default.Delete<QuesCollect>(QuesCollect._.Ques_ID == qusid && QuesCollect._.Acc_ID == accid);
+            Gateway.Default.Delete<QuesCollect>(QuesCollect._.Qus_ID == qusid && QuesCollect._.Acc_ID == accid);
             return true;
+        }
+        /// <summary>
+        /// 试题是否被收藏
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="qusid"></param>
+        /// <returns></returns>
+        public bool Collected(int accid, long qusid)
+        {
+            if (accid <= 0 || qusid <= 0) return false;
+            return Gateway.Default.Count<QuesCollect>(QuesCollect._.Qus_ID == qusid && QuesCollect._.Acc_ID == accid) > 0;
         }
         /// <summary>
         /// 获取收藏的试题
