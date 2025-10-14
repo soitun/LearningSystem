@@ -110,7 +110,7 @@ namespace Song.ViewData.Methods
         [HttpPost]
         public Song.Entities.Accounts Login(string acc, string pw, string vcode, string vmd5)
         {
-            string val = ConvertToAnyValue.Create(acc + vcode).MD5;
+            string val = ViewData.Helper.ConvertToAnyValue.Create(acc + vcode).MD5;
             if (!val.Equals(vmd5, StringComparison.CurrentCultureIgnoreCase))
                 throw VExcept.Verify("验证码错误", 101);
             Song.Entities.Accounts account = Business.Do<IAccounts>().AccountsLogin(acc, pw, true);
@@ -161,7 +161,7 @@ namespace Song.ViewData.Methods
         [HttpPost]
         public Song.Entities.Accounts LoginSms(string phone, string sms)
         {
-            string val = ConvertToAnyValue.Create(phone + sms).MD5;
+            string val = ViewData.Helper.ConvertToAnyValue.Create(phone + sms).MD5;
             Song.Entities.Accounts account = Business.Do<IAccounts>().AccountsLoginSms(phone, val);
             if (account == null) throw VExcept.Verify("验证码不正确", 105);
             if (!(bool)account.Ac_IsUse) throw VExcept.Verify("当前账号被禁用", 103);
@@ -208,7 +208,7 @@ namespace Song.ViewData.Methods
             //创建新账户
             Song.Entities.Accounts tmp = new Entities.Accounts();
             tmp.Ac_AccName = acc;
-            tmp.Ac_Pw = ConvertToAnyValue.Create(pw).MD5;
+            tmp.Ac_Pw = Song.ViewData.Helper.ConvertToAnyValue.Create(pw).MD5;
             //是否是手机号注册
             if ((bool)(config["IsRegSms"].Value.Boolean ?? false))
                 tmp.Ac_MobiTel1 = tmp.Ac_MobiTel2 = acc;
@@ -246,7 +246,7 @@ namespace Song.ViewData.Methods
         {
             //当前机构的配置信息
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
-            string val = ConvertToAnyValue.Create(org.Org_PlatformName + code).MD5;
+            string val = ViewData.Helper.ConvertToAnyValue.Create(org.Org_PlatformName + code).MD5;
             return val.Equals(vcode, StringComparison.CurrentCultureIgnoreCase);
         }
         /// <summary>
@@ -259,7 +259,7 @@ namespace Song.ViewData.Methods
         {
             //当前机构的配置信息
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
-            string val = ConvertToAnyValue.Create(org.Org_PlatformName + sms).SHA256;
+            string val = ViewData.Helper.ConvertToAnyValue.Create(org.Org_PlatformName + sms).SHA256;
             return val.Equals(vsms, StringComparison.CurrentCultureIgnoreCase);
         }
         /// <summary>
@@ -340,22 +340,18 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
+            foreach (int tm in ViewData.Helper.StringTo.List<int>(id))
             {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
                 try
                 {
-                    Business.Do<IStudent>().StudentOnlineDelete(idval);
+                    Business.Do<IStudent>().StudentOnlineDelete(tm);
                     i++;
                 }
                 catch (Exception ex)
                 {
                     throw ex;
                 }
-            }
+            }           
             return i;
         }
         /// <summary>
@@ -616,7 +612,7 @@ namespace Song.ViewData.Methods
         {
             acc.Ac_Photo = _uploadLogo();
             if (!string.IsNullOrWhiteSpace(acc.Ac_Pw))
-                acc.Ac_Pw = ConvertToAnyValue.Create(acc.Ac_Pw).MD5;
+                acc.Ac_Pw = ViewData.Helper.ConvertToAnyValue.Create(acc.Ac_Pw).MD5;
             Business.Do<IAccounts>().AccountsAdd(acc);
             acc.Ac_Photo = System.IO.File.Exists(_phyPath + acc.Ac_Photo) ? _virPath + acc.Ac_Photo : "";
             return acc;

@@ -80,15 +80,12 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
+            List<int> list = ViewData.Helper.StringTo.List<int>(id);
+            foreach (int s in list)
             {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
                 try
                 {
-                    Business.Do<ILinks>().SortDelete(idval);
+                    Business.Do<ILinks>().SortDelete(s);
                     i++;
                 }
                 catch (Exception ex)
@@ -200,7 +197,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public Song.Entities.Links ForID(int id)
         {
-            return _tran(Business.Do<ILinks>().LinksSingle(id));
+            return _tran(Business.Do<ILinks>().LinkSingle(id));
         }
         /// <summary>
         /// 添加友情
@@ -229,7 +226,7 @@ namespace Song.ViewData.Methods
                 entity.Lk_Logo = filename;
                 entity.Lk_LogoSmall = smallfile;
 
-                Business.Do<ILinks>().LinksAdd(entity);
+                Business.Do<ILinks>().LinkAdd(entity);
                 return entity;
             }
             catch (Exception ex)
@@ -251,7 +248,7 @@ namespace Song.ViewData.Methods
             string filename = string.Empty, smallfile = string.Empty;
             try
             {
-                Song.Entities.Links old = Business.Do<ILinks>().LinksSingle(entity.Lk_Id);
+                Song.Entities.Links old = Business.Do<ILinks>().LinkSingle(entity.Lk_Id);
                 if (old == null) throw new Exception("Not found entity for Links！");
                 //如果有上传文件
                 if (this.Files.Count > 0)
@@ -283,7 +280,7 @@ namespace Song.ViewData.Methods
                 }
 
                 old.Copy<Song.Entities.Links>(entity);
-                Business.Do<ILinks>().LinksSave(old);
+                Business.Do<ILinks>().LinkSave(old);
                 return old;
             }
             catch (Exception ex)
@@ -303,15 +300,12 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
+            List<int> list = ViewData.Helper.StringTo.List<int>(id);
+            foreach (int s in list)
             {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
                 try
                 {
-                    Business.Do<ILinks>().LinksDelete(idval);
+                    Business.Do<ILinks>().LinkDelete(s);
                     i++;
                 }
                 catch (Exception ex)
@@ -342,7 +336,7 @@ namespace Song.ViewData.Methods
             }
             //总记录数
             int count = 0;
-            Song.Entities.Links[] arr = Business.Do<ILinks>().GetLinksPager(orgid, sortid, use, show, name, link, size, index, out count);
+            List<Song.Entities.Links> arr = Business.Do<ILinks>().GetLinkPager(orgid, sortid, use, show, name, link, size, index, out count);
             foreach (Song.Entities.Links l in arr)
                 _tran(l);
             ListResult result = new ListResult(arr);
@@ -362,9 +356,9 @@ namespace Song.ViewData.Methods
         /// <param name="count">指定数量的结果，少于等于零取所有</param>
         /// <returns></returns>
         [HttpPost, HttpGet]
-        public Song.Entities.Links[] Count(int orgid,int sortid, bool? use, bool? show, string search, int count)
+        public List<Song.Entities.Links> Count(int orgid,int sortid, bool? use, bool? show, string search, int count)
         {
-            Song.Entities.Links[] entities = Business.Do<ILinks>().GetLinks(orgid, sortid, show, use, count);
+            List<Song.Entities.Links> entities = Business.Do<ILinks>().GetLinks(orgid, sortid, show, use, count);
             foreach(Song.Entities.Links l in entities)          
                 _tran(l);           
             return entities;

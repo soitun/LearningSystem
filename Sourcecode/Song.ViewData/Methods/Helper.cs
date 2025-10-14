@@ -279,7 +279,7 @@ namespace Song.ViewData.Methods
             if (leng <= 0) throw new Exception("长度不得小于等于零");
             //设定生成几位随机数
             string tmp = RndNum(leng, type);
-            string val = ConvertToAnyValue.Create(acc + tmp).MD5;
+            string val = ViewData.Helper.ConvertToAnyValue.Create(acc + tmp).MD5;
             //生成图片
             System.Drawing.Bitmap image = CreateImage(tmp);
             string base64 = WeiSha.Core.Images.ImageTo.ToBase64(image);

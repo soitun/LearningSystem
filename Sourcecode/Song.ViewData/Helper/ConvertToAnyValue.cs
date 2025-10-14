@@ -9,7 +9,7 @@ using System.Data.HashFunction;
 using System.Data.HashFunction.FNV;
 using System.Data.HashFunction;
 
-namespace Song.ViewData
+namespace Song.ViewData.Helper
 {
     /// <summary>
     /// 将某个值转换为任意数据类型
@@ -156,7 +156,7 @@ namespace Song.ViewData
         {
             get
             {
-                if (_paravlue == null) return null;
+                if (_paravlue == null) return null;               
                 try
                 {
                     return System.Convert.ToDouble(_paravlue);
@@ -170,13 +170,7 @@ namespace Song.ViewData
         /// <summary>
         /// 参数的String类型值，如果参数不存在或异常，则返回空字符串，非Null;
         /// </summary>
-        public string String
-        {
-            get
-            {
-                return _paravlue == null ? "" : _paravlue.ToString().Trim();
-            }
-        }
+        public string String => _paravlue == null ? string.Empty : _paravlue.ToString().Trim();
         /// <summary>
         /// 参数文本类型值，自动去除html标签
         /// </summary>
@@ -211,6 +205,13 @@ namespace Song.ViewData
             get
             {
                 if (_paravlue == null) return null;
+                string text = _paravlue.ToString();
+                if (string.IsNullOrWhiteSpace(text)) return null;
+                if ("false".Equals(text, StringComparison.CurrentCultureIgnoreCase)) return false;
+                if ("true".Equals(text, StringComparison.CurrentCultureIgnoreCase)) return true;
+                ////
+                //bool.TryParse(text, out bool result);
+                //return result;
                 try
                 {
                     return System.Convert.ToBoolean(_paravlue);
@@ -483,7 +484,7 @@ namespace Song.ViewData
                     obj = this.DateTime;
                     break;
                 default:
-                    obj = Convert.ChangeType(_paravlue, type);
+                    obj = System.Convert.ChangeType(_paravlue, type);
                     break;
             }
             return obj;

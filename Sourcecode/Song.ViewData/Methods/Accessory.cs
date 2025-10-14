@@ -274,7 +274,7 @@ namespace Song.ViewData.Methods
         /// <summary>
         /// 删除附件
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">附件ID，多个ID用逗号分隔</param>
         /// <returns></returns>
         [HttpDelete]
         [Admin, Teacher]
@@ -282,15 +282,11 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
+            foreach (int tm in ViewData.Helper.StringTo.List<int>(id))
             {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
                 try
                 {
-                    Business.Do<IAccessory>().Delete(idval);
+                    Business.Do<IAccessory>().Delete(tm);
                     i++;
                 }
                 catch (Exception ex)

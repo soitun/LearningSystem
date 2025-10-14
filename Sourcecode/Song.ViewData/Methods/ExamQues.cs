@@ -8,6 +8,7 @@ using Song.ServiceInterfaces;
 using Song.ViewData.Attri;
 using WeiSha.Core;
 using Song.ViewData;
+using Help = Song.ViewData.Helper;
 
 namespace Song.ViewData.Methods
 {
@@ -67,7 +68,23 @@ namespace Song.ViewData.Methods
             if(state) return Business.Do<IExamQues>().CollectAdd(accid, qusid);
             else return Business.Do<IExamQues>().CollectRemove(accid, qusid);
         }
+        public ListResult CollectPager(int acid, string qpid, string tagid, string knlid, string type, string diff, int size, int index)
+        {
+            int sum = 0;
+            List<Questions> list = Business.Do<IExamQues>().CollectPager(acid,
+                Help.StringTo.Array<long>(qpid),
+                Help.StringTo.Array<long>(tagid),
+                Help.StringTo.Array<long>(knlid),
+                Help.StringTo.Array<int>(type),
+                Help.StringTo.Array<int>(diff),
+                size, index, out sum);
 
+            Song.ViewData.ListResult result = new ListResult(list);
+            result.Index = index;
+            result.Size = size;
+            result.Total = sum;
+            return result;
+        }
 
         #endregion
     }

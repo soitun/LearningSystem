@@ -50,8 +50,7 @@ $ready([
 
             //当前登录的管理员
             $api.login.current('admin', function (d) {
-                th.admin = d;
-                console.error(th.admin);
+                th.admin = d;               
             });
         },
         created: function () {
@@ -150,43 +149,7 @@ $ready([
                 }).catch(function (err) {
                     alert(err, '错误');
                 }).finally(() => th.loadingid = 0);
-            },
-            //批量修改状态
-            batchState: function (use) {
-                use = Boolean(use);
-                var th = this;
-                this.$confirm('批量更改当前页面的试题为“' + (use ? '启用' : '禁用') + '”, 是否继续?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    var ids = '';
-                    for (var i = 0; i < th.datas.length; i++) {
-                        ids += th.datas[i].Qus_ID;
-                        if (i < th.datas.length - 1) ids += ',';
-                    }
-                    var loading = this.$fulloading();
-                    $api.post('Question/ChangeUse', { 'id': ids, 'use': use }).then(function (req) {
-                        if (req.data.success) {
-                            th.$notify({
-                                type: 'success',
-                                message: '修改状态成功!',
-                                center: true
-                            });
-                            th.handleCurrentChange();
-                            th.$nextTick(function () {
-                                loading.close();
-                            });
-                        } else {
-                            throw req.data.message;
-                        }
-                    }).catch(function (err) {
-                        alert(err);
-                    });
-                }).catch(() => {
-
-                });
-            },
+            },           
             //导出
             output: function (btn) {
                 var title = btn.tips;

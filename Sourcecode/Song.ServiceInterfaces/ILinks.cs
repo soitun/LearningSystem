@@ -17,60 +17,60 @@ namespace Song.ServiceInterfaces
         /// 添加友情链接
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void LinksAdd(Links entity);
+        void LinkAdd(Links entity);
         /// <summary>
         /// 申请友链接（外网申请的交换连接）
         /// </summary>
         /// <param name="entity"></param>
-        void LinksApply(Links entity);
+        void LinkApply(Links entity);
         /// <summary>
         /// 通过审核（对外网申请的交换连接进行审核）
         /// </summary>
         /// <param name="identify"></param>
-        void LinksVerify(Links entity);
+        void LinkVerify(Links entity);
         /// <summary>
         /// 修改
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void LinksSave(Links entity);
+        void LinkSave(Links entity);
         /// <summary>
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void LinksDelete(Links entity);
+        void LinkDelete(Links entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void LinksDelete(int identify);
+        void LinkDelete(int identify);
         /// <summary>
         /// 删除，按链接项名称
         /// </summary>
         /// <param name="name">链接项名称</param>
-        void LinksDelete(int orgid, string name);
+        void LinkDelete(int orgid, string name);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
         /// <returns></returns>
-        Links LinksSingle(int identify);
+        Links LinkSingle(int identify);
         /// <summary>
         /// 获取单一实体对象，按链接项名称
         /// </summary>
         /// <param name="ttl">链接项名称</param>
         /// <returns></returns>
-        Links LinksSingle(int orgid, string ttl);
+        Links LinkSingle(int orgid, string ttl);
         /// <summary>
         /// 获取同一分类下的最大排序号；
         /// </summary>
         /// <param name="sortId">分类Id</param>
         /// <returns></returns>
-        int LinksMaxTaxis(int orgid, int sortId);
+        int LinkMaxTaxis(int orgid, int sortId);
         /// 获取某个院系的所有链接项；
         /// </summary>
         /// <param name="isShow">是否显示</param>
         /// <returns></returns>
-        Links[] GetLinksAll(int orgid, bool? isShow);
+        List<Links> GetLinkAll(int orgid, bool? isShow);
         /// <summary>
         /// 取成情链接
         /// </summary>
@@ -79,8 +79,8 @@ namespace Song.ServiceInterfaces
         /// <param name="isUse">是否使用</param>
         /// <param name="count">取多少条记录，如果小于等于0，则取所有</param>
         /// <returns></returns>
-        Links[] GetLinks(int orgid, int sortId, bool? isShow, bool? isUse, int count);
-        Links[] GetLinks(int orgid, string sortName, bool? isShow, bool? isUse, int count);
+        List<Links> GetLinks(int orgid, int sortId, bool? isShow, bool? isUse, int count);
+        List<Links> GetLinks(int orgid, string sortName, bool? isShow, bool? isUse, int count);
         /// <summary>
         /// 分页获取所有的链接项；
         /// </summary>
@@ -89,7 +89,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        Links[] GetLinksPager(int orgid, int sortId, int size, int index, out int countSum);
+        List<Links> GetLinkPager(int orgid, int sortId, int size, int index, out int countSum);
         /// <summary>
         /// 分页获取所有链接项
         /// </summary>
@@ -103,7 +103,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        Links[] GetLinksPager(int orgid, int sortId, bool? isUse, bool? isShow, string name,string link, int size, int index, out int countSum);
+        List<Links> GetLinkPager(int orgid, int sortId, bool? isUse, bool? isShow, string name,string link, int size, int index, out int countSum);
 
         /// <summary>
         /// 分页获取所有的链接项；
@@ -114,7 +114,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        Links[] GetLinksPager(int orgid, bool? isShow, int size, int index, out int countSum);
+        List<Links> GetLinkPager(int orgid, bool? isShow, int size, int index, out int countSum);
         #endregion
 
         #region 友情链接分类项

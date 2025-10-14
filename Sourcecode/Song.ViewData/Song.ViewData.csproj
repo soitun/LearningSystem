@@ -188,6 +188,7 @@
     <Compile Include="Helper\AreaCode.cs" />
     <Compile Include="Helper\Browser.cs" />
     <Compile Include="Helper\Cache.cs" />
+    <Compile Include="Helper\StringTo.cs" />
     <Compile Include="Helper\ConvertToAnyValue.cs" />
     <Compile Include="Helper\DatabaseLog.cs" />
     <Compile Include="Helper\Desensitize.cs" />

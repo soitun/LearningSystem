@@ -655,6 +655,7 @@
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Collects.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\ques_collect.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\ques_diff.js" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\Styles\ques_collect.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Questions.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\Collects.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\Questions.js" />

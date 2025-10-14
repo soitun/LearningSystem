@@ -19,7 +19,7 @@ namespace Song.ServiceImpls
 
         #region 友情链接项
 
-        public void LinksAdd(Links entity)
+        public void LinkAdd(Links entity)
         {
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
             //添加对象，并设置排序号
@@ -47,17 +47,17 @@ namespace Song.ServiceImpls
 
             Gateway.Default.Save<Links>(entity);
         }
-        public void LinksApply(Links entity)
+        public void LinkApply(Links entity)
         {
             entity.Lk_IsApply = true;
             entity.Lk_IsVerify = false;
             Gateway.Default.Save<Links>(entity);
         }
-        public void LinksVerify(Links entity)
+        public void LinkVerify(Links entity)
         {
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
             entity.Lk_IsVerify = true;
-            entity.Lk_Order = LinksMaxTaxis((int)entity.Ls_Id, org.Org_ID) + 1;
+            entity.Lk_Order = LinkMaxTaxis((int)entity.Ls_Id, org.Org_ID) + 1;
             LinksSort ls = Gateway.Default.From<LinksSort>().Where(LinksSort._.Ls_Id == entity.Ls_Id).ToFirst<LinksSort>();
             if (ls != null)
             {
@@ -65,7 +65,7 @@ namespace Song.ServiceImpls
             }
             Gateway.Default.Save<Links>(entity);
         }
-        public void LinksSave(Links entity)
+        public void LinkSave(Links entity)
         {
             LinksSort ls = Gateway.Default.From<LinksSort>().Where(LinksSort._.Ls_Id == entity.Ls_Id).ToFirst<LinksSort>();
             if (ls != null)
@@ -81,43 +81,43 @@ namespace Song.ServiceImpls
             Gateway.Default.Save<Links>(entity);
         }
 
-        public void LinksDelete(Links entity)
+        public void LinkDelete(Links entity)
         {
             _LinksDelete(entity);
         }
 
-        public void LinksDelete(int identify)
+        public void LinkDelete(int identify)
         {
-            _LinksDelete(this.LinksSingle(identify));
+            _LinksDelete(this.LinkSingle(identify));
         }
 
-        public void LinksDelete(int orgid, string name)
+        public void LinkDelete(int orgid, string name)
         {
-            _LinksDelete(this.LinksSingle(orgid, name));
+            _LinksDelete(this.LinkSingle(orgid, name));
         }
 
-        public Links LinksSingle(int identify)
+        public Links LinkSingle(int identify)
         {
             return Gateway.Default.From<Links>().Where(Links._.Lk_Id == identify).ToFirst<Links>();
         }
 
-        public Links LinksSingle(int orgid, string ttl)
+        public Links LinkSingle(int orgid, string ttl)
         {
             return Gateway.Default.From<Links>().Where(Links._.Org_ID == orgid && Links._.Lk_Name == ttl).ToFirst<Links>();
         }
 
-        public int LinksMaxTaxis(int orgid, int sortId)
+        public int LinkMaxTaxis(int orgid, int sortId)
         {
             //添加对象，并设置排序号
             object obj = Gateway.Default.Max<Links>(Links._.Lk_Order, Links._.Ls_Id == sortId && Links._.Org_ID == orgid);
             return obj != null ? Convert.ToInt32(obj) + 1 : 0;
         }
-        public Links[] GetLinksAll(int orgid, bool? isShow)
+        public List<Links> GetLinkAll(int orgid, bool? isShow)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Links._.Org_ID == orgid);
             if (isShow != null) wc.And(Links._.Lk_IsShow == isShow);
-            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Order.Asc).ToArray<Links>();
+            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Order.Asc).ToList<Links>();
         }
         /// <summary>
         /// 取友情链接
@@ -127,17 +127,17 @@ namespace Song.ServiceImpls
         /// <param name="isUse"></param>
         /// <param name="count">取多少条记录，如果小于等于0，则取所有</param>
         /// <returns></returns>
-        public Links[] GetLinks(int orgid, int sortId, bool? isShow, bool? isUse, int count)
+        public List<Links> GetLinks(int orgid, int sortId, bool? isShow, bool? isUse, int count)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Links._.Org_ID == orgid);
             if (sortId > 0) wc.And(Links._.Ls_Id == sortId);
             if (isShow != null) wc.And(Links._.Lk_IsShow == isShow);
             if (isUse != null) wc.And(Links._.Lk_IsUse == isUse);
-            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Order.Asc && Links._.Lk_Id.Asc).ToArray<Links>(count);
+            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Order.Asc && Links._.Lk_Id.Asc).ToList<Links>(count);
         }
 
-        public Links[] GetLinks(int orgid, string sortName, bool? isShow, bool? isUse, int count)
+        public List<Links> GetLinks(int orgid, string sortName, bool? isShow, bool? isUse, int count)
         {
             if (string.IsNullOrWhiteSpace(sortName) || sortName.Trim() == "") return null;
             Song.Entities.LinksSort sort = Gateway.Default.From<LinksSort>().Where(LinksSort._.Org_ID == orgid && LinksSort._.Ls_Name == sortName.Trim()).ToFirst<LinksSort>();
@@ -145,20 +145,20 @@ namespace Song.ServiceImpls
             if (isShow != null && (bool)isShow && !sort.Ls_IsShow && !sort.Ls_IsUse) return null;
             return GetLinks(orgid, sort.Ls_Id, isShow, isUse, count);
         }
-        public Links[] GetLinksPager(int orgid, int size, int index, out int countSum)
+        public List<Links> GetLinksPager(int orgid, int size, int index, out int countSum)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Links._.Org_ID == orgid);
             countSum = Gateway.Default.Count<Links>(wc);
-            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Order.Asc).ToArray<Links>(size, (index - 1) * size);
+            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Order.Asc).ToList<Links>(size, (index - 1) * size);
         }
-        public Links[] GetLinksPager(int orgid, int sortId, int size, int index, out int countSum)
+        public List<Links> GetLinkPager(int orgid, int sortId, int size, int index, out int countSum)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Links._.Org_ID == orgid);
             if (sortId > 0) wc.And(Links._.Ls_Id == sortId);
             countSum = Gateway.Default.Count<Links>(wc);
-            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Order.Asc).ToArray<Links>(size, (index - 1) * size);
+            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Order.Asc).ToList<Links>(size, (index - 1) * size);
         }
         /// <summary>
         /// 分页获取所有链接项
@@ -173,7 +173,7 @@ namespace Song.ServiceImpls
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        public Links[] GetLinksPager(int orgid, int sortId, bool? isUse, bool? isShow, string name, string link, int size, int index, out int countSum)
+        public List<Links> GetLinkPager(int orgid, int sortId, bool? isUse, bool? isShow, string name, string link, int size, int index, out int countSum)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Links._.Org_ID == orgid);
@@ -183,15 +183,15 @@ namespace Song.ServiceImpls
             if (!string.IsNullOrWhiteSpace(name)) wc.And(Links._.Lk_Name.Contains(name.Trim()));
             if (!string.IsNullOrWhiteSpace(link)) wc.And(Links._.Lk_Url.Contains(link.Trim()));
             countSum = Gateway.Default.Count<Links>(wc);
-            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Order.Asc).ToArray<Links>(size, (index - 1) * size);
+            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Order.Asc).ToList<Links>(size, (index - 1) * size);
         }       
-        public Links[] GetLinksPager(int orgid, bool? isShow, int size, int index, out int countSum)
+        public List<Links> GetLinkPager(int orgid, bool? isShow, int size, int index, out int countSum)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Links._.Org_ID == orgid);
             if (isShow != null) wc.And(Links._.Lk_IsShow == (bool)isShow);
             countSum = Gateway.Default.Count<Links>(wc);
-            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Order.Asc).ToArray<Links>(size, (index - 1) * size);
+            return Gateway.Default.From<Links>().Where(wc).OrderBy(Links._.Lk_Order.Asc).ToList<Links>(size, (index - 1) * size);
         }
         #endregion
 

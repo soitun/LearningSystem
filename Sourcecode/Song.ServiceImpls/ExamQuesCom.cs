@@ -454,8 +454,11 @@ namespace Song.ServiceImpls
         {
             WhereClip wc = new WhereClip();
             wc.And(QuesCollect._.Acc_ID == acid);
-            countSum = Gateway.Default.Count<Questions>(wc);
-            return Gateway.Default.From<Questions>().Where(wc).OrderBy(Questions._.Qus_ID.Desc).ToList<Questions>(size, (index - 1) * size);
+            //countSum = Gateway.Default.Count<Questions>(wc);
+            QuerySection<Questions> section = Gateway.Default.From<Questions>().LeftJoin<QuesCollect>(QuesCollect._.Qus_ID == Questions._.Qus_ID).Where(wc);
+            countSum = section.Count();
+
+            return section.OrderBy(Questions._.Qus_ID.Desc).ToList<Questions>(size, (index - 1) * size);
         }
         #endregion
     }
