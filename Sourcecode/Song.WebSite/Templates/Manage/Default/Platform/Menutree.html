@@ -58,7 +58,7 @@
 
               <el-button type="text" size="mini" @click="() => append(data)"> 新增下级 </el-button>
               <el-button type="text" size="mini" @click="showedit(node,data)"> 编辑 </el-button>
-              <el-popconfirm title="确定删除吗？" @confirm="remove(node, data)">
+              <el-popconfirm :title="'确定删除 “'+data.MM_Name+'” 吗？'" @confirm="remove(node, data)">
                 <el-button type="text" slot="reference"> 删除 </el-button>
               </el-popconfirm>
             </span>
