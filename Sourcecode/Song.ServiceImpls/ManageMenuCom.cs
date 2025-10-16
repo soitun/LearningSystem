@@ -407,7 +407,7 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 获取当前对象的子级对象；
         /// </summary>
-        /// <param name="identify">当前实体的主键</param>
+        /// <param name="uid">当前菜单项的唯一标识</param>
         /// <returns></returns>
         public List<ManageMenu> GetChilds(string uid)
         {

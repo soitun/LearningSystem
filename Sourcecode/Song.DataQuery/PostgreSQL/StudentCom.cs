@@ -326,7 +326,7 @@ namespace Song.DataQuery.PostgreSQL
                     ///* 不要删除
                     //*****如果没有购买的，则去除
                     //购买的课程(含概试用的）
-                    int count = 0;
+                    //int count = 0;
                     List<Song.Entities.Course> cous = Business.Do<ICourse>().CourseForStudent(acid, null, 0, null, null);
                     for (int i = 0; i < dt.Rows.Count; i++)
                     {

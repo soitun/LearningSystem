@@ -67,8 +67,8 @@
         $dom.ready(function () {
             $dom.corejs(function () {
                 $components(function () {
+                    window.$init_load(() => $dom.componentjs(jsfile, func));
                     window.$init_func();
-                    $dom.componentjs(jsfile, func);
                 });
             });
         });
@@ -125,4 +125,17 @@
             return txt.replace(regExp, (match, p1) => '<red>' + p1 + '</red>');
         };
     };
+    //初始加载
+    window.$init_load = function (func) {
+        $api.get('Organization/Current').then(function (req) {
+            if (req.data.success) {
+                window.org = req.data.result;
+                window.config = $api.organ(window.org).config;
+            } else {
+                console.error(req.data.exception);
+                throw req.data.message;
+            }
+        }).catch(err => console.error(err))
+            .finally(() => func());
+    }
 })();

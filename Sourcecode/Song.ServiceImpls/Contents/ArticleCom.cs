@@ -347,7 +347,6 @@ namespace Song.ServiceImpls
             return Gateway.Default.From<Article>().Where(wc).OrderBy(wcOrder).ToArray<Article>(size, (index - 1) * size);
         }
         /// <summary>
-        /// <summary>
         /// 更改新闻文章的顺序
         /// </summary>
         /// <param name="items"></param>

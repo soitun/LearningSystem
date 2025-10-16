@@ -2090,9 +2090,7 @@ namespace Song.ServiceImpls
         /// 分页获取学员的错误试题
         /// </summary>
         /// <param name="acid">学员id</param>
-        /// <param name="quesid">试题id</param>
-        /// <param name="type">试题类型</param>
-        /// <param name="diff">难易度</param>
+        /// <param name="quesid">试题id</param> 
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <param name="countSum"></param>

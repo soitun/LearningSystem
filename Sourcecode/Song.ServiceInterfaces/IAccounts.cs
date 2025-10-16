@@ -716,7 +716,6 @@ namespace Song.ServiceInterfaces
         /// <summary>
         /// 分页获取资金流水；
         /// </summary>
-        /// </summary>
         /// <param name="orgid">机构id</param>
         /// <param name="type">类型，支出为1，转入2</param>
         /// <param name="from">来源，1为管理员，2为充值码，3为在线支付</param>

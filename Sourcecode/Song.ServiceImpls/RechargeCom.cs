@@ -137,7 +137,8 @@ namespace Song.ServiceImpls
         /// 获取所有设置项
         /// </summary>
         /// <param name="orgid">所在机构id</param>
-        /// <param name="isUse"></param>
+        /// <param name="isEnable"></param>
+        /// <param name="count"></param>
         /// <returns></returns>
         public RechargeSet[] RechargeSetCount(int orgid, bool? isEnable, int count)
         {

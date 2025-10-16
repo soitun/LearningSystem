@@ -69,7 +69,7 @@ namespace Song.ServiceInterfaces
         /// 分页获取学习卡设置项
         /// </summary>
         /// <param name="orgid"></param>
-        /// <param name="isUse"></param>
+        /// <param name="isEnable"></param>
         /// <param name="searTxt"></param>
         /// <param name="size"></param>
         /// <param name="index"></param>

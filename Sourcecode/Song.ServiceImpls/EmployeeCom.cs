@@ -214,7 +214,7 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 获取单一实体对象，按员工手机号码
         /// </summary>
-        /// <param name="acc">员工手机号码</param>
+        /// <param name="phoneNumber">员工手机号码</param>
         /// <returns></returns>
         public EmpAccount GetSingleByPhone(string phoneNumber)
         {
@@ -223,7 +223,7 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 获取单一实体对象，按员工名称
         /// </summary>
-        /// <param name="phoneNumber"></param>
+        /// <param name="name"></param>
         /// <returns></returns>
         public EmpAccount GetSingleByName(string name)
         {

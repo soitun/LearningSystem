@@ -84,6 +84,7 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         bool IsExist(EmpGroup entity);
         bool IsExist(string name, int id, int orgid);
+        /// <summary>
         /// ¸ü¸ÄÅÅÐò
         /// </summary>
         /// <param name="entities"></param>

@@ -7,8 +7,6 @@ $ready([
     window.vapp = new Vue({
         el: '#vapp',
         data: {
-            organ: {},
-            config: {},      //当前机构配置项    
             types: [],        //试题类型，来自web.config中配置项
             admin: {},          //当前登录用户
             //试题的查询条件
@@ -30,18 +28,14 @@ $ready([
         mounted: function () {
             var th = this;
             th.loadstate.init = true;
-            $api.bat(
-                $api.get('Organization/Current'),
-                $api.cache('Question/Types:99999')
-            ).then(([organ, types]) => {
-                //获取结果
-                th.organ = organ.data.result;               
-                th.config = $api.organ(th.organ).config;
-                th.types = types.data.result;              
-            }).catch(function (err) {
-                alert(err);
-                console.error(err);
-            }).finally(() => th.loadstate.init = false);
+            $api.cache('Question/Types:99999').then(req => {
+                if (req.data.success) {
+                    th.types = req.data.result;                
+                } else {
+                    throw req.data.message;
+                }
+            }).catch(err => console.error(err))
+                .finally(() => th.loadstate.init = false);
 
             //当前登录的管理员
             $api.login.current('admin', d => {

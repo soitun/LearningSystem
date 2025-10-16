@@ -724,8 +724,7 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 获取教师
         /// </summary>
-        /// <param name="orgid">机构id</param>
-        /// <param name="isUse"></param>
+        /// <param name="thid"></param>
         /// <param name="count"></param>
         /// <returns></returns>
         public TeacherHistory[] HistoryCount(int thid, int count)

@@ -62,7 +62,6 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         ProfitSharing[] ThemeAll(bool? isUse);
         /// <summary>
-        /// <summary>
         /// ¸ü¸ÄË³Ðò
         /// </summary>
         /// <param name="items"></param>
