@@ -27,6 +27,14 @@
     "mark": "课程价格",
     "intro": "用于记录课程的价格项，每一个课程，可以设置多个价格项，例如一个月多少钱，一个季度多少钱。"
   },
+  "DataOperateLog": {
+    "mark": "",
+    "intro": ""
+  },
+  "DataOperateLogArchive": {
+    "mark": "",
+    "intro": ""
+  },
   "Depart": {
     "mark": "部门",
     "intro": ""
@@ -199,12 +207,40 @@
     "mark": "试题答案项",
     "intro": "用于单选题、多选题、填空题的选项；实际没有存储任何数据，仅作为数据格式存在于Question表的Qus_Items字段中，在应用中数据被解析成QuesAnswer的格式而已。\n这么做的原因是兼容历史版本。"
   },
+  "QuesCollect": {
+    "mark": "",
+    "intro": "试题收藏，这里是管理员收藏的试题，用于编辑试卷"
+  },
+  "QuesKnowledge": {
+    "mark": "",
+    "intro": ""
+  },
+  "QuesPart": {
+    "mark": "",
+    "intro": "试题分类"
+  },
+  "QuesTags": {
+    "mark": "",
+    "intro": ""
+  },
   "QuesTypes": {
     "mark": "试题分类",
     "intro": "未启用该功能，原计是要做公共题干，后来由于精力有限，未继续开发。"
   },
   "Questions": {
     "mark": "试题",
+    "intro": ""
+  },
+  "Questions_QKnl": {
+    "mark": "",
+    "intro": ""
+  },
+  "Questions_QPart": {
+    "mark": "",
+    "intro": ""
+  },
+  "Questions_QTags": {
+    "mark": "",
     "intro": ""
   },
   "RechargeCode": {

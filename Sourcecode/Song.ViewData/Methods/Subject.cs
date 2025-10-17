@@ -154,26 +154,16 @@ namespace Song.ViewData.Methods
         /// <param name="id">账户id，可以是多个，用逗号分隔</param>
         /// <returns></returns>
         [Admin]
-        [HttpDelete,HttpGet(Ignore =true)]
+        [HttpDelete, HttpGet(Ignore = true)]
         public int Delete(string id)
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
+            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            foreach (long s in list)
             {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<ISubject>().SubjectDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                Business.Do<ISubject>().SubjectDelete(s);
+                i++;
             }
             return i;
         }

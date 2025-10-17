@@ -44,7 +44,7 @@ Vue.component('ques_collect', {
             var th = this;
             th.loading = true;
             th.collected = !th.collected;
-            $api.get("ExamQues/CollectUpdate", { "accid": th.accid, "qusid": th.ques.Qus_ID, "state": th.collected })
+            $api.post("ExamQues/CollectUpdate", { "accid": th.accid, "qusid": th.ques.Qus_ID, "state": th.collected })
                 .then(req => {
                     if (req.data.success) {
                         let result = req.data.result;

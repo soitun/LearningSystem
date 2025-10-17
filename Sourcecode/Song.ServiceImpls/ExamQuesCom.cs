@@ -126,7 +126,7 @@ namespace Song.ServiceImpls
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="id">实体的主键</param>
-        public void PartDelete(long id)
+        public int PartDelete(long id)
         {
             List<long> list = this.PartTreeID(id, 0);   //获取当前试题分类下的所有子试题分类id，包括自身
             using (DbTrans tran = Gateway.Default.BeginTrans())
@@ -146,6 +146,7 @@ namespace Song.ServiceImpls
                     throw ex;
                 }
             }
+            return list.Count;
         }
 
         /// <summary>

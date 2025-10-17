@@ -872,26 +872,16 @@ namespace Song.ViewData.Methods
         [Admin]
         [HttpDelete]
         public int DeleteBatch(string ids)
-        {         
+        {
             int i = 0;
             if (string.IsNullOrWhiteSpace(ids)) return i;
-            string[] arr = ids.Split(',');
-            foreach (string s in arr)
+            List<int> list = ViewData.Helper.StringTo.List<int>(ids);
+            foreach (int s in list)
             {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IAccounts>().AccountsDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                Business.Do<IAccounts>().AccountsDelete(s);
+                i++;
             }
-            return i;           
+            return i;
         }
         /// <summary>
         /// 按id删除账户
@@ -1036,21 +1026,11 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
+            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            foreach (long s in list)
             {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IStudent>().SortDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                Business.Do<IStudent>().SortDelete(s);
+                i++;
             }
             return i;
         }

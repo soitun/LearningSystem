@@ -67,7 +67,7 @@ namespace Song.ServiceInterfaces
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="id">实体的主键</param>
-        void PartDelete(long id);
+        int PartDelete(long id);
         /// <summary>
         /// 清空试题分类下的所有试题关联关联（并不删除试题）
         /// </summary>

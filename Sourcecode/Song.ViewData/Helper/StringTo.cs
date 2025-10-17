@@ -29,9 +29,10 @@ namespace Song.ViewData.Helper
         /// <param name="str"></param>
         /// <returns></returns>
         public static List<T> List<T>(string str) where T : struct
-        {
-            string[] arr = str.Split(',');
+        {           
             List<T> list = new List<T>();
+            if (string.IsNullOrWhiteSpace(str)) return list;
+            string[] arr = str.Split(',');
             foreach (string s in arr)
             {
                 if (string.IsNullOrWhiteSpace(s) || string.IsNullOrWhiteSpace(s.Trim())) continue;
