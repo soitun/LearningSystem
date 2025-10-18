@@ -36,6 +36,8 @@ namespace Song.Entities {
     		
     		protected Boolean _Qus_IsCorrect;
     		
+    		protected Boolean _Qus_IsDeleted;
+    		
     		protected Boolean _Qus_IsError;
     		
     		protected Boolean _Qus_IsTitle;
@@ -203,6 +205,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Qus_IsCorrect, _Qus_IsCorrect, value);
     				this._Qus_IsCorrect = value;
+    			}
+    		}
+    		
+    		public Boolean Qus_IsDeleted {
+    			get {
+    				return this._Qus_IsDeleted;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Qus_IsDeleted, _Qus_IsDeleted, value);
+    				this._Qus_IsDeleted = value;
     			}
     		}
     		
@@ -390,6 +402,7 @@ namespace Song.Entities {
     					_.Qus_Errornum,
     					_.Qus_Explain,
     					_.Qus_IsCorrect,
+    					_.Qus_IsDeleted,
     					_.Qus_IsError,
     					_.Qus_IsTitle,
     					_.Qus_IsUse,
@@ -426,6 +439,7 @@ namespace Song.Entities {
     					this._Qus_Errornum,
     					this._Qus_Explain,
     					this._Qus_IsCorrect,
+    					this._Qus_IsDeleted,
     					this._Qus_IsError,
     					this._Qus_IsTitle,
     					this._Qus_IsUse,
@@ -488,6 +502,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Qus_IsCorrect))) {
     				this._Qus_IsCorrect = reader.GetBoolean(_.Qus_IsCorrect);
+    			}
+    			if ((false == reader.IsDBNull(_.Qus_IsDeleted))) {
+    				this._Qus_IsDeleted = reader.GetBoolean(_.Qus_IsDeleted);
     			}
     			if ((false == reader.IsDBNull(_.Qus_IsError))) {
     				this._Qus_IsError = reader.GetBoolean(_.Qus_IsError);
@@ -629,6 +646,11 @@ namespace Song.Entities {
     			/// 字段名：Qus_IsCorrect - 数据类型：Boolean
     			/// </summary>
     			public static WeiSha.Data.Field Qus_IsCorrect = new WeiSha.Data.Field<Questions>("Qus_IsCorrect");
+    			
+    			/// <summary>
+    			/// 字段名：Qus_IsDeleted - 数据类型：Boolean
+    			/// </summary>
+    			public static WeiSha.Data.Field Qus_IsDeleted = new WeiSha.Data.Field<Questions>("Qus_IsDeleted");
     			
     			/// <summary>
     			/// 字段名：Qus_IsError - 数据类型：Boolean

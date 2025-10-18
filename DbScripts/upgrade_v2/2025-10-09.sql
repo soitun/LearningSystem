@@ -148,7 +148,8 @@ CREATE TABLE "QuesKnowledge" (
     "Qk_Intro" TEXT,                        --简述
     "Qk_Details" TEXT
 );
-
+/*是否删除的字段*/
+ALTER TABLE "QuesKnowledge" ADD COLUMN "Qk_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
 -- 创建索引
 CREATE INDEX "QuesKnowledge_IX_PID" ON "QuesKnowledge"("Qk_PID");
 CREATE INDEX "QuesKnowledge_IX_Name" ON "QuesKnowledge"("Qk_Name");
@@ -158,6 +159,7 @@ CREATE INDEX "QuesKnowledge_IX_OrgID" ON "QuesKnowledge"("Org_ID");
 CREATE INDEX "QuesKnowledge_IX_PID_Order" ON "QuesKnowledge"("Qk_PID", "Qk_Order");
 CREATE INDEX "QuesKnowledge_IX_Org_ID" ON "QuesKnowledge"("Org_ID");
 CREATE INDEX "QuesKnowledge_IX_Qk_Count" ON "QuesKnowledge"("Qk_Count");
+CREATE INDEX "QuesKnowledge_IX_Qk_IsDeleted" ON "QuesKnowledge"("Qk_IsDeleted");
 
 /*试题与知识点的关联表*/
 CREATE TABLE "Questions_QKnl" (
@@ -194,6 +196,7 @@ CREATE INDEX "QuesTags_IX_CouID" ON "QuesTags"("Cou_ID");
 CREATE INDEX "QuesTags_IX_Order" ON "QuesTags"("Qtag_Order");
 CREATE INDEX "QuesTags_IX_Weight" ON "QuesTags"("Qtag_Weight");
 
+
 --创建试题与标签的关联表
 CREATE TABLE "Questions_QTags" (
     "Qqt_ID" BIGINT PRIMARY KEY DEFAULT 0,
@@ -210,6 +213,10 @@ CREATE INDEX "Questions_QTags_IX_TagID_QuesID" ON "Questions_QTags"("Qtag_ID", "
 
 /*为试题添用途的字段，默认为0，即课程使用；考试用为1*/
 ALTER TABLE "Questions" ADD COLUMN "Qus_Purpose" int NOT NULL  DEFAULT 0;
+CREATE INDEX "Questions_IX_Purpose" ON "Questions"("Qus_Purpose");
+/*为试题添加是否删除的字段*/
+ALTER TABLE "Questions" ADD COLUMN "Qus_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
+CREATE INDEX "Questions_IX_IsDeleted" ON "Questions"("Qus_IsDeleted");
 
 --创建操作日志的记录表
 CREATE TABLE "DataOperateLog" (

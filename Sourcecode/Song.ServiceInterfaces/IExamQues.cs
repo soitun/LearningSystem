@@ -163,7 +163,7 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="list">试题分类列表，对象中只有Qp_ID、Qp_PID、Qp_Order</param>
         /// <returns></returns>
-        bool UpdateTaxis(QuesPart[] list);
+        bool PartUpdateTaxis(QuesPart[] list);
         #endregion
 
         #region 收藏

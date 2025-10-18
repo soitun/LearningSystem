@@ -373,7 +373,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="list">试题分类列表，对象中只有Qp_ID、Qp_PID、Qp_Order</param>
         /// <returns></returns>
-        public bool UpdateTaxis(QuesPart[] list)
+        public bool PartUpdateTaxis(QuesPart[] list)
         {
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {

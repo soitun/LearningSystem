@@ -3,22 +3,18 @@ $ready(function () {
     window.vapp = new Vue({
         el: '#vapp',
         data: {
-            org: {},
-            config: {},      //当前机构配置项        
-            datas: [],
+            datas: [],      //所有数据
             form: {
-                orgid: '',
-                search: '',
-                isuse: null
+                orgid: '', search: '', isuse: null
             },
             defaultProps: {
                 children: 'children',
-                label: 'Sbj_Name'
+                label: 'Qp_Name'
             },
-            expanded: [],        //专业树形默认展开的节点
-            expanded_storage: 'subject_for_admin_tree',  //用于记录展开节点的storage名称
+            expanded: [],        //树形默认展开的节点
+            expanded_storage: 'quespart_for_admin_tree',  //用于记录展开节点的storage名称
             filterText: '',      //查询过虑树形的字符
-            total: 0,     //当前机构下的专业总数
+            total: 0,       //当前机构下的试题分类总数
             //是否折叠
             fold: true,
 
@@ -40,8 +36,8 @@ $ready(function () {
             });
         },
         created: function () {
-            console.error(window.org);
-            console.error(window.config);
+            //console.error(window.org);
+            //console.error(window.config);
 
             var th = this;
             th.form.orgid = window.org.Org_ID;
@@ -66,7 +62,7 @@ $ready(function () {
             getTreeData: function () {
                 var th = this;
                 th.loading = true;
-                $api.get('Subject/Tree', th.form).then(function (req) {
+                $api.get('ExamQues/PartTree', th.form).then(function (req) {
                     if (req.data.success) {
                         th.datas = th.clacCount(req.data.result);
                         //获取默认展开的节点
@@ -83,10 +79,8 @@ $ready(function () {
             //计算课程数，ques数，test数
             clacCount: function (datas) {
                 this.total = 0;
-                this.calcSerial(datas);
-                datas.forEach(d => this.ergodic_clacCount(d, 'Sbj_CourseCount', 'CourseCount'));
-                datas.forEach(d => this.ergodic_clacCount(d, 'Sbj_QuesCount', 'QuesCount'));
-                datas.forEach(d => this.ergodic_clacCount(d, 'Sbj_TestCount', 'TestCount'));
+                this.calcSerial(datas);                
+                datas.forEach(d => this.ergodic_clacCount(d, 'QP_Count', 'QuesCount'));              
                 return datas;
             },
             //遍历计算各个专业的课程数，包括当前专业的子专业
@@ -108,9 +102,9 @@ $ready(function () {
                 if (childarr == null) return;
                 for (let i = 0; i < childarr.length; i++) {
                     childarr[i].serial = (lvl ? lvl : '') + (i + 1) + '.';
-                    childarr[i]['CourseCount'] = 0;
+                    //childarr[i]['CourseCount'] = 0;
                     childarr[i]['QuesCount'] = 0;
-                    childarr[i]['TestCount'] = 0;
+                    //childarr[i]['TestCount'] = 0;
                     childarr[i]['calcChild'] = this.calcChild(childarr[i]);
                     this.total++;
                     this.calcSerial(childarr[i], childarr[i].serial);
@@ -125,12 +119,11 @@ $ready(function () {
                 return count;
             },
             //拖动改变顺序
-            handleDragEnd(draggingNode, dropNode, dropType, ev) {
-                //console.log('tree drag end: ', dropNode && dropNode, dropType);
+            handleDragEnd(draggingNode, dropNode, dropType, ev) {              
                 var th = this;
                 th.loading_sumbit = true;
                 var arr = th.tree2array(this.datas);
-                $api.post('Subject/ModifyTaxis', { 'list': arr }).then(function (req) {
+                $api.post('ExamQues/ModifyTaxis', { 'list': arr }).then(function (req) {
 
                     if (req.data.success) {
                         var result = req.data.result;
@@ -152,12 +145,12 @@ $ready(function () {
 
             //节点展开事件
             nodeexpand: function (data, node, tree) {
-                this.expanded.push(data.Sbj_ID);
+                this.expanded.push(data.Qp_ID);
                 $api.storage(this.expanded_storage, this.expanded);
             },
             //节点折叠事件
             nodecollapse: function (data, node, tree) {
-                var index = this.expanded.indexOf(data.Sbj_ID);
+                var index = this.expanded.indexOf(data.Qp_ID);
                 if (index > -1) {
                     this.expanded.splice(index, 1);
                     $api.storage(this.expanded_storage, this.expanded);
@@ -167,7 +160,7 @@ $ready(function () {
             unFoldAll2: function (data) {
                 let self = this;
                 data.forEach((el) => {
-                    self.$refs.tree.store.nodesMap[el.Sbj_ID].expanded = true;
+                    self.$refs.tree.store.nodesMap[el.Qp_ID].expanded = true;
                     el.children && el.children.length > 0 ? self.unFoldAll2(el.children) : ""; // 子级递归
                 });
             },
@@ -175,7 +168,7 @@ $ready(function () {
             collapseAll2: function (data) {
                 let self = this;
                 data.forEach((el) => {
-                    self.$refs.tree.store.nodesMap[el.Sbj_ID].expanded = false;
+                    self.$refs.tree.store.nodesMap[el.Qp_ID].expanded = false;
                     el.children && el.children.length > 0 ? self.collapseAll2(el.children) : ""; // 子级递归
                 });
             },
@@ -184,7 +177,7 @@ $ready(function () {
                 if (!value) return true;
                 var txt = $api.trim(value.toLowerCase());
                 if (txt == '') return true;
-                return data.Sbj_Name.toLowerCase().indexOf(txt) !== -1;
+                return data.Qp_Name.toLowerCase().indexOf(txt) !== -1;
             },
             //编辑当前专业
             modify: function (row) {
@@ -194,8 +187,8 @@ $ready(function () {
             changeState: function (data, field) {
                 data[field] = !data[field];
                 var th = this;
-                this.loadingid = data.Sbj_ID;
-                $api.post('Subject/Modify', { 'entity': data }).then(function (req) {
+                this.loadingid = data.Qp_ID;
+                $api.post('ExamQues/PartModify', { 'entity': data }).then(function (req) {
                     th.loadingid = -1;
                     if (req.data.success) {
                         th.$message({
@@ -204,7 +197,7 @@ $ready(function () {
                             center: true
                         });
                         th.fresh_cache();
-                        $api.cache('Subject/ForID:clear', { 'id': data.Sbj_ID });
+                        $api.cache('ExamQues/PartForID:clear', { 'id': data.Qp_ID });
                     } else {
                         throw req.data.message;
                     }
@@ -222,43 +215,22 @@ $ready(function () {
                     for (let i = 0; i < arr.length; i++) {
                         const d = arr[i];
                         var obj = {
-                            'Sbj_ID': d.Sbj_ID,
-                            'Sbj_PID': pid,
-                            'Sbj_Order': i + 1,
-                            'Sbj_Level': level
+                            'Qp_ID': d.Qp_ID,
+                            'Qp_PID': pid,
+                            'Qp_Order': i + 1,                           
                         }
                         list.push(obj);
                         if (d.children && d.children.length > 0)
-                            list = toarray(d.children, d.Sbj_ID, ++level, list);
+                            list = toarray(d.children, d.Qp_ID, ++level, list);
                     }
                     return list;
                 }
             },
             //删除节点
             remove: function (node, data) {
-                console.log(node);
-                console.log(data);
-                if (!!data.sbjCount && data.sbjCount > 0) {
-                    var msg = '当前专业“' + data.Sbj_Name + '”下共有 <b>' + data.sbjCount + '</b> 个子专业，请先删除子专业。'
-                    this.$alert(msg, '不可删除', {
-                        confirmButtonText: '确定',
-                        dangerouslyUseHTMLString: true,
-                        callback: () => { }
-                    });
-                    return;
-                }
-                if (!!data.courseCount && data.courseCount > 0) {
-                    var msg = '当前专业“' + data.Sbj_Name + '”下有 <b>' + data.courseCount + '</b> 门课程，请删除课程后再删除当前专业。'
-                    this.$alert(msg, '不可删除', {
-                        confirmButtonText: '确定',
-                        dangerouslyUseHTMLString: true,
-                        callback: () => { }
-                    });
-                    return;
-                }
                 var th = this;
                 th.loading_sumbit = true;
-                $api.delete('Subject/Delete', { 'id': data.Sbj_ID }).then(function (req) {
+                $api.delete('ExamQues/PartDelete', { 'id': data.Qp_ID }).then(function (req) {
                     th.loading_sumbit = false;
                     if (req.data.success) {
                         var result = req.data.result;
@@ -277,32 +249,21 @@ $ready(function () {
                     alert(err);
                     console.error(err);
                 });
-            },
-            //鼠标滑过Logo，显示大图
-            hoverlogo: function (data) {
-                if (data == null) return;
-                var img = $dom("#logo_" + data.Sbj_ID);
-                if (img == null || img.length < 1) return;
-                img.show();
-                var icon = img.prev().offset();
-                var offset = $dom('.el-tree').offset();
-                img.css("top", icon.top - offset.top + 22 + 'px');
-                img.css("left", icon.left - offset.left + 8 + 'px');
-            },
+            },           
             //当专业数据更改时，刷新缓存数据
             fresh_cache: function () {
-                $api.cache('Subject/TreeFront:update', { 'orgid': this.org.Org_ID });
+                $api.cache('ExamQues/PartTreeFront:update', { 'orgid': window.org.Org_ID });
             },
             //更新统计数据，包括课程数、试题数、试卷数
             update_statdata: function () {
-                this.$confirm('此操作将重新计算专业的课程数、试题数、试卷数，, 是否继续?', '更新数据', {
+                this.$confirm('此操作将重新计算试题分类下的试题数，, 是否继续?', '更新数据', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
                     var th = this;
                     var loading = this.$fulloading();
-                    $api.post('Subject/updatestatisticaldata', { 'orgid': th.org.Org_ID, 'sbjid': '' }).then(req => {
+                    $api.post('ExamQues/updatestatisticaldata', { 'orgid': window.org.Org_ID, 'sbjid': '' }).then(req => {
                         if (req.data.success) {
                             var result = req.data.result;
                             th.getTreeData();

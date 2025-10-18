@@ -18,6 +18,8 @@ namespace Song.Entities {
     		
     		protected String _Qp_Intro;
     		
+    		protected Boolean _Qp_IsDeleted;
+    		
     		protected Boolean _Qp_IsUse;
     		
     		protected String _Qp_Name;
@@ -75,6 +77,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Qp_Intro, _Qp_Intro, value);
     				this._Qp_Intro = value;
+    			}
+    		}
+    		
+    		public Boolean Qp_IsDeleted {
+    			get {
+    				return this._Qp_IsDeleted;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Qp_IsDeleted, _Qp_IsDeleted, value);
+    				this._Qp_IsDeleted = value;
     			}
     		}
     		
@@ -153,6 +165,7 @@ namespace Song.Entities {
     					_.QP_Count,
     					_.Qp_CrtTime,
     					_.Qp_Intro,
+    					_.Qp_IsDeleted,
     					_.Qp_IsUse,
     					_.Qp_Name,
     					_.Qp_Order,
@@ -170,6 +183,7 @@ namespace Song.Entities {
     					this._QP_Count,
     					this._Qp_CrtTime,
     					this._Qp_Intro,
+    					this._Qp_IsDeleted,
     					this._Qp_IsUse,
     					this._Qp_Name,
     					this._Qp_Order,
@@ -195,6 +209,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Qp_Intro))) {
     				this._Qp_Intro = reader.GetString(_.Qp_Intro);
+    			}
+    			if ((false == reader.IsDBNull(_.Qp_IsDeleted))) {
+    				this._Qp_IsDeleted = reader.GetBoolean(_.Qp_IsDeleted);
     			}
     			if ((false == reader.IsDBNull(_.Qp_IsUse))) {
     				this._Qp_IsUse = reader.GetBoolean(_.Qp_IsUse);
@@ -261,6 +278,11 @@ namespace Song.Entities {
     			/// 字段名：Qp_Intro - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Qp_Intro = new WeiSha.Data.Field<QuesPart>("Qp_Intro");
+    			
+    			/// <summary>
+    			/// 字段名：Qp_IsDeleted - 数据类型：Boolean
+    			/// </summary>
+    			public static WeiSha.Data.Field Qp_IsDeleted = new WeiSha.Data.Field<QuesPart>("Qp_IsDeleted");
     			
     			/// <summary>
     			/// 字段名：Qp_IsUse - 数据类型：Boolean

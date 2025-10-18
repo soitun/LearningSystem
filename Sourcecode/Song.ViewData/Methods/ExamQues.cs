@@ -9,6 +9,7 @@ using Song.ViewData.Attri;
 using WeiSha.Core;
 using Song.ViewData;
 using Help = Song.ViewData.Helper;
+using Newtonsoft.Json.Linq;
 
 namespace Song.ViewData.Methods
 {
@@ -175,6 +176,78 @@ namespace Song.ViewData.Methods
             foreach (long s in list)
                 i += Business.Do<IExamQues>().PartDelete(s);
             return i;
+        }
+        /// <summary>
+        /// 某个机构下的专业，用于前端展示，被禁用的专业不显示
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <returns>专业列表</returns>
+        [Cache]
+        public JArray PartTreeFront(int orgid)
+        {
+            List<Song.Entities.QuesPart> sbjs = Business.Do<IExamQues>().PartCount(orgid, string.Empty, true, -1, -1);           
+            return sbjs.Count > 0 ? _partsNode(null, sbjs) : null;
+        }
+        /// <summary>
+        /// 机构下的专业，树形数据
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="search">按名称检索</param>
+        /// <param name="isuse">是否启用</param>
+        /// <returns></returns>
+        public JArray PartTree(int orgid, string search, bool? isuse)
+        {
+            List<Song.Entities.QuesPart> sbjs = Business.Do<IExamQues>().PartCount(orgid, search, isuse, -1, -1);          
+            return sbjs.Count > 0 ? _partsNode(null, sbjs) : null;
+        }
+        /// <summary>
+        /// 生成菜单子节点
+        /// </summary>
+        /// <param name="item">当前菜单项</param>
+        /// <param name="items">所有菜单项</param>
+        /// <returns></returns>
+        private JArray _partsNode(Song.Entities.QuesPart item, List<Song.Entities.QuesPart> items)
+        {
+            List<Song.Entities.QuesPart> childs = new List<Song.Entities.QuesPart>();
+            for (int i = 0; i < items.Count; i++)
+            {
+                Entities.QuesPart m = items[i];
+                if (item == null && m.Qp_PID != 0) continue;
+                if (item != null && m.Qp_PID != item.Qp_ID) continue;
+                childs.Add(m);
+                items.RemoveAt(i);
+                i--;
+            }
+            JArray jarr = new JArray();
+            for (int i = 0; i < childs.Count; i++)
+            {
+                string j = childs[i].ToJson("", "Qp_CrtTime,Qp_UpdateTime");
+                JObject jo = JObject.Parse(j);
+                jarr.Add(jo);
+                //计算下级
+                JArray charray = _partsNode(childs[i], items);
+                if (charray.Count > 0) jo.Add("children", charray);
+            }
+            return jarr;
+        }
+        /// <summary>
+        /// 更改试题分类的排序
+        /// </summary>
+        /// <param name="list">专业的数组</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Admin]
+        public bool ModifyTaxis(Song.Entities.QuesPart[] list)
+        {
+            try
+            {
+                Business.Do<IExamQues>().PartUpdateTaxis(list);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
         #endregion
     }
