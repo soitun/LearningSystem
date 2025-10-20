@@ -126,6 +126,13 @@ namespace Song.ViewData.Methods
             return Business.Do<IExamQues>().PartSingle(id);  
         }
         /// <summary>
+        /// 当前试题分类的上级父级
+        /// </summary>
+        /// <param name="qpid">当前试题分类的id</param>
+        /// <param name="isself">是否包括自身</param>
+        /// <returns></returns>
+        public List<QuesPart> PartParents(long qpid, bool isself) => Business.Do<IExamQues>().PartParents(qpid, isself);
+        /// <summary>
         /// 添加试题分类
         /// </summary>
         /// <param name="entity">试题分类的实体</param>
@@ -162,7 +169,7 @@ namespace Song.ViewData.Methods
             }
         }
         /// <summary>
-        /// 删除试题分类，下级分类也会一并删除
+        /// 逻辑删除试题分类，下级分类也会一并删除
         /// </summary>
         /// <param name="id">试题分类id，可以是多个，用逗号分隔</param>
         /// <returns></returns>
@@ -178,6 +185,64 @@ namespace Song.ViewData.Methods
             return i;
         }
         /// <summary>
+        /// 还原逻辑删除试题分类
+        /// </summary>
+        [Admin]
+        [HttpPost, HttpGet(Ignore = true)]
+        public int PartRecycle(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            foreach (long s in list)
+                i += Business.Do<IExamQues>().PartRecycle(s);
+            return i;
+        }
+
+        /// <summary>
+        /// 删除试题分类，下级分类也会一并删除
+        /// </summary>
+        /// <param name="id">试题分类id，可以是多个，用逗号分隔</param>
+        /// <returns></returns>
+        [Admin]
+        [HttpDelete, HttpGet(Ignore = true)]
+        public int PartRemove(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            foreach (long s in list)
+                i += Business.Do<IExamQues>().PartRemove(s);
+            return i;
+        }
+        /// <summary>
+        /// 分页获取试题分类
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="pid">上级id</param>
+        /// <param name="isuse">是否启用</param>
+        /// <param name="isdeleted">是否删除</param>
+        /// <param name="name">分类名称</param>
+        /// <param name="size"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public ListResult PartPager(int orgid, long pid, bool? isuse, bool? isdeleted, string name, int size, int index)
+        {
+            if (orgid <= 0)
+            {
+                Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
+                orgid = org.Org_ID;
+            }
+            //总记录数
+            int count = 0;
+            List<Song.Entities.QuesPart> arr = Business.Do<IExamQues>().PartPager(orgid, pid, isuse, isdeleted, name, size, index, out count);            
+            ListResult result = new ListResult(arr);
+            result.Index = index;
+            result.Size = size;
+            result.Total = count;
+            return result;
+        }
+        /// <summary>
         /// 某个机构下的专业，用于前端展示，被禁用的专业不显示
         /// </summary>
         /// <param name="orgid">机构id</param>
@@ -185,7 +250,7 @@ namespace Song.ViewData.Methods
         [Cache]
         public JArray PartTreeFront(int orgid)
         {
-            List<Song.Entities.QuesPart> sbjs = Business.Do<IExamQues>().PartCount(orgid, string.Empty, true, -1, -1);           
+            List<Song.Entities.QuesPart> sbjs = Business.Do<IExamQues>().PartCount(orgid, string.Empty, true, false, -1, -1);
             return sbjs.Count > 0 ? _partsNode(null, sbjs) : null;
         }
         /// <summary>
@@ -197,7 +262,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public JArray PartTree(int orgid, string search, bool? isuse)
         {
-            List<Song.Entities.QuesPart> sbjs = Business.Do<IExamQues>().PartCount(orgid, search, isuse, -1, -1);          
+            List<Song.Entities.QuesPart> sbjs = Business.Do<IExamQues>().PartCount(orgid, search, isuse, false, -1, -1);
             return sbjs.Count > 0 ? _partsNode(null, sbjs) : null;
         }
         /// <summary>

@@ -79,8 +79,8 @@ $ready(function () {
             //计算课程数，ques数，test数
             clacCount: function (datas) {
                 this.total = 0;
-                this.calcSerial(datas);                
-                datas.forEach(d => this.ergodic_clacCount(d, 'QP_Count', 'QuesCount'));              
+                this.calcSerial(datas);
+                datas.forEach(d => this.ergodic_clacCount(d, 'QP_Count', 'QuesCount'));
                 return datas;
             },
             //遍历计算各个专业的课程数，包括当前专业的子专业
@@ -119,12 +119,11 @@ $ready(function () {
                 return count;
             },
             //拖动改变顺序
-            handleDragEnd(draggingNode, dropNode, dropType, ev) {              
+            handleDragEnd(draggingNode, dropNode, dropType, ev) {
                 var th = this;
                 th.loading_sumbit = true;
                 var arr = th.tree2array(this.datas);
                 $api.post('ExamQues/ModifyTaxis', { 'list': arr }).then(function (req) {
-
                     if (req.data.success) {
                         var result = req.data.result;
                         th.$message({
@@ -217,7 +216,7 @@ $ready(function () {
                         var obj = {
                             'Qp_ID': d.Qp_ID,
                             'Qp_PID': pid,
-                            'Qp_Order': i + 1,                           
+                            'Qp_Order': i + 1,
                         }
                         list.push(obj);
                         if (d.children && d.children.length > 0)
@@ -249,10 +248,10 @@ $ready(function () {
                     alert(err);
                     console.error(err);
                 });
-            },           
+            },
             //当专业数据更改时，刷新缓存数据
             fresh_cache: function () {
-                $api.cache('ExamQues/PartTreeFront:update', { 'orgid': window.org.Org_ID });
+                $api.cache('ExamQues/PartTreeFront:update', { 'orgid': window.org.Org_ID }, this.getTreeData());
             },
             //更新统计数据，包括课程数、试题数、试卷数
             update_statdata: function () {

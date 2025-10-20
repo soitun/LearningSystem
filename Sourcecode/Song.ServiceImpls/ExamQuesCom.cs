@@ -134,6 +134,29 @@ namespace Song.ServiceImpls
                 try
                 {
                     foreach (long qpid in list)
+                        tran.Update<QuesPart>(QuesPart._.Qp_IsDeleted,true, QuesPart._.Qp_ID == qpid);                  
+                    tran.Commit();
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                    throw ex;
+                }
+            }
+            return list.Count;
+        }
+        /// <summary>
+        /// 真正删除，按主键ID；
+        /// </summary>
+        /// <param name="id">实体的主键</param>
+        public int PartRemove(long id)
+        {
+            List<long> list = this.PartTreeID(id, 0);   //获取当前试题分类下的所有子试题分类id，包括自身
+            using (DbTrans tran = Gateway.Default.BeginTrans())
+            {
+                try
+                {
+                    foreach (long qpid in list)
                     {
                         tran.Delete<Questions_QPart>(Questions_QPart._.Qp_ID == qpid);
                         tran.Delete<QuesPart>(QuesPart._.Qp_ID == qpid);
@@ -148,7 +171,13 @@ namespace Song.ServiceImpls
             }
             return list.Count;
         }
-
+        /// <summary>
+        /// 回收，标记删除状态为false
+        /// </summary>
+        public int PartRecycle(long id)
+        {
+            return Gateway.Default.Update<QuesPart>(QuesPart._.Qp_IsDeleted, false, QuesPart._.Qp_ID == id);
+        }
         /// <summary>
         /// 清空试题分类下的所有试题关联关联（并不删除试题）
         /// </summary>
@@ -245,14 +274,16 @@ namespace Song.ServiceImpls
         /// <param name="orgid">机构ID</param>
         /// <param name="sear">搜索关键字</param>
         /// <param name="isUse"></param>
+        /// <param name="isdeleted"></param>
         /// <param name="pid">上级ID</param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public List<QuesPart> PartCount(int orgid, string sear, bool? isUse, long pid, int count)
+        public List<QuesPart> PartCount(int orgid, string sear, bool? isUse, bool? isdeleted, long pid, int count)
         {
             WhereClip wc = new WhereClip();
             if (orgid >= 0) wc.And(QuesPart._.Org_ID == orgid);
             if (isUse != null) wc.And(QuesPart._.Qp_IsUse == (bool)isUse);
+            if (isdeleted != null) wc.And(QuesPart._.Qp_IsDeleted == (bool)isdeleted);
             if (!string.IsNullOrWhiteSpace(sear)) wc.And(QuesPart._.Qp_Name.Contains(sear));
             if (pid >= 0) wc.And(QuesPart._.Qp_PID == pid);
             return Gateway.Default.From<QuesPart>().Where(wc).OrderBy(QuesPart._.Qp_Order.Asc && QuesPart._.Qp_ID.Asc).ToList<QuesPart>(count);
@@ -353,17 +384,19 @@ namespace Song.ServiceImpls
         /// <param name="orgid"></param>
         /// <param name="pid">上级id</param>
         /// <param name="isUse"></param>
+        /// <param name="isdeleted"></param>
         /// <param name="searTxt"></param>
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        public List<QuesPart> PartPager(int orgid, long pid, bool? isUse, string searTxt, int size, int index, out int countSum)
+        public List<QuesPart> PartPager(int orgid, long pid, bool? isUse, bool? isdeleted, string searTxt, int size, int index, out int countSum)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(QuesPart._.Org_ID == orgid);
             if (pid >= 0) wc.And(QuesPart._.Qp_PID == pid);
             if (isUse != null) wc.And(QuesPart._.Qp_IsUse == (bool)isUse);
+            if (isdeleted != null) wc.And(QuesPart._.Qp_IsDeleted == (bool)isdeleted);
             if (string.IsNullOrWhiteSpace(searTxt)) wc.And(QuesPart._.Qp_Name.Contains(searTxt));
             countSum = Gateway.Default.Count<QuesPart>(wc);
             return Gateway.Default.From<QuesPart>().Where(wc).OrderBy(QuesPart._.Org_ID.Asc && QuesPart._.Qp_ID.Asc).ToList<QuesPart>(size, (index - 1) * size);

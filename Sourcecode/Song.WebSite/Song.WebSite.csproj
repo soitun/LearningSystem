@@ -658,13 +658,17 @@
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\Styles\ques_collect.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Knowledge.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\MyTestpaper.html" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\PartModify.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Parts.html" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\PartsRecy.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Questions.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Recyclebin.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\Collects.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\Knowledge.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\MyTestpaper.js" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\PartModify.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\Parts.js" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\PartsRecy.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\Questions.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\Recyclebin.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\Tags.js" />
@@ -672,7 +676,9 @@
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\Collects.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\Knowledge.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\MyTestpaper.css" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\PartModify.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\Parts.css" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\PartsRecy.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\Questions.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\Recyclebin.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\Tags.css" />

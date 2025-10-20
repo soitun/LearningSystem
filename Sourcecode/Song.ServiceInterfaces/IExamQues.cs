@@ -64,10 +64,19 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         int PartUpdate(long qpid, Field field, object obj);
         /// <summary>
-        /// 删除，按主键ID；
+        /// 逻辑删除，标记删除状态为true
         /// </summary>
         /// <param name="id">实体的主键</param>
         int PartDelete(long id);
+        /// <summary>
+        /// 回收，标记删除状态为false
+        /// </summary>
+        int PartRecycle(long id);
+        /// <summary>
+        /// 真正删除，按主键ID；
+        /// </summary>
+        /// <param name="id">实体的主键</param>
+        int PartRemove(long id);
         /// <summary>
         /// 清空试题分类下的所有试题关联关联（并不删除试题）
         /// </summary>
@@ -105,19 +114,20 @@ namespace Song.ServiceInterfaces
         /// <param name="orgid">机构ID</param>
         /// <param name="sear">搜索关键字</param>
         /// <param name="isUse"></param>
+        /// <param name="isdeleted"></param>
         /// <param name="pid">上级ID</param>
         /// <param name="count"></param>
         /// <returns></returns>
-        List<QuesPart> PartCount(int orgid, string sear, bool? isUse, long pid, int count);
+        List<QuesPart> PartCount(int orgid, string sear, bool? isUse, bool? isdeleted, long pid, int count);
         /// <summary>
         /// 当前试题分类的上级父级
         /// </summary>
-        /// <param name="qpid"></param>
+        /// <param name="qpid">当前试题分类的id</param>
         /// <param name="isself">是否包括自身</param>
         /// <returns></returns>
         List<QuesPart> PartParents(long qpid, bool isself);
         /// <summary>
-        /// 计算试题分类数量
+        /// 计算试题分类的数量
         /// </summary>
         /// <param name="orgid">机构id</param>       
         /// <param name="pid">上级id</param>
@@ -152,12 +162,13 @@ namespace Song.ServiceInterfaces
         /// <param name="orgid"></param>
         /// <param name="pid">上级id</param>
         /// <param name="isUse"></param>
+        /// <param name="isdeleted">是否删除</param>
         /// <param name="searTxt"></param>
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        List<QuesPart> PartPager(int orgid, long pid, bool? isUse, string searTxt, int size, int index, out int countSum);
+        List<QuesPart> PartPager(int orgid, long pid, bool? isUse, bool? isdeleted, string searTxt, int size, int index, out int countSum);
         /// <summary>
         /// 更改试题分类的排序
         /// </summary>
@@ -202,6 +213,15 @@ namespace Song.ServiceInterfaces
         /// <param name="countSum">总记录数</param>
         /// <returns></returns>
         List<Questions> CollectPager(int acid, long[] qpid, long[] tagid, long[] knlid, int[] type, int[] diff, int size, int index, out int countSum);
+        #endregion
+
+        #region 知识点
+        #endregion
+
+        #region 关键字
+        #endregion
+
+        #region 回收站
         #endregion
     }
 }
