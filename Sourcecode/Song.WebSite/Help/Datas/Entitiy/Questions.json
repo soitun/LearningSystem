@@ -46,7 +46,7 @@
   },
   "Qus_Number": {
     "mark": "试题分数",
-    "intro": "",
+    "intro": "没有实际的存储值，作为临时值使用，在组卷时用于记录每道题的得分，由于得分是临时计算，所以并不保存。",
     "relation": ""
   },
   "Qus_CrtTime": {
@@ -146,6 +146,11 @@
   },
   "Qus_Purpose": {
     "mark": "用途",
+    "intro": "试题用途，默认为0，即课程使用；考试专用的试题为1",
+    "relation": ""
+  },
+  "Qus_IsDeleted": {
+    "mark": "",
     "intro": "",
     "relation": ""
   }

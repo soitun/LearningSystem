@@ -314,6 +314,17 @@ namespace Song.ViewData.Methods
                 throw ex;
             }
         }
+        /// <summary>
+        /// 获取试题分类的下的试题数量
+        /// </summary>
+        /// <param name="orgid">当前机构</param>
+        /// <param name="qpid">试题分类id</param>
+        /// <param name="qtype">题型</param>
+        /// <param name="isUse">是否启用的试题</param>
+        /// <param name="children">是否包括下级，如果false，则取当前分类的试题</param>
+        /// <returns></returns>
+        public int PartQusTotal(int orgid, long qpid, int qtype, bool? isUse, bool children)
+            => Business.Do<IExamQues>().PartQusTotal(orgid, qpid, qtype, isUse, children);
         #endregion
     }
 }

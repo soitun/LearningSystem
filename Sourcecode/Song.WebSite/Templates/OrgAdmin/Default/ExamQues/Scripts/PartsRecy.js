@@ -83,7 +83,7 @@ $ready(function () {
                 }).catch(() => { });
             },
             //彻底删除
-            remove: function (datas) { 
+            remove: function (datas) {
                 var th = this;
                 th.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
                     confirmButtonText: '确定',
@@ -122,7 +122,6 @@ $ready(function () {
                     }
                 },
                 watch: {
-
                     part: {
                         handler: function (val) {
                             this.getPaths();
@@ -158,6 +157,45 @@ $ready(function () {
                    <div v-html="showpath"></div>
                 </div>`
             },
+            //试题总数
+            'questotal': {
+                props: ['part'],
+                data: function () {
+                    return {
+                        total: 0,   //试题总数
+                        loading: false,
+                    }
+                },
+                watch: {
+                    part: {
+                        handler: function (val) {
+                            this.getquestotal();
+                        },
+                        immediate: true,
+                    }
+                },
+                methods: {
+                    //获取试题总数
+                    getquestotal: function () {
+                        var th = this;
+                        th.loading = true;
+                        $api.get("ExamQues/PartQusTotal", { "orgid": -1, "qpid": th.part.Qp_ID, "qtype": "", "isUse": "", "children": true })
+                            .then(req => {
+                                if (req.data.success) {
+                                    th.total = req.data.result;                                   
+                                } else {
+                                    console.error(req.data.exception);
+                                    throw req.config.way + ' ' + req.data.message;
+                                }
+                            }).catch(err => console.error(err))
+                            .finally(() => th.loading = false);
+                    },
+                },
+                template: `<div>
+                    <loading v-if="loading"></loading>
+                    <tempalte>{{part.QP_Count}} / {{total}}</tempalte>
+                </div>`
+            }
         }
     });
 });

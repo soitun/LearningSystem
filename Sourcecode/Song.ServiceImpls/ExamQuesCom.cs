@@ -363,7 +363,20 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public List<Questions> PartQuestions(int orgid, long qpid, int qtype, bool? isUse, bool children, int count)
         {
-            throw new NotImplementedException();
+            WhereClip wc = new WhereClip();
+            wc.And(Questions._.Qus_Purpose == 1);   //考试专用试题
+            if (qtype > 0) wc.And(Questions._.Qus_Type == qtype);
+            if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
+            if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
+
+            List<long> listqpid = children ? new List<long>() { qpid } : this.PartTreeID(qpid, orgid);
+            WhereClip wc2 = new WhereClip();
+            foreach (long l in listqpid) wc2.Or(Questions_QPart._.Qp_ID == l);
+            wc.And(wc2);
+
+            QuerySection<Questions> section = Gateway.Default.From<Questions>().LeftJoin<Questions_QPart>(Questions_QPart._.Qus_ID == Questions._.Qus_ID).Where(wc);
+            return section.ToList<Questions>(count);
+
         }
         /// <summary>
         /// 获取试题分类的下的试题数量
@@ -376,7 +389,19 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public int PartQusTotal(int orgid, long qpid, int qtype, bool? isUse, bool children)
         {
-            throw new NotImplementedException();
+            WhereClip wc = new WhereClip();
+            wc.And(Questions._.Qus_Purpose == 1);   //考试专用试题
+            if (qtype > 0) wc.And(Questions._.Qus_Type == qtype);
+            if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
+            if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
+
+            List<long> listqpid = children ? new List<long>() { qpid } : this.PartTreeID(qpid, orgid);
+            WhereClip wc2 = new WhereClip();
+            foreach (long l in listqpid) wc2.Or(Questions_QPart._.Qp_ID == l);
+            wc.And(wc2);
+
+            QuerySection<Questions> section = Gateway.Default.From<Questions>().LeftJoin<Questions_QPart>(Questions_QPart._.Qus_ID == Questions._.Qus_ID).Where(wc);
+            return section.Count();
         }
         /// <summary>
         /// 分页获取

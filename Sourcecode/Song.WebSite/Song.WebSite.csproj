@@ -3676,8 +3676,13 @@
     <Content Include="Help\Datas\Entitiy\NotLicense.json" />
     <Content Include="Help\Datas\Entitiy\Product.json" />
     <Content Include="Help\Datas\Entitiy\Promoter.json" />
-    <Content Include="Help\Datas\Entitiy\QueryLog.json" />
     <Content Include="Help\Datas\Entitiy\SystemPara.json" />
+    <Content Include="Help\Datas\Entitiy\FuncPoint.json" />
+    <Content Include="Help\Datas\Entitiy\Logs.json" />
+    <Content Include="Help\Datas\Entitiy\QuesCollect.json" />
+    <Content Include="Help\Datas\Entitiy\QuesPart.json" />
+    <Content Include="Help\Datas\Entitiy\Questions_QPart.json" />
+    <Content Include="Help\Datas\Entitiy\RechargeSet.json" />
     <None Include="packages.config" />
     <Content Include="Utilities\LLM\aliyun_model.json" />
     <Content Include="Utilities\jsontreejs\LICENSE" />

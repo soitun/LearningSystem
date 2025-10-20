@@ -42,9 +42,9 @@
                     <parents_path :part="scope.row" separator="->"></parents_path>
                 </template>
             </el-table-column>
-            <el-table-column label="试题数" width="100">
-                <template slot-scope="scope">
-                    {{scope.row.QP_Count}}
+            <el-table-column label="试题数" width="100" align="center">
+                <template slot-scope="scope">                  
+                    <questotal :part="scope.row"></questotal>
                 </template>
             </el-table-column>
 
