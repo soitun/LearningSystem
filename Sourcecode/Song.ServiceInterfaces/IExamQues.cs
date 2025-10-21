@@ -216,6 +216,152 @@ namespace Song.ServiceInterfaces
         #endregion
 
         #region 知识点
+        /// <summary>
+        /// 添加试题知识点
+        /// </summary>
+        /// <param name="entity">业务实体</param>
+        int KnlAdd(QuesKnowledge entity);
+        /// <summary>
+        /// 是否已经存在
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="pid"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        QuesKnowledge KnlIsExist(int orgid, long pid, string name);
+        /// <summary>
+        /// 修改
+        /// </summary>
+        /// <param name="entity">业务实体</param>
+        void KnlSave(QuesKnowledge entity);
+        /// <summary>
+        /// 修改试题知识点的某些项
+        /// </summary>
+        /// <param name="qkid">试题知识点id</param>
+        /// <param name="fields">字段</param>
+        /// <param name="objs"></param>
+        /// <returns></returns>
+        int KnlUpdate(long qkid, Field[] fields, object[] objs);
+        /// <summary>
+        /// 修改试题知识点的某些项
+        /// </summary>
+        /// <param name="qkid">试题知识点id</param>
+        /// <param name="field">字段</param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        int KnlUpdate(long qkid, Field field, object obj);
+        /// <summary>
+        /// 逻辑删除，标记删除状态为true
+        /// </summary>
+        /// <param name="id">实体的主键</param>
+        int KnlDelete(long id);
+        /// <summary>
+        /// 回收，标记删除状态为false
+        /// </summary>
+        int KnlRecycle(long id);
+        /// <summary>
+        /// 真正删除，按主键ID；
+        /// </summary>
+        /// <param name="id">实体的主键</param>
+        int KnlRemove(long id);
+        /// <summary>
+        /// 清空试题知识点下的所有试题关联关联（并不删除试题）
+        /// </summary>
+        /// <param name="qkid"></param>
+        void KnlClear(long qkid);
+        /// <summary>
+        /// 获取单一实体对象，按主键ID；
+        /// </summary>
+        /// <param name="id">实体的主键</param>
+        /// <returns></returns>
+        QuesKnowledge KnlSingle(long id);
+        /// <summary>
+        /// 当前试题知识点下的所有子试题知识点id
+        /// </summary>
+        /// <param name="qkid">当前试题知识点id</param>
+        /// <param name="orgid">试题知识点所属机构的ID,如果小于等于零，则取从数据库读取qkid再取orgid，所以建议正确赋值，可以减少数据库读取次数</param>
+        List<long> KnlTreeID(long qkid, int orgid);
+        /// <summary>
+        /// 获取试题知识点名称，如果为多级，则带上父级名称
+        /// </summary>
+        /// <param name="id">试题知识点的id</param>
+        /// <returns></returns>
+        string KnlName(long id);
+        /// <summary>
+        /// 当前试题知识点，是否有子试题知识点
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="id">当前试题知识点Id</param>
+        /// <param name="isUse">是否启用</param>
+        /// <returns>有子级，返回true</returns>
+        bool KnlIsChildren(int orgid, long id, bool? isUse);
+        /// <summary>
+        /// 获取试题知识点
+        /// </summary>
+        /// <param name="orgid">机构ID</param>
+        /// <param name="sear">搜索关键字</param>
+        /// <param name="isUse"></param>
+        /// <param name="isdeleted"></param>
+        /// <param name="pid">上级ID</param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        List<QuesKnowledge> KnlCount(int orgid, string sear, bool? isUse, bool? isdeleted, long pid, int count);
+        /// <summary>
+        /// 当前试题知识点的上级父级
+        /// </summary>
+        /// <param name="qkid">当前试题知识点的id</param>
+        /// <param name="isself">是否包括自身</param>
+        /// <returns></returns>
+        List<QuesKnowledge> KnlParents(long qkid, bool isself);
+        /// <summary>
+        /// 计算试题知识点的数量
+        /// </summary>
+        /// <param name="orgid">机构id</param>       
+        /// <param name="pid">上级id</param>
+        /// <param name="isUse">是否启用的，null取所有</param>
+        /// <param name="children">是否包括子级</param>
+        /// <returns></returns>
+        int KnlOfCount(int orgid, long pid, bool? isUse, bool children);
+        /// <summary>
+        /// 当前试题知识点下的所有试题
+        /// </summary>
+        /// <param name="orgid">当前机构</param>
+        /// <param name="qkid"></param>
+        /// <param name="qtype">试题类型</param>
+        /// <param name="isUse"></param>
+        /// <param name="children">是否包括下级，如果false，则取当前分类的试题</param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        List<Questions> KnlQuestions(int orgid, long qkid, int qtype, bool? isUse, bool children, int count);
+        /// <summary>
+        /// 获取试题知识点的下的试题数量
+        /// </summary>
+        /// <param name="orgid">当前机构</param>
+        /// <param name="qkid">试题知识点id</param>
+        /// <param name="qtype">题型</param>
+        /// <param name="isUse">是否启用的试题</param>
+        /// <param name="children">是否包括下级，如果false，则取当前分类的试题</param>
+        /// <returns></returns>
+        int KnlQusTotal(int orgid, long qkid, int qtype, bool? isUse, bool children);
+        /// <summary>
+        /// 分页获取
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="pid">上级id</param>
+        /// <param name="isUse"></param>
+        /// <param name="isdeleted">是否删除</param>
+        /// <param name="searTxt"></param>
+        /// <param name="size"></param>
+        /// <param name="index"></param>
+        /// <param name="countSum"></param>
+        /// <returns></returns>
+        List<QuesKnowledge> KnlPager(int orgid, long pid, bool? isUse, bool? isdeleted, string searTxt, int size, int index, out int countSum);
+        /// <summary>
+        /// 更改试题知识点的排序
+        /// </summary>
+        /// <param name="list">试题知识点列表，对象中只有Qp_ID、Qp_PID、Qp_Order</param>
+        /// <returns></returns>
+        bool KnlUpdateTaxis(QuesKnowledge[] list);
         #endregion
 
         #region 关键字

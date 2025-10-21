@@ -1180,6 +1180,7 @@ namespace Song.ViewData.Methods
         /// <param name="organs">机构id,多个id用逗号分隔</param>
         /// <param name="path"></param> 
         /// <returns></returns>
+        [Admin, Teacher]
         public JObject ExcelOutputForOrg(string organs)
         {
             string outputPath = "AccountsToExcelForOrgan";
@@ -1204,6 +1205,7 @@ namespace Song.ViewData.Methods
         /// <param name="orgid"></param>
         /// <param name="sorts">分组id,多个id用逗号分隔</param> 
         /// <returns></returns>
+        [Admin, Teacher]
         public JObject ExcelOutputForSort(int orgid,string sorts)
         {
             string outputPath = "AccountsToExcelForSort";
@@ -1229,12 +1231,14 @@ namespace Song.ViewData.Methods
         /// <param name="path"></param>
         /// <returns></returns>
         [HttpDelete]
+        [Admin, Teacher]
         public bool ExcelDelete(string filename, string path)
             => ViewData.Helper.Excel.DeleteFile(filename, path, "Temp");
         /// <summary>
         /// 已经生成的Excel文件
         /// </summary>
         /// <returns>file:文件名,url:下载地址,date:创建时间</returns>
+        [Admin, Teacher]
         public JArray ExcelFiles(string path)
         {
             string rootpath = WeiSha.Core.Upload.Get["Temp"].Physics + path + "\\";

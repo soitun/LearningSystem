@@ -850,6 +850,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="organs">机构id,多个id用逗号分隔</param>
         /// <returns></returns>
+        [Admin, Teacher]
         public JObject ExcelOutputForOrg(string organs)
         {
             string outputPath = "TeacherToExcelForTitle";
@@ -874,6 +875,7 @@ namespace Song.ViewData.Methods
         /// <param name="orgid"></param>
         /// <param name="sorts">分组id,多个id用逗号分隔</param> 
         /// <returns></returns>
+        [Admin, Teacher]
         public JObject ExcelOutputForSort(int orgid, string sorts)
         {
             string outputPath = "TeacherToExcelForTitle";
@@ -899,6 +901,7 @@ namespace Song.ViewData.Methods
         /// <param name="path"></param>
         /// <returns></returns>
         [HttpDelete]
+        [Admin,Teacher]
         public bool ExcelDelete(string filename, string path)
         {
             return Song.ViewData.Helper.Excel.DeleteFile(filename, path, "Temp");         

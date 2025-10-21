@@ -326,5 +326,219 @@ namespace Song.ViewData.Methods
         public int PartQusTotal(int orgid, long qpid, int qtype, bool? isUse, bool children)
             => Business.Do<IExamQues>().PartQusTotal(orgid, qpid, qtype, isUse, children);
         #endregion
+
+        #region 试题知识点
+
+        /// <summary>
+        /// 获取试题知识点的单条数据
+        /// </summary>
+        /// <param name="id">试题知识点id</param>
+        /// <returns></returns>
+        [Cache(AdminDisable = true)]
+        public Song.Entities.QuesKnowledge KnlForID(long id)
+        {
+            return Business.Do<IExamQues>().KnlSingle(id);
+        }
+        /// <summary>
+        /// 当前试题知识点的上级父级
+        /// </summary>
+        /// <param name="qkid">当前试题知识点的id</param>
+        /// <param name="isself">是否包括自身</param>
+        /// <returns></returns>
+        public List<QuesKnowledge> KnlParents(long qkid, bool isself) => Business.Do<IExamQues>().KnlParents(qkid, isself);
+        /// <summary>
+        /// 添加试题知识点
+        /// </summary>
+        /// <param name="entity">试题知识点的实体</param>
+        /// <returns></returns>
+        [Admin]
+        [HttpPost]
+        [HtmlClear(Not = "entity")]
+        public Song.Entities.QuesKnowledge KnlAdd(Song.Entities.QuesKnowledge entity)
+        {
+            Business.Do<IExamQues>().KnlAdd(entity);
+            return entity;
+        }
+        /// <summary>
+        /// 修改试题知识点
+        /// </summary>
+        /// <param name="entity">试题知识点的实体</param>
+        /// <returns></returns>
+        [Admin]
+        [HttpPost]
+        [HtmlClear(Not = "entity")]
+        public Song.Entities.QuesKnowledge KnlModify(Song.Entities.QuesKnowledge entity)
+        {
+            Song.Entities.QuesKnowledge old = Business.Do<IExamQues>().KnlSingle(entity.Qk_ID);
+            if (old == null) throw new Exception("Not found entity for QuesKnowledge！");
+            try
+            {
+                old.Copy<Song.Entities.QuesKnowledge>(entity);
+                Business.Do<IExamQues>().KnlSave(old);
+                return entity;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        /// <summary>
+        /// 逻辑删除试题知识点，下级分类也会一并删除
+        /// </summary>
+        /// <param name="id">试题知识点id，可以是多个，用逗号分隔</param>
+        /// <returns></returns>
+        [Admin]
+        [HttpDelete, HttpGet(Ignore = true)]
+        public int KnlDelete(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            foreach (long s in list)
+                i += Business.Do<IExamQues>().KnlDelete(s);
+            return i;
+        }
+        /// <summary>
+        /// 还原逻辑删除试题知识点
+        /// </summary>
+        [Admin]
+        [HttpPost, HttpGet(Ignore = true)]
+        public int KnlRecycle(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            foreach (long s in list)
+                i += Business.Do<IExamQues>().KnlRecycle(s);
+            return i;
+        }
+
+        /// <summary>
+        /// 删除试题知识点，下级分类也会一并删除
+        /// </summary>
+        /// <param name="id">试题知识点id，可以是多个，用逗号分隔</param>
+        /// <returns></returns>
+        [Admin]
+        [HttpDelete, HttpGet(Ignore = true)]
+        public int KnlRemove(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            foreach (long s in list)
+                i += Business.Do<IExamQues>().KnlRemove(s);
+            return i;
+        }
+        /// <summary>
+        /// 分页获取试题知识点
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="pid">上级id</param>
+        /// <param name="isuse">是否启用</param>
+        /// <param name="isdeleted">是否删除</param>
+        /// <param name="name">分类名称</param>
+        /// <param name="size"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public ListResult KnlPager(int orgid, long pid, bool? isuse, bool? isdeleted, string name, int size, int index)
+        {
+            if (orgid <= 0)
+            {
+                Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
+                orgid = org.Org_ID;
+            }
+            //总记录数
+            int count = 0;
+            List<Song.Entities.QuesKnowledge> arr = Business.Do<IExamQues>().KnlPager(orgid, pid, isuse, isdeleted, name, size, index, out count);
+            ListResult result = new ListResult(arr);
+            result.Index = index;
+            result.Size = size;
+            result.Total = count;
+            return result;
+        }
+        /// <summary>
+        /// 某个机构下的专业，用于前端展示，被禁用的专业不显示
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <returns>专业列表</returns>
+        [Cache]
+        public JArray KnlTreeFront(int orgid)
+        {
+            List<Song.Entities.QuesKnowledge> sbjs = Business.Do<IExamQues>().KnlCount(orgid, string.Empty, true, false, -1, -1);
+            return sbjs.Count > 0 ? _KnlsNode(null, sbjs) : null;
+        }
+        /// <summary>
+        /// 机构下的专业，树形数据
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="search">按名称检索</param>
+        /// <param name="isuse">是否启用</param>
+        /// <returns></returns>
+        public JArray KnlTree(int orgid, string search, bool? isuse)
+        {
+            List<Song.Entities.QuesKnowledge> sbjs = Business.Do<IExamQues>().KnlCount(orgid, search, isuse, false, -1, -1);
+            return sbjs.Count > 0 ? _KnlsNode(null, sbjs) : null;
+        }
+        /// <summary>
+        /// 生成菜单子节点
+        /// </summary>
+        /// <param name="item">当前菜单项</param>
+        /// <param name="items">所有菜单项</param>
+        /// <returns></returns>
+        private JArray _KnlsNode(Song.Entities.QuesKnowledge item, List<Song.Entities.QuesKnowledge> items)
+        {
+            List<Song.Entities.QuesKnowledge> childs = new List<Song.Entities.QuesKnowledge>();
+            for (int i = 0; i < items.Count; i++)
+            {
+                Entities.QuesKnowledge m = items[i];
+                if (item == null && m.Qk_PID != 0) continue;
+                if (item != null && m.Qk_PID != item.Qk_ID) continue;
+                childs.Add(m);
+                items.RemoveAt(i);
+                i--;
+            }
+            JArray jarr = new JArray();
+            for (int i = 0; i < childs.Count; i++)
+            {
+                string j = childs[i].ToJson("", "Qp_CrtTime,Qp_UpdateTime");
+                JObject jo = JObject.Parse(j);
+                jarr.Add(jo);
+                //计算下级
+                JArray charray = _KnlsNode(childs[i], items);
+                if (charray.Count > 0) jo.Add("children", charray);
+            }
+            return jarr;
+        }
+        /// <summary>
+        /// 更改试题知识点的排序
+        /// </summary>
+        /// <param name="list">专业的数组</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Admin]
+        public bool ModifyTaxis(Song.Entities.QuesKnowledge[] list)
+        {
+            try
+            {
+                Business.Do<IExamQues>().KnlUpdateTaxis(list);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        /// <summary>
+        /// 获取试题知识点的下的试题数量
+        /// </summary>
+        /// <param name="orgid">当前机构</param>
+        /// <param name="qpid">试题知识点id</param>
+        /// <param name="qtype">题型</param>
+        /// <param name="isUse">是否启用的试题</param>
+        /// <param name="children">是否包括下级，如果false，则取当前分类的试题</param>
+        /// <returns></returns>
+        public int KnlQusTotal(int orgid, long qpid, int qtype, bool? isUse, bool children)
+            => Business.Do<IExamQues>().KnlQusTotal(orgid, qpid, qtype, isUse, children);
+        #endregion
     }
 }

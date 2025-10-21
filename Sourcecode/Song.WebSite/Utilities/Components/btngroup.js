@@ -124,7 +124,7 @@ Vue.component('btngroup', {
         }
     },
     methods: {
-        //添加按钮
+        //自定义添加按钮
         addbtn: function (btn) {
             if (btn == null) return;
             if (Array.isArray(btn)) {
@@ -159,6 +159,8 @@ Vue.component('btngroup', {
         //后续参数，自动传入
         events: function () {
             const args = Array.from(arguments);
+            if (args.length == 0) return;
+            //第一个参数为按钮的id
             let btnid = args.length > 0 ? args[0] : null;
             //按钮事件
             let existEvent = this.$listeners[btnid];

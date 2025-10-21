@@ -10,7 +10,7 @@ namespace Song.Entities {
     		
     		protected Int64 _Qk_ID;
     		
-    		protected Int64 _Org_ID;
+    		protected Int32 _Org_ID;
     		
     		protected Int32 _Qk_Count;
     		
@@ -44,7 +44,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int64 Org_ID {
+    		public Int32 Org_ID {
     			get {
     				return this._Org_ID;
     			}
@@ -227,7 +227,7 @@ namespace Song.Entities {
     				this._Qk_ID = reader.GetInt64(_.Qk_ID);
     			}
     			if ((false == reader.IsDBNull(_.Org_ID))) {
-    				this._Org_ID = reader.GetInt64(_.Org_ID);
+    				this._Org_ID = reader.GetInt32(_.Org_ID);
     			}
     			if ((false == reader.IsDBNull(_.Qk_Count))) {
     				this._Qk_Count = reader.GetInt32(_.Qk_Count);
@@ -294,7 +294,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Qk_ID = new WeiSha.Data.Field<QuesKnowledge>("Qk_ID");
     			
     			/// <summary>
-    			/// 字段名：Org_ID - 数据类型：Int64
+    			/// 字段名：Org_ID - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Org_ID = new WeiSha.Data.Field<QuesKnowledge>("Org_ID");
     			

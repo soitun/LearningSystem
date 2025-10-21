@@ -10,7 +10,7 @@ namespace Song.Entities {
     		
     		protected Int64 _Qqk_ID;
     		
-    		protected Int64 _Qtag_ID;
+    		protected Int64 _Qk_ID;
     		
     		protected Int64 _Qus_ID;
     		
@@ -24,13 +24,13 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int64 Qtag_ID {
+    		public Int64 Qk_ID {
     			get {
-    				return this._Qtag_ID;
+    				return this._Qk_ID;
     			}
     			set {
-    				this.OnPropertyValueChange(_.Qtag_ID, _Qtag_ID, value);
-    				this._Qtag_ID = value;
+    				this.OnPropertyValueChange(_.Qk_ID, _Qk_ID, value);
+    				this._Qk_ID = value;
     			}
     		}
     		
@@ -65,7 +65,7 @@ namespace Song.Entities {
     		protected override WeiSha.Data.Field[] GetFields() {
     			return new WeiSha.Data.Field[] {
     					_.Qqk_ID,
-    					_.Qtag_ID,
+    					_.Qk_ID,
     					_.Qus_ID};
     		}
     		
@@ -75,7 +75,7 @@ namespace Song.Entities {
     		protected override object[] GetValues() {
     			return new object[] {
     					this._Qqk_ID,
-    					this._Qtag_ID,
+    					this._Qk_ID,
     					this._Qus_ID};
     		}
     		
@@ -86,8 +86,8 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Qqk_ID))) {
     				this._Qqk_ID = reader.GetInt64(_.Qqk_ID);
     			}
-    			if ((false == reader.IsDBNull(_.Qtag_ID))) {
-    				this._Qtag_ID = reader.GetInt64(_.Qtag_ID);
+    			if ((false == reader.IsDBNull(_.Qk_ID))) {
+    				this._Qk_ID = reader.GetInt64(_.Qk_ID);
     			}
     			if ((false == reader.IsDBNull(_.Qus_ID))) {
     				this._Qus_ID = reader.GetInt64(_.Qus_ID);
@@ -124,9 +124,9 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Qqk_ID = new WeiSha.Data.Field<Questions_QKnl>("Qqk_ID");
     			
     			/// <summary>
-    			/// 字段名：Qtag_ID - 数据类型：Int64
+    			/// 字段名：Qk_ID - 数据类型：Int64
     			/// </summary>
-    			public static WeiSha.Data.Field Qtag_ID = new WeiSha.Data.Field<Questions_QKnl>("Qtag_ID");
+    			public static WeiSha.Data.Field Qk_ID = new WeiSha.Data.Field<Questions_QKnl>("Qk_ID");
     			
     			/// <summary>
     			/// 字段名：Qus_ID - 数据类型：Int64
@@ -135,4 +135,3 @@ namespace Song.Entities {
     		}
     	}
     }
-    

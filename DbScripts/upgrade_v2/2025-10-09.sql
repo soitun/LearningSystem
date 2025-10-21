@@ -165,15 +165,15 @@ CREATE INDEX "QuesKnowledge_IX_Qk_IsDeleted" ON "QuesKnowledge"("Qk_IsDeleted");
 CREATE TABLE "Questions_QKnl" (
     "Qqk_ID" BIGINT PRIMARY KEY DEFAULT 0,
     "Qus_ID" BIGINT NOT NULL,
-    "Qtag_ID" BIGINT NOT NULL
+    "Qk_ID" BIGINT NOT NULL
 );
 -- 创建所有字段的索引
 CREATE INDEX "Questions_QKnl_IX_ID" ON "Questions_QKnl"("Qqk_ID");
 CREATE INDEX "Questions_QKnl_IX_QuesID" ON "Questions_QKnl"("Qus_ID");
-CREATE INDEX "Questions_QKnl_IX_TagID" ON "Questions_QKnl"("Qtag_ID");
+CREATE INDEX "Questions_QKnl_Qk_ID" ON "Questions_QKnl"("Qk_ID");
 -- 复合索引
-CREATE INDEX "Questions_QKnl_IX_QuesID_TagID" ON "Questions_QKnl"("Qus_ID", "Qtag_ID");
-CREATE INDEX "Questions_QKnl_IX_TagID_QuesID" ON "Questions_QKnl"("Qtag_ID", "Qus_ID");
+CREATE INDEX "Questions_QKnl_IX_QuesID_QkID" ON "Questions_QKnl"("Qus_ID", "Qk_ID");
+CREATE INDEX "Questions_QKnl_IX_QkID_QuesID" ON "Questions_QKnl"("Qk_ID", "Qus_ID");
 
 
 --创建试题标签
