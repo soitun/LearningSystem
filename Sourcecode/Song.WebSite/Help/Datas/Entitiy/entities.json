@@ -28,12 +28,12 @@
     "intro": "用于记录课程的价格项，每一个课程，可以设置多个价格项，例如一个月多少钱，一个季度多少钱。"
   },
   "DataOperateLog": {
-    "mark": "",
+    "mark": "操作日志",
     "intro": ""
   },
   "DataOperateLogArchive": {
-    "mark": "",
-    "intro": ""
+    "mark": "操作日志的存档",
+    "intro": "操作日志的存档记录"
   },
   "Depart": {
     "mark": "部门",
@@ -208,19 +208,19 @@
     "intro": "用于单选题、多选题、填空题的选项；实际没有存储任何数据，仅作为数据格式存在于Question表的Qus_Items字段中，在应用中数据被解析成QuesAnswer的格式而已。\n这么做的原因是兼容历史版本。"
   },
   "QuesCollect": {
-    "mark": "",
+    "mark": "试题收藏",
     "intro": "试题收藏，这里是管理员收藏的试题，用于编辑试卷"
   },
   "QuesKnowledge": {
-    "mark": "",
-    "intro": ""
+    "mark": "试题知识点",
+    "intro": "考试试题的知识点"
   },
   "QuesPart": {
-    "mark": "",
-    "intro": "试题分类"
+    "mark": "试题分类",
+    "intro": "用于在线考试的试题的试题分类，课程中的试题与此无关联"
   },
   "QuesTags": {
-    "mark": "",
+    "mark": "试题标签",
     "intro": ""
   },
   "QuesTypes": {
@@ -232,15 +232,15 @@
     "intro": ""
   },
   "Questions_QKnl": {
-    "mark": "",
+    "mark": "试题知识点",
     "intro": ""
   },
   "Questions_QPart": {
-    "mark": "",
+    "mark": "试题与试题分类的关联表",
     "intro": "试题与试题分类的关联表"
   },
   "Questions_QTags": {
-    "mark": "",
+    "mark": "试题与标签的关联表",
     "intro": ""
   },
   "RechargeCode": {
