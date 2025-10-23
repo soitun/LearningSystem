@@ -123,7 +123,7 @@ $ready(function () {
                 var th = this;
                 th.loading_sumbit = true;
                 var arr = th.tree2array(this.datas);
-                $api.post('ExamQues/ModifyTaxis', { 'list': arr }).then(function (req) {
+                $api.post('ExamQues/PartModifyTaxis', { 'list': arr }).then(function (req) {
                     if (req.data.success) {
                         var result = req.data.result;
                         th.$message({

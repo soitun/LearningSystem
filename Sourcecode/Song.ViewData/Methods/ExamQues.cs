@@ -302,7 +302,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         [HttpPost]
         [Admin]
-        public bool ModifyTaxis(Song.Entities.QuesPart[] list)
+        public bool PartModifyTaxis(Song.Entities.QuesPart[] list)
         {
             try
             {
@@ -500,7 +500,7 @@ namespace Song.ViewData.Methods
             JArray jarr = new JArray();
             for (int i = 0; i < childs.Count; i++)
             {
-                string j = childs[i].ToJson("", "Qp_CrtTime,Qp_UpdateTime");
+                string j = childs[i].ToJson("", "Qk_CrtTime,Qk_UpdateTime");
                 JObject jo = JObject.Parse(j);
                 jarr.Add(jo);
                 //计算下级
@@ -516,7 +516,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         [HttpPost]
         [Admin]
-        public bool ModifyTaxis(Song.Entities.QuesKnowledge[] list)
+        public bool KnlModifyTaxis(Song.Entities.QuesKnowledge[] list)
         {
             try
             {

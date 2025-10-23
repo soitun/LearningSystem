@@ -3687,6 +3687,8 @@
     <Content Include="Help\Datas\Entitiy\Questions_QPart.json" />
     <Content Include="Help\Datas\Entitiy\RechargeSet.json" />
     <Content Include="Help\Datas\Entitiy\QuesKnowledge.json" />
+    <Content Include="Help\Datas\Entitiy\InternalLink.json" />
+    <Content Include="Help\Datas\Entitiy\QuesTags.json" />
     <None Include="packages.config" />
     <Content Include="Utilities\LLM\aliyun_model.json" />
     <Content Include="Utilities\jsontreejs\LICENSE" />

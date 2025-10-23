@@ -9,7 +9,7 @@
     <div id="vapp" v-cloak> 
         <div class="toolsbar">
             <btngroup show="新增,展开/折叠" ref='btngroup' path="KnowledgeModify" @update_data="update_statdata"
-                @fold_open="fold=!fold" width="800" idkey='Qp_ID' height="500"></btngroup>
+                @fold_open="fold=!fold" width="800" idkey='Qk_ID' height="500"></btngroup>
             <query_panel :model="form" :loading="loading">
                 <el-form-item label="">
                     <el-tag type="success">
@@ -23,21 +23,21 @@
             </query_panel>
         </div>
         <div class="tree-box">
-            <el-tree ref="tree" :data="datas" node-key="Qp_ID" ref="tree" :props="defaultProps" expand-on-click-node
+            <el-tree ref="tree" :data="datas" node-key="Qk_ID" ref="tree" :props="defaultProps" expand-on-click-node
                 :filter-node-method="filterNode" @node-drag-end="handleDragEnd" :expand-on-click-node="false" draggable
                 @node-expand="nodeexpand" @node-collapse="nodecollapse" :default-expanded-keys="expanded"
                 v-loading="loading || loading_sumbit">
                 <div class="custom-tree-node" slot-scope="{ node, data }">
                     <span class="tree-node draghandle">
                         <span>{{data.serial}}</span> &nbsp;   
-                        <span class="large" v-html="showsearch(data.Qp_Name,filterText)"></span>
+                        <span class="large" v-html="showsearch(data.Qk_Name,filterText)"></span>
                         <span class="sbjcount" v-if="data.calcChild>0">({{data.calcChild}})</span>
                     </span>                 
                     <div class="column_state">
-                        <b class="el-icon-loading" v-if="loadingid==data.Qp_ID"></b>
+                        <b class="el-icon-loading" v-if="loadingid==data.Qk_ID"></b>
                         <template v-else>
-                            <el-tag :type="data.Qp_IsUse ? 'success' : 'info'" @click="changeState(data,'Qp_IsUse')">
-                                {{data.Qp_IsUse ? '启用' : '禁用'}}</el-tag>                          
+                            <el-tag :type="data.Qk_IsUse ? 'success' : 'info'" @click="changeState(data,'Qk_IsUse')">
+                                {{data.Qk_IsUse ? '启用' : '禁用'}}</el-tag>                          
                         </template>
                     </div>
 

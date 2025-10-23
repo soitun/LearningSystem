@@ -9,10 +9,10 @@ $ready(function () {
             },
             defaultProps: {
                 children: 'children',
-                label: 'Qp_Name'
+                label: 'Qk_Name'
             },
             expanded: [],        //树形默认展开的节点
-            expanded_storage: 'quespart_for_admin_tree',  //用于记录展开节点的storage名称
+            expanded_storage: 'quesknl_for_admin_tree',  //用于记录展开节点的storage名称
             filterText: '',      //查询过虑树形的字符
             total: 0,       //当前机构下的试题分类总数
             //是否折叠
@@ -62,7 +62,7 @@ $ready(function () {
             getTreeData: function () {
                 var th = this;
                 th.loading = true;
-                $api.get('ExamQues/PartTree', th.form).then(function (req) {
+                $api.get('ExamQues/KnlTree', th.form).then(function (req) {
                     if (req.data.success) {
                         th.datas = th.clacCount(req.data.result);
                         //获取默认展开的节点
@@ -80,7 +80,7 @@ $ready(function () {
             clacCount: function (datas) {
                 this.total = 0;
                 this.calcSerial(datas);
-                datas.forEach(d => this.ergodic_clacCount(d, 'QP_Count', 'QuesCount'));
+                datas.forEach(d => this.ergodic_clacCount(d, 'Qk_Count', 'QuesCount'));
                 return datas;
             },
             //遍历计算各个专业的课程数，包括当前专业的子专业
@@ -123,7 +123,7 @@ $ready(function () {
                 var th = this;
                 th.loading_sumbit = true;
                 var arr = th.tree2array(this.datas);
-                $api.post('ExamQues/ModifyTaxis', { 'list': arr }).then(function (req) {
+                $api.post('ExamQues/KnlModifyTaxis', { 'list': arr }).then(function (req) {
                     if (req.data.success) {
                         var result = req.data.result;
                         th.$message({
@@ -144,12 +144,12 @@ $ready(function () {
 
             //节点展开事件
             nodeexpand: function (data, node, tree) {
-                this.expanded.push(data.Qp_ID);
+                this.expanded.push(data.Qk_ID);
                 $api.storage(this.expanded_storage, this.expanded);
             },
             //节点折叠事件
             nodecollapse: function (data, node, tree) {
-                var index = this.expanded.indexOf(data.Qp_ID);
+                var index = this.expanded.indexOf(data.Qk_ID);
                 if (index > -1) {
                     this.expanded.splice(index, 1);
                     $api.storage(this.expanded_storage, this.expanded);
@@ -159,7 +159,7 @@ $ready(function () {
             unFoldAll2: function (data) {
                 let self = this;
                 data.forEach((el) => {
-                    self.$refs.tree.store.nodesMap[el.Qp_ID].expanded = true;
+                    self.$refs.tree.store.nodesMap[el.Qk_ID].expanded = true;
                     el.children && el.children.length > 0 ? self.unFoldAll2(el.children) : ""; // 子级递归
                 });
             },
@@ -167,7 +167,7 @@ $ready(function () {
             collapseAll2: function (data) {
                 let self = this;
                 data.forEach((el) => {
-                    self.$refs.tree.store.nodesMap[el.Qp_ID].expanded = false;
+                    self.$refs.tree.store.nodesMap[el.Qk_ID].expanded = false;
                     el.children && el.children.length > 0 ? self.collapseAll2(el.children) : ""; // 子级递归
                 });
             },
@@ -176,7 +176,7 @@ $ready(function () {
                 if (!value) return true;
                 var txt = $api.trim(value.toLowerCase());
                 if (txt == '') return true;
-                return data.Qp_Name.toLowerCase().indexOf(txt) !== -1;
+                return data.Qk_Name.toLowerCase().indexOf(txt) !== -1;
             },
             //编辑当前专业
             modify: function (row) {
@@ -186,8 +186,8 @@ $ready(function () {
             changeState: function (data, field) {
                 data[field] = !data[field];
                 var th = this;
-                this.loadingid = data.Qp_ID;
-                $api.post('ExamQues/PartModify', { 'entity': data }).then(function (req) {
+                this.loadingid = data.Qk_ID;
+                $api.post('ExamQues/KnlModify', { 'entity': data }).then(function (req) {
                     th.loadingid = -1;
                     if (req.data.success) {
                         th.$message({
@@ -196,7 +196,7 @@ $ready(function () {
                             center: true
                         });
                         th.fresh_cache();
-                        $api.cache('ExamQues/PartForID:clear', { 'id': data.Qp_ID });
+                        $api.cache('ExamQues/KnlForID:clear', { 'id': data.Qk_ID });
                     } else {
                         throw req.data.message;
                     }
@@ -214,13 +214,13 @@ $ready(function () {
                     for (let i = 0; i < arr.length; i++) {
                         const d = arr[i];
                         var obj = {
-                            'Qp_ID': d.Qp_ID,
-                            'Qp_PID': pid,
-                            'Qp_Order': i + 1,
+                            'Qk_ID': d.Qk_ID,
+                            'Qk_PID': pid,
+                            'Qk_Order': i + 1,
                         }
                         list.push(obj);
                         if (d.children && d.children.length > 0)
-                            list = toarray(d.children, d.Qp_ID, ++level, list);
+                            list = toarray(d.children, d.Qk_ID, ++level, list);
                     }
                     return list;
                 }
@@ -229,7 +229,7 @@ $ready(function () {
             remove: function (node, data) {
                 var th = this;
                 th.loading_sumbit = true;
-                $api.delete('ExamQues/PartDelete', { 'id': data.Qp_ID }).then(function (req) {
+                $api.delete('ExamQues/KnlDelete', { 'id': data.Qk_ID }).then(function (req) {
                     th.loading_sumbit = false;
                     if (req.data.success) {
                         var result = req.data.result;
@@ -251,7 +251,7 @@ $ready(function () {
             },
             //当专业数据更改时，刷新缓存数据
             fresh_cache: function () {
-                $api.cache('ExamQues/PartTreeFront:update', { 'orgid': window.org.Org_ID }, this.getTreeData());
+                $api.cache('ExamQues/KnlTreeFront:update', { 'orgid': window.org.Org_ID }, this.getTreeData());
             },
             //更新统计数据，包括课程数、试题数、试卷数
             update_statdata: function () {

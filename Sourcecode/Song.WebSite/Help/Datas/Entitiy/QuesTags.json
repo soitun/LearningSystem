@@ -1,0 +1,47 @@
+{
+  "Cou_ID": {
+    "mark": "",
+    "intro": "",
+    "relation": "Course"
+  },
+  "Org_ID": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Qtag_CrtTime": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Qtag_ID": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Qtag_Name": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Qtag_Order": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Qtag_PID": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Qtag_UpdateTime": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Qtag_Weight": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  }
+}
