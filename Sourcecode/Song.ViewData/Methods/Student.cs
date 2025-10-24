@@ -93,7 +93,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult SortCoursePager(long sortid, string name, int size, int index)
         {
-            int count = 0;
+            int count;
             List<Song.Entities.Course> list = Business.Do<IStudent>().SortCoursePager(sortid, name, size, index, out count);
             for (int i = 0; i < list.Count; i++)
             {
@@ -203,7 +203,7 @@ namespace Song.ViewData.Methods
            string orderby, string orderpattr,
            int size, int index)
         {
-            int total = 0;
+            int total;
             DataTable dt = Business.Do<IStudent>().Activation(orgid, stsid, acc, name, mobi, idcard, code, orderby, orderpattr, size, index, out total);
             ListResult result = new ListResult(dt);
             result.Index = index;

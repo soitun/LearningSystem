@@ -166,7 +166,7 @@ namespace Song.ViewData.Methods
         public ListResult Pager(int orgid, int type, int from, string account, DateTime? start, DateTime? end, string serial, int moneymin, int moneymax, int state, int size, int index)
         {
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
-            int count = 0;
+            int count;
             Song.Entities.MoneyAccount[] eas = null;
             eas = Business.Do<IAccounts>().MoneyPager(orgid, type, from, account, (DateTime?)start, (DateTime?)end, moneymin, moneymax, serial, state, size, index, out count);
             ListResult result = new ListResult(eas);
@@ -201,7 +201,7 @@ namespace Song.ViewData.Methods
                     acid = acc.Ac_ID;
             }
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
-            int count = 0;
+            int count;
             Song.Entities.MoneyAccount[] eas = null;
             eas = Business.Do<IAccounts>().MoneyPager(-1, acid, type, from, start, end, search, moneymin, moneymax, serial, state, size, index, out count);
             ListResult result = new ListResult(eas);

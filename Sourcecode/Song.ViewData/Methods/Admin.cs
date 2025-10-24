@@ -451,7 +451,7 @@ namespace Song.ViewData.Methods
         {
             Song.Entities.Organization org = LoginAdmin.Status.Organ(this.Letter);
             //总记录数
-            int count = 0;
+            int count;
             EmpAccount[] eas = Business.Do<IEmployee>().GetPager(org.Org_ID, -1, name, size, index, out count);
             foreach (EmpAccount ea in eas) ea.Acc_Pw = string.Empty;
             ListResult result = new ListResult(eas);
@@ -474,7 +474,7 @@ namespace Song.ViewData.Methods
         public ListResult Pager(int orgid, int posi, string name, int index, int size)
         {
             //总记录数
-            int count = 0;
+            int count;
             EmpAccount[] eas = Business.Do<IEmployee>().GetPager(orgid, posi, name, size, index, out count);
             foreach (EmpAccount ea in eas) ea.Acc_Pw = string.Empty;
             ListResult result = new ListResult(eas);
@@ -640,7 +640,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult TitlePager(int orgid, string name, int index, int size)
         {
-            int sum = 0;
+            int sum;
             Song.Entities.EmpTitle[] titles = Business.Do<IEmployee>().TitlePager(orgid, null, name, size, index, out sum);
             Song.ViewData.ListResult result = new ListResult(titles);
             result.Index = index;
@@ -791,7 +791,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult GroupPager(int orgid, string name, int index, int size)
         {
-            int sum = 0;
+            int sum;
             Song.Entities.EmpGroup[] titles = Business.Do<IEmpGroup>().Pager(orgid, null, name, size, index, out sum);
             Song.ViewData.ListResult result = new ListResult(titles);
             result.Index = index;

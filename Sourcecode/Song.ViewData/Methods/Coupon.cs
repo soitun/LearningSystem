@@ -139,7 +139,7 @@ namespace Song.ViewData.Methods
                 if (acc != null)
                     acid = acc.Ac_ID;
             }
-            int count = 0;
+            int count;
             Song.Entities.CouponAccount[] details = Business.Do<IAccounts>()
                 .CouponPager(-1, acid, type, start, end, search, size, index, out count);
             ListResult result = new ListResult(details);

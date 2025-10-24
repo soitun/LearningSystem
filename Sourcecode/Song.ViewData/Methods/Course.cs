@@ -571,9 +571,8 @@ namespace Song.ViewData.Methods
         public ListResult Pager(int orgid, string sbjids, int thid, bool? use, bool? live, bool? free,string search, string order,int size, int index)
         {
             size = size <= 0 ? int.MaxValue : size;
-            int count = 0;
-            List<Song.Entities.Course> eas = null;
-            eas = Business.Do<ICourse>().CoursePager(orgid, sbjids, thid, use, live, free, search, order, size, index, out count);
+            int count;
+            List<Song.Entities.Course> eas = Business.Do<ICourse>().CoursePager(orgid, sbjids, thid, use, live, free, search, order, size, index, out count);
             for (int i = 0; i < eas.Count; i++)          
                 eas[i] = _tran(eas[i]);
             //ListResult result = new ListResult(eas.ToArray<Song.Entities.Course>());
@@ -596,7 +595,7 @@ namespace Song.ViewData.Methods
         [Cache]
         public ListResult ShowPager(int orgid, string sbjids,  string search, string order, int size, int index)
         {
-            int count = 0;
+            int count;
             List<Song.Entities.Course> eas = null;
             if (sbjids == "0") sbjids = "";
             if (string.IsNullOrWhiteSpace(order))
@@ -631,7 +630,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public List<Song.Entities.Course> ShowCount(long sbjid,int orgid, string search, string order, int count)
         {
-            List<Song.Entities.Course> eas = null;
+            List<Song.Entities.Course> eas;
             if (string.IsNullOrWhiteSpace(order))
                 order = "rec";
             eas = Business.Do<ICourse>().CourseCount(orgid, sbjid, search, true, order, count);
@@ -656,7 +655,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult Purchased(int acid, string search, bool? enable, int size, int index)
         {
-            int count = 0;
+            int count;
             List<Song.Entities.Course> courses = Business.Do<ICourse>().CourseForStudent(acid, search, 1, enable, false, size, index, out count);
             for (int i = 0; i < courses.Count; i++)
             {
@@ -683,7 +682,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult Overdue(int acid, string search, bool? enable, int size, int index)
         {
-            int count = 0;
+            int count;
             List<Song.Entities.Course> courses = Business.Do<ICourse>().CourseForStudent(acid, search, 2, enable, false, size, index, out count);
             for (int i = 0; i < courses.Count; i++)
             {
@@ -736,7 +735,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult Ontrial(int acid, string search, bool? enable, int size, int index)
         {
-            int count = 0;
+            int count;
             List<Song.Entities.Course> courses = Business.Do<ICourse>().CourseForStudent(acid, search, -1, enable, true, size, index, out count);
             for (int i = 0; i < courses.Count; i++)
             {
@@ -764,7 +763,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult ForStudent(int acid, string search, bool? enable, bool? istry, int size, int index)
         {
-            int count = 0;
+            int count;
             List<Song.Entities.Course> courses = Business.Do<ICourse>().CourseForStudent(acid, search, 0, enable, istry, size, index, out count);
             for (int i = 0; i < courses.Count; i++)
             {
@@ -944,7 +943,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult StudyLogPager(int orgid, long couid, int size,int index)
         {
-            int total = 0;
+            int total;
             List<LogForStudentStudy> list= Business.Do<IStudent>().LogForStudyPager(orgid, couid,-1,-1,null,size,index,out total);
             foreach(LogForStudentStudy item in list)
             {
@@ -1072,7 +1071,7 @@ namespace Song.ViewData.Methods
         [Admin,Teacher]
         public ListResult Students(long couid,long stsid, string acc, string name,string idcard,string mobi, int size, int index)
         {
-            int total = 0;
+            int total;
             DataTable dt = Business.Do<ICourse>().StudentLogPager(couid,stsid, acc, name, idcard, mobi, null, null, size, index, out total);
             //处理返回结果
             string virPath = WeiSha.Core.Upload.Get["Accounts"].Virtual;

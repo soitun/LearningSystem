@@ -277,7 +277,7 @@ namespace Song.ViewData.Methods
         public ListResult Pager(long couid,string uid, bool? show, bool? use,string search, int size, int index)
         {
             //总记录数
-            int count = 0;
+            int count;
             Song.Entities.Guide[] eas = Business.Do<IGuide>().GuidePager(-1, couid, uid, search, show, use, size, index, out count);
             ListResult result = new ListResult(eas);
             result.Index = index;

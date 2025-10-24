@@ -105,9 +105,8 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult Pager(int orgid,long couid, long olid, string search, int size, int index)
         {
-            int count = 0;
-            Song.Entities.Message[] eas = null;
-            eas = Business.Do<IMessage>().GetPager(orgid, couid, olid, -1, search, null, null, size, index, out count);
+            int count;
+            Song.Entities.Message[] eas = Business.Do<IMessage>().GetPager(orgid, couid, olid, -1, search, null, null, size, index, out count);
             ListResult result = new ListResult(eas);
             result.Index = index;
             result.Size = size;

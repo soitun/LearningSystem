@@ -120,7 +120,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult Pager(string search, int size, int index)
         {
-            int count = 0;
+            int count;
             Song.Entities.LimitDomain[] eas = null;           
             eas = Business.Do<ILimitDomain>().DomainPager(null, search, size, index, out count);
             ListResult result = new ListResult(eas);

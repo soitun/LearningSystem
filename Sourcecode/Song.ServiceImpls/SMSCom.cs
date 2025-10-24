@@ -16,6 +16,9 @@ using System.Web;
 
 namespace Song.ServiceImpls
 {
+    /// <summary>
+    /// 短信接口实现
+    /// </summary>
     public class SMSCom : ISMS
     {
 

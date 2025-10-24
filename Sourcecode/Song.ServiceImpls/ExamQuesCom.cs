@@ -723,10 +723,10 @@ namespace Song.ServiceImpls
             }
             //取同一个机构下的所有专业
             List<QuesKnowledge> sbjs = Gateway.Default.From<QuesKnowledge>().Where(QuesKnowledge._.Org_ID == orgid).ToList<QuesKnowledge>();
-            list = _Knltreeid(qkid, sbjs);
+            list = _knltreeid(qkid, sbjs);
             return list;
         }
-        private List<long> _Knltreeid(long id, List<QuesKnowledge> Knls)
+        private List<long> _knltreeid(long id, List<QuesKnowledge> Knls)
         {
             List<long> list = new List<long>();
             if (id > 0) list.Add(id);
@@ -735,7 +735,7 @@ namespace Song.ServiceImpls
             for (int i = 0; i < childs.Count; i++)
             {
                 list.Add(childs[i]);
-                List<long> tm = _Knltreeid(childs[i], Knls);
+                List<long> tm = _knltreeid(childs[i], Knls);
                 list.AddRange(tm.Except(list));
             }
             return list;
@@ -858,7 +858,7 @@ namespace Song.ServiceImpls
                 if (orgid > 0) wc.And(QuesKnowledge._.Org_ID == orgid);
                 if (isUse != null) wc.And(QuesKnowledge._.Qk_IsUse == (bool)isUse);
                 List<QuesKnowledge> Knls = Gateway.Default.From<QuesKnowledge>().Where(wc).ToList<QuesKnowledge>();
-                list = _Knltreeid(pid, Knls);
+                list = _knltreeid(pid, Knls);
                 return list.Count;
             }
         }

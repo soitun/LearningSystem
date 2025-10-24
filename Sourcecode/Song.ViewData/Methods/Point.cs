@@ -123,7 +123,7 @@ namespace Song.ViewData.Methods
                 if (acc != null)
                     acid = acc.Ac_ID;
             }
-            int count = 0;
+            int count;
             Song.Entities.PointAccount[] details = Business.Do<IAccounts>()
                 .PointPager(-1, acid, type, search, start, end, size, index, out count);
             ListResult result = new ListResult(details);

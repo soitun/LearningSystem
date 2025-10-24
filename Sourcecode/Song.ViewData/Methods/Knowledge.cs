@@ -161,7 +161,7 @@ namespace Song.ViewData.Methods
         [HttpGet]
         public ListResult Pager(long couid, long kns, bool? isuse, string search, int size, int index)
         {
-            int count = 0;
+            int count;
             Song.Entities.Knowledge[] kls = null;
             kls = Business.Do<IKnowledge>().KnowledgePager(couid, kns, search, isuse, size, index, out count);
             ListResult result = new ListResult(kls);

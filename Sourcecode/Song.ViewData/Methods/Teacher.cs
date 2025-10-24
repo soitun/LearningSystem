@@ -446,7 +446,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult Pager(int orgid, int titid, string search, int gender, bool? isuse, string phone, string acc, string idcard,string order, int size, int index)
         {
-            int count = 0;
+            int count;
             Song.Entities.Teacher[] eas = Business.Do<ITeacher>().TeacherPager(orgid, titid, gender, isuse, null, search, phone, acc, idcard, order, size, index, out count);
             for (int i = 0; i < eas.Length; i++)
                 eas[i] = _tran(eas[i]);

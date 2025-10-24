@@ -173,7 +173,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult Pager(int lvid, string search, int index, int size)
         {
-            int sum = 0;
+            int sum;
             List<Ett.Organization> orgs = Business.Do<IOrganization>().OrganPager(null, lvid, search, size, index, out sum);
             for (int i = 0; i < orgs.Count; i++)
             {

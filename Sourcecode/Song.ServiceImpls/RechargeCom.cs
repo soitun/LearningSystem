@@ -175,7 +175,6 @@ namespace Song.ServiceImpls
         /// 分页获取充值码设置项
         /// </summary>
         /// <param name="orgid"></param>
-        /// <param name="isUse"></param>
         /// <param name="searTxt"></param>
         /// <param name="size"></param>
         /// <param name="index"></param>

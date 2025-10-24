@@ -26,7 +26,7 @@ namespace Song.ServiceInterfaces
         /// <summary>
         /// 通过审核（对外网申请的交换连接进行审核）
         /// </summary>
-        /// <param name="identify"></param>
+        /// <param name="entity"></param>
         void LinkVerify(Links entity);
         /// <summary>
         /// 修改

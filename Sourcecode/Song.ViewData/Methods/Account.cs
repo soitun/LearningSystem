@@ -365,7 +365,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult LoginLogs(int acid, DateTime? start, DateTime? end, int index, int size)
         {
-            int sum = 0;
+            int sum;
             Song.Entities.LogForStudentOnline[] list = Business.Do<IStudent>().LogForLoginPager(acid, string.Empty, start, end, size, index, out sum);
            
             Song.ViewData.ListResult result = new ListResult(list);
@@ -387,7 +387,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult LoginLogs(int orgid,string name,string acname, DateTime? start, DateTime? end, int index, int size)
         {
-            int sum = 0;
+            int sum;
             Song.Entities.LogForStudentOnline[] list = Business.Do<IStudent>().LogForLoginPager(orgid, 0, string.Empty, start, end, name, acname, size, index, out sum);
 
             Song.ViewData.ListResult result = new ListResult(list);
@@ -530,7 +530,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult Pager(int orgid, long sortid, bool? use, string acc, string name, string phone,string idcard,int gender, string orderby, string orderpattr, int index, int size)
         {
-            int sum = 0;
+            int sum;
             Song.Entities.Accounts[] accs = Business.Do<IAccounts>().AccountsPager(orgid, sortid, use, acc, name, phone, idcard, gender, orderby, orderpattr, size, index, out sum);
             for (int i = 0; i < accs.Length; i++)
             {
@@ -552,7 +552,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult PagerOfAll(int orgid, string search, int index, int size)
         {
-            int sum = 0;
+            int sum;
             Song.Entities.Accounts[] accs = Business.Do<IAccounts>().AccountsPager(orgid, -1, null, search, search, search, search, -1, string.Empty, string.Empty, size, index, out sum);
             for (int i = 0; i < accs.Length; i++)
             {
@@ -1050,7 +1050,7 @@ namespace Song.ViewData.Methods
                 Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
                 orgid = org.Org_ID;
             }
-            int sum = 0;
+            int sum;
             Song.Entities.StudentSort[] accs = Business.Do<IStudent>().SortPager(orgid, use, search, size, index, out sum);
             Song.ViewData.ListResult result = new ListResult(accs);
             result.Index = index;
@@ -1178,7 +1178,6 @@ namespace Song.ViewData.Methods
         /// 生成excel,按机构导出
         /// </summary>
         /// <param name="organs">机构id,多个id用逗号分隔</param>
-        /// <param name="path"></param> 
         /// <returns></returns>
         [Admin, Teacher]
         public JObject ExcelOutputForOrg(string organs)
@@ -1560,7 +1559,7 @@ namespace Song.ViewData.Methods
             string acc, string name, string idcard, string mobi,
            DateTime? start, DateTime? end, int size, int index)
         {
-            int sum = 0;
+            int sum;
             List<Accounts> accs = Business.Do<IStudent>().PurchasePager(orgid, stsid, couid, acc, name, idcard, mobi,start,end, size, index, out sum);
             for (int i = 0; i < accs.Count; i++)           
                 accs[i] = _tran(accs[i]);

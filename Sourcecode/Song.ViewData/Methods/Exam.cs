@@ -280,7 +280,7 @@ namespace Song.ViewData.Methods
                 JObject ques = new JObject();
                 int type = Convert.ToInt32(node.Attributes["type"].Value);
                 ques.Add("type", type);
-                float count = 0, number = 0;
+                float count, number;
                 float.TryParse(node.Attributes["count"].Value, out count);
                 float.TryParse(node.Attributes["number"].Value, out number);
                 ques.Add("count", count);
@@ -673,7 +673,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult ThemePager(int orgid, DateTime? start, DateTime? end, string search, int size, int index)
         {
-            int count = 0;
+            int count;
             List<Examination>  datas = Business.Do<IExamination>().ThemePager(orgid, start, end, true, search, size, index, out count);
             ListResult result = new ListResult(datas);
             result.Index = index;
@@ -696,7 +696,7 @@ namespace Song.ViewData.Methods
         [Admin,Teacher]
         public ListResult ThemeAdminPager(int orgid, DateTime? start, DateTime? end, bool? use, string search, int size, int index)
         {
-            int count = 0;
+            int count;
             List<Examination> datas = Business.Do<IExamination>().ThemePager(orgid, start, end, use, search, size, index, out count);
             ListResult result = new ListResult(datas);
             result.Index = index;
@@ -720,7 +720,7 @@ namespace Song.ViewData.Methods
         [Admin, Teacher]
         public ListResult ExamAdminPager(int orgid, DateTime? start, DateTime? end, bool? use, bool? ismanual, string search, int size, int index)
         {
-            int count = 0;
+            int count;
             List<Examination> datas = Business.Do<IExamination>().ExamPager(orgid, start, end, use, ismanual,search, size, index, out count);
             ListResult result = new ListResult(datas);
             result.Index = index;
@@ -857,7 +857,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult AttendThemeAccounts(int examid, string name, string idcard, long stsid, int size,int index)
         {
-            int total = 0;
+            int total;
             List<Accounts> datas = Business.Do<IExamination>().AttendThemeAccounts(examid, name, idcard, stsid,size, index, out total);
             ListResult result = new ListResult(datas);
             result.Index = index;
@@ -878,7 +878,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult AbsenceExamAccounts(int examid, string name, string idcard, string phone, long stsid, int size, int index)
         {
-            int total = 0;
+            int total;
             List<Accounts> datas = Business.Do<IExamination>().AbsenceExamAccounts(examid, name, idcard, phone, stsid, size, index, out total);
             for (int i = 0; i < datas.Count; i++)
             {
@@ -1170,7 +1170,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult Result4Exam(int examid, string name, string idcard, long stsid, float min, float max, bool? manual, int size, int index)
         {
-            int count = 0;
+            int count;
             List<ExamResults> datas = Business.Do<IExamination>().ResultsPager(examid, name, idcard, stsid, min, max, manual, size, index, out count);
             ListResult result = new ListResult(datas);
             result.Index = index;
@@ -1190,7 +1190,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult Result4Student(int acid, int orgid, long sbjid, string search, int size, int index)
         {
-            int count = 0;
+            int count;
             List<ExamResults> datas = null;
             datas = Business.Do<IExamination>().GetAttendPager(acid, sbjid, orgid, search, size, index, out count);
             ListResult result = new ListResult(datas);
@@ -1360,7 +1360,7 @@ namespace Song.ViewData.Methods
         /// <returns>考试场次，而非考试主题</returns>
         public ListResult SelfExam4Todaylate(int acid, string search, int size, int index)
         {
-            int count = 0;
+            int count;
             DateTime start = DateTime.Now.Date;
             List<Song.Entities.Examination> todaylate = Business.Do<IExamination>().GetSelfExam(acid, start, null, search, size, index, out count);
             ListResult result = new ListResult(todaylate);

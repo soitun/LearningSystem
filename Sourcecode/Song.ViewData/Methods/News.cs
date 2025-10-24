@@ -219,7 +219,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult ArticlePagerShow(string uid, string search, string order, int size, int index)
         {
-            int count = 0;
+            int count;
             Song.Entities.Article[] news = Business.Do<IContents>().ArticlePager(-1, uid, search, null, true, order, size, index, out count);
             foreach (Song.Entities.Article art in news)
             {
@@ -251,7 +251,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult ArticlePager(int orgid, string uid, string search, bool? verify, bool? del, string order,bool isintro, int size, int index)
         {
-            int count = 0;
+            int count;
             Song.Entities.Article[] news = Business.Do<IContents>().ArticlePager(orgid, uid, search, verify, del, order, size, index, out count);
             if (!isintro)
                 foreach (Song.Entities.Article art in news) art.Art_Intro = string.Empty;

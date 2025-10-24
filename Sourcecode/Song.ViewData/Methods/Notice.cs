@@ -126,7 +126,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult Pager(int orgid, string search,bool iscontext, int size, int index)
         {            
-            int count = 0;
+            int count;
             Song.Entities.Notice[] eas = Business.Do<INotice>().GetPager(orgid, null, search, size, index, out count);
             if (!iscontext) 
                 foreach (Song.Entities.Notice e in eas) e.No_Context = "";
@@ -147,7 +147,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult ShowPager(int orgid, string search, int size, int index)
         {
-            int count = 0;
+            int count;
             Song.Entities.Notice[] notices = Business.Do<INotice>().GetPager(orgid, true, search, size, index, out count);
             ListResult result = new ListResult(notices);
             result.Index = index;

@@ -27,7 +27,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult Pager(int orgid, int index, int size)
         {
-            int sum = 0;
+            int sum;
             List<Questions> list = Business.Do<IExamQues>().Pager(orgid, null, null, null, null, null, size, index, out sum);
            
             Song.ViewData.ListResult result = new ListResult(list);
@@ -95,7 +95,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult CollectPager(int acid, string qpid, string tagid, string knlid, string type, string diff, int size, int index)
         {
-            int sum = 0;
+            int sum;
             List<Questions> list = Business.Do<IExamQues>().CollectPager(acid,
                 Help.StringTo.Array<long>(qpid),
                 Help.StringTo.Array<long>(tagid),
@@ -234,7 +234,7 @@ namespace Song.ViewData.Methods
                 orgid = org.Org_ID;
             }
             //总记录数
-            int count = 0;
+            int count;
             List<Song.Entities.QuesPart> arr = Business.Do<IExamQues>().PartPager(orgid, pid, isuse, isdeleted, name, size, index, out count);            
             ListResult result = new ListResult(arr);
             result.Index = index;
@@ -448,7 +448,7 @@ namespace Song.ViewData.Methods
                 orgid = org.Org_ID;
             }
             //总记录数
-            int count = 0;
+            int count;
             List<Song.Entities.QuesKnowledge> arr = Business.Do<IExamQues>().KnlPager(orgid, pid, isuse, isdeleted, name, size, index, out count);
             ListResult result = new ListResult(arr);
             result.Index = index;
@@ -653,7 +653,7 @@ namespace Song.ViewData.Methods
                 orgid = org.Org_ID;
             }
             //总记录数
-            int count = 0;
+            int count;
             List<Song.Entities.QuesTags> arr = Business.Do<IExamQues>().TagPager(orgid, couid, isdeleted, name, size, index, out count);
             ListResult result = new ListResult(arr);
             result.Index = index;

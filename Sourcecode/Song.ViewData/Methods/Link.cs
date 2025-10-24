@@ -113,7 +113,7 @@ namespace Song.ViewData.Methods
                 orgid = org.Org_ID;
             }
             //总记录数
-            int count = 0;
+            int count;
             Song.Entities.LinksSort[] arr = Business.Do<ILinks>().SortPager(orgid, use, show, search, size, index, out count);
             ListResult result = new ListResult(arr);
             result.Index = index;
@@ -335,7 +335,7 @@ namespace Song.ViewData.Methods
                 orgid = org.Org_ID;
             }
             //总记录数
-            int count = 0;
+            int count;
             List<Song.Entities.Links> arr = Business.Do<ILinks>().GetLinkPager(orgid, sortid, use, show, name, link, size, index, out count);
             foreach (Song.Entities.Links l in arr)
                 _tran(l);

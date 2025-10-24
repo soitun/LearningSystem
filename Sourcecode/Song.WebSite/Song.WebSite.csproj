@@ -3689,6 +3689,7 @@
     <Content Include="Help\Datas\Entitiy\QuesKnowledge.json" />
     <Content Include="Help\Datas\Entitiy\InternalLink.json" />
     <Content Include="Help\Datas\Entitiy\QuesTags.json" />
+    <Content Include="Help\Datas\Entitiy\Questions_QTags.json" />
     <None Include="packages.config" />
     <Content Include="Utilities\LLM\aliyun_model.json" />
     <Content Include="Utilities\jsontreejs\LICENSE" />

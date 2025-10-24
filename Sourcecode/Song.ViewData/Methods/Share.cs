@@ -55,7 +55,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult FriendPager(int acid, string acc, string name, string phone, int index, int size)
         {
-            int count = 0;
+            int count;
             Song.Entities.Accounts[] entities = Business.Do<IAccounts>().AccountsPager(-1, -1, acid, null, acc, name, phone, null, -1,string.Empty,string.Empty, size, index, out count);
             foreach(Song.Entities.Accounts st in entities)
             {

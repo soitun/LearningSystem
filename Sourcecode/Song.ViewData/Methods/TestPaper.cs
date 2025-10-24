@@ -222,7 +222,7 @@ namespace Song.ViewData.Methods
         {
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
             int orgid = org.Org_ID;
-            int count = 0;
+            int count;
             List<Song.Entities.TestPaper> tps = Business.Do<ITestPaper>().PaperPager(orgid, -1, couid, diff, true, search, size, index, out count);
             for (int i = 0; i < tps.Count; i++)
                 tps[i] = _tran(tps[i]);
@@ -259,7 +259,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult Pager(int orgid, long sbjid, long couid, string search, bool? isuse, int diff, int size, int index)
         {
-            int count = 0;
+            int count;
             List<Song.Entities.TestPaper> tps = Business.Do<ITestPaper>()
                 .PaperPager(orgid, sbjid, couid, diff, isuse, search, size, index, out count);
             for (int i = 0; i < tps.Count; i++)
@@ -543,7 +543,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult ResultsPager(int stid, long tpid, int size, int index)
         {
-            int count = 0;
+            int count;
             List<TestResults> trs = Business.Do<ITestPaper>().ResultsPager(stid, tpid, size, index, out count);
             ListResult result = new ListResult(trs);
             result.Index = index;
@@ -574,7 +574,7 @@ namespace Song.ViewData.Methods
             string stname, string cardid, float score_min, float score_max, DateTime? time_min, DateTime? time_max,
             int size, int index)
         {
-            int count = 0;
+            int count;
             List<TestResults> trs = Business.Do<ITestPaper>().ResultsPager(stid, tpid, tpname, couid, sbjid, orgid,
                 stname, cardid, score_min, score_max, time_min, time_max,
                 size, index, out count);
