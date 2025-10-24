@@ -540,5 +540,137 @@ namespace Song.ViewData.Methods
         public int KnlQusTotal(int orgid, long qkid, int qtype, bool? isUse, bool children)
             => Business.Do<IExamQues>().KnlQusTotal(orgid, qkid, qtype, isUse, children);
         #endregion
+
+        #region 试题关键字
+        /// <summary>
+        /// 获取试题关键字的单条数据
+        /// </summary>
+        /// <param name="id">试题知识点id</param>
+        /// <returns></returns>
+        [Cache(AdminDisable = true)]
+        public Song.Entities.QuesTags TagForID(long id)
+        {
+            return Business.Do<IExamQues>().TagSingle(id);
+        }
+        /// <summary>
+        /// 添加试题关键字
+        /// </summary>
+        /// <param name="entity">试题关键字的实体</param>
+        /// <returns></returns>
+        [Admin]
+        [HttpPost]
+        [HtmlClear(Not = "entity")]
+        public Song.Entities.QuesTags TagAdd(Song.Entities.QuesTags entity)
+        {
+            Business.Do<IExamQues>().TagAdd(entity);
+            return entity;
+        }
+        /// <summary>
+        /// 修改试题知识点
+        /// </summary>
+        /// <param name="entity">试题知识点的实体</param>
+        /// <returns></returns>
+        [Admin]
+        [HttpPost]
+        [HtmlClear(Not = "entity")]
+        public Song.Entities.QuesTags TagModify(Song.Entities.QuesTags entity)
+        {
+            Song.Entities.QuesTags old = Business.Do<IExamQues>().TagSingle(entity.Qtag_ID);
+            if (old == null) throw new Exception("Not found entity for QuesTags！");
+            try
+            {
+                old.Copy<Song.Entities.QuesTags>(entity);
+                Business.Do<IExamQues>().TagSave(old);
+                return entity;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        /// <summary>
+        /// 逻辑删除试题知识点，下级分类也会一并删除
+        /// </summary>
+        /// <param name="id">试题知识点id，可以是多个，用逗号分隔</param>
+        /// <returns></returns>
+        [Admin]
+        [HttpDelete, HttpGet(Ignore = true)]
+        public int TagDelete(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            foreach (long s in list)
+                i += Business.Do<IExamQues>().TagDelete(s);
+            return i;
+        }
+        /// <summary>
+        /// 还原逻辑删除试题知识点
+        /// </summary>
+        [Admin]
+        [HttpPost, HttpGet(Ignore = true)]
+        public int TagRecycle(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            foreach (long s in list)
+                i += Business.Do<IExamQues>().TagRecycle(s);
+            return i;
+        }
+
+        /// <summary>
+        /// 删除试题知识点，下级分类也会一并删除
+        /// </summary>
+        /// <param name="id">试题知识点id，可以是多个，用逗号分隔</param>
+        /// <returns></returns>
+        [Admin]
+        [HttpDelete, HttpGet(Ignore = true)]
+        public int TagRemove(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            foreach (long s in list)
+                i += Business.Do<IExamQues>().TagRemove(s);
+            return i;
+        }
+        /// <summary>
+        /// 分页获取试题知识点
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="couid">课程id</param>
+        /// <param name="isdeleted">是否删除</param>
+        /// <param name="name">名称</param>
+        /// <param name="size"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public ListResult TagPager(int orgid, long couid, bool? isdeleted, string name, int size, int index)
+        {
+            if (orgid <= 0)
+            {
+                Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
+                orgid = org.Org_ID;
+            }
+            //总记录数
+            int count = 0;
+            List<Song.Entities.QuesTags> arr = Business.Do<IExamQues>().TagPager(orgid, couid, isdeleted, name, size, index, out count);
+            ListResult result = new ListResult(arr);
+            result.Index = index;
+            result.Size = size;
+            result.Total = count;
+            return result;
+        }
+        /// <summary>
+        /// 获取试题知识点的下的试题数量
+        /// </summary>
+        /// <param name="qtagid">试题标签的id</param>
+        /// <param name="couid"></param>
+        /// <param name="qtype">题型</param>
+        /// <param name="isuse">是否启用</param>
+        /// <returns></returns>
+        public int TagQusTotal(long qtagid, long couid, int qtype, bool? isuse)
+            => Business.Do<IExamQues>().TagQusTotal(qtagid, couid, qtype, isuse);
+        #endregion
     }
 }

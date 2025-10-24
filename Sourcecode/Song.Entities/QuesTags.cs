@@ -16,6 +16,8 @@ namespace Song.Entities {
     		
     		protected DateTime _Qtag_CrtTime;
     		
+    		protected Boolean _Qtag_IsDeleted;
+    		
     		protected String _Qtag_Name;
     		
     		protected Int32 _Qtag_Order;
@@ -63,6 +65,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Qtag_CrtTime, _Qtag_CrtTime, value);
     				this._Qtag_CrtTime = value;
+    			}
+    		}
+    		
+    		public Boolean Qtag_IsDeleted {
+    			get {
+    				return this._Qtag_IsDeleted;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Qtag_IsDeleted, _Qtag_IsDeleted, value);
+    				this._Qtag_IsDeleted = value;
     			}
     		}
     		
@@ -140,6 +152,7 @@ namespace Song.Entities {
     					_.Cou_ID,
     					_.Org_ID,
     					_.Qtag_CrtTime,
+    					_.Qtag_IsDeleted,
     					_.Qtag_Name,
     					_.Qtag_Order,
     					_.Qtag_PID,
@@ -156,6 +169,7 @@ namespace Song.Entities {
     					this._Cou_ID,
     					this._Org_ID,
     					this._Qtag_CrtTime,
+    					this._Qtag_IsDeleted,
     					this._Qtag_Name,
     					this._Qtag_Order,
     					this._Qtag_PID,
@@ -178,6 +192,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Qtag_CrtTime))) {
     				this._Qtag_CrtTime = reader.GetDateTime(_.Qtag_CrtTime);
+    			}
+    			if ((false == reader.IsDBNull(_.Qtag_IsDeleted))) {
+    				this._Qtag_IsDeleted = reader.GetBoolean(_.Qtag_IsDeleted);
     			}
     			if ((false == reader.IsDBNull(_.Qtag_Name))) {
     				this._Qtag_Name = reader.GetString(_.Qtag_Name);
@@ -241,6 +258,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Qtag_CrtTime = new WeiSha.Data.Field<QuesTags>("Qtag_CrtTime");
     			
     			/// <summary>
+    			/// 字段名：Qtag_IsDeleted - 数据类型：Boolean
+    			/// </summary>
+    			public static WeiSha.Data.Field Qtag_IsDeleted = new WeiSha.Data.Field<QuesTags>("Qtag_IsDeleted");
+    			
+    			/// <summary>
     			/// 字段名：Qtag_Name - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Qtag_Name = new WeiSha.Data.Field<QuesTags>("Qtag_Name");
@@ -267,4 +289,3 @@ namespace Song.Entities {
     		}
     	}
     }
-    

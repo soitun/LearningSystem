@@ -72,6 +72,19 @@ namespace Song.ServiceImpls
             return Gateway.Default.From<QuesPart>().Where(wc && QuesPart._.Qp_Name == name.Trim()).ToFirst<QuesPart>();
         }
         /// <summary>
+        /// 是否已经存在
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public QuesPart PartIsExist(QuesPart entity)
+        {
+            WhereClip wc = new WhereClip();
+            if (entity.Org_ID > 0) wc &= QuesPart._.Org_ID == entity.Org_ID;
+            if (entity.Qp_PID >= 0) wc &= QuesPart._.Qp_PID == entity.Qp_PID;
+            if (entity.Qp_ID > 0) wc &= QuesPart._.Qp_ID != entity.Qp_ID;
+            return Gateway.Default.From<QuesPart>().Where(wc && QuesPart._.Qp_Name == entity.Qp_Name.Trim()).ToFirst<QuesPart>();
+        }
+        /// <summary>
         /// 修改
         /// </summary>
         /// <param name="entity">业务实体</param>
@@ -424,7 +437,7 @@ namespace Song.ServiceImpls
             if (isdeleted != null) wc.And(QuesPart._.Qp_IsDeleted == (bool)isdeleted);
             if (string.IsNullOrWhiteSpace(searTxt)) wc.And(QuesPart._.Qp_Name.Contains(searTxt));
             countSum = Gateway.Default.Count<QuesPart>(wc);
-            return Gateway.Default.From<QuesPart>().Where(wc).OrderBy(QuesPart._.Org_ID.Asc && QuesPart._.Qp_ID.Asc).ToList<QuesPart>(size, (index - 1) * size);
+            return Gateway.Default.From<QuesPart>().Where(wc).OrderBy(QuesPart._.Qp_Order.Asc).ToList<QuesPart>(size, (index - 1) * size);
         }
         /// <summary>
         /// 更改试题分类的排序
@@ -555,6 +568,19 @@ namespace Song.ServiceImpls
             if (orgid > 0) wc &= QuesKnowledge._.Org_ID == orgid;
             if (pid >= 0) wc &= QuesKnowledge._.Qk_PID == pid;
             return Gateway.Default.From<QuesKnowledge>().Where(wc && QuesKnowledge._.Qk_Name == name.Trim()).ToFirst<QuesKnowledge>();
+        }
+        /// <summary>
+        /// 是否已经存在
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public QuesKnowledge KnlIsExist(QuesKnowledge entity)
+        {
+            WhereClip wc = new WhereClip();
+            if (entity.Org_ID > 0) wc &= QuesKnowledge._.Org_ID == entity.Org_ID;
+            if (entity.Qk_PID >= 0) wc &= QuesKnowledge._.Qk_PID == entity.Qk_PID;
+            if (entity.Qk_ID > 0) wc &= QuesKnowledge._.Qk_ID != entity.Qk_ID;
+            return Gateway.Default.From<QuesKnowledge>().Where(wc && QuesKnowledge._.Qk_Name == entity.Qk_Name.Trim()).ToFirst<QuesKnowledge>();
         }
         /// <summary>
         /// 修改
@@ -909,7 +935,7 @@ namespace Song.ServiceImpls
             if (isdeleted != null) wc.And(QuesKnowledge._.Qk_IsDeleted == (bool)isdeleted);
             if (string.IsNullOrWhiteSpace(searTxt)) wc.And(QuesKnowledge._.Qk_Name.Contains(searTxt));
             countSum = Gateway.Default.Count<QuesKnowledge>(wc);
-            return Gateway.Default.From<QuesKnowledge>().Where(wc).OrderBy(QuesKnowledge._.Org_ID.Asc && QuesKnowledge._.Qk_ID.Asc).ToList<QuesKnowledge>(size, (index - 1) * size);
+            return Gateway.Default.From<QuesKnowledge>().Where(wc).OrderBy(QuesKnowledge._.Qk_Order.Asc).ToList<QuesKnowledge>(size, (index - 1) * size);
         }
         /// <summary>
         /// 更改试题知识点的排序
@@ -938,6 +964,209 @@ namespace Song.ServiceImpls
                     throw ex;
                 }
             }
+        }
+        #endregion
+
+        #region 关键字
+        /// <summary>
+        /// 添加
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public int TagAdd(QuesTags entity)
+        {
+            entity.Qtag_CrtTime = DateTime.Now;
+            if (entity.Org_ID <= 0)
+            {
+                Organization org = Business.Do<IOrganization>().OrganCurrent();
+                if (org != null) entity.Org_ID = org.Org_ID;
+            }
+            //如果没有排序号，则自动计算
+            if (entity.Qtag_Order < 1)
+            {
+                WhereClip wc = QuesTags._.Org_ID == entity.Org_ID;
+                if (entity.Cou_ID > 0) wc &= QuesTags._.Cou_ID == entity.Cou_ID;
+                object obj = Gateway.Default.Max<QuesTags>(QuesTags._.Qtag_Order, wc);
+                entity.Qtag_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
+            }
+            return Gateway.Default.Save<QuesTags>(entity);
+        }
+        /// <summary>
+        /// 是否已经存在
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="couid"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public bool TagIsExist(int orgid, long couid, string name)
+        {
+            WhereClip wc = new WhereClip();
+            if (orgid > 0) wc &= QuesTags._.Org_ID == orgid;
+            if (couid >= 0) wc &= QuesTags._.Cou_ID == couid;
+            return Gateway.Default.From<QuesTags>().Where(wc && QuesTags._.Qtag_Name == name.Trim()).Count() > 0;
+        }
+        /// <summary>
+        /// 是否已经存在
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public bool TagIsExist(QuesTags entity)
+        {
+            WhereClip wc = new WhereClip();
+            if (entity.Org_ID > 0) wc &= QuesTags._.Org_ID == entity.Org_ID;
+            if (entity.Cou_ID >= 0) wc &= QuesTags._.Cou_ID == entity.Cou_ID;
+            if (entity.Qtag_ID > 0) wc &= QuesTags._.Qtag_ID != entity.Qtag_ID;
+            return Gateway.Default.From<QuesPart>().Where(wc && QuesTags._.Qtag_Name == entity.Qtag_Name.Trim()).Count() > 0;
+        }
+        /// <summary>
+        /// 修改
+        /// </summary>
+        /// <param name="entity">业务实体</param>
+        public void TagSave(QuesTags entity)
+        {
+            entity.Qtag_UpdateTime = DateTime.Now;
+            using (DbTrans tran = Gateway.Default.BeginTrans())
+            {
+                try
+                {
+                    tran.Save<QuesTags>(entity);
+                    tran.Commit();
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                    throw ex;
+                }
+            }
+        }
+        /// <summary>
+        /// 逻辑删除，标记删除状态为true
+        /// </summary>
+        /// <param name="id">实体的主键</param>
+        public int TagDelete(long id)
+        {
+            return Gateway.Default.Update<QuesPart>(QuesPart._.Qp_IsDeleted, true, QuesPart._.Qp_ID == id);
+        }
+        /// <summary>
+        /// 回收，标记删除状态为false
+        /// </summary>
+        public int TagRecycle(long id)
+        {
+            return Gateway.Default.Update<QuesPart>(QuesPart._.Qp_IsDeleted, false, QuesPart._.Qp_ID == id);
+        }
+        /// <summary>
+        /// 真正删除，按主键ID；
+        /// </summary>
+        /// <param name="id">实体的主键</param>
+        public int TagRemove(long id)
+        {
+            return Gateway.Default.Delete<QuesTags>(QuesTags._.Qtag_ID == id);
+        }
+        /// <summary>
+        /// 获取单一实体对象，按主键ID；
+        /// </summary>
+        /// <param name="id">实体的主键</param>
+        /// <returns></returns>
+        public QuesTags TagSingle(long id)
+        {
+            return Gateway.Default.From<QuesTags>().Where(QuesTags._.Qtag_ID == id).ToFirst<QuesTags>();
+        }
+        /// <summary>
+        /// 获取试题标签
+        /// </summary>
+        /// <param name="orgid">机构ID</param>
+        /// <param name="sear">搜索关键字</param>
+        /// <param name="couid"></param>
+        /// <param name="isdeleted"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public List<QuesTags> TagCount(int orgid, string sear, long couid, bool? isdeleted, int count)
+        {
+            WhereClip wc = new WhereClip();
+            if (orgid > 0) wc.And(QuesTags._.Org_ID == orgid);
+            if (couid > 0) wc.And(QuesTags._.Cou_ID == couid);
+            if (string.IsNullOrWhiteSpace(sear)) wc.And(QuesTags._.Qtag_Name.Contains(sear));
+            if (isdeleted != null) wc.And(QuesTags._.Qtag_IsDeleted == (bool)isdeleted);
+            return Gateway.Default.From<QuesTags>().Where(wc).OrderBy(QuesTags._.Qtag_Order.Asc).ToList<QuesTags>(count);
+        }
+        /// <summary>
+        /// 计算试题标签的数量
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="couid"></param>
+        /// <param name="isdeleted"></param> 
+        /// <returns></returns>
+        public int TagOfCount(int orgid, long couid, bool? isdeleted)
+        {
+            WhereClip wc = new WhereClip();
+            if (orgid > 0) wc.And(QuesTags._.Org_ID == orgid);
+            if (couid > 0) wc.And(QuesTags._.Cou_ID == couid);
+            if (isdeleted != null) wc.And(QuesTags._.Qtag_IsDeleted == (bool)isdeleted);
+            return Gateway.Default.Count<QuesTags>(wc);
+        }
+        /// <summary>
+        /// 当前试题标签下的所有试题
+        /// </summary>
+        /// <param name="qtagid"></param>
+        /// <param name="couid"></param>
+        /// <param name="qtype">试题类型</param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public List<Questions> TagQuestions(long qtagid, long couid, int qtype, bool? isuse, int count)
+        {
+
+            WhereClip wc = new WhereClip();
+            wc.And(Questions._.Qus_Purpose == 1);   //考试专用试题
+            wc &= Questions._.Qus_IsDeleted == false;
+
+            if (couid > 0) wc.And(Questions._.Cou_ID == couid);
+            if (qtype > 0) wc.And(Questions._.Qus_Type == qtype); 
+            if(isuse != null) wc.And(Questions._.Qus_IsUse == (bool)isuse);
+
+            QuerySection<Questions> section = Gateway.Default.From<Questions>().LeftJoin<Questions_QTags>(Questions_QTags._.Qus_ID == Questions._.Qus_ID).Where(wc);
+            return section.ToList<Questions>(count);
+        }
+        /// <summary>
+        /// 获取试题标签的下的试题数量
+        /// </summary>
+        /// <param name="qtagid">试题标签id</param>
+        /// <param name="couid"></param>
+        /// <param name="qtype">题型</param>
+        /// <returns></returns>
+        public int TagQusTotal(long qtagid, long couid, int qtype, bool? isuse)
+        {
+            WhereClip wc = new WhereClip();
+            wc.And(Questions._.Qus_Purpose == 1);   //考试专用试题
+            wc &= Questions._.Qus_IsDeleted == false;
+
+            if (qtype > 0) wc.And(Questions._.Qus_Type == qtype);
+            if (couid > 0) wc.And(Questions._.Cou_ID == couid);
+            if (isuse != null) wc.And(Questions._.Qus_IsUse == (bool)isuse);
+
+            QuerySection<Questions> section = Gateway.Default.From<Questions>().LeftJoin<Questions_QTags>(Questions_QTags._.Qus_ID == Questions._.Qus_ID).Where(wc);
+            return section.Count();
+        }
+        /// <summary>
+        /// <summary>
+        /// 分页获取
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="isUse"></param>
+        /// <param name="isdeleted">是否删除</param>
+        /// <param name="searTxt"></param>
+        /// <param name="size"></param>
+        /// <param name="index"></param>
+        /// <param name="countSum"></param>
+        /// <returns></returns>
+        public List<QuesTags> TagPager(int orgid, long couid, bool? isdeleted, string searTxt, int size, int index, out int countSum)
+        {
+            WhereClip wc = new WhereClip();
+            if (orgid > 0) wc.And(QuesTags._.Org_ID == orgid);
+            if (couid > 0) wc.And(QuesTags._.Cou_ID == couid);
+            if (isdeleted != null) wc.And(QuesTags._.Qtag_IsDeleted == (bool)isdeleted);
+            if (string.IsNullOrWhiteSpace(searTxt)) wc.And(QuesTags._.Qtag_Name.Contains(searTxt));
+            countSum = Gateway.Default.Count<QuesTags>(wc);
+            return Gateway.Default.From<QuesTags>().Where(wc).OrderBy(QuesTags._.Qtag_Order.Asc).ToList<QuesTags>(size, (index - 1) * size);
         }
         #endregion
     }

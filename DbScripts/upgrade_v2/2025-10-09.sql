@@ -195,6 +195,9 @@ CREATE INDEX "QuesTags_IX_Name" ON "QuesTags"("Qtag_Name");
 CREATE INDEX "QuesTags_IX_CouID" ON "QuesTags"("Cou_ID");
 CREATE INDEX "QuesTags_IX_Order" ON "QuesTags"("Qtag_Order");
 CREATE INDEX "QuesTags_IX_Weight" ON "QuesTags"("Qtag_Weight");
+/*是否删除的字段*/
+ALTER TABLE "QuesTags" ADD COLUMN "Qtag_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
+CREATE INDEX "QuesTags_IX_IsDeleted" ON "QuesTags"("Qtag_IsDeleted");
 
 
 --创建试题与标签的关联表

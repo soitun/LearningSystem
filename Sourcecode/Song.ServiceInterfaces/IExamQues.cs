@@ -43,6 +43,12 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         QuesPart PartIsExist(int orgid, long pid, string name);
         /// <summary>
+        /// 是否已经存在
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        QuesPart PartIsExist(QuesPart entity);
+        /// <summary>
         /// 修改
         /// </summary>
         /// <param name="entity">业务实体</param>
@@ -230,6 +236,12 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         QuesKnowledge KnlIsExist(int orgid, long pid, string name);
         /// <summary>
+        /// 是否已经存在
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        QuesKnowledge KnlIsExist(QuesKnowledge entity);
+        /// <summary>
         /// 修改
         /// </summary>
         /// <param name="entity">业务实体</param>
@@ -375,9 +387,16 @@ namespace Song.ServiceInterfaces
         /// 是否已经存在
         /// </summary>
         /// <param name="orgid"></param>
+        /// <param name="couid"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        QuesTags TagIsExist(int orgid, string name);
+        bool TagIsExist(int orgid, long couid, string name);
+        /// <summary>
+        /// 是否已经存在
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        bool TagIsExist(QuesTags entity);
         /// <summary>
         /// 修改
         /// </summary>
@@ -408,52 +427,48 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="orgid">机构ID</param>
         /// <param name="sear">搜索关键字</param>
-        /// <param name="isUse"></param>
+        /// <param name="couid"></param>
         /// <param name="isdeleted"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        List<QuesTags> TagCount(int orgid, string sear, bool? isUse, bool? isdeleted, int count);
+        List<QuesTags> TagCount(int orgid, string sear, long couid, bool? isdeleted, int count);
         /// <summary>
         /// 计算试题标签的数量
         /// </summary>
-        /// <param name="orgid">机构id</param> 
-        /// <param name="isUse">是否启用的，null取所有</param>
-        /// <param name="children">是否包括子级</param>
+        /// <param name="orgid">机构id</param>
+        /// <param name="couid"></param>
+        /// <param name="isdeleted"></param> 
         /// <returns></returns>
-        int TagOfCount(int orgid, bool? isUse, bool children);
+        int TagOfCount(int orgid, long couid, bool? isdeleted);
         /// <summary>
         /// 当前试题标签下的所有试题
         /// </summary>
-        /// <param name="orgid">当前机构</param>
         /// <param name="qtagid"></param>
+        /// <param name="couid"></param>
         /// <param name="qtype">试题类型</param>
-        /// <param name="isUse"></param>
-        /// <param name="children">是否包括下级，如果false，则取当前分类的试题</param>
         /// <param name="count"></param>
         /// <returns></returns>
-        List<Questions> TagQuestions(int orgid, long qtagid, int qtype, bool? isUse, bool children, int count);
+        List<Questions> TagQuestions(long qtagid, long couid, int qtype, bool? isuse, int count);
         /// <summary>
         /// 获取试题标签的下的试题数量
         /// </summary>
-        /// <param name="orgid">当前机构</param>
         /// <param name="qtagid">试题标签id</param>
+        /// <param name="couid"></param>
         /// <param name="qtype">题型</param>
-        /// <param name="isUse">是否启用的试题</param>
-        /// <param name="children">是否包括下级，如果false，则取当前分类的试题</param>
         /// <returns></returns>
-        int TagQusTotal(int orgid, long qtagid, int qtype, bool? isUse, bool children);
+        int TagQusTotal(long qtagid, long couid, int qtype, bool? isuse);
         /// <summary>
         /// 分页获取
         /// </summary>
         /// <param name="orgid"></param>
-        /// <param name="isUse"></param>
+        /// <param name="couid"></param>
         /// <param name="isdeleted">是否删除</param>
         /// <param name="searTxt"></param>
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        List<QuesTags> TagPager(int orgid, bool? isUse, bool? isdeleted, string searTxt, int size, int index, out int countSum);
+        List<QuesTags> TagPager(int orgid, long couid, bool? isdeleted, string searTxt, int size, int index, out int countSum);
         #endregion
 
         #region 回收站
