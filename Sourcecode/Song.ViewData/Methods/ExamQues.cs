@@ -532,13 +532,13 @@ namespace Song.ViewData.Methods
         /// 获取试题知识点的下的试题数量
         /// </summary>
         /// <param name="orgid">当前机构</param>
-        /// <param name="qpid">试题知识点id</param>
+        /// <param name="qkid">试题知识点id</param>
         /// <param name="qtype">题型</param>
         /// <param name="isUse">是否启用的试题</param>
         /// <param name="children">是否包括下级，如果false，则取当前分类的试题</param>
         /// <returns></returns>
-        public int KnlQusTotal(int orgid, long qpid, int qtype, bool? isUse, bool children)
-            => Business.Do<IExamQues>().KnlQusTotal(orgid, qpid, qtype, isUse, children);
+        public int KnlQusTotal(int orgid, long qkid, int qtype, bool? isUse, bool children)
+            => Business.Do<IExamQues>().KnlQusTotal(orgid, qkid, qtype, isUse, children);
         #endregion
     }
 }
