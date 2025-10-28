@@ -85,7 +85,7 @@ $ready(function () {
             //彻底删除
             remove: function (datas) {
                 var th = this;
-                th.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                th.$confirm('此操作将永久删除该内容, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'error'
