@@ -656,6 +656,7 @@
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\ques_collect.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\ques_diff.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\Styles\ques_collect.css" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\KnlRecy.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Knowledge.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\KnowledgeModify.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\MyTestpaper.html" />
@@ -665,6 +666,7 @@
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Questions.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Recyclebin.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\Collects.js" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\KnlRecy.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\Knowledge.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\KnowledgeModify.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\MyTestpaper.js" />
@@ -676,6 +678,7 @@
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\Tags.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\Testpaper.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\Collects.css" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\KnlRecy.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\Knowledge.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\KnowledgeModify.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\MyTestpaper.css" />
