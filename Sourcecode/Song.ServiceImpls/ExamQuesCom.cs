@@ -435,7 +435,7 @@ namespace Song.ServiceImpls
             if (pid >= 0) wc.And(QuesPart._.Qp_PID == pid);
             if (isUse != null) wc.And(QuesPart._.Qp_IsUse == (bool)isUse);
             if (isdeleted != null) wc.And(QuesPart._.Qp_IsDeleted == (bool)isdeleted);
-            if (string.IsNullOrWhiteSpace(searTxt)) wc.And(QuesPart._.Qp_Name.Contains(searTxt));
+            if (!string.IsNullOrWhiteSpace(searTxt)) wc.And(QuesPart._.Qp_Name.Contains(searTxt));
             countSum = Gateway.Default.Count<QuesPart>(wc);
             return Gateway.Default.From<QuesPart>().Where(wc).OrderBy(QuesPart._.Qp_Order.Asc).ToList<QuesPart>(size, (index - 1) * size);
         }
@@ -933,7 +933,7 @@ namespace Song.ServiceImpls
             if (pid >= 0) wc.And(QuesKnowledge._.Qk_PID == pid);
             if (isUse != null) wc.And(QuesKnowledge._.Qk_IsUse == (bool)isUse);
             if (isdeleted != null) wc.And(QuesKnowledge._.Qk_IsDeleted == (bool)isdeleted);
-            if (string.IsNullOrWhiteSpace(searTxt)) wc.And(QuesKnowledge._.Qk_Name.Contains(searTxt));
+            if (!string.IsNullOrWhiteSpace(searTxt)) wc.And(QuesKnowledge._.Qk_Name.Contains(searTxt));
             countSum = Gateway.Default.Count<QuesKnowledge>(wc);
             return Gateway.Default.From<QuesKnowledge>().Where(wc).OrderBy(QuesKnowledge._.Qk_Order.Asc).ToList<QuesKnowledge>(size, (index - 1) * size);
         }
@@ -975,6 +975,7 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public int TagAdd(QuesTags entity)
         {
+            if (this.TagIsExist(entity)) return 0;
             entity.Qtag_CrtTime = DateTime.Now;
             if (entity.Org_ID <= 0)
             {
@@ -1016,7 +1017,7 @@ namespace Song.ServiceImpls
             if (entity.Org_ID > 0) wc &= QuesTags._.Org_ID == entity.Org_ID;
             if (entity.Cou_ID >= 0) wc &= QuesTags._.Cou_ID == entity.Cou_ID;
             if (entity.Qtag_ID > 0) wc &= QuesTags._.Qtag_ID != entity.Qtag_ID;
-            return Gateway.Default.From<QuesPart>().Where(wc && QuesTags._.Qtag_Name == entity.Qtag_Name.Trim()).Count() > 0;
+            return Gateway.Default.From<QuesTags>().Where(wc && QuesTags._.Qtag_Name == entity.Qtag_Name.Trim()).Count() > 0;
         }
         /// <summary>
         /// 修改
@@ -1045,14 +1046,14 @@ namespace Song.ServiceImpls
         /// <param name="id">实体的主键</param>
         public int TagDelete(long id)
         {
-            return Gateway.Default.Update<QuesPart>(QuesPart._.Qp_IsDeleted, true, QuesPart._.Qp_ID == id);
+            return Gateway.Default.Update<QuesTags>(QuesTags._.Qtag_IsDeleted, true, QuesTags._.Qtag_ID == id);
         }
         /// <summary>
         /// 回收，标记删除状态为false
         /// </summary>
         public int TagRecycle(long id)
         {
-            return Gateway.Default.Update<QuesPart>(QuesPart._.Qp_IsDeleted, false, QuesPart._.Qp_ID == id);
+            return Gateway.Default.Update<QuesTags>(QuesTags._.Qtag_IsDeleted, false, QuesTags._.Qtag_ID == id);
         }
         /// <summary>
         /// 真正删除，按主键ID；
@@ -1085,7 +1086,7 @@ namespace Song.ServiceImpls
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(QuesTags._.Org_ID == orgid);
             if (couid > 0) wc.And(QuesTags._.Cou_ID == couid);
-            if (string.IsNullOrWhiteSpace(sear)) wc.And(QuesTags._.Qtag_Name.Contains(sear));
+            if (!string.IsNullOrWhiteSpace(sear)) wc.And(QuesTags._.Qtag_Name.Contains(sear));
             if (isdeleted != null) wc.And(QuesTags._.Qtag_IsDeleted == (bool)isdeleted);
             return Gateway.Default.From<QuesTags>().Where(wc).OrderBy(QuesTags._.Qtag_Order.Asc).ToList<QuesTags>(count);
         }
@@ -1164,7 +1165,7 @@ namespace Song.ServiceImpls
             if (orgid > 0) wc.And(QuesTags._.Org_ID == orgid);
             if (couid > 0) wc.And(QuesTags._.Cou_ID == couid);
             if (isdeleted != null) wc.And(QuesTags._.Qtag_IsDeleted == (bool)isdeleted);
-            if (string.IsNullOrWhiteSpace(searTxt)) wc.And(QuesTags._.Qtag_Name.Contains(searTxt));
+            if (!string.IsNullOrWhiteSpace(searTxt)) wc.And(QuesTags._.Qtag_Name.Contains(searTxt));
             countSum = Gateway.Default.Count<QuesTags>(wc);
             return Gateway.Default.From<QuesTags>().Where(wc).OrderBy(QuesTags._.Qtag_Order.Asc).ToList<QuesTags>(size, (index - 1) * size);
         }

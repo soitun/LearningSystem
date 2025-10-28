@@ -43,5 +43,10 @@
     "mark": "权重",
     "intro": "标签的权重，可以理解为是这个标签的重要度",
     "relation": ""
+  },
+  "Qtag_IsDeleted": {
+    "mark": "删除",
+    "intro": "是否被删除",
+    "relation": ""
   }
 }

@@ -205,10 +205,14 @@ Vue.component('btngroup', {
         },
         //删除事件
         delete: function (ids, btn) {
+            if (this.table == null) {
+                this.$emit('delete', ids, btn);
+                return true;
+            }
             let arr = String(ids).split(',');
             if (ids == '' || arr.length < 1) {
                 this.$message({
-                    message: '请选中要操作的数据行',
+                    message: '请选中要操作的数据项',
                     type: 'error'
                 });
                 return false;

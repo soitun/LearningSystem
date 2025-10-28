@@ -559,11 +559,21 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         [Admin]
         [HttpPost]
-        [HtmlClear(Not = "entity")]
-        public Song.Entities.QuesTags TagAdd(Song.Entities.QuesTags entity)
+        public int TagAdd(Song.Entities.QuesTags entity)
         {
-            Business.Do<IExamQues>().TagAdd(entity);
-            return entity;
+            int count = 0;
+            entity.Qtag_Name = entity.Qtag_Name.Replace(",", " ").Replace("，", " ");
+            foreach (string name in entity.Qtag_Name.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                Song.Entities.QuesTags tag = new QuesTags();
+                tag.Qtag_Name = name;
+                tag.Qtag_Weight = entity.Qtag_Weight;
+                tag.Qtag_IsDeleted = entity.Qtag_IsDeleted;
+                tag.Org_ID = entity.Org_ID;
+                tag.Cou_ID = entity.Cou_ID;
+                count += Business.Do<IExamQues>().TagAdd(tag);
+            }
+            return count;
         }
         /// <summary>
         /// 修改试题知识点
@@ -572,7 +582,6 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         [Admin]
         [HttpPost]
-        [HtmlClear(Not = "entity")]
         public Song.Entities.QuesTags TagModify(Song.Entities.QuesTags entity)
         {
             Song.Entities.QuesTags old = Business.Do<IExamQues>().TagSingle(entity.Qtag_ID);
