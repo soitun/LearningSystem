@@ -19,11 +19,12 @@
                 </el-form-item>
             </query_panel>
         </div>
+        <!--关键字列表-->
         <section class="list-box">
             <el-card shadow="hover" v-for="(item,idx) in datas">
                 <div slot="header">
                     <span>{{(form.index - 1) * form.size + idx+ 1}} . </span>
-                    <el-tag type="primary"> {{item.Qtag_Name}}</el-tag>
+                    <el-tag :type="tagcolor(item)" v-html="showsearch(item.Qtag_Name,form.name)"></el-tag>
                 </div>
                 <quescount :tag="item" :orgid="form.orgid"></quescount>
                 <div class="item_footer">

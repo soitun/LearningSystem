@@ -155,6 +155,11 @@ $ready(function () {
                         .finally(() => th.loadstate.recycle = false);
                 }).catch(() => { });
             },
+             //标签的颜色
+             tagcolor: function (item) {
+                let colors = ["info", "success", "warning", "primary", "danger"];
+                return colors[Math.floor(item.Qtag_Weight / 2)];
+            },
         },
         filters: {
 

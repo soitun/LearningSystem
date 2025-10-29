@@ -19,6 +19,7 @@
                 </el-form-item>
             </query_panel>
         </div>
+        <!--添加关键字-->
         <el-drawer :visible.sync="draweradd" direction="ttb" :show-close="false" size="300px" :before-close="()=>{}">
             <span slot="title" icon="&#xa02e">添加关键字</span>
             <el-form ref="formadd" :model="formadd" @submit.native.prevent :rules="formaddrules" label-width="80px">
@@ -48,12 +49,13 @@
                 </el-form-item>
             </el-form>
         </el-drawer>
+        <!--关键字的列表-->
         <section class="list-box">
             <el-card shadow="hover" v-for="(item,idx) in datas" :editing="item.editing">
                 <template v-if="item.editing==null || item.editing==false">
                     <div slot="header">
                         <span>{{(form.index - 1) * form.size + idx+ 1}} . </span>
-                        <el-tag type="primary"> {{item.Qtag_Name}}</el-tag>
+                        <el-tag :type="tagcolor(item)" v-html="showsearch(item.Qtag_Name,form.name)"></el-tag>
                     </div>
                     <quescount :tag="item" :orgid="form.orgid"></quescount>
                     <div class="item_footer">
@@ -94,6 +96,7 @@
                 </template>
             </el-card>
         </section>
+        <!--分页-->
         <div id="pager-box">
             <el-pagination v-on:current-change="handleCurrentChange" :current-page="form.index" :page-size="form.size"
                 :pager-count="12" layout="total, prev, pager, next, jumper" :total="total">
