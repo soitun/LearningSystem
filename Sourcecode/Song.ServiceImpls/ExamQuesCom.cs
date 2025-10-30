@@ -555,6 +555,30 @@ namespace Song.ServiceImpls
             return true;
         }
         /// <summary>
+        /// 批量取消收藏
+        /// </summary>
+        public int CollectRemove(int accid, long[] qusid)
+        {
+            int i = 0;
+            using (DbTrans tran = Gateway.Default.BeginTrans())
+            {
+                try
+                {
+                    foreach (long l in qusid)
+                    {
+                        i += tran.Delete<QuesCollect>(QuesCollect._.Qus_ID == l && QuesCollect._.Acc_ID == accid);
+                    }                  
+                    tran.Commit();
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                    throw ex;
+                }
+            }
+            return i;
+        }
+        /// <summary>
         /// 试题是否被收藏
         /// </summary>
         /// <param name="accid"></param>

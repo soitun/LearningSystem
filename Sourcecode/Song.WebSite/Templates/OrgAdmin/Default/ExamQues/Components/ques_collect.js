@@ -39,7 +39,7 @@ Vue.component('ques_collect', {
                 }).catch(err => console.error(err))
                 .finally(() => th.loading = false);
         },
-        //设置收藏
+        //设置收藏或取消收藏
         setcollect: function () {
             var th = this;
             th.loading = true;
@@ -48,6 +48,19 @@ Vue.component('ques_collect', {
                 .then(req => {
                     if (req.data.success) {
                         let result = req.data.result;
+                        if (th.collected) {
+                            this.$notify({
+                                title: '成功',
+                                message: '收藏该试题',
+                                type: 'success', duration: 1000
+                            });
+                        } else {
+                            this.$notify({
+                                title: '取消',
+                                message: '取消收藏该试题',
+                                type: 'warning', duration: 1000
+                            });
+                        }
                     } else {
                         console.error(req.data.exception);
                         throw req.config.way + ' ' + req.data.message;

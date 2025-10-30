@@ -66,10 +66,14 @@ div.datarow {
     font-size: 0.8rem !important;
 }
 
+/*试题顶部栏的右侧区域*/
 .datarow-title>*:last-child {
     margin-left: auto;
+    display: flex;
 }
-
+.datarow-title>*:last-child>*{
+    margin-left: 20px;
+}
 /*试题内容的显示*/
 .datarow-content {
     cursor: default;

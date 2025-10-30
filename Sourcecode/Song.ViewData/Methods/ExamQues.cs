@@ -121,9 +121,12 @@ namespace Song.ViewData.Methods
         /// <param name="accid">管理id</param>
         /// <param name="qusid">试题id</param>
         /// <returns></returns>
-        [Admin] 
+        [Admin]
         [HttpDelete, HttpGet(Ignore = true)]
-        public bool CollectRemove(int accid, long qusid) => Business.Do<IExamQues>().CollectRemove(accid, qusid);
+        public int CollectRemove(int accid, string qusid)
+        {
+            return Business.Do<IExamQues>().CollectRemove(accid, Song.ViewData.Helper.StringTo.Array<long>(qusid));
+        }
 
         /// <summary>
         /// 收藏状态的变更

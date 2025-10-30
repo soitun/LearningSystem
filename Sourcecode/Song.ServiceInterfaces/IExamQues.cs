@@ -218,6 +218,10 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         bool CollectRemove(int accid, long qusid);
         /// <summary>
+        /// 批量取消收藏
+        /// </summary>
+        int CollectRemove(int accid, long[] qusid);
+        /// <summary>
         /// 试题是否被收藏
         /// </summary>
         /// <param name="accid"></param>
