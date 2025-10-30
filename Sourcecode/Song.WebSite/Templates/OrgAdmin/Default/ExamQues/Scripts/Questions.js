@@ -6,14 +6,11 @@ $ready([
 ], function () {
     window.vapp = new Vue({
         el: '#vapp',
-        data: {  
+        data: {
             types: [],        //试题类型，来自web.config中配置项
             admin: {},          //当前登录用户
             //试题的查询条件
-            form: {
-                'orgid': -1, 'sbjid': '', 'couid': '', 'olid': '',
-                'type': '', 'use': '', 'error': '', 'wrong': '', 'search': '', 'size': 10, 'index': 1
-            },
+            form: { "orgid": -1, "qpid": "", "tagid": "", "knlid": "", "type": "", "diff": "", "size": 10, "index": 1 },
             datas: [],
             total: 1, //总记录数
             totalpages: 1, //总页数
@@ -29,13 +26,13 @@ $ready([
             loadingid: 0,
         },
         mounted: function () {
-            var th = this;           
+            var th = this;
             th.form.orgid = window.org.Org_ID;
             th.loadstate.init = true;
             $api.cache('Question/Types:99999').then(req => {
                 if (req.data.success) {
-                    th.types = req.data.result;    
-                    th.handleCurrentChange(1);            
+                    th.types = req.data.result;
+                    th.handleCurrentChange(1);
                 } else {
                     throw req.data.message;
                 }
@@ -44,7 +41,7 @@ $ready([
 
             //当前登录的管理员
             $api.login.current('admin', function (d) {
-                th.admin = d;               
+                th.admin = d;
             });
         },
         created: function () {
@@ -70,7 +67,7 @@ $ready([
                 var th = this;
                 if (index != null) this.form.index = index;
                 var loading = this.$fulloading();
-                $api.get("Question/Pager", th.form).then(function (d) {
+                $api.get("ExamQues/QuesPager", th.form).then(function (d) {
                     if (d.data.success) {
                         var result = d.data.result;
                         for (let i = 0; i < result.length; i++) {
@@ -97,12 +94,12 @@ $ready([
                 var th = this;
                 //th.loading = true;
                 var loading = this.$fulloading();
-                var quesid = datas.split(',');
-                var form = { 'qusid': quesid };
+                //var quesid = datas.split(',');
+                //var form = { 'qusid': quesid };
                 //要删除的试题,当删除后要重新统计章节、课程、专业下的试题数，所以需要提交更多id
-                var ques = th.getques_selected(quesid);
-                form['olid'] = th.getques_keys(ques, 'Ol_ID'); //章节id              
-                $api.delete('Question/Delete', form).then(function (req) {
+                //var ques = th.getques_selected(quesid);
+                //form['olid'] = th.getques_keys(ques, 'Ol_ID'); //章节id              
+                $api.delete('ExamQues/QuesDelete', { 'id': datas }).then(function (req) {
                     if (req.data.success) {
                         var result = req.data.result;
                         th.$notify({
@@ -143,7 +140,7 @@ $ready([
                 }).catch(function (err) {
                     alert(err, '错误');
                 }).finally(() => th.loadingid = 0);
-            },           
+            },
             //导出
             output: function (btn) {
                 var title = btn.tips;

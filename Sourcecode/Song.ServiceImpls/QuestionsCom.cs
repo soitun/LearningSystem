@@ -260,15 +260,9 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public bool QuesUpdate(long qusid, Field[] fiels, object[] objs)
         {
-            try
-            {
-                Gateway.Default.Update<Questions>(fiels, objs, Questions._.Qus_ID == qusid);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+
+            Gateway.Default.Update<Questions>(fiels, objs, Questions._.Qus_ID == qusid);
+            return true;
         }
         /// <summary>
         /// 修改试题的某些项

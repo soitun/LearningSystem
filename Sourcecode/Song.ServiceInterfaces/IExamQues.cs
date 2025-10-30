@@ -13,6 +13,25 @@ namespace Song.ServiceInterfaces
     {
         #region 试题
         /// <summary>
+        /// 删除试题
+        /// </summary>
+        /// <param name="entity">试题实体</param>
+        int QuesDelete(Questions entity);
+        /// <summary>
+        /// 删除，按主键ID；
+        /// </summary>
+        /// <param name="id">实体的主键</param>
+        int QuesDelete(long id);
+        /// <summary>
+        /// 回收，标记删除状态为false
+        /// </summary>
+        int QuesRecycle(long id);
+        /// <summary>
+        /// 真正删除，按主键ID；
+        /// </summary>
+        /// <param name="id">实体的主键</param>
+        int QuesRemove(long id);
+        /// <summary>
         /// 获取试题
         /// </summary>
         /// <param name="orgid">机构id</param>
@@ -25,7 +44,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        List<Questions> Pager(int orgid, long[] qpid, long[] tagid, long[] knlid, int[] type, int[] diff, int size, int index, out int countSum);
+        List<Questions> QuesPager(int orgid, long[] qpid, long[] tagid, long[] knlid, int[] type, int[] diff, int size, int index, out int countSum);
         #endregion
 
         #region 试题分类

@@ -8,12 +8,68 @@ using WeiSha.Data;
 using Song.ServiceInterfaces;
 using System.Linq;
 using System.Collections;
+using System.Threading.Tasks;
 
 namespace Song.ServiceImpls
 {
     public class ExamQuesCom : IExamQues
     {
         #region 试题
+        /// <summary>
+        /// 删除试题
+        /// </summary>
+        /// <param name="entity">试题实体</param>
+        public int QuesDelete(Questions entity)
+        {
+            return Gateway.Default.Update<Questions>(Questions._.Qus_IsDeleted, true, Questions._.Qus_ID == entity.Qus_ID);
+        }
+        /// <summary>
+        /// 删除，按主键ID；
+        /// </summary>
+        /// <param name="id">实体的主键</param>
+        public int QuesDelete(long id)
+        {
+            return Gateway.Default.Update<Questions>(Questions._.Qus_IsDeleted, true, Questions._.Qus_ID == id);
+        }
+        /// <summary>
+        /// 回收，标记删除状态为false
+        /// </summary>
+        public int QuesRecycle(long id)
+        {
+            return Gateway.Default.Update<Questions>(Questions._.Qus_IsDeleted, false, Questions._.Qus_ID == id);
+        }
+        /// <summary>
+        /// 真正删除，按主键ID；
+        /// </summary>
+        /// <param name="id">实体的主键</param>
+        public int QuesRemove(long id)
+        {
+            using (DbTrans tran = Gateway.Default.BeginTrans())
+            {
+                try
+                {
+                    //删除笔记
+                    Gateway.Default.Delete<Student_Notes>(Student_Notes._.Qus_ID == id);
+                    //删除收藏记录
+                    Gateway.Default.Delete<Student_Collect>(Student_Collect._.Qus_ID == id);
+                    Gateway.Default.Delete<QuesCollect>(QuesCollect._.Qus_ID == id);
+                    //删除错题记录
+                    Gateway.Default.Delete<Student_Ques>(Student_Ques._.Qus_ID == id);
+                    //
+                    //删除试题
+                    int n = tran.Delete<Questions>(Questions._.Qus_ID == id);
+                    //删除图片等资源
+                    WeiSha.Core.Upload.Get["Ques"].DeleteDirectory(id.ToString());
+                    tran.Commit();
+                    return n;
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                    throw ex;
+                }
+            }           
+        }
         /// <summary>
         /// 获取试题
         /// </summary>
@@ -27,9 +83,9 @@ namespace Song.ServiceImpls
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        public List<Questions> Pager(int orgid, long[] qpid, long[] tagid, long[] knlid, int[] type, int[] diff, int size, int index, out int countSum)
+        public List<Questions> QuesPager(int orgid, long[] qpid, long[] tagid, long[] knlid, int[] type, int[] diff, int size, int index, out int countSum)
         {
-            WhereClip wc = Questions._.Qus_Purpose==1;
+            WhereClip wc = Questions._.Qus_Purpose == 1;    //用于考试的试题
             if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
             countSum = Gateway.Default.Count<Questions>(wc);
             return Gateway.Default.From<Questions>().Where(wc).OrderBy(Questions._.Qus_ID.Desc).ToList<Questions>(size, (index - 1) * size);

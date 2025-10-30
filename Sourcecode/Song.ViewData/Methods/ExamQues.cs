@@ -19,17 +19,75 @@ namespace Song.ViewData.Methods
     public class ExamQues : ViewMethod, IViewAPI
     {
         /// <summary>
+        /// 逻辑删除试题
+        /// </summary>
+        /// <param name="id">试题id，可以是多个，用逗号分隔</param>
+        /// <returns></returns>
+        [Admin]
+        [HttpDelete, HttpGet(Ignore = true)]
+        public int QuesDelete(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            foreach (long s in list)
+                i += Business.Do<IExamQues>().QuesDelete(s);
+            return i;
+        }
+        /// <summary>
+        /// 还原逻辑删除试题
+        /// </summary>
+        [Admin]
+        [HttpPost, HttpGet(Ignore = true)]
+        public int QuesRecycle(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            foreach (long s in list)
+                i += Business.Do<IExamQues>().QuesRecycle(s);
+            return i;
+        }
+
+        /// <summary>
+        /// 删除试题分
+        /// </summary>
+        /// <param name="id">试题id，可以是多个，用逗号分隔</param>
+        /// <returns></returns>
+        [Admin]
+        [HttpDelete, HttpGet(Ignore = true)]
+        public int QuesRemove(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            foreach (long s in list)
+                i += Business.Do<IExamQues>().QuesRemove(s);
+            return i;
+        }
+        /// <summary>
         /// 获取题库列表
         /// </summary>
-        /// <param name="orgid"></param>
+        /// <param name="orgid">机构id</param>
+        /// <param name="qpid">试题分类</param>
+        /// <param name="tagid">标签</param>
+        /// <param name="knlid">知识点</param>
+        /// <param name="type">试题类型</param>
+        /// <param name="diff">难度</param>
         /// <param name="index"></param>
         /// <param name="size"></param>
         /// <returns></returns>
-        public ListResult Pager(int orgid, int index, int size)
+        public ListResult QuesPager(int orgid, string qpid, string tagid, string knlid, string type, string diff, int size, int index)
         {
             int sum;
-            List<Questions> list = Business.Do<IExamQues>().Pager(orgid, null, null, null, null, null, size, index, out sum);
-           
+            List<Questions> list = Business.Do<IExamQues>().QuesPager(orgid,
+                Help.StringTo.Array<long>(qpid),
+                Help.StringTo.Array<long>(tagid),
+                Help.StringTo.Array<long>(knlid),
+                Help.StringTo.Array<int>(type),
+                Help.StringTo.Array<int>(diff),
+                size, index, out sum);
+
             Song.ViewData.ListResult result = new ListResult(list);
             result.Index = index;
             result.Size = size;
