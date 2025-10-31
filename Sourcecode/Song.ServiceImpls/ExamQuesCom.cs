@@ -87,6 +87,8 @@ namespace Song.ServiceImpls
         {
             WhereClip wc = Questions._.Qus_Purpose == 1;    //用于考试的试题
             if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
+
+
             countSum = Gateway.Default.Count<Questions>(wc);
             return Gateway.Default.From<Questions>().Where(wc).OrderBy(Questions._.Qus_ID.Desc).ToList<Questions>(size, (index - 1) * size);
         }
@@ -604,7 +606,7 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public List<Questions> CollectPager(int acid, long[] qpid, long[] tagid, long[] knlid, int[] type, int[] diff, int size, int index, out int countSum)
         {
-            WhereClip wc = new WhereClip();
+            WhereClip wc = Questions._.Qus_Purpose == 1;    //用于考试的试题
             wc.And(QuesCollect._.Acc_ID == acid);
             //countSum = Gateway.Default.Count<Questions>(wc);
             QuerySection<Questions> section = Gateway.Default.From<Questions>().LeftJoin<QuesCollect>(QuesCollect._.Qus_ID == Questions._.Qus_ID).Where(wc);
