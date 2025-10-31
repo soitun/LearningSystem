@@ -3,7 +3,7 @@ $dom.load.css([$dom.path() + 'Question/Components/Styles/enter_button.css']);
 Vue.component('enter_button', {
     //question：当前试题
     //verify:验证试题是否满足编辑条件的方法
-    props: ["question", "verify", "organ"],
+    props: ["question", "verify", "org"],
     data: function () {
         return {
             loading: false,
@@ -66,7 +66,7 @@ Vue.component('enter_button', {
             var th = this;
             if (th.loading) return;
             th.loading = true;
-            if (th.isadd) th.question.Org_ID = th.organ.Org_ID;
+            if (th.isadd) th.question.Org_ID = th.org.Org_ID;
             let apipath = th.isadd ? api = 'Question/add' : 'Question/Modify';
             $api.post(apipath, { 'entity': th.question }).then(function (req) {
                 if (req.data.success) {
