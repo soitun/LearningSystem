@@ -1,14 +1,15 @@
 ﻿//试题编辑中的主要组件
 $dom.load.css([$dom.pagepath() + 'Components/Styles/modify_main.css']);
+
 //事件:
-//load,
+//load:加载试题完成后
+//init:初始化完成
 Vue.component('modify_main', {
     props: [],
     data: function () {
         return {
             id: $api.dot(),     //试题id
             typename: $api.querystring('typename'),
-            course: {},          //当前试题的课程
             //当前试题
             question: {
                 Qus_ID: 0, Qus_Type: 0, Qus_IsUse: true,
@@ -18,7 +19,7 @@ Vue.component('modify_main', {
                 Qus_IsCorrect: false,
                 Qus_Items: []
             },
-            organ: {},           //当前机构
+            org: {},           //当前机构
             config: {},      //当前机构配置项    
             types: [],        //试题类型，来自web.config中配置项
 
@@ -50,15 +51,13 @@ Vue.component('modify_main', {
         'question': {
             handler: function (nv, ov) {
                 //如果试题类型不明确（例如新增试题），类型从路径中取
-                if (!nv.Qus_Type || nv.Qus_Type <= 0) {                  
+                if (!nv.Qus_Type || nv.Qus_Type <= 0) {
                     nv['Qus_Type'] = this.getquestype();
                 }
             }, immediate: true, deep: true
         }
     },
     computed: {
-        //课程是否为空
-        coursenull: t => $api.isnull(t.course),
         //试题是否为空
         'quesnull': function () {
             return $api.isnull(this.question) || this.question.Qus_ID == 0;
@@ -76,22 +75,25 @@ Vue.component('modify_main', {
     },
     mounted: function () {
         var th = this;
-        $api.bat(
-            $api.get('Organization/Current'),
-            $api.cache('Question/Types:99999')
-        ).then(([organ, types]) => {
-            //获取结果
-            th.organ = organ.data.result;
-            th.config = $api.organ(th.organ).config;
-            th.types = types.data.result;
-            th.$emit('init', th.organ, th.config, th.types);
-        }).catch((err) => console.error(err))
+        th.org = window.org;
+        th.config = window.config;
+        $api.cache('Question/Types:99999').then(req => {
+            if (req.data.success) {
+                th.types = req.data.result;
+                th.$emit('init', th.org, th.config, th.types);
+            } else {
+                console.error(req.data.exception);
+                throw req.config.way + ' ' + req.data.message;
+            }
+        }).catch(err => console.error(err))
             .finally(() => th.loading_init = false);
+
+       
         th.getEntity();
     },
     methods: {
         //获取试题的初始类型
-        getquestype:function(){
+        getquestype: function () {
             let name = window.location.pathname;
             if (name.indexOf('.') > -1) name = name.substring(0, name.indexOf('.'));
             let type = name.substring(name.length - 1);
@@ -125,30 +127,10 @@ Vue.component('modify_main', {
                 }
             });
             promise.then(function (req) {
-                th.getCourse();
+                //th.getCourse();
+                th.$emit('load', req);
             }).catch((err) => alert(err, '错误'))
                 .finally(() => th.loading = false);
-        },
-        //获取课程
-        getCourse: function () {
-            //课程uid
-            var uid = $api.querystring("uid");
-            var th = this;
-            var apipath = uid != '' ? 'Course/ForUID' : 'Course/ForID';
-            var apipara = uid != '' ? { 'uid': uid } : { 'id': th.question.Cou_ID };
-            $api.get(apipath, apipara).then(function (req) {
-                if (req.data.success) {
-                    th.course = req.data.result;
-                    //设置试题的课程名称，这个在试题实体上并不存在，只是在前端临时使用
-                    th.question['Cou_Name'] = th.course.Cou_Name;
-                    th.$emit('load', th.question, th.course);
-                } else {
-                    console.error(req.data.exception);
-                    throw req.config.way + ' ' + req.data.message;
-                }
-            }).catch(function (err) {
-                th.$emit('load', th.question, th.course);
-            });
         },
         //选项卡是否显示
         tabshow: function (item) {
@@ -244,7 +226,7 @@ Vue.component('modify_main', {
         </el-tabs>
         <div v-show="activeName=='question'" remark="试题"><slot  v-if="!quesnull"></slot></div>
         <div v-show="activeName=='base'" class="base" remark="基本信息">
-            <general :question="question" :organ="organ" :course="course"></general>
+            <general :question="question" :org="org"></general>
         </div>
         <div v-show="activeName=='explan'" remark="解析">
             <template v-if="quesnull"></template>
@@ -252,7 +234,7 @@ Vue.component('modify_main', {
             :menubar="false" model="question" @change="text=>question.Qus_Explain=text"></editor>          
         </div>
         <div v-show="activeName=='knowledge'" remark="知识点">
-            <knowledge :question="question"></knowledge>
+            <knowledge :question="question" :org="org"></knowledge>
         </div>
         <div v-show="activeName=='error'" remark="存在编辑错误">
             <ques_error :question="question"></ques_error>

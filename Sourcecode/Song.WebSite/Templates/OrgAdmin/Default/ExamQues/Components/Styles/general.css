@@ -1,0 +1,27 @@
+﻿.panel>div.base[remark] {
+	overflow: hidden;
+}
+
+.general {
+	height: 100%;
+	width: 100%;
+	margin: 0px;
+	padding: 0px;
+}
+
+.general form.el-form {
+	height: 100%;
+	width: 100%;
+	margin: 0px;
+	padding: 10px;
+	box-sizing: border-box;
+}
+
+.tree-area .el-form-item__content {
+	height: 100%;
+}
+
+/*难度*/
+.el-rate {
+	margin-top: 6px;
+}
