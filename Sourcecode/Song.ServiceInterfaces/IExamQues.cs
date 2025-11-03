@@ -35,6 +35,7 @@ namespace Song.ServiceInterfaces
         /// 获取试题
         /// </summary>
         /// <param name="orgid">机构id</param>
+        /// <param name="isdeleted"></param>
         /// <param name="qpid">试题分类id</param>
         /// <param name="tagid">标签id</param>
         /// <param name="knlid">知识点</param>
@@ -44,7 +45,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        List<Questions> QuesPager(int orgid, long[] qpid, long[] tagid, long[] knlid, int[] type, int[] diff, int size, int index, out int countSum);
+        List<Questions> QuesPager(int orgid, bool? isdeleted, long[] qpid, long[] tagid, long[] knlid, int[] type, int[] diff, int size, int index, out int countSum);
         #endregion
 
         #region 试题分类

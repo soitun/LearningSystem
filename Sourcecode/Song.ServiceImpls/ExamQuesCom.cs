@@ -83,11 +83,11 @@ namespace Song.ServiceImpls
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        public List<Questions> QuesPager(int orgid, long[] qpid, long[] tagid, long[] knlid, int[] type, int[] diff, int size, int index, out int countSum)
+        public List<Questions> QuesPager(int orgid, bool? isdeleted, long[] qpid, long[] tagid, long[] knlid, int[] type, int[] diff, int size, int index, out int countSum)
         {
             WhereClip wc = Questions._.Qus_Purpose == 1;    //用于考试的试题
             if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
-
+            if(isdeleted != null)wc.And(Questions._.Qus_IsDeleted == isdeleted);
 
             countSum = Gateway.Default.Count<Questions>(wc);
             return Gateway.Default.From<Questions>().Where(wc).OrderBy(Questions._.Qus_ID.Desc).ToList<Questions>(size, (index - 1) * size);

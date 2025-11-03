@@ -10,7 +10,7 @@ $ready([
             types: [],        //试题类型，来自web.config中配置项
             admin: {},          //当前登录用户
             //试题的查询条件
-            form: { "orgid": -1, "qpid": "", "tagid": "", "knlid": "", "type": "", "diff": "", "size": 10, "index": 1 },
+            form: { "orgid": -1, "isdeleted":false,"qpid": "", "tagid": "", "knlid": "", "type": "", "diff": "", "size": 10, "index": 1 },
             datas: [],
             total: 1, //总记录数
             totalpages: 1, //总页数
@@ -26,6 +26,12 @@ $ready([
             loadingid: 0,
         },
         mounted: function () {
+            this.$refs.btngroup.addbtn([{
+                text: '全选/取消', tips: '选择标签',
+                id: 'select', type: 'primary',
+                icon: 'a057'
+            }]);
+
             var th = this;
             th.form.orgid = window.org.Org_ID;
             th.loadstate.init = true;
@@ -89,16 +95,47 @@ $ready([
                     });
                 });
             },
+            //批量选择
+            selectall: function () {
+                let isselected = true;   //是否全选
+                for (let i = 0; i < this.datas.length; i++) {
+                    if (this.datas[i].checked == null || !this.datas[i].checked) {
+                        isselected = false;
+                        break;
+                    }
+                }
+                for (let i = 0; i < this.datas.length; i++) {
+                    this.$set(this.datas[i], 'checked', !isselected);
+                }
+            },
+            //获取选中的id
+            getselectid: function () {
+                return this.datas.filter(item => item.checked).map(item => item.Qus_ID);
+            },
+            //批量删除
+            btnbatdel: function (id) {
+                if (id != null && id != '') return this.deleteData(id);
+                var arr = this.getselectid();
+                if (arr.length < 1) {
+                    this.$message({
+                        message: '请选中要操作的数据项',
+                        type: 'error'
+                    });
+                    return false;
+                }
+                var th = this;
+                this.$confirm('是否确认删除这 ' + arr.length + ' 项数据? ', '谨慎操作', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(function () {
+                    th.deleteData(arr.join(","));
+                }).catch(function () { });
+            },
             //删除
             deleteData: function (datas) {
                 var th = this;
-                //th.loading = true;
                 var loading = this.$fulloading();
-                //var quesid = datas.split(',');
-                //var form = { 'qusid': quesid };
-                //要删除的试题,当删除后要重新统计章节、课程、专业下的试题数，所以需要提交更多id
-                //var ques = th.getques_selected(quesid);
-                //form['olid'] = th.getques_keys(ques, 'Ol_ID'); //章节id              
                 $api.delete('ExamQues/QuesDelete', { 'id': datas }).then(function (req) {
                     if (req.data.success) {
                         var result = req.data.result;

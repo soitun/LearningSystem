@@ -84,11 +84,7 @@ $ready(function () {
             },
             //获取选中的id
             getselectid: function () {
-                var arr = [];
-                for (let i = 0; i < this.datas.length; i++)
-                    if (this.datas[i].checked)
-                        arr.push(this.datas[i].Qtag_ID);
-                return arr;
+                return this.datas.filter(item => item.checked).map(item => item.Qtag_ID);
             },
             //批量删除
             btnbatdel: function (id) {
@@ -155,8 +151,8 @@ $ready(function () {
                         .finally(() => th.loadstate.recycle = false);
                 }).catch(() => { });
             },
-             //标签的颜色
-             tagcolor: function (item) {
+            //标签的颜色
+            tagcolor: function (item) {
                 let colors = ["info", "success", "warning", "primary", "danger"];
                 return colors[Math.floor(item.Qtag_Weight / 2)];
             },

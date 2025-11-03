@@ -69,6 +69,7 @@ namespace Song.ViewData.Methods
         /// 获取题库列表
         /// </summary>
         /// <param name="orgid">机构id</param>
+        /// <param name="isdeleted">是否删除</param>
         /// <param name="qpid">试题分类</param>
         /// <param name="tagid">标签</param>
         /// <param name="knlid">知识点</param>
@@ -77,10 +78,10 @@ namespace Song.ViewData.Methods
         /// <param name="index"></param>
         /// <param name="size"></param>
         /// <returns></returns>
-        public ListResult QuesPager(int orgid, string qpid, string tagid, string knlid, string type, string diff, int size, int index)
+        public ListResult QuesPager(int orgid, bool? isdeleted, string qpid, string tagid, string knlid, string type, string diff, int size, int index)
         {
             int sum;
-            List<Questions> list = Business.Do<IExamQues>().QuesPager(orgid,
+            List<Questions> list = Business.Do<IExamQues>().QuesPager(orgid, isdeleted,
                 Help.StringTo.Array<long>(qpid),
                 Help.StringTo.Array<long>(tagid),
                 Help.StringTo.Array<long>(knlid),

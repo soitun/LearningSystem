@@ -4,18 +4,7 @@ Vue.component('general', {
     props: ["question", "org"],
     data: function () {
         return {
-            subjects: [],       //专业
-            courses: [],     //课程列表
-            couid: '',      //当前课程id
-            olid: $api.querystring("olid", ''),     //当前章节id
-
-            outlines: [],     //课程下的所有章节
-            outline: null,         //试题当前章节
-            defaultOutlinesProps: {
-                children: 'children',
-                label: 'Ol_Name'
-            },
-            outlineFilterText: ''
+            
         }
     },
     watch: {
