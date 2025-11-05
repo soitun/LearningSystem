@@ -47,7 +47,7 @@ Vue.component('interfaces', {
         getapilist: function () {
             var th = this;
             th.loading = true;
-            $api.get('Helper/APIList').then(req => {
+            $api.get('APIHelper/List').then(req => {
                 if (req.data.success) {
                     th.list = req.data.result;
                 } else {
@@ -114,9 +114,10 @@ Vue.component('interfaces', {
             <div v-if="showcount<=0">没有满足条件的接口</div>
             <el-collapse v-model="activeName" accordion>
                 <el-collapse-item  v-for="(item,idx) in list" :name="idx" v-show="show(item,search)">
-                    <div slot="title" class="item_title" :current="current!=null && item.Name==current.Name">
+                    <div slot="title" class="item_title" :current="current!=null && item.Name==current.Name">                        
                         <span v-html="(idx+1)+'.  '+ showsearch(item.Name,search)" class="name"></span>
-                        <span class="intro" v-html="showsearch(item.Intro,search)"></span> 
+                        <span class="count" v-if="item.count!=null">{{item.count}}</span>
+                        <span class="intro" v-html="showsearch(item.Intro,search)"></span>                        
                     </div>
                     <div v-if='item.Intro.length>0' class="intro"><span>摘要：</span>
                         <span v-html="showsearch(item.Intro,search)"></span>
@@ -151,13 +152,14 @@ Vue.component('methods', {
         getmethods: function () {
             var th = this;
             th.loading = true;
-            $api.get('Helper/APIMethods', { 'classname': th.api.Name }).then(req => {
+            $api.get('APIHelper/Methods', { 'classname': th.api.Name }).then(req => {
                 if (req.data.success) {
                     let methods = req.data.result;
                     for (let i = 0; i < methods.length; i++)
                         th.$set(methods[i], 'Paramstring', th.getParamstring(methods[i]));
                     //methods[i].Paramstring = th.getParamstring(methods[i]);
                     th.methods = methods;
+                    th.$set(th.api, 'count', methods.length);
                     th.$set(th.api, 'methods', methods);
                     th.$set(th.api, 'loaded', true);    //是否加载完成
                     th.$emit('load', methods, th.api);    //加载完成的事件
