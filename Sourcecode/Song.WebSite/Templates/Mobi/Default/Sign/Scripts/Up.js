@@ -200,7 +200,7 @@ $ready(function () {
                 var th = this;
                 th.loading_vcode = true;
                 //校验码生成
-                $api.post('Helper/CheckCodeImg', { 'leng': 4, 'acc': th.organ.Org_PlatformName }).then(function (req) {
+                $api.post('Platform/CheckCodeImg', { 'leng': 4, 'acc': th.organ.Org_PlatformName }).then(function (req) {
                     th.loading_vcode = false;
                     if (req.data.success) {
                         var result = req.data.result;

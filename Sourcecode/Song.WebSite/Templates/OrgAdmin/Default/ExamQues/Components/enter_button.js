@@ -64,11 +64,13 @@ Vue.component('enter_button', {
                 if (!this.verify(this.question, this.prompt)) return;
             }
             var th = this;
+            //console.error(th.question);
+            //return;
             if (th.loading) return;
             th.loading = true;
             if (th.isadd) th.question.Org_ID = th.org.Org_ID;
-            let apipath = th.isadd ? api = 'Question/add' : 'Question/Modify';
-            $api.post(apipath, { 'entity': th.question }).then(function (req) {
+            let apipath = th.isadd ? api = 'ExamQues/Quesadd' : 'ExamQues/QuesModify';
+            $api.post(apipath, { 'entity': th.question,'tags':th.question.Tags }).then(function (req) {
                 if (req.data.success) {
                     var result = req.data.result;
                     th.$message({
@@ -78,7 +80,8 @@ Vue.component('enter_button', {
                     th.ischanged = false;
                     th.operateSuccess(isclose);
                 } else {
-                    throw req.data.message;
+                    console.error(req.data);
+                    throw req.data.message;                    
                 }
             }).catch(err => alert(err, '错误'))
                 .finally(() => th.loading = false);

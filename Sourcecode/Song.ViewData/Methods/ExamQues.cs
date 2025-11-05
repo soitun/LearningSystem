@@ -18,6 +18,76 @@ namespace Song.ViewData.Methods
     /// </summary>
     public class ExamQues : ViewMethod, IViewAPI
     {
+        #region 试题
+        /// <summary>
+        /// 获取试题
+        /// </summary>
+        /// <param name="id">试题id</param>
+        /// <returns></returns> 
+        public JObject QuesForID(long id)
+        {
+            Song.Entities.Questions ques = Business.Do<IQuestions>().QuesSingle(id);
+            if (ques == null) return null;
+            JObject jo = ques.ToJObject();
+            //关联的关键字
+            List<Song.Entities.QuesTags> tags = Business.Do<IExamQues>().TagForQues(ques.Qus_ID);
+            jo["Tags"] = tags.ToJArray<QuesTags>();
+            //所属的分类
+            List<Song.Entities.QuesPart> parts = Business.Do<IExamQues>().PartForQues(ques.Qus_ID);
+            jo["Parts"] = parts.ToJArray<QuesPart>();
+            //关联的知识点
+            List<Song.Entities.QuesKnowledge> knls = Business.Do<IExamQues>().KnlForQues(ques.Qus_ID);
+            jo["Knls"] = knls.ToJArray<QuesKnowledge>();
+            return jo;
+        }
+        /// <summary>
+        /// 添加试题
+        /// </summary>
+        /// <param name="entity">试题</param>
+        /// <returns></returns>
+        [Admin, Teacher]
+        [HttpPost]
+        [HtmlClear(Not = "entity")]
+        public long QuesAdd(Song.Entities.Questions entity)
+        {
+            //如果存在，不保存
+            Song.Entities.Questions old = Business.Do<IQuestions>().QuesSingle(entity.Qus_ID);
+            if (old != null) return old.Qus_ID;
+            //处理单选、多选的选项
+            if (entity.Qus_Type == 1 || entity.Qus_Type == 2 || entity.Qus_Type == 5)
+            {
+                entity.Qus_Items = Business.Do<IQuestions>().AnswerToItems(Helper.Question.AnswerToItems(entity));
+            }
+            Business.Do<IQuestions>().QuesAdd(entity);
+            return entity.Qus_ID;
+        }
+        /// <summary>
+        /// 修改试题
+        /// </summary>
+        /// <param name="entity">修改试题</param>
+        /// <param name="tags"></param>
+        /// <returns></returns>
+        [Admin, Teacher]
+        [HttpPost]
+        [HtmlClear(Not = "entity")]
+        public bool QuesModify(Questions entity, QuesTags[] tags)
+        {
+            Song.Entities.Questions old = Business.Do<IQuestions>().QuesSingle(entity.Qus_ID);
+            if (old == null) throw new Exception("Not found entity for Questions！");
+            //是否更改章节id
+            long oldOlid = old.Ol_ID, newOlid = entity.Ol_ID;
+            old.Copy<Song.Entities.Questions>(entity);
+            //处理单选、多选的选项
+            if (entity.Qus_Type == 1 || entity.Qus_Type == 2 || entity.Qus_Type == 5)
+            {
+                old.Qus_Items = Business.Do<IQuestions>().AnswerToItems(Helper.Question.AnswerToItems(entity));
+            }
+            old.Qus_Purpose = 1;    //考试专用
+            Business.Do<IQuestions>().QuesSave(old);
+            //保存关键字的关联
+            Business.Do<IExamQues>().TagConnectionQues(tags, entity.Qus_ID, 0);
+            return true;
+        }
         /// <summary>
         /// 逻辑删除试题
         /// </summary>
@@ -95,6 +165,7 @@ namespace Song.ViewData.Methods
             result.Total = sum;
             return result;
         }
+        #endregion
 
         #region 试题收藏
         /// <summary>
@@ -617,7 +688,7 @@ namespace Song.ViewData.Methods
         /// <summary>
         /// 添加试题关键字
         /// </summary>
-        /// <param name="entity">试题关键字的实体</param>
+        /// <param name="entity">试题关键字的实体，如果关键字有逗号或空格，会当成多个关键字</param>
         /// <returns></returns>
         [Admin]
         [HttpPost]
@@ -638,9 +709,38 @@ namespace Song.ViewData.Methods
             return count;
         }
         /// <summary>
-        /// 修改试题知识点
+        /// 设置关键字与试题的关联
         /// </summary>
-        /// <param name="entity">试题知识点的实体</param>
+        /// <param name="tags">关键字，多个关键字逗号或空格个</param>
+        /// <param name="quesid">试题id</param>
+        /// <param name="couid">课程id</param>
+        /// <returns></returns>
+        public int TagConnectionQues(string tags, long quesid, long couid)
+        {
+            int count = 0;
+            tags = tags.Replace(",", " ").Replace("，", " ");
+            //当前机构
+            Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
+            int orgid = org != null ? org.Org_ID : 0;
+            foreach (string name in tags.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                Song.Entities.QuesTags tag = Business.Do<IExamQues>().TagSingle(name, orgid, couid);
+                if (tag == null) tag = new QuesTags()
+                {
+                    Qtag_Name = name,
+                    Qtag_Weight = 0,
+                };
+                tag.Qtag_IsDeleted = false;
+                count += Business.Do<IExamQues>().TagAdd(tag);
+                //关联
+                long tagid = tag.Qtag_ID;
+            }
+            return count;
+        }
+        /// <summary>
+        /// 修改试题关键字
+        /// </summary>
+        /// <param name="entity">试题关键字的实体</param>
         /// <returns></returns>
         [Admin]
         [HttpPost]
@@ -660,7 +760,7 @@ namespace Song.ViewData.Methods
             }
         }
         /// <summary>
-        /// 逻辑删除试题知识点，下级分类也会一并删除
+        /// 逻辑删除试题关键字
         /// </summary>
         /// <param name="id">试题知识点id，可以是多个，用逗号分隔</param>
         /// <returns></returns>
@@ -676,7 +776,7 @@ namespace Song.ViewData.Methods
             return i;
         }
         /// <summary>
-        /// 还原逻辑删除试题知识点
+        /// 还原逻辑删除试题关键字
         /// </summary>
         [Admin]
         [HttpPost, HttpGet(Ignore = true)]
@@ -691,7 +791,7 @@ namespace Song.ViewData.Methods
         }
 
         /// <summary>
-        /// 删除试题知识点，下级分类也会一并删除
+        /// 删除试题关键字
         /// </summary>
         /// <param name="id">试题知识点id，可以是多个，用逗号分隔</param>
         /// <returns></returns>
@@ -707,7 +807,7 @@ namespace Song.ViewData.Methods
             return i;
         }
         /// <summary>
-        /// 分页获取试题知识点
+        /// 分页获取试题
         /// </summary>
         /// <param name="orgid">机构id</param>
         /// <param name="couid">课程id</param>
@@ -733,7 +833,16 @@ namespace Song.ViewData.Methods
             return result;
         }
         /// <summary>
-        /// 获取试题知识点的下的试题数量
+        /// 获取试题关联的关键字
+        /// </summary>
+        /// <param name="quesid"></param>
+        /// <returns></returns>
+        public List<Song.Entities.QuesTags> TagForQues(long quesid)
+        {
+            return Business.Do<IExamQues>().TagForQues(quesid);
+        }
+        /// <summary>
+        /// 获取试题关键字的下的试题数量
         /// </summary>
         /// <param name="qtagid">试题标签的id</param>
         /// <param name="couid"></param>

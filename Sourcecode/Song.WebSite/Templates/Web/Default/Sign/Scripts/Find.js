@@ -77,7 +77,7 @@
             getvcode: function () {
                 var th = this;
                 th.acc.loading = true;
-                $api.post('Helper/CodeImg', { 'leng': 4, 'type': 5, 'acc': '' }).then(function (req) {
+                $api.post('Platform/CodeImg', { 'leng': 4, 'type': 5, 'acc': '' }).then(function (req) {
                     if (req.data.success) {
                         var result = req.data.result;
                         th.acc.base64 = result.base64;

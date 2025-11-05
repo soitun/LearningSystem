@@ -34,7 +34,7 @@ Vue.component('modify_main', {
                 { 'label': '反馈', 'name': 'wrong', 'show': true, 'icon': 'e61f', 'size': 18, 'color': '#E6A23C' },
             ],
             //当前选项卡
-            activeName: 'question',
+            activeName: 'base',
 
             loading: false,
             loading_ai: false,   //是否正在加载AI
@@ -88,7 +88,7 @@ Vue.component('modify_main', {
         }).catch(err => console.error(err))
             .finally(() => th.loading_init = false);
 
-       
+
         th.getEntity();
     },
     methods: {
@@ -108,6 +108,10 @@ Vue.component('modify_main', {
                     $api.get('Snowflake/Generate').then(function (req) {
                         if (req.data.success) {
                             th.question.Qus_ID = req.data.result;
+                            //初始化关联的关键字、分类、知识点
+                            th.$set(th.question, 'Tags', []);
+                            th.$set(th.question, 'Parts', []);
+                            th.$set(th.question, 'Knls', []);
                             resolve(th.question);
                         } else {
                             console.error(req.data.exception);
@@ -115,7 +119,7 @@ Vue.component('modify_main', {
                         }
                     }).catch((err) => reject(err));
                 } else {
-                    $api.put('Question/ForID', { 'id': th.id }).then(function (req) {
+                    $api.put('ExamQues/QuesForID', { 'id': th.id }).then(function (req) {
                         if (req.data.success) {
                             let result = req.data.result;
                             th.question = window.ques.parseAnswer(result);

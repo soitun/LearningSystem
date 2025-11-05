@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Song.ViewData
@@ -465,11 +466,21 @@ namespace Song.ViewData
                                         piValue = DateTime.MinValue;
                                         break;
                                     }
-                                    DateTime dt = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
-                                    if (val.IndexOf(".") > -1) val = val.Substring(0, val.IndexOf("."));
-                                    long lTime = long.Parse(val + "0000");
-                                    //piValue = lTime > 0 ? dt.Add(new TimeSpan(lTime)) : dt;
-                                    piValue = dt.Add(new TimeSpan(lTime));
+                                    //如果字符为 2023-01-07 16:20:08 的格式
+                                    string patternWithGroups = @"^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$";
+                                    Match match = Regex.Match(val, patternWithGroups);
+                                    if (match.Success)
+                                    {
+                                        piValue = DateTime.Parse(val);
+                                    }
+                                    else
+                                    {
+                                        DateTime dt = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+                                        if (val.IndexOf(".") > -1) val = val.Substring(0, val.IndexOf("."));
+                                        long lTime = long.Parse(val + "0000");
+                                        //piValue = lTime > 0 ? dt.Add(new TimeSpan(lTime)) : dt;
+                                        piValue = dt.Add(new TimeSpan(lTime));
+                                    }
                                     break;
                                 default:
                                     piValue = string.IsNullOrEmpty(val) ? null : WeiSha.Core.DataConvert.ChangeType(val.Trim(), opi.PropertyType);

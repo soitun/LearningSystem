@@ -183,6 +183,12 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         int PartQusTotal(int orgid, long qpid, int qtype, bool? isUse, bool children);
         /// <summary>
+        /// 试题所属的分类，由于是多对多关联，试题可能会属于多个分类
+        /// </summary>
+        /// <param name="quesid">试题id</param>
+        /// <returns></returns>
+        List<QuesPart> PartForQues(long quesid);
+        /// <summary>
         /// 分页获取
         /// </summary>
         /// <param name="orgid"></param>
@@ -380,6 +386,12 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         int KnlQusTotal(int orgid, long qkid, int qtype, bool? isUse, bool children);
         /// <summary>
+        /// 试题关联的知识点
+        /// </summary>
+        /// <param name="quesid">试题id</param>
+        /// <returns></returns>
+        List<QuesKnowledge> KnlForQues(long quesid);
+        /// <summary>
         /// 分页获取
         /// </summary>
         /// <param name="orgid"></param>
@@ -419,8 +431,9 @@ namespace Song.ServiceInterfaces
         /// 是否已经存在
         /// </summary>
         /// <param name="entity"></param>
+        /// <param name="oneself">是否包括自身</param>
         /// <returns></returns>
-        bool TagIsExist(QuesTags entity);
+        bool TagIsExist(QuesTags entity, bool oneself = false);
         /// <summary>
         /// 修改
         /// </summary>
@@ -446,6 +459,34 @@ namespace Song.ServiceInterfaces
         /// <param name="id">实体的主键</param>
         /// <returns></returns>
         QuesTags TagSingle(long id);
+        /// <summary>
+        /// 获取单一实体对象，按主键名称；
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="orgid"></param>
+        /// <param name="couid"></param>
+        /// <returns></returns>
+        QuesTags TagSingle(string name, int orgid, long couid);
+        /// <summary>
+        /// 创建关键字与试题的关联
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <param name="quesid"></param>
+        /// <param name="couid"></param>
+        /// <returns></returns>
+        int TagConnectionQues(string tag, long quesid, long couid);
+        /// <summary>
+        /// 创建关键字与试题的关联
+        /// </summary>
+        /// <param name="tagid"></param>
+        /// <param name="quesid"></param>
+        /// <param name="couid"></param>
+        /// <returns></returns>
+        int TagConnectionQues(long tagid, long quesid, long couid);
+        /// <summary>
+        /// 创建关键字与试题的关联
+        /// </summary>
+        int TagConnectionQues(QuesTags[] tags, long quesid, long couid);
         /// <summary>
         /// 获取试题标签
         /// </summary>
@@ -474,11 +515,18 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         List<Questions> TagQuestions(long qtagid, long couid, int qtype, bool? isuse, int count);
         /// <summary>
+        /// 某道试题的关键字
+        /// </summary>
+        /// <param name="quesid">试题id</param>
+        /// <returns></returns>
+        List<QuesTags> TagForQues(long quesid);
+        /// <summary>
         /// 获取试题标签的下的试题数量
         /// </summary>
         /// <param name="qtagid">试题标签id</param>
         /// <param name="couid"></param>
         /// <param name="qtype">题型</param>
+        /// <param name="isuse"></param>
         /// <returns></returns>
         int TagQusTotal(long qtagid, long couid, int qtype, bool? isuse);
         /// <summary>

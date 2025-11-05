@@ -475,6 +475,15 @@ namespace Song.ServiceImpls
             return section.Count();
         }
         /// <summary>
+        /// 试题所属的分类，由于是多对多关联，试题可能会属于多个分类
+        /// </summary>
+        /// <param name="quesid">试题id</param>
+        /// <returns></returns>
+        public List<QuesPart> PartForQues(long quesid)
+        {
+            return Gateway.Default.From<QuesPart>().LeftJoin<Questions_QPart>(Questions_QPart._.Qp_ID == QuesPart._.Qp_ID).Where(Questions_QPart._.Qus_ID == quesid).ToList<QuesPart>();
+        }
+        /// <summary>
         /// 分页获取
         /// </summary>
         /// <param name="orgid"></param>
@@ -997,6 +1006,15 @@ namespace Song.ServiceImpls
             return section.Count();
         }
         /// <summary>
+        /// 试题关联的知识点
+        /// </summary>
+        /// <param name="quesid">试题id</param>
+        /// <returns></returns>
+        public List<QuesKnowledge> KnlForQues(long quesid)
+        {
+            return Gateway.Default.From<QuesKnowledge>().LeftJoin<Questions_QKnl>(Questions_QKnl._.Qk_ID == QuesKnowledge._.Qk_ID).Where(Questions_QKnl._.Qus_ID == quesid).ToList<QuesKnowledge>();
+        }
+        /// <summary>
         /// 分页获取
         /// </summary>
         /// <param name="orgid"></param>
@@ -1056,8 +1074,7 @@ namespace Song.ServiceImpls
         /// <param name="entity"></param>
         /// <returns></returns>
         public int TagAdd(QuesTags entity)
-        {
-            if (this.TagIsExist(entity)) return 0;
+        {          
             entity.Qtag_CrtTime = DateTime.Now;
             if (entity.Org_ID <= 0)
             {
@@ -1073,7 +1090,7 @@ namespace Song.ServiceImpls
                 entity.Qtag_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
             return Gateway.Default.Save<QuesTags>(entity);
-        }
+        }       
         /// <summary>
         /// 是否已经存在
         /// </summary>
@@ -1097,8 +1114,22 @@ namespace Song.ServiceImpls
         {
             WhereClip wc = new WhereClip();
             if (entity.Org_ID > 0) wc &= QuesTags._.Org_ID == entity.Org_ID;
-            if (entity.Cou_ID >= 0) wc &= QuesTags._.Cou_ID == entity.Cou_ID;
+            if (entity.Cou_ID > 0) wc &= QuesTags._.Cou_ID == entity.Cou_ID;
             if (entity.Qtag_ID > 0) wc &= QuesTags._.Qtag_ID != entity.Qtag_ID;
+            return Gateway.Default.From<QuesTags>().Where(wc && QuesTags._.Qtag_Name == entity.Qtag_Name.Trim()).Count() > 0;
+        }
+        /// <summary>
+        /// 是否已经存在
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="oneself">是否包括自身</param>
+        /// <returns></returns>
+        public bool TagIsExist(QuesTags entity, bool oneself = false)
+        {
+            WhereClip wc = new WhereClip();
+            if (entity.Org_ID > 0) wc &= QuesTags._.Org_ID == entity.Org_ID;
+            if (entity.Cou_ID > 0) wc &= QuesTags._.Cou_ID == entity.Cou_ID;
+            if (!oneself && entity.Qtag_ID > 0) wc &= QuesTags._.Qtag_ID != entity.Qtag_ID;
             return Gateway.Default.From<QuesTags>().Where(wc && QuesTags._.Qtag_Name == entity.Qtag_Name.Trim()).Count() > 0;
         }
         /// <summary>
@@ -1155,6 +1186,79 @@ namespace Song.ServiceImpls
             return Gateway.Default.From<QuesTags>().Where(QuesTags._.Qtag_ID == id).ToFirst<QuesTags>();
         }
         /// <summary>
+        /// 获取单一实体对象，按主键名称；
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="orgid"></param>
+        /// <returns></returns>
+        public QuesTags TagSingle(string name, int orgid, long couid)
+        {
+            WhereClip wc = new WhereClip();
+            if (orgid > 0) wc.And(QuesTags._.Org_ID == orgid);
+            if (couid > 0) wc.And(QuesTags._.Cou_ID == couid);
+            wc.And(QuesTags._.Qtag_Name == name);
+            return Gateway.Default.From<QuesTags>().Where(wc).ToFirst<QuesTags>();
+        }
+        /// <summary>
+        /// 创建关键字与试题的关联
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <param name="quesid"></param>
+        /// <param name="couid"></param>
+        /// <returns></returns>
+        public int TagConnectionQues(string tag, long quesid, long couid)
+        {
+            Questions ques = Gateway.Default.From<Questions>().Where(Questions._.Qus_ID == quesid).ToFirst<Questions>();
+            if (quesid <= 0) return 0;
+            QuesTags qtag = this.TagSingle(tag, ques.Org_ID, couid > 0 ? couid : ques.Cou_ID);
+            if (qtag == null)
+            {
+                qtag = new QuesTags()
+                {
+                    Qtag_Name = tag,
+                    Qtag_Weight = 0,
+                    Org_ID = ques.Org_ID,
+                };
+                this.TagAdd(qtag);
+            }
+            return this.TagConnectionQues(qtag.Qtag_ID, quesid, couid);
+        }
+        /// <summary>
+        /// 创建关键字与试题的关联
+        /// </summary>
+        /// <param name="tagid"></param>
+        /// <param name="quesid"></param>
+        /// <param name="couid"></param>
+        /// <returns></returns>
+        public int TagConnectionQues(long tagid, long quesid, long couid)
+        {
+            WhereClip wc = Questions_QTags._.Qus_ID == quesid && Questions_QTags._.Qtag_ID == tagid;
+            Questions_QTags qqtag = Gateway.Default.From<Questions_QTags>().Where(wc).ToFirst<Questions_QTags>();
+            if (qqtag != null) return 0;
+            qqtag = new Questions_QTags()
+            {
+                Qus_ID = quesid,
+                Qtag_ID = tagid
+            };
+            return Gateway.Default.Save<Questions_QTags>(qqtag);
+        }
+        /// <summary>
+        /// 创建关键字与试题的关联
+        /// </summary>
+        public int TagConnectionQues(QuesTags[] tags, long quesid, long couid)
+        {
+            Questions ques = Gateway.Default.From<Questions>().Where(Questions._.Qus_ID == quesid).ToFirst<Questions>();
+            if (quesid <= 0) return 0;
+            Gateway.Default.Delete<Questions_QTags>(Questions_QTags._.Qus_ID == quesid);
+            int i = 0;
+            foreach (QuesTags tag in tags)
+            {
+                if (!this.TagIsExist(tag, true)) this.TagAdd(tag);
+                i += this.TagConnectionQues(tag.Qtag_ID, quesid, couid);
+            }
+            return i;
+        }
+        /// <summary>
         /// 获取试题标签
         /// </summary>
         /// <param name="orgid">机构ID</param>
@@ -1208,6 +1312,16 @@ namespace Song.ServiceImpls
 
             QuerySection<Questions> section = Gateway.Default.From<Questions>().LeftJoin<Questions_QTags>(Questions_QTags._.Qus_ID == Questions._.Qus_ID).Where(wc);
             return section.ToList<Questions>(count);
+        }
+        /// <summary>
+        /// 某道试题的关键字
+        /// </summary>
+        /// <param name="quesid">试题id</param>
+        /// <returns></returns>
+        public List<QuesTags> TagForQues(long quesid)
+        {
+            return Gateway.Default.From<QuesTags>().LeftJoin<Questions_QTags>(Questions_QTags._.Qtag_ID == QuesTags._.Qtag_ID)
+                .Where(Questions_QTags._.Qus_ID == quesid).ToList<QuesTags>();
         }
         /// <summary>
         /// 获取试题标签的下的试题数量

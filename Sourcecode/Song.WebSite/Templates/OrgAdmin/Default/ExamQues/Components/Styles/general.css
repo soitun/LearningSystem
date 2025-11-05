@@ -25,3 +25,23 @@
 .el-rate {
 	margin-top: 6px;
 }
+
+.taglist .el-form-item__content {
+	display: flex;
+}
+
+/*关键字*/
+.taglist .el-form-item__content>* {
+	margin: 3px 8px 0px 0px;
+}
+
+.taglist .button-new-tag {
+	margin-left: 10px;
+	height: 30px;
+	line-height: 30px;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+.taglist  .el-tag--medium{
+	height: 30px;
+}

@@ -188,6 +188,7 @@
     <Compile Include="Helper\AreaCode.cs" />
     <Compile Include="Helper\Browser.cs" />
     <Compile Include="Helper\Cache.cs" />
+    <Compile Include="Helper\Question.cs" />
     <Compile Include="Helper\StringTo.cs" />
     <Compile Include="Helper\ConvertToAnyValue.cs" />
     <Compile Include="Helper\DatabaseLog.cs" />
@@ -253,7 +254,7 @@
     <Compile Include="Methods\Subject.cs" />
     <Compile Include="Methods\Message.cs" />
     <Compile Include="Methods\Teacher.cs" />
-    <Compile Include="Methods\Helper.cs" />
+    <Compile Include="Methods\APIHelper.cs" />
     <Compile Include="Methods\Student.cs" />
     <Compile Include="Methods\Upload.cs" />
     <Compile Include="Pay\Weixin\business\DownloadBill.cs" />

@@ -85,7 +85,7 @@ window.$loyout = function (platinfo, org) {
 
     });
     window.login.ondragfinish(function (s, e) {
-        $api.post('Helper/CheckCodeImg', { 'leng': s.vcodelen, 'acc': s.user }).then(function (req) {
+        $api.post('Platform/CheckCodeImg', { 'leng': s.vcodelen, 'acc': s.user }).then(function (req) {
             if (req.data.success) {
                 let result = req.data.result;
                 s.vcodebase64 = result.base64;
