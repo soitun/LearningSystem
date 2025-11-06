@@ -107,10 +107,7 @@
                     </div>
                 </div>
                 <div class="datarow-footer">
-                    <span>
-                        <el-tag type="warning">标签，试题的标签</el-tag>
-                        <el-tag type="warning">试题的标签2</el-tag>
-                    </span>
+                    <tags :ques="ques"></tags>                       
                     <ques_collect :ques="ques" :accid="admin.Acc_Id"></ques_collect>
                 </div>
             </div>

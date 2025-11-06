@@ -121,6 +121,7 @@ div.datarow {
     height: 20px;
     padding: 0 8px;
     line-height: 18px;
+    margin-right: 8px;
 }
 .ques_collect icon{ 
     font-size: 1rem;
