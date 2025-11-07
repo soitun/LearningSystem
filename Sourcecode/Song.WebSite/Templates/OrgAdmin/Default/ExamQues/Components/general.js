@@ -161,7 +161,7 @@ Vue.component('general', {
                   :fetch-suggestions="tagquery"  placeholder="请输入内容"  @select="tagselect"
                   @keyup.enter.native="tagedit" @blur="tagedit">
                     <template slot-scope="{ item }">
-                        <div class="name">{{ item.Qtag_Name }}</div>                       
+                        <div class="name" v-html="showsearch(item.Qtag_Name,taginput)"></div>                       
                     </template>
                 </el-autocomplete>               
             </el-form-item>   
