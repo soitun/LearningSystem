@@ -11,26 +11,11 @@ Vue.component('general', {
             callback(new Error("不得为空"));
         };
         return {
-            //表单验证规则
-            generalrules: {
-                "taginput": [{ required: true, message: '不得为空', trigger: 'blur' },
-                {
-                    validator: function (rule, value, callback) {
-                        var pat = /^[\u4e00-\u9fa5a-zA-Z0-9\s]*$/;
-                        if (!pat.test(value))
-                            callback(new Error('只允许字母、数字、汉字!'));
-                        else callback();
-                    }, trigger: 'blur'
-                },
-                { validator: validate.name.proh, trigger: 'change' },   //禁止使用特殊字符
-                { validator: validate.name.danger, trigger: 'change' }
-                ]
-            },
             //标签输入框
             taginput: '',
             tagShowInput: false,
 
-            tagmax: 3,       //最多可输入的标签数量
+            tagmax: 6,       //最多可输入的标签数量
 
             loading: false
         }
@@ -55,7 +40,7 @@ Vue.component('general', {
             handler: function (nv, ov) {
                 //if (nv) this.getCourses();
             }, immediate: true
-        },        
+        },
     },
     computed: {
         //试题关键字列表
@@ -92,6 +77,7 @@ Vue.component('general', {
         },
         //编辑标签
         tagedit: function () {
+            if (this.taginput == null || this.taginput.length < 1) return;
             let str = this.taginput.replace(/，/g, ",");
             str = str.replace(/\s/g, ",");
             str = str.replace(/,+/g, ",");
@@ -134,13 +120,30 @@ Vue.component('general', {
                 }).catch(err => console.error(err))
                 .finally(() => { });
         },
-        //移除关键字
-        tagremove: function (idx) {
-            this.taglist.splice(idx, 1);
+        //查询关键字
+        tagquery: function (search, cb) {
+            var th = this;
+            $api.get("ExamQues/TagPager", { "orgid": th.question.Org_ID, "couid": 0, "isdeleted": false, "name": search, "size": 10, "index": 1 })
+                .then(req => {
+                    if (req.data.success) {
+                        let result = req.data.result;
+                        cb(result);
+                    } else {
+                        console.error(req.data.exception);
+                        throw req.config.way + ' ' + req.data.message;
+                    }
+                }).catch(err => console.error(err))
+                .finally(() => { });
+        },
+        tagselect: function (item) {
+            if (!this.taglist.some(tag => tag.Qtag_Name == item.Qtag_Name))
+                this.taglist.push(item);
+            this.taginput = item.Qtag_Name;
+            this.tagedit();
         }
     },
     template: `<div class="general">
-        <el-form ref="question" :model="question" :rule="generalrules" @submit.native.prevent label-width="80px">    
+        <el-form ref="question" :model="question" @submit.native.prevent label-width="80px">    
             <el-form-item label="难度" prop="Qus_Diff">
                 <el-rate title="点击难度值" v-model="question.Qus_Diff" :max="5" show-score></el-rate>
             </el-form-item>
@@ -152,10 +155,15 @@ Vue.component('general', {
                 <el-switch  v-model="question.Qus_IsUse"  active-text="启用"  inactive-text="禁用"></el-switch>
             </el-form-item>         
             <el-form-item label="关键字" prop="taginput" class="taglist">               
-                <el-tag size="medium" v-for="(tag,idx) in taglist" closable @close="tagremove(idx)"> {{tag.Qtag_Name}}</el-tag>
+                <el-tag size="medium" v-for="(tag,idx) in taglist" closable @close="taglist.splice(idx, 1)"> {{tag.Qtag_Name}}</el-tag>
                 <el-button v-if="!tagShowInput" class="button-new-tag" size="small" @click="showTagInput">+ 新增关键字</el-button>
-                <el-input class="input-new-tag" clearable v-else v-model="taginput" ref="taginput" @keyup.enter.native="tagedit" @blur="tagedit">
-                </el-input>
+                <el-autocomplete class="input-new-tag" clearable v-else v-model="taginput" ref="taginput"
+                  :fetch-suggestions="tagquery"  placeholder="请输入内容"  @select="tagselect"
+                  @keyup.enter.native="tagedit" @blur="tagedit">
+                    <template slot-scope="{ item }">
+                        <div class="name">{{ item.Qtag_Name }}</div>                       
+                    </template>
+                </el-autocomplete>               
             </el-form-item>   
         </el-form>
     </div> `
