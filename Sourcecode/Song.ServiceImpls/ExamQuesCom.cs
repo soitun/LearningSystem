@@ -74,6 +74,7 @@ namespace Song.ServiceImpls
         /// 获取试题
         /// </summary>
         /// <param name="orgid">机构id</param>
+        /// <param name="isdeleted"></param>
         /// <param name="qpid">试题分类id</param>
         /// <param name="tagid">标签id</param>
         /// <param name="knlid">知识点</param>
@@ -83,12 +84,12 @@ namespace Song.ServiceImpls
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        public List<Questions> QuesPager(int orgid, bool? isdeleted, long[] qpid, long[] tagid, long[] knlid, int[] type, int[] diff, int size, int index, out int countSum)
+        public List<Questions> QuesPager(int orgid, string search, bool? isdeleted, long[] qpid, long[] tagid, long[] knlid, int[] type, int[] diff, int size, int index, out int countSum)
         {
             WhereClip wc = Questions._.Qus_Purpose == 1;    //用于考试的试题
             if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
             if(isdeleted != null)wc.And(Questions._.Qus_IsDeleted == isdeleted);
-
+            if(!string.IsNullOrWhiteSpace(search))wc.And(Questions._.Qus_Title.Contains(search));
             countSum = Gateway.Default.Count<Questions>(wc);
             return Gateway.Default.From<Questions>().Where(wc).OrderBy(Questions._.Qus_ID.Desc).ToList<Questions>(size, (index - 1) * size);
         }
@@ -352,7 +353,7 @@ namespace Song.ServiceImpls
         public List<QuesPart> PartCount(int orgid, string sear, bool? isUse, bool? isdeleted, long pid, int count)
         {
             WhereClip wc = new WhereClip();
-            if (orgid >= 0) wc.And(QuesPart._.Org_ID == orgid);
+            if (orgid > 0) wc.And(QuesPart._.Org_ID == orgid);
             if (isUse != null) wc.And(QuesPart._.Qp_IsUse == (bool)isUse);
             if (isdeleted != null) wc.And(QuesPart._.Qp_IsDeleted == (bool)isdeleted);
             if (!string.IsNullOrWhiteSpace(sear)) wc.And(QuesPart._.Qp_Name.Contains(sear));

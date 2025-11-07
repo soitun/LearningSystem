@@ -3,19 +3,13 @@ $dom.load.css([$dom.pagepath() + 'Components/Styles/general.css']);
 Vue.component('general', {
     props: ["question", "org"],
     data: function () {
-        //config的字段是否为空
-        let isrequired = function (rule, value, callback) {
-            var field = rule.field;
-            if (!!vapp.config[field] && vapp.config[field] != '')
-                return callback();
-            callback(new Error("不得为空"));
-        };
         return {
             //标签输入框
             taginput: '',
             tagShowInput: false,
-
             tagmax: 6,       //最多可输入的标签数量
+
+            parts:[],       //试题分类
 
             loading: false
         }
@@ -135,12 +129,15 @@ Vue.component('general', {
                 }).catch(err => console.error(err))
                 .finally(() => { });
         },
+        //选择下拉的关键字时
         tagselect: function (item) {
             if (!this.taglist.some(tag => tag.Qtag_Name == item.Qtag_Name))
                 this.taglist.push(item);
             this.taginput = item.Qtag_Name;
             this.tagedit();
-        }
+        },
+        /** 试题类分 */
+
     },
     template: `<div class="general">
         <el-form ref="question" :model="question" @submit.native.prevent label-width="80px">    
@@ -165,6 +162,10 @@ Vue.component('general', {
                     </template>
                 </el-autocomplete>               
             </el-form-item>   
+            <el-form-item label="分类" prop="parts">
+                <el-tree :props="{label: 'name',children: 'zones'}" :data="parts">
+                </el-tree>
+            </el-form-item>    
         </el-form>
     </div> `
 });

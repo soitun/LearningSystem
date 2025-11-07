@@ -45,7 +45,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        List<Questions> QuesPager(int orgid, bool? isdeleted, long[] qpid, long[] tagid, long[] knlid, int[] type, int[] diff, int size, int index, out int countSum);
+        List<Questions> QuesPager(int orgid, string search, bool? isdeleted, long[] qpid, long[] tagid, long[] knlid, int[] type, int[] diff, int size, int index, out int countSum);
         #endregion
 
         #region  ‘Ã‚∑÷¿‡

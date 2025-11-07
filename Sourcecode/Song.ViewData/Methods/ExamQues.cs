@@ -139,6 +139,7 @@ namespace Song.ViewData.Methods
         /// 获取题库列表
         /// </summary>
         /// <param name="orgid">机构id</param>
+        /// <param name="search"></param>
         /// <param name="isdeleted">是否删除</param>
         /// <param name="qpid">试题分类</param>
         /// <param name="tagid">标签</param>
@@ -148,10 +149,10 @@ namespace Song.ViewData.Methods
         /// <param name="index"></param>
         /// <param name="size"></param>
         /// <returns></returns>
-        public ListResult QuesPager(int orgid, bool? isdeleted, string qpid, string tagid, string knlid, string type, string diff, int size, int index)
+        public ListResult QuesPager(int orgid, string search, bool? isdeleted, string qpid, string tagid, string knlid, string type, string diff, int size, int index)
         {
             int sum;
-            List<Questions> list = Business.Do<IExamQues>().QuesPager(orgid, isdeleted,
+            List<Questions> list = Business.Do<IExamQues>().QuesPager(orgid, search, isdeleted,
                 Help.StringTo.Array<long>(qpid),
                 Help.StringTo.Array<long>(tagid),
                 Help.StringTo.Array<long>(knlid),
@@ -374,6 +375,25 @@ namespace Song.ViewData.Methods
             result.Size = size;
             result.Total = count;
             return result;
+        }
+        /// <summary>
+        /// 获取指定数量的试题分类
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="sear">按名称搜索</param>
+        /// <param name="isuse">是否启用</param>
+        /// <param name="isdeleted">是否删除</param>
+        /// <param name="pid">上级节点的ID</param>
+        /// <param name="count">返回指定数量</param>
+        /// <returns></returns>
+        public List<QuesPart> PartCount(int orgid, string sear, bool? isuse, bool? isdeleted, long pid, int count)
+        {
+            if (orgid <= 0)
+            {
+                Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
+                orgid = org.Org_ID;
+            }
+            return Business.Do<IExamQues>().PartCount(orgid, sear, isuse, isdeleted, pid, count);
         }
         /// <summary>
         /// 某个机构下的专业，用于前端展示，被禁用的专业不显示

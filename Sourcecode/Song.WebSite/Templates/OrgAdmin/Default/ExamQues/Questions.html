@@ -15,7 +15,7 @@
             <query_panel :model="form" :width="45" :loading="loading" @search="handleCurrentChange(1)">
                 <template>
                     <el-form-item label="题干">
-                        <el-input v-model.trim="form.search" clearable style="width:245px" placeholder="搜索"></el-input>
+                        <el-input v-model.trim="form.search" clearable style="width:245px" placeholder="搜索题干"></el-input>
                     </el-form-item>
                 </template>
                 <template slot="more">

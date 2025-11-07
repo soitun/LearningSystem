@@ -10,7 +10,7 @@ $ready([
             types: [],        //试题类型，来自web.config中配置项
             admin: {},          //当前登录用户
             //试题的查询条件
-            form: { "orgid": -1, "isdeleted": false, "qpid": "", "tagid": "", "knlid": "", "type": "", "diff": "", "size": 10, "index": 1 },
+            form: { "orgid": -1, "search": "", "isdeleted": false, "qpid": "", "tagid": "", "knlid": "", "type": "", "diff": "", "size": 10, "index": 1 },
             datas: [],
             total: 1, //总记录数
             totalpages: 1, //总页数
@@ -203,9 +203,9 @@ $ready([
                     }
                 },
                 watch: {
-                    ques: {
+                    "ques.Qus_ID": {
                         handler: function (val) {
-                            if (val != null) this.gettags();
+                            this.gettags();
                         }, immediate: true,
                     }
                 },
@@ -213,7 +213,7 @@ $ready([
                     //获取关键字
                     gettags: function () {
                         var th = this;
-                        if (th.loading || th.taglist != null) return;
+                        if (th.loading) return;
                         th.loading = true;
                         $api.get("ExamQues/TagForQues", { "quesid": th.ques.Qus_ID })
                             .then(req => {
