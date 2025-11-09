@@ -10,7 +10,10 @@ $ready([
             types: [],        //试题类型，来自web.config中配置项
             admin: {},          //当前登录用户
             //试题的查询条件
-            form: { "orgid": -1, "search": "", "isdeleted": false, "qpid": "", "tagid": "", "knlid": "", "type": "", "diff": "", "size": 10, "index": 1 },
+            form: {
+                "orgid": -1, "search": "", "isdeleted": false, "qpid": "", "tagid": "", "knlid": "", "type": "", "diff": "",
+                "size": 10, "index": 1
+            },
             datas: [],
             total: 1, //总记录数
             totalpages: 1, //总页数
@@ -188,6 +191,28 @@ $ready([
                 var title = btn.tips;
                 this.$refs.btngroup.pagebox('Import', title, null, 900, 650);
             },
+            //刷新行数据，
+            freshrow: function (id) {
+                if (id == null || id == '') return this.handleCurrentChange();
+                if (this.datas.length < 1) return;
+                //要刷新的行数据
+                let entity = this.datas.find(item => item.Qus_ID == id);
+                if (entity == null) return;
+                //获取最新数据，刷新
+                var th = this;
+                th.loadingid = id;
+                $api.get('Question/ForID', { 'id': id }).then(function (req) {
+                    if (req.data.success) {
+                        var result = req.data.result;
+                        result.Qus_Title = result.Qus_Title.replace(/(<([^>]+)>)/ig, "");
+                        let index = th.datas.findIndex(item => item.Qus_ID == id);
+                        if (index >= 0) th.$set(th.datas, index, result);
+                    } else {
+                        throw req.data.message;
+                    }
+                }).catch(err => console.error(err))
+                    .finally(() => th.loadingid = 0);
+            },
         },
         filters: {
 
@@ -203,7 +228,7 @@ $ready([
                     }
                 },
                 watch: {
-                    "ques.Qus_ID": {
+                    "ques": {
                         handler: function (val) {
                             this.gettags();
                         }, immediate: true,
@@ -238,7 +263,7 @@ $ready([
             </div>`
             },
             //试题的分类
-             'parts': {
+            'parts': {
                 props: ['ques'],
                 data: function () {
                     return {
@@ -247,7 +272,7 @@ $ready([
                     }
                 },
                 watch: {
-                    "ques.Qus_ID": {
+                    "ques": {
                         handler: function (val) {
                             this.getparts();
                         }, immediate: true,
