@@ -915,7 +915,7 @@ namespace Song.ServiceImpls
         public List<QuesKnowledge> KnlCount(int orgid, string sear, bool? isUse, bool? isdeleted, long pid, int count)
         {
             WhereClip wc = new WhereClip();
-            if (orgid >= 0) wc.And(QuesKnowledge._.Org_ID == orgid);
+            if (orgid > 0) wc.And(QuesKnowledge._.Org_ID == orgid);
             if (isUse != null) wc.And(QuesKnowledge._.Qk_IsUse == (bool)isUse);
             if (isdeleted != null) wc.And(QuesKnowledge._.Qk_IsDeleted == (bool)isdeleted);
             if (!string.IsNullOrWhiteSpace(sear)) wc.And(QuesKnowledge._.Qk_Name.Contains(sear));
