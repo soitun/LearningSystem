@@ -15,6 +15,8 @@
 	margin: 0px;
 	padding: 10px;
 	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
 }
 
 .tree-area .el-form-item__content {
@@ -31,17 +33,55 @@
 }
 
 /*关键字*/
-.taglist .el-form-item__content>* {
-	margin: 3px 8px 0px 0px;
+.taglist .el-form-item__content>.el-tag {
+	margin: 0px 8px 0px 0px;
 }
 
 .taglist .button-new-tag {
-	margin-left: 10px;
 	height: 30px;
 	line-height: 30px;
 	padding-top: 0;
 	padding-bottom: 0;
 }
-.taglist  .el-tag--medium{
+
+.taglist .el-tag--medium {
 	height: 30px;
+}
+
+/*试题分类*/
+.parts-area {
+	flex: 1;
+	margin-bottom: 0px !important;
+}
+
+.parts-area .el-form-item__content {
+	height: 100%;
+	display: flex;
+	overflow: hidden;
+}
+
+.parts-area .el-form-item__content>* {
+	flex: 1;
+}
+
+.parts-area .el-form-item__content .tree-area {
+	margin-right: 15px;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.parts-area .el-form-item__content .title {
+	margin-bottom: 10px;
+}
+
+.parts-area .el-form-item__content .parttree,
+.parts-area .el-form-item__content .part_list {
+	overflow-y: auto;
+	height: calc(100% - 45px);
+}
+.part_list .el-tag {
+	margin-bottom: 5px;
+	margin-right: 5px;
+	width: auto;
 }

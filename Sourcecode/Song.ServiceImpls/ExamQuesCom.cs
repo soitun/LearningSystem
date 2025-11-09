@@ -535,6 +535,37 @@ namespace Song.ServiceImpls
                 }
             }
         }
+        /// <summary>
+        /// 创建试题分类与试题的关联
+        /// </summary>
+        /// <param name="qpid"></param>
+        /// <param name="qusid"></param> 
+        /// <returns></returns>
+        public int PartConnectionQues(long qpid, long qusid)
+        {
+            if (qpid <= 0 || qusid <= 0) return 0;
+            WhereClip wc = Questions_QPart._.Qus_ID == qusid && Questions_QPart._.Qp_ID == qpid;
+            Questions_QPart qqpart = Gateway.Default.From<Questions_QPart>().Where(wc).ToFirst<Questions_QPart>();
+            if (qqpart != null) return 0;
+            qqpart = new Questions_QPart()
+            {
+                Qus_ID = qusid,
+                Qp_ID = qpid
+            };
+            return Gateway.Default.Save<Questions_QPart>(qqpart);
+        }
+        /// <summary>
+        /// 创建试题分类与试题的关联
+        /// </summary>
+        public int PartConnectionQues(QuesPart[] parts, long qusid)
+        {
+            if (qusid <= 0) return 0;         
+            Gateway.Default.Delete<Questions_QPart>(Questions_QPart._.Qus_ID == qusid);
+            int i = 0;
+            foreach (QuesPart p in parts)                        
+                i += this.PartConnectionQues(p.Qp_ID, qusid);
+            return i;
+        }
         #endregion
 
         #region 收藏
@@ -1066,6 +1097,36 @@ namespace Song.ServiceImpls
                 }
             }
         }
+        /// <summary>
+        /// 创建知识点与试题的关联
+        /// </summary>
+        /// <param name="qkid"></param>
+        /// <param name="qusid"></param>
+        /// <returns></returns>
+        public int KnlConnectionQues(long qkid, long qusid)
+        {
+            WhereClip wc = Questions_QKnl._.Qus_ID == qusid && Questions_QKnl._.Qk_ID == qkid;
+            Questions_QKnl qqknl = Gateway.Default.From<Questions_QKnl>().Where(wc).ToFirst<Questions_QKnl>();
+            if (qqknl != null) return 0;
+            qqknl = new Questions_QKnl()
+            {
+                Qus_ID = qusid,
+                Qk_ID = qkid
+            };
+            return Gateway.Default.Save<Questions_QKnl>(qqknl);
+        }
+        /// <summary>
+        /// 创建知识点与试题的关联
+        /// </summary>
+        public int KnlConnectionQues(QuesKnowledge[] knls, long qusid)
+        {
+            if (qusid <= 0) return 0;
+            Gateway.Default.Delete<Questions_QKnl>(Questions_QKnl._.Qus_ID == qusid);
+            int i = 0;
+            foreach (QuesKnowledge p in knls)
+                i += this.PartConnectionQues(p.Qk_ID, qusid);
+            return i;
+        }
         #endregion
 
         #region 关键字
@@ -1248,8 +1309,8 @@ namespace Song.ServiceImpls
         /// </summary>
         public int TagConnectionQues(QuesTags[] tags, long quesid, long couid)
         {
-            Questions ques = Gateway.Default.From<Questions>().Where(Questions._.Qus_ID == quesid).ToFirst<Questions>();
             if (quesid <= 0) return 0;
+            Questions ques = Gateway.Default.From<Questions>().Where(Questions._.Qus_ID == quesid).ToFirst<Questions>();            
             Gateway.Default.Delete<Questions_QTags>(Questions_QTags._.Qus_ID == quesid);
             int i = 0;
             foreach (QuesTags tag in tags)

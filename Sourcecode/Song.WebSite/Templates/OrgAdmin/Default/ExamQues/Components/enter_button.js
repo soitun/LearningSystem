@@ -70,7 +70,10 @@ Vue.component('enter_button', {
             th.loading = true;
             if (th.isadd) th.question.Org_ID = th.org.Org_ID;
             let apipath = th.isadd ? api = 'ExamQues/Quesadd' : 'ExamQues/QuesModify';
-            $api.post(apipath, { 'entity': th.question,'tags':th.question.Tags }).then(function (req) {
+            $api.post(apipath, {
+                'entity': th.question,
+                'parts': th.question.Parts, "tags": th.question.Tags, "knls": th.question.Knls
+            }).then(function (req) {
                 if (req.data.success) {
                     var result = req.data.result;
                     th.$message({
@@ -81,7 +84,7 @@ Vue.component('enter_button', {
                     th.operateSuccess(isclose);
                 } else {
                     console.error(req.data);
-                    throw req.data.message;                    
+                    throw req.data.message;
                 }
             }).catch(err => alert(err, '错误'))
                 .finally(() => th.loading = false);

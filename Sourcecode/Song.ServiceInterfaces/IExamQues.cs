@@ -207,6 +207,17 @@ namespace Song.ServiceInterfaces
         /// <param name="list">试题分类列表，对象中只有Qp_ID、Qp_PID、Qp_Order</param>
         /// <returns></returns>
         bool PartUpdateTaxis(QuesPart[] list);
+        /// <summary>
+        /// 创建试题分类与试题的关联
+        /// </summary>
+        /// <param name="qpid"></param>
+        /// <param name="qusid"></param> 
+        /// <returns></returns>
+        int PartConnectionQues(long qpid, long qusid);
+        /// <summary>
+        /// 创建试题分类与试题的关联
+        /// </summary>
+        int PartConnectionQues(QuesPart[] parts, long qusid);
         #endregion
 
         #region 收藏
@@ -410,6 +421,17 @@ namespace Song.ServiceInterfaces
         /// <param name="list">试题知识点列表，对象中只有Qp_ID、Qp_PID、Qp_Order</param>
         /// <returns></returns>
         bool KnlUpdateTaxis(QuesKnowledge[] list);
+        /// <summary>
+        /// 创建知识点与试题的关联
+        /// </summary>
+        /// <param name="qkid"></param>
+        /// <param name="qusid"></param>
+        /// <returns></returns>
+        int KnlConnectionQues(long qkid, long qusid);
+        /// <summary>
+        /// 创建知识点与试题的关联
+        /// </summary>
+        int KnlConnectionQues(QuesKnowledge[] knls, long qusid);
         #endregion
 
         #region 关键字

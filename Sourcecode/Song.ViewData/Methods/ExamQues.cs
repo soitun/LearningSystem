@@ -65,12 +65,14 @@ namespace Song.ViewData.Methods
         /// 修改试题
         /// </summary>
         /// <param name="entity">修改试题</param>
-        /// <param name="tags"></param>
+        /// <param name="tags">试题关键字</param>
+        /// <param name="parts">试题分类</param>
+        /// <param name="knls">知识点</param>
         /// <returns></returns>
         [Admin, Teacher]
         [HttpPost]
         [HtmlClear(Not = "entity")]
-        public bool QuesModify(Questions entity, QuesTags[] tags)
+        public bool QuesModify(Questions entity, QuesPart[] parts, QuesTags[] tags, QuesKnowledge[] knls)
         {
             Song.Entities.Questions old = Business.Do<IQuestions>().QuesSingle(entity.Qus_ID);
             if (old == null) throw new Exception("Not found entity for Questions！");
@@ -86,6 +88,10 @@ namespace Song.ViewData.Methods
             Business.Do<IQuestions>().QuesSave(old);
             //保存关键字的关联
             Business.Do<IExamQues>().TagConnectionQues(tags, entity.Qus_ID, 0);
+            //保存分类的关联
+            Business.Do<IExamQues>().PartConnectionQues(parts, entity.Qus_ID);
+            //保存知识点的关联
+            Business.Do<IExamQues>().KnlConnectionQues(knls, entity.Qus_ID);
             return true;
         }
         /// <summary>
@@ -255,10 +261,7 @@ namespace Song.ViewData.Methods
         /// <param name="id">试题分类id</param>
         /// <returns></returns>
         [Cache(AdminDisable = true)]
-        public Song.Entities.QuesPart PartForID(long id)
-        {
-            return Business.Do<IExamQues>().PartSingle(id);  
-        }
+        public Song.Entities.QuesPart PartForID(long id) => Business.Do<IExamQues>().PartSingle(id);
         /// <summary>
         /// 当前试题分类的上级父级
         /// </summary>
@@ -396,10 +399,10 @@ namespace Song.ViewData.Methods
             return Business.Do<IExamQues>().PartCount(orgid, sear, isuse, isdeleted, pid, count);
         }
         /// <summary>
-        /// 某个机构下的专业，用于前端展示，被禁用的专业不显示
+        /// 试题分类，用于前端展示，被禁用的专业不显示
         /// </summary>
         /// <param name="orgid">机构id</param>
-        /// <returns>专业列表</returns>
+        /// <returns>树形数据，子节点为 children</returns>
         [Cache]
         public JArray PartTreeFront(int orgid)
         {
@@ -407,12 +410,12 @@ namespace Song.ViewData.Methods
             return sbjs.Count > 0 ? _partsNode(null, sbjs) : null;
         }
         /// <summary>
-        /// 机构下的专业，树形数据
+        /// 试题分类，树形结构，不包括被逻辑删除的
         /// </summary>
         /// <param name="orgid">机构id</param>
         /// <param name="search">按名称检索</param>
         /// <param name="isuse">是否启用</param>
-        /// <returns></returns>
+        /// <returns>树形数据，子节点为 children</returns>
         public JArray PartTree(int orgid, string search, bool? isuse)
         {
             List<Song.Entities.QuesPart> sbjs = Business.Do<IExamQues>().PartCount(orgid, search, isuse, false, -1, -1);
@@ -478,6 +481,13 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public int PartQusTotal(int orgid, long qpid, int qtype, bool? isUse, bool children)
             => Business.Do<IExamQues>().PartQusTotal(orgid, qpid, qtype, isUse, children);
+
+        /// <summary>
+        /// 试题所属的分类
+        /// </summary>
+        /// <param name="qusid">试题id</param>
+        /// <returns></returns>
+        public List<QuesPart> PartForQues(long qusid) => Business.Do<IExamQues>().PartForQues(qusid);
         #endregion
 
         #region 试题知识点
