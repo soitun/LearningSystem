@@ -35,11 +35,21 @@ div.datarow {
     padding: 8px 10px 8px 0px;
     box-sizing: border-box;
     height: 30px;
-
+}
+.datarow-title .parts{
+    margin-top: -3px;
+    flex: 1;
+    height: 20px;
+    overflow: hidden;
+}
+.datarow-title .parts .el-tag--small {
+    height: 20px;
+    padding: 0 8px;
+    line-height: 18px;
+    margin-right: 6px;
 
 }
-
-.datarow-title>*:not(:last-child), .datarow-title>*:not(:last-child) * {
+.datarow-title>*:not(:last-child), .datarow-title>*:not(:last-child,.el-tag){
     font-size: 0.9rem;
     line-height: 1;
     color: #777;

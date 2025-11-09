@@ -230,12 +230,55 @@ $ready([
                 template: `<div>
                 <loading v-if="loading"></loading>
                 <el-tag v-else-if="taglist==null || taglist.length<1" type="info">没有关键字</el-tag>
-                <el-tag v-else v-for="tag in taglist" :key="tag.Tag_ID">
+                <el-tag v-else v-for="tag in taglist" :key="tag.Tag_ID" type="warning" >
                     <el-tooltip :content="'关键字  '+tag.Qtag_Name" placement="bottom" effect="light">
                         <span>{{tag.Qtag_Name}}</span>
                     </el-tooltip>
                 </el-tag>
             </div>`
+            },
+            //试题的分类
+             'parts': {
+                props: ['ques'],
+                data: function () {
+                    return {
+                        parts: null,  //分类列表
+                        loading: false,
+                    }
+                },
+                watch: {
+                    "ques.Qus_ID": {
+                        handler: function (val) {
+                            this.getparts();
+                        }, immediate: true,
+                    }
+                },
+                methods: {
+                    //获取关联的分类
+                    getparts: function () {
+                        var th = this;
+                        if (th.loading) return;
+                        th.loading = true;
+                        $api.get("ExamQues/PartForQues", { "qusid": th.ques.Qus_ID })
+                            .then(req => {
+                                if (req.data.success) {
+                                    th.parts = req.data.result;
+                                } else {
+                                    console.error(req.data.exception);
+                                    throw req.config.way + ' ' + req.data.message;
+                                }
+                            }).catch(err => console.error(err))
+                            .finally(() => th.loading = false);
+                    }
+                },
+                template: `<div class="parts">
+                    <loading v-if="loading"></loading>                   
+                    <el-tag v-else v-for="p in parts" >
+                        <el-tooltip :content="'试题分类：  '+p.Qp_Name" placement="bottom" effect="light">
+                            <span>{{p.Qp_Name}}</span>
+                        </el-tooltip>
+                    </el-tag>
+                </div>`
             }
         }
     });
