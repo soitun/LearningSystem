@@ -236,7 +236,7 @@ Vue.component('general', {
             </el-form-item>         
             <el-form-item label="关键字" prop="taginput" class="taglist">               
                 <el-tag type="warning" size="medium" v-for="(tag,idx) in taglist" closable @close="taglist.splice(idx, 1)"> {{tag.Qtag_Name}}</el-tag>
-                <el-button v-if="!tagShowInput" class="button-new-tag" size="small" @click="showTagInput">+ 新增关键字</el-button>
+                <el-button v-if="!tagShowInput" class="button-new-tag" size="small" @click="showTagInput">+ 添加关键字</el-button>
                 <el-autocomplete class="input-new-tag" clearable v-else v-model="taginput" ref="taginput"
                   :fetch-suggestions="tagquery"  placeholder="请输入内容"  @select="tagselect"
                   @keyup.enter.native="tagedit" @blur="tagedit">
