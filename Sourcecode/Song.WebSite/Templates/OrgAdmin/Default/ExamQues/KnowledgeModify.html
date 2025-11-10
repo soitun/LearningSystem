@@ -30,7 +30,7 @@
                     <el-form-item label="别名" prop="Qk_ByName">
                         <el-input v-model="entity.Qk_ByName"></el-input>
                     </el-form-item>
-                    <el-form-item label="上级专业">
+                    <el-form-item label="上级节点">
                         <el-cascader style="width: 100%;" v-model="selects " :options="datas" separator="／"
                             :props="defaultProps" filterable>
                             <template slot-scope="{ node, data }">

@@ -4,4 +4,43 @@
 	width: calc(100% - 30px);
 	height: calc(100% - 30px);
 	position: relative;
+	display: flex;
+}
+
+.knowledge>* {
+	flex: 1;
+}
+
+.knowledge>*:first-child {
+	margin-right: 15px;
+}
+.knowledge>*:first-child .el-card__header{
+	display: flex;
+	justify-content: space-between;
+	line-height: 32px;
+}
+.knowledge>*:first-child .el-card__header>span:first-child{
+	display: inline-block;
+	margin-right: 30px;
+}
+.knowledge>*:first-child .el-card__header>div:last-child{
+	flex: 1;
+}
+.knowledge .el-card__header {
+	height: 53px;
+}
+.knowledge .el-card__header .title {
+	line-height: 32px;
+}
+
+.knls_list_null{
+	color: #777;
+}
+div[role="treeitem"] .selected{
+	font-weight: bold;
+	color: chocolate;
+}
+.selected_knls .title{
+	display: flex;
+	justify-content: space-between;
 }

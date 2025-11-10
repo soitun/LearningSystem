@@ -19,7 +19,7 @@
 	flex-direction: column;
 }
 
-.tree-area .el-form-item__content {
+.parts-tree .el-form-item__content {
 	height: 100%;
 }
 
@@ -64,7 +64,7 @@
 	flex: 1;
 }
 
-.parts-area .el-form-item__content .tree-area {
+.parts-area .el-form-item__content .parts-tree {
 	margin-right: 15px;
 	display: flex;
 	flex-direction: column;

@@ -81,6 +81,7 @@ $ready([
                         var result = d.data.result;
                         for (let i = 0; i < result.length; i++) {
                             result[i] = window.ques.parseAnswer(result[i]);
+                            result[i]["checked"] = false;
                             //result[i].Qus_Title = result[i].Qus_Title.replace(/(<([^>]+)>)/ig, "");
                         }
                         th.datas = result;

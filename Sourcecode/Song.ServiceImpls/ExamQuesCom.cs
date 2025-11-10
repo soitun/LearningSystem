@@ -1124,7 +1124,7 @@ namespace Song.ServiceImpls
             Gateway.Default.Delete<Questions_QKnl>(Questions_QKnl._.Qus_ID == qusid);
             int i = 0;
             foreach (QuesKnowledge p in knls)
-                i += this.PartConnectionQues(p.Qk_ID, qusid);
+                i += this.KnlConnectionQues(p.Qk_ID, qusid);
             return i;
         }
         #endregion

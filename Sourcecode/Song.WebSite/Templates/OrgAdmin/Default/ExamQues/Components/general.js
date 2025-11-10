@@ -104,22 +104,6 @@ Vue.component('general', {
             this.taginput = '';
 
         },
-        //设置试题的关键字
-        setquestag: function () {
-            var th = this;
-            if (th.taginput == null || th.taginput.length < 1) return;
-            $api.get("ExamQues/TagConnectionQues", { "tags": th.taginput, "quesid": th.question.Qus_ID, "couid": "" })
-                .then(req => {
-                    if (req.data.success) {
-                        let result = req.data.result;
-                        th.gettags();
-                    } else {
-                        console.error(req.data.exception);
-                        throw req.config.way + ' ' + req.data.message;
-                    }
-                }).catch(err => console.error(err))
-                .finally(() => { });
-        },
         //查询关键字
         tagquery: function (search, cb) {
             var th = this;
@@ -246,7 +230,7 @@ Vue.component('general', {
                 </el-autocomplete>               
             </el-form-item>   
             <el-form-item label="试题分类" prop="parts" class="parts-area">
-                <div class="tree-area">
+                <div class="parts-tree">
                     <div class="title">
                         <el-input placeholder="检索" v-model="partsearch" clearable></el-input>
                     </div>
