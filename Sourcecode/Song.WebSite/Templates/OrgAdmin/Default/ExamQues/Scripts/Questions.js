@@ -206,6 +206,7 @@ $ready([
                     if (req.data.success) {
                         var result = req.data.result;
                         result.Qus_Title = result.Qus_Title.replace(/(<([^>]+)>)/ig, "");
+                        result = window.ques.parseAnswer(result);
                         let index = th.datas.findIndex(item => item.Qus_ID == id);
                         if (index >= 0) th.$set(th.datas, index, result);
                     } else {

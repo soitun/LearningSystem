@@ -18,6 +18,6 @@ Vue.component('ques_diff', {
 
     },
     template: `<div class="ques_diff">  
-       {{diffs[ques.Qus_Diff]}}
+       {{diffs[ques.Qus_Diff-1]}}
     </div> `
 });

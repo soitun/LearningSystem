@@ -6,6 +6,7 @@ $ready(
         'Components/modify_main.js',
         'Components/knowledge.js',
         'Components/general.js',
+        'Components/ques_diff.js',
         'Components/ques_error.js',
         'Components/ques_wrong.js',
         'Components/ques_ansitem.js',

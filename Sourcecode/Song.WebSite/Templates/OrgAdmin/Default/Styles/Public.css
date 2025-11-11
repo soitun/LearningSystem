@@ -95,7 +95,9 @@ a {
 .link {
 	cursor: pointer;
 }
-
+.null{
+	color: #666;
+}
 dl, dd {
 	padding: 0px;
 	margin: 0px;

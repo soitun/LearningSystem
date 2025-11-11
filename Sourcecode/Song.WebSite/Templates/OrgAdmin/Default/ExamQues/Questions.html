@@ -29,7 +29,14 @@
                             </el-radio-button>
                         </el-radio-group>
                     </el-form-item>
-
+                    <el-form-item label="难度">                      
+                        <el-radio-group v-model="form.diff">
+                            <el-radio-button label="">所有</el-radio-button>
+                            <el-radio-button v-for="(n,i) in ['很简单', '简单', '一般', '较难', '比较难']" :label="i+1">        
+                                {{n}}                  
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
                     <el-form-item label="状态">
                         <!--是否试题有错误-->
                         <el-radio-group v-model="form.error">
@@ -72,7 +79,8 @@
 
         <!-- 数据列表-->
         <section class="data-list">
-            <div class="datarow" v-for="(ques,index) in datas" :qid="item.Qus_ID">
+            <div v-if="datas.length<1" class="null">没有满足条件的数据</div>
+            <div v-else class="datarow" v-for="(ques,index) in datas" :qid="item.Qus_ID">
                 <div class="datarow-title">
                     <div class="index">{{(form.index - 1) * form.size + index + 1}}.</div>
                     <ques_type :type="ques.Qus_Type" :types="types" :showicon="true" :showname="true"></ques_type>

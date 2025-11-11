@@ -208,8 +208,9 @@ Vue.component('general', {
     },
     template: `<div class="general">
         <el-form ref="question" :model="question" @submit.native.prevent label-width="80px">    
-            <el-form-item label="难度" prop="Qus_Diff">
-                <el-rate title="点击难度值" v-model="question.Qus_Diff" :max="5" show-score></el-rate>
+            <el-form-item label="难度" prop="Qus_Diff" class="form_diff">
+                <el-rate title="点击难度值" v-model="question.Qus_Diff" :max="5"></el-rate>
+                <ques_diff :ques="question"></ques_diff>
             </el-form-item>
             <el-form-item label="排序号" prop="Qus_Order" v-if="false">
                 <el-input-number v-model="question.Qus_Order"></el-input-number>

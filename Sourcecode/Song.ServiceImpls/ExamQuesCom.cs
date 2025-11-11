@@ -90,6 +90,8 @@ namespace Song.ServiceImpls
             if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
             if(isdeleted != null)wc.And(Questions._.Qus_IsDeleted == isdeleted);
             if(!string.IsNullOrWhiteSpace(search))wc.And(Questions._.Qus_Title.Contains(search));
+            //难度
+            if (diff != null && diff.Length > 0) wc.And(Questions._.Qus_Diff.In(diff));
             countSum = Gateway.Default.Count<Questions>(wc);
             return Gateway.Default.From<Questions>().Where(wc).OrderBy(Questions._.Qus_ID.Desc).ToList<Questions>(size, (index - 1) * size);
         }
