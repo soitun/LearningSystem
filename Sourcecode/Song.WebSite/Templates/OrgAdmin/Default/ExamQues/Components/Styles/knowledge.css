@@ -14,33 +14,51 @@
 .knowledge>*:first-child {
 	margin-right: 15px;
 }
-.knowledge>*:first-child .el-card__header{
+
+.knowledge>*:first-child .el-card__header {
 	display: flex;
 	justify-content: space-between;
 	line-height: 32px;
 }
-.knowledge>*:first-child .el-card__header>span:first-child{
+
+.knowledge>*:first-child .el-card__header>span:first-child {
 	display: inline-block;
 	margin-right: 30px;
 }
-.knowledge>*:first-child .el-card__header>div:last-child{
+
+.knowledge>*:first-child .el-card__header>div:last-child {
 	flex: 1;
 }
+
 .knowledge .el-card__header {
 	height: 53px;
 }
+
 .knowledge .el-card__header .title {
 	line-height: 32px;
 }
 
-.knls_list_null{
+.knowledge .el-card .el-card__body {
+	height: calc(100% - 53px);
+	box-sizing: border-box;
+	overflow: auto;
+}
+
+/**/
+.knls_list_null {
 	color: #777;
 }
-div[role="treeitem"] .selected{
+
+div[role="treeitem"] .selected {
 	font-weight: bold;
-	color: chocolate;
+	color: #409EFF;
 }
-.selected_knls .title{
+
+.selected_knls .title {
 	display: flex;
 	justify-content: space-between;
+}
+
+.knls_list>div:not(:last-child) {
+	margin-bottom: 8px;
 }

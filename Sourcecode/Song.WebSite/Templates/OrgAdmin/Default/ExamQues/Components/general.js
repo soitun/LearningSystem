@@ -244,7 +244,7 @@ Vue.component('general', {
                     </div>
                 </div>
                 <div class="selected_parts">
-                    <div class="title">已选分类：</div>
+                    <div class="title">已选 {{parts.length}} 个分类</div>
                     <div class="part_list" v-if="parts?.length>0">
                         <el-tag size="medium" v-for="(p,idx) in parts" closable @close="removepart(idx)">
                         {{p.Qp_Name}}</el-tag>

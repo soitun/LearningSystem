@@ -71,13 +71,9 @@ Vue.component('knowledge', {
         //data:当前节点对象，即QuesKnowledge实体      
         knlcheck: function (value, ctrl) {
             this.$set(value, "selected", !value.selected);
-            //this.$refs.knltree.setCurrentKey(value.Qk_ID);
-            let selectarr = this.gettreeselected(this.datas);
-            for (let i = 0; i < selectarr.length; i++) {
-                let idx = this.knls.findIndex(x => x.Qk_ID == selectarr[i].Qk_ID);
-                if (idx < 0) this.knls.push(selectarr[i]);
-            }
-            this.question.Knls = this.knls;
+            let idx = this.knls.findIndex(x => x.Qk_ID == value.Qk_ID);
+            if (value.selected && idx < 0) this.knls.push(value);
+            if (!value.selected && idx >= 0) this.knls.splice(idx, 1);
         },
         //获取已经选择的知识点
         gettreeselected: function (knls, selectarr) {
@@ -85,9 +81,8 @@ Vue.component('knowledge', {
             if (knls == null || knls?.length < 1) return selectarr;
             for (let i = 0; i < knls.length; i++) {
                 if (knls[i].selected) selectarr.push(knls[i]);
-                if (knls[i]["children"] != null) {
+                if (knls[i]["children"] != null)
                     selectarr = selectarr.concat(this.gettreeselected(knls[i].children));
-                }
             }
             return selectarr;
         },
@@ -95,7 +90,6 @@ Vue.component('knowledge', {
         removeknl: function (idx) {
             this.knls.splice(idx, 1);
             this.calcknls(this.datas, this.knls);
-            this.question.Knls = this.knls;
         },
     },
     template: `<div class="knowledge">
@@ -121,8 +115,11 @@ Vue.component('knowledge', {
                 </el-badge>               
             </div>
             <div class="knls_list" v-if="knls?.length>0">
-                <el-tag size="medium" v-for="(k,idx) in knls" closable @close="removeknl(idx)">
-                {{k.Qk_Name}}</el-tag>
+                <div v-for="(k,idx) in knls" >
+                    {{idx+1}} .
+                    <el-tag size="medium"closable @close="removeknl(idx)">
+                    {{k.Qk_Name}}</el-tag>
+                </div>
             </div>
             <div class="knls_list_null" v-else>暂无</div>
         </el-card>    
