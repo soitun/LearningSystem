@@ -34,7 +34,7 @@ Vue.component('modify_main', {
                 { 'label': '反馈', 'name': 'wrong', 'show': true, 'icon': 'e61f', 'size': 18, 'color': '#E6A23C' },
             ],
             //当前选项卡
-            activeName: 'knowledge',
+            activeName: 'base',
 
             loading: false,
             loading_ai: false,   //是否正在加载AI

@@ -27,6 +27,12 @@ Vue.component('knowledge', {
     computed: {
         //试题的知识点
         knls: t => t.question.Knls,
+        //知识点数量
+        knlslength: function () {
+            let len = this.knls?.length ?? 0;
+            //console.error(len);
+            return len;
+        },
     },
     mounted: function () {
 
@@ -50,8 +56,9 @@ Vue.component('knowledge', {
         },
         //计算已经选中的知识点
         calcknls: function (treedata, selectarr) {
-            if (treedata == null || treedata?.length < 1) return treedata;
-            for (let i = 0; i < treedata.length; i++) {
+            let treedatalen = treedata?.length ?? 0;
+            if (treedata == null || treedatalen < 1) return treedata;
+            for (let i = 0; i < treedatalen; i++) {
                 let idx = selectarr.findIndex(x => x.Qk_ID == treedata[i].Qk_ID);
                 treedata[i]["selected"] = idx >= 0;
                 if (treedata[i]["children"] != null) {
@@ -78,8 +85,8 @@ Vue.component('knowledge', {
         //获取已经选择的知识点
         gettreeselected: function (knls, selectarr) {
             if (selectarr == null) selectarr = [];
-            if (knls == null || knls?.length < 1) return selectarr;
-            for (let i = 0; i < knls.length; i++) {
+            if (knls == null || this.knlslength < 1) return selectarr;
+            for (let i = 0; i < this.knlslength; i++) {
                 if (knls[i].selected) selectarr.push(knls[i]);
                 if (knls[i]["children"] != null)
                     selectarr = selectarr.concat(this.gettreeselected(knls[i].children));
@@ -110,11 +117,11 @@ Vue.component('knowledge', {
         </el-card>
         <el-card shadow="never" class="selected_knls">
             <div slot="header" class="title">
-                <el-badge :value="knls?.length" :hidden="knls?.length<1">
+                <el-badge :value="knlslength" :hidden="knlslength<1">
                     <icon>&#xa029</icon>关联的知识点</span>
                 </el-badge>               
             </div>
-            <div class="knls_list" v-if="knls?.length>0">
+            <div class="knls_list" v-if="knlslength>0">
                 <div v-for="(k,idx) in knls" >
                     {{idx+1}} .
                     <el-tag size="medium"closable @close="removeknl(idx)">

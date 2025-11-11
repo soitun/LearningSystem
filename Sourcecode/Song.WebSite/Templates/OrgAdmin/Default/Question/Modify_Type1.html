@@ -37,7 +37,7 @@
                             </div>
                         </dd>
                         <dt>
-                            <el-link type="success" @click='$set(ansitems, ansitems.length, newitem())'>
+                            <el-link type="success" @click='$set(ansitems, ansitems?.length ?? 0, newitem())'>
                                 <icon>&#xe6ea</icon>添加新项
                             </el-link>
                         </dt>
