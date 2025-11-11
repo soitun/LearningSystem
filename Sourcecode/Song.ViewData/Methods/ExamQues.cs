@@ -44,11 +44,14 @@ namespace Song.ViewData.Methods
         /// 添加试题
         /// </summary>
         /// <param name="entity">试题</param>
+        /// <param name="tags">试题关键字</param>
+        /// <param name="parts">试题分类</param>
+        /// <param name="knls">知识点</param>
         /// <returns></returns>
         [Admin, Teacher]
         [HttpPost]
         [HtmlClear(Not = "entity")]
-        public long QuesAdd(Song.Entities.Questions entity)
+        public long QuesAdd(Song.Entities.Questions entity, QuesPart[] parts, QuesTags[] tags, QuesKnowledge[] knls)
         {
             //如果存在，不保存
             Song.Entities.Questions old = Business.Do<IQuestions>().QuesSingle(entity.Qus_ID);
@@ -58,7 +61,14 @@ namespace Song.ViewData.Methods
             {
                 entity.Qus_Items = Business.Do<IQuestions>().AnswerToItems(Helper.Question.AnswerToItems(entity));
             }
+            old.Qus_Purpose = 1;    //考试专用
             Business.Do<IQuestions>().QuesAdd(entity);
+            //保存关键字的关联
+            Business.Do<IExamQues>().TagConnectionQues(tags, entity.Qus_ID, 0);
+            //保存分类的关联
+            Business.Do<IExamQues>().PartConnectionQues(parts, entity.Qus_ID);
+            //保存知识点的关联
+            Business.Do<IExamQues>().KnlConnectionQues(knls, entity.Qus_ID);
             return entity.Qus_ID;
         }
         /// <summary>
