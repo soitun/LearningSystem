@@ -163,7 +163,7 @@ Vue.component('general', {
         //data:当前节点对象，即QuesPart实体
         //stat:树形节点状态，checkedNodes为选中节点，halfCheckedNodes为半选中节点
         partcheck: function (value, stat) {
-            console.error(stat);
+            //console.error(stat);
             //添加到当前试题的分类
             let checkedparts = stat.checkedNodes ?? [];
             for (let i = 0; i < checkedparts.length; i++) {

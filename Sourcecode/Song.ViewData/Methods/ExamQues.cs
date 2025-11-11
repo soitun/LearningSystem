@@ -61,7 +61,7 @@ namespace Song.ViewData.Methods
             {
                 entity.Qus_Items = Business.Do<IQuestions>().AnswerToItems(Helper.Question.AnswerToItems(entity));
             }
-            old.Qus_Purpose = 1;    //考试专用
+            entity.Qus_Purpose = 1;    //考试专用
             Business.Do<IQuestions>().QuesAdd(entity);
             //保存关键字的关联
             Business.Do<IExamQues>().TagConnectionQues(tags, entity.Qus_ID, 0);

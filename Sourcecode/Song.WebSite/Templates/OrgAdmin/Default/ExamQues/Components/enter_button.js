@@ -43,16 +43,7 @@ Vue.component('enter_button', {
             let qus = this.question;
             //题干不得为空
             if (!qus.Qus_Title || qus.Qus_Title == '')
-                return this.prompt('试题题干不得为空！', 0);
-            //是否设置课程
-            if (!qus.Cou_ID || qus.Cou_ID <= 0)
-                return this.prompt('试题必须设置所属课程', 1);
-            //是否设置专业
-            if (!qus.Sbj_ID || qus.Sbj_ID <= 0) {
-                //console.error(qus);
-                console.error('试题必须设置所属专业');
-                //return this.prompt('试题必须设置所属专业', 1);
-            }
+                return this.prompt('试题题干不得为空！', 0);            
             return true;
         },
         //提交
