@@ -74,16 +74,20 @@ $ready([
             //加载数据页
             handleCurrentChange: function (index) {
                 var th = this;
+                th.loadstate.get = true;
                 if (index != null) this.form.index = index;
                 var loading = this.$fulloading();
+                //th.datas = [];
                 $api.get("ExamQues/QuesPager", th.form).then(function (d) {
                     if (d.data.success) {
                         var result = d.data.result;
                         for (let i = 0; i < result.length; i++) {
                             result[i] = window.ques.parseAnswer(result[i]);
                             result[i]["checked"] = false;
+                            result[i]["showdetail"] = false;
                             //result[i].Qus_Title = result[i].Qus_Title.replace(/(<([^>]+)>)/ig, "");
                         }
+                        
                         th.datas = result;
                         th.totalpages = Number(d.data.totalpages);
                         th.total = d.data.total;
@@ -94,6 +98,7 @@ $ready([
                     alert(err);
                     console.error(err);
                 }).finally(() => {
+                    th.loadstate.get = false;
                     th.$nextTick(function () {
                         loading.close();
                     });
@@ -149,7 +154,6 @@ $ready([
                             center: true
                         });
                         th.handleCurrentChange();
-
                     } else {
                         console.error(req.data.exception);
                         throw req.data.message;
@@ -160,7 +164,6 @@ $ready([
                 }).finally(() => {
                     th.$nextTick(function () {
                         loading.close();
-                        //th.loading = false;
                     });
                 });
             },
@@ -306,6 +309,27 @@ $ready([
                         </el-tooltip>
                     </el-tag>
                 </div>`
+            },
+            //试题的答案
+            'answer': {
+                props: ['ques'],
+                methods: {
+                    //解析试题答案
+                    answer: function (q) {
+                        let func = 'type' + q.Qus_Type;                      
+                        return this[func] != null ? this[func](q) : '';
+                    },
+                    type1: q => String.fromCharCode(65 + q.Qus_Items.findIndex(m => m.Ans_IsCorrect)),
+                    type2: q => q.Qus_Items.map((m, i) => m.Ans_IsCorrect ? String.fromCharCode(65 + i) : null)
+                        .filter(m => m !== null).join('、'),
+                    type3: q => q.Qus_IsCorrect ? "正确" : "错误",
+                    type4: q => q.Qus_Answer,
+                    type5: q => q.Qus_Items.length === 1 ?
+                        q.Qus_Items[0].Ans_Context : q.Qus_Items.map((m, i) => `${i + 1}、${m.Ans_Context}`).join('；'),
+                },
+                template: `<div class="answer">
+                        正确答案：<span v-html="answer(ques)"></span>
+                    </div>`
             }
         }
     });

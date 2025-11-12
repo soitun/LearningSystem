@@ -36,12 +36,14 @@ div.datarow {
     box-sizing: border-box;
     height: 30px;
 }
-.datarow-title .parts{
+
+.datarow-title .parts {
     margin-top: -3px;
     flex: 1;
     height: 20px;
     overflow: hidden;
 }
+
 .datarow-title .parts .el-tag--small {
     height: 20px;
     padding: 0 8px;
@@ -49,7 +51,8 @@ div.datarow {
     margin-right: 6px;
 
 }
-.datarow-title>*:not(:last-child), .datarow-title>*:not(:last-child,.el-tag){
+
+.datarow-title>*:not(:last-child), .datarow-title>*:not(:last-child, .el-tag) {
     font-size: 0.9rem;
     line-height: 1;
     color: #777;
@@ -75,14 +78,17 @@ div.datarow {
     margin-left: 2px !important;
     font-size: 0.8rem !important;
 }
+
 /*试题顶部栏的右侧区域*/
 .datarow-title>*:last-child {
     margin-left: auto;
     display: flex;
 }
-.datarow-title>*:last-child>*{
+
+.datarow-title>*:last-child>* {
     margin-left: 20px;
 }
+
 /*试题内容的显示*/
 .datarow-content {
     cursor: default;
@@ -94,17 +100,49 @@ div.datarow {
     color: #444;
     max-height: 5rem;
 }
-.datarow-content[showdetail] { 
+
+.datarow-content[showdetail] {
     max-height: 100rem;
     overflow: auto;
 }
-.datarow-content:not([showdetail]) .qus_items{
+
+.datarow-content:not([showdetail]) .qus_items {
     height: 0px;
     overflow: hidden;
 }
+
+.datarow-content:not([showdetail]) .answer {
+    height: 0px;
+    overflow: hidden;
+}
+
+.datarow-content[showdetail] .answer {
+    margin: 8px 8px 0px 0px;
+    padding: 10px 0px 0px 0px;
+    border-top: var(--border-solid);
+    font-size: 16px;
+}
+
 .datarow-content .qus_items {
-    margin: 10px 10px 10px 30px;
+    margin: 10px 10px 10px 0px;
     transition: all 0.5s;
+}
+
+.datarow-content .qus_items>div {
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.5;
+}
+
+.datarow-content .qus_items>div[correct]::before {
+    content: "✔";
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+
+.datarow-content .qus_items.type3 {
+    margin: 10px 10px 10px 5px;
 }
 
 .datarow-content .qus_items>div {
@@ -133,6 +171,7 @@ div.datarow {
     line-height: 18px;
     margin-right: 8px;
 }
-.ques_collect icon{ 
+
+.ques_collect icon {
     font-size: 1rem;
 }

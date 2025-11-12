@@ -50,14 +50,14 @@ Vue.component('ques_collect', {
                         let result = req.data.result;
                         if (th.collected) {
                             this.$notify({
-                                title: '成功',
+                                title: '收藏成功',
                                 message: '收藏该试题',
                                 type: 'success', duration: 1000
                             });
                         } else {
                             this.$notify({
-                                title: '取消',
-                                message: '取消收藏该试题',
+                                title: '取消收藏',
+                                message: '试题取消收藏',
                                 type: 'warning', duration: 1000
                             });
                         }
