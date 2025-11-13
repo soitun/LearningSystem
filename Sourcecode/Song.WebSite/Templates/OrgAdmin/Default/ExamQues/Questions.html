@@ -12,7 +12,7 @@
         <div class="toolsbar">
             <btngroup show="新增,修改,删除,导入,导出,全选/取消" ref='btngroup' :disabled="loading" @output="output" @input="input"
                 @delete="btnbatdel" @select="selectall" path="Modify" width="960" height="80%"></btngroup>
-            <query_panel :model="form" :width="45" :loading="loading" @search="handleCurrentChange(1)">
+            <query_panel :model="form" :width="45" :loading="loading" @search="handleCurrentChange(1)" @reset="queryreset">
                 <template>
                     <el-form-item label="题干">
                         <el-input v-model.trim="form.search" clearable style="width:245px" placeholder="搜索题干">
@@ -73,6 +73,9 @@
                                 <icon>&#xe7ad</icon>禁用
                             </el-radio-button>
                         </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="关键字">
+                        <tagselect ref="tagselect" :org="org" @change="v=>form.tagid=v.join(',')"></tagselect>
                     </el-form-item>
                 </template>
             </query_panel>

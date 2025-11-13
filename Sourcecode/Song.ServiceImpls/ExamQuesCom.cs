@@ -128,7 +128,7 @@ namespace Song.ServiceImpls
             {
                 section.LeftJoin<Questions_QTags>(Questions_QTags._.Qus_ID == Questions._.Qus_ID);
                 WhereClip wcqp = new WhereClip();
-                foreach (long d in qpid) wcqp |= Questions_QTags._.Qtag_ID == d;
+                foreach (long t in tagid) wcqp |= Questions_QTags._.Qtag_ID == t;
                 wc.And(wcqp);
             }
             //关联知识点
@@ -136,7 +136,7 @@ namespace Song.ServiceImpls
             {
                 section.LeftJoin<Questions_QKnl>(Questions_QKnl._.Qus_ID == Questions._.Qus_ID);
                 WhereClip wcqp = new WhereClip();
-                foreach (long d in qpid) wcqp |= Questions_QKnl._.Qk_ID == d;
+                foreach (long k in knlid) wcqp |= Questions_QKnl._.Qk_ID == k;
                 wc.And(wcqp);
             }
             countSum = section.Where(wc).Count();
