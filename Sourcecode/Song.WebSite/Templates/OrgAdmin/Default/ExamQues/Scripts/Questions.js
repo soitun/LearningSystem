@@ -12,6 +12,7 @@ $ready([
             //试题的查询条件
             form: {
                 "orgid": -1, "search": "", "isdeleted": false, "qpid": "", "tagid": "", "knlid": "", "type": "", "diff": "",
+                "use": "", "error": "", 'wrong': "",
                 "size": 10, "index": 1
             },
             datas: [],
@@ -87,7 +88,7 @@ $ready([
                             result[i]["showdetail"] = false;
                             //result[i].Qus_Title = result[i].Qus_Title.replace(/(<([^>]+)>)/ig, "");
                         }
-                        
+
                         th.datas = result;
                         th.totalpages = Number(d.data.totalpages);
                         th.total = d.data.total;
@@ -316,7 +317,7 @@ $ready([
                 methods: {
                     //解析试题答案
                     answer: function (q) {
-                        let func = 'type' + q.Qus_Type;                      
+                        let func = 'type' + q.Qus_Type;
                         return this[func] != null ? this[func](q) : '';
                     },
                     type1: q => String.fromCharCode(65 + q.Qus_Items.findIndex(m => m.Ans_IsCorrect)),

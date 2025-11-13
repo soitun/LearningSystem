@@ -162,10 +162,15 @@ namespace Song.ViewData.Methods
         /// <param name="knlid">知识点</param>
         /// <param name="type">试题类型</param>
         /// <param name="diff">难度</param>
+        /// <param name="use"></param>
+        /// <param name="error"></param>
+        /// <param name="wrong"></param>
         /// <param name="index"></param>
         /// <param name="size"></param>
         /// <returns></returns>
-        public ListResult QuesPager(int orgid, string search, bool? isdeleted, string qpid, string tagid, string knlid, string type, string diff, int size, int index)
+        public ListResult QuesPager(int orgid, string search, bool? isdeleted, string qpid, string tagid, string knlid,
+            string type, string diff, bool? use, bool? error, bool? wrong,
+            int size, int index)
         {
             int sum;
             List<Questions> list = Business.Do<IExamQues>().QuesPager(orgid, search, isdeleted,
@@ -174,6 +179,7 @@ namespace Song.ViewData.Methods
                 Help.StringTo.Array<long>(knlid),
                 Help.StringTo.Array<int>(type),
                 Help.StringTo.Array<int>(diff),
+                use, error, wrong,
                 size, index, out sum);
 
             Song.ViewData.ListResult result = new ListResult(list);

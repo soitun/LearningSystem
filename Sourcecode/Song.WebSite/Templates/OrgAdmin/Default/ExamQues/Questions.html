@@ -33,7 +33,7 @@
                     <el-form-item label="难度">
                         <el-radio-group v-model="form.diff">
                             <el-radio-button label="">所有</el-radio-button>
-                            <el-radio-button v-for="(n,i) in ['很简单', '简单', '一般', '较难', '比较难']" :label="i+1">
+                            <el-radio-button v-for="(n,i) in ['很简单', '简单', '有难度', '比较难', '很难']" :label="i+1">
                                 {{n}}
                             </el-radio-button>
                         </el-radio-group>

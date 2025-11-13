@@ -3,7 +3,7 @@ Vue.component('ques_diff', {
     props: ['ques'],
     data: function () {
         return {
-            diffs: ['很简单', '简单', '一般', '较难', '比较难'],
+            diffs: ['很简单', '简单', '有难度', '比较难', '很难'],
             loading: false
         }
     },

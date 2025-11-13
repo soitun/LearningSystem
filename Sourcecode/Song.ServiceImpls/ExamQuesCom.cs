@@ -68,32 +68,79 @@ namespace Song.ServiceImpls
                     tran.Rollback();
                     throw ex;
                 }
-            }           
+            }
         }
         /// <summary>
         /// 获取试题
         /// </summary>
         /// <param name="orgid">机构id</param>
+        /// <param name="search"></param>
         /// <param name="isdeleted"></param>
         /// <param name="qpid">试题分类id</param>
         /// <param name="tagid">标签id</param>
         /// <param name="knlid">知识点</param>
         /// <param name="type"></param>
         /// <param name="diff"></param>
+        /// <param name="isUse"></param>
+        /// <param name="isError"></param>
+        /// <param name="isWrong"></param>
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        public List<Questions> QuesPager(int orgid, string search, bool? isdeleted, long[] qpid, long[] tagid, long[] knlid, int[] type, int[] diff, int size, int index, out int countSum)
+        public List<Questions> QuesPager(int orgid, string search, bool? isdeleted, long[] qpid, long[] tagid, long[] knlid,
+            int[] type, int[] diff, bool? isUse, bool? isError, bool? isWrong,
+            int size, int index, out int countSum)
         {
             WhereClip wc = Questions._.Qus_Purpose == 1;    //用于考试的试题
             if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
-            if(isdeleted != null)wc.And(Questions._.Qus_IsDeleted == isdeleted);
-            if(!string.IsNullOrWhiteSpace(search))wc.And(Questions._.Qus_Title.Contains(search));
-            //难度
-            if (diff != null && diff.Length > 0) wc.And(Questions._.Qus_Diff.In(diff));
-            countSum = Gateway.Default.Count<Questions>(wc);
-            return Gateway.Default.From<Questions>().Where(wc).OrderBy(Questions._.Qus_ID.Desc).ToList<Questions>(size, (index - 1) * size);
+            if (isdeleted != null) wc.And(Questions._.Qus_IsDeleted == isdeleted);    //删除状态
+            if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
+            if (isError != null) wc.And(Questions._.Qus_IsError == (bool)isError);
+            if (isWrong != null) wc.And(Questions._.Qus_IsWrong == (bool)isWrong);
+            //按题干进行检索
+            if (!string.IsNullOrWhiteSpace(search)) wc.And(Questions._.Qus_Title.Contains(search));
+            //题型
+            if (type != null && type.Length > 0)
+            {
+                WhereClip wctype = new WhereClip();
+                foreach (int t in type) wctype |= Questions._.Qus_Type == t;
+                wc.And(wctype);
+            }
+            //难度  
+            if (diff != null && diff.Length > 0)
+            {
+                WhereClip wcdiff = new WhereClip();
+                foreach (int d in diff) wcdiff |= Questions._.Qus_Diff == d;
+                wc.And(wcdiff);
+            }
+            FromSection<Questions> section = Gateway.Default.From<Questions>();
+            //试题分类
+            if (qpid != null && qpid.Length > 0)
+            {
+                section.LeftJoin<Questions_QPart>(Questions_QPart._.Qus_ID == Questions._.Qus_ID);
+                WhereClip wcqp = new WhereClip();
+                foreach (long d in qpid) wcqp |= Questions_QPart._.Qp_ID == d;
+                wc.And(wcqp);
+            }
+            //试题关键字
+            if (tagid != null && tagid.Length > 0)
+            {
+                section.LeftJoin<Questions_QTags>(Questions_QTags._.Qus_ID == Questions._.Qus_ID);
+                WhereClip wcqp = new WhereClip();
+                foreach (long d in qpid) wcqp |= Questions_QTags._.Qtag_ID == d;
+                wc.And(wcqp);
+            }
+            //关联知识点
+            if (knlid != null && knlid.Length > 0)
+            {
+                section.LeftJoin<Questions_QKnl>(Questions_QKnl._.Qus_ID == Questions._.Qus_ID);
+                WhereClip wcqp = new WhereClip();
+                foreach (long d in qpid) wcqp |= Questions_QKnl._.Qk_ID == d;
+                wc.And(wcqp);
+            }
+            countSum = section.Where(wc).Count();
+            return section.Where(wc).OrderBy(Questions._.Qus_ID.Desc).ToList<Questions>(size, (index - 1) * size);
         }
         #endregion
 
