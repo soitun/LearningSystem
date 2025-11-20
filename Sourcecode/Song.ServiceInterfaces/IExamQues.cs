@@ -40,10 +40,11 @@ namespace Song.ServiceInterfaces
         /// <param name="qpid">试题分类id</param>
         /// <param name="tagid">标签id</param>
         /// <param name="knlid">知识点</param>
-        /// <param name="type"></param>
-        /// <param name="diff"></param>
-        /// <param name="isError"></param>
-        /// <param name="isWrong"></param>
+        /// <param name="type">试题类型</param>
+        /// <param name="diff">试题难度</param>
+        /// <param name="isUse">是否启用</param>
+        /// <param name="isError">是否有格式错误</param>
+        /// <param name="isWrong">是否有反馈的错误</param>
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <param name="countSum"></param>
@@ -255,16 +256,22 @@ namespace Song.ServiceInterfaces
         /// 获取收藏的试题
         /// </summary>
         /// <param name="acid">管理员id</param>
+        /// <param name="search">搜索题干</param>
         /// <param name="qpid">试题分类id</param>
         /// <param name="tagid">试题标签id</param>
         /// <param name="knlid">试题知识点id</param>
         /// <param name="type">试题类型</param>
         /// <param name="diff">试题难度</param>
+        /// <param name="isUse">是否启用</param>
+        /// <param name="isError">是否有格式错误</param>
+        /// <param name="isWrong">是否有反馈的错误</param>
         /// <param name="size">分页大小</param>
         /// <param name="index">分页索引</param>
         /// <param name="countSum">总记录数</param>
         /// <returns></returns>
-        List<Questions> CollectPager(int acid, long[] qpid, long[] tagid, long[] knlid, int[] type, int[] diff, int size, int index, out int countSum);
+        List<Questions> CollectPager(int acid, string search, long[] qpid, long[] tagid, long[] knlid, 
+            int[] type, int[] diff, bool? isUse, bool? isError, bool? isWrong,
+            int size, int index, out int countSum);
         #endregion
 
         #region 知识点

@@ -84,14 +84,14 @@
 
 .interfaces .el-collapse-item__header .item_title .count {
     font-size: 12px;
-    color: #ff5959;
+    color: #409EFF;
     margin-top: 8px;
     margin-left: 6px;
     line-height: 20px;
     height: 20px;
     width: 20px;
     text-align: center;
-    background: #f9ebeb;
+    background: #ecf5ff;
     border-radius: 50%;
 }
 

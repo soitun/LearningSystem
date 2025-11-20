@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head resource>
+    <meta charset="UTF-8">
+    <include file="../inc/meta.inc" />
+    <title>考试试卷</title>
+</head>
+
+<body>
+    <div id="vapp" v-cloak>
+        <div class="toolsbar">
+            <btngroup show="新增,修改,删除" ref='btngroup' :disabled="loading" path="Modify" width="960" height="80%">
+            </btngroup>
+            <query_panel :model="form" :width="45" :loading="loading" @search="handleCurrentChange(1)">
+                <template>
+                    <el-form-item label="标题">
+                        <el-input v-model.trim="form.search" clearable style="width:245px" placeholder="搜索试卷标题">
+                        </el-input>
+                    </el-form-item>
+                </template>
+                <template slot="more">                    
+                    <el-form-item label="状态">
+                        <!--是否试题有错误-->
+                        <el-radio-group v-model="form.error">
+                            <el-radio-button label="">所有</el-radio-button>
+                            <el-radio-button label="false">
+                                <icon>&#xe634</icon>正常
+                            </el-radio-button>
+                            <el-radio-button label="true">
+                                <icon>&#xe70e</icon>存在错误
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                
+                </template>
+            </query_panel>
+        </div>
+    </div>
+</body>
+
+</html>

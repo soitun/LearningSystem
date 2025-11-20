@@ -2,7 +2,8 @@ $ready([
     '/Utilities/Components/question/function.js',
     '../Question/Components/ques_type.js',
     'Components/ques_diff.js',
-    'Components/ques_collect.js'
+    'Components/ques_collect.js',
+    'Components/tagselect.js',
 ], function () {
     window.vapp = new Vue({
         el: '#vapp',
@@ -10,7 +11,7 @@ $ready([
             types: [],        //试题类型，来自web.config中配置项
             admin: {},          //当前登录用户
             //试题的查询条件
-            form: { "acid": "", "qpid": "", "tagid": "", "knlid": "", "type": "", "diff": "", "size": 10, "index": 1 },
+            form: {"acid":"","search":"","qpid":"","tagid":"","knlid":"","type":"","diff":"","use":"","error":"","wrong":"","size":10,"index":1},
             datas: [],
             total: 1, //总记录数
             totalpages: 1, //总页数
@@ -82,6 +83,8 @@ $ready([
                         var result = d.data.result;
                         for (let i = 0; i < result.length; i++) {
                             result[i] = window.ques.parseAnswer(result[i]);
+                            result[i]["checked"] = false;
+                            result[i]["showdetail"] = false;
                             //result[i].Qus_Title = result[i].Qus_Title.replace(/(<([^>]+)>)/ig, "");
                         }
                         th.datas = result;
@@ -98,6 +101,10 @@ $ready([
                         loading.close();
                     });
                 });
+            },
+            //查询面板重置的方法
+            queryreset: function () {
+                this.$refs['tagselect'].clear();
             },
             //批量选择
             selectall: function () {
@@ -144,13 +151,121 @@ $ready([
                         }
                     }).catch(err => console.error(err))
                     .finally(() => th.loadstate.update = false);
-            }
+            },
+
         },
         filters: {
 
         },
         components: {
-
+            //试题的关键字
+            'tags': {
+                props: ['ques'],
+                data: function () {
+                    return {
+                        taglist: null,  //关键字列表
+                        loading: false,
+                    }
+                },
+                watch: {
+                    "ques": {
+                        handler: function (val) {
+                            this.gettags();
+                        }, immediate: true,
+                    }
+                },
+                methods: {
+                    //获取关键字
+                    gettags: function () {
+                        var th = this;
+                        if (th.loading) return;
+                        th.loading = true;
+                        $api.get("ExamQues/TagForQues", { "quesid": th.ques.Qus_ID })
+                            .then(req => {
+                                if (req.data.success) {
+                                    th.taglist = req.data.result;
+                                } else {
+                                    console.error(req.data.exception);
+                                    throw req.config.way + ' ' + req.data.message;
+                                }
+                            }).catch(err => console.error(err))
+                            .finally(() => th.loading = false);
+                    }
+                },
+                template: `<div>
+                <loading v-if="loading"></loading>
+                <el-tag v-else-if="taglist==null || taglist.length<1" type="info">没有关键字</el-tag>
+                <el-tag v-else v-for="tag in taglist" :key="tag.Tag_ID" type="warning" >
+                    <el-tooltip :content="'关键字  '+tag.Qtag_Name" placement="bottom" effect="light">
+                        <span>{{tag.Qtag_Name}}</span>
+                    </el-tooltip>
+                </el-tag>
+            </div>`
+            },
+            //试题的分类
+            'parts': {
+                props: ['ques'],
+                data: function () {
+                    return {
+                        parts: null,  //分类列表
+                        loading: false,
+                    }
+                },
+                watch: {
+                    "ques": {
+                        handler: function (val) {
+                            this.getparts();
+                        }, immediate: true,
+                    }
+                },
+                methods: {
+                    //获取关联的分类
+                    getparts: function () {
+                        var th = this;
+                        if (th.loading) return;
+                        th.loading = true;
+                        $api.get("ExamQues/PartForQues", { "qusid": th.ques.Qus_ID })
+                            .then(req => {
+                                if (req.data.success) {
+                                    th.parts = req.data.result;
+                                } else {
+                                    console.error(req.data.exception);
+                                    throw req.config.way + ' ' + req.data.message;
+                                }
+                            }).catch(err => console.error(err))
+                            .finally(() => th.loading = false);
+                    }
+                },
+                template: `<div class="parts">
+                    <loading v-if="loading"></loading>                   
+                    <el-tag v-else v-for="p in parts" >
+                        <el-tooltip :content="'试题分类：  '+p.Qp_Name" placement="bottom" effect="light">
+                            <span>{{p.Qp_Name}}</span>
+                        </el-tooltip>
+                    </el-tag>
+                </div>`
+            },
+            //试题的答案
+            'answer': {
+                props: ['ques'],
+                methods: {
+                    //解析试题答案
+                    answer: function (q) {
+                        let func = 'type' + q.Qus_Type;
+                        return this[func] != null ? this[func](q) : '';
+                    },
+                    type1: q => String.fromCharCode(65 + q.Qus_Items.findIndex(m => m.Ans_IsCorrect)),
+                    type2: q => q.Qus_Items.map((m, i) => m.Ans_IsCorrect ? String.fromCharCode(65 + i) : null)
+                        .filter(m => m !== null).join('、'),
+                    type3: q => q.Qus_IsCorrect ? "正确" : "错误",
+                    type4: q => q.Qus_Answer,
+                    type5: q => q.Qus_Items.length === 1 ?
+                        q.Qus_Items[0].Ans_Context : q.Qus_Items.map((m, i) => `${i + 1}、${m.Ans_Context}`).join('；'),
+                },
+                template: `<div class="answer">
+                        正确答案：<span v-html="answer(ques)"></span>
+                    </div>`
+            },          
         }
     });
 });

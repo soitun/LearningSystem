@@ -162,9 +162,9 @@ namespace Song.ViewData.Methods
         /// <param name="knlid">知识点</param>
         /// <param name="type">试题类型</param>
         /// <param name="diff">难度</param>
-        /// <param name="use"></param>
-        /// <param name="error"></param>
-        /// <param name="wrong"></param>
+        /// <param name="use">是否启用</param>
+        /// <param name="error">是否有格式错误</param>
+        /// <param name="wrong">是否有反馈的错误</param>
         /// <param name="index"></param>
         /// <param name="size"></param>
         /// <returns></returns>
@@ -241,23 +241,29 @@ namespace Song.ViewData.Methods
         /// 管理员收藏的试题
         /// </summary>
         /// <param name="acid">管理员的id</param>
+        /// <param name="search"></param>
         /// <param name="qpid">试题分类的id，多个id用逗号分隔</param>
-        /// <param name="tagid"></param>
-        /// <param name="knlid"></param>
-        /// <param name="type"></param>
-        /// <param name="diff"></param>
+        /// <param name="tagid">关键字</param>
+        /// <param name="knlid">知识点</param>
+        /// <param name="type">题型</param>
+        /// <param name="diff">难度</param>
+        /// <param name="use">是否启用</param>
+        /// <param name="error">是否有格式错误</param>
+        /// <param name="wrong">是否有反馈的错误</param>
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public ListResult CollectPager(int acid, string qpid, string tagid, string knlid, string type, string diff, int size, int index)
+        public ListResult CollectPager(int acid,string search, string qpid, string tagid, string knlid, 
+            string type, string diff, bool? use, bool? error, bool? wrong, int size, int index)
         {
             int sum;
-            List<Questions> list = Business.Do<IExamQues>().CollectPager(acid,
+            List<Questions> list = Business.Do<IExamQues>().CollectPager(acid,search,
                 Help.StringTo.Array<long>(qpid),
                 Help.StringTo.Array<long>(tagid),
                 Help.StringTo.Array<long>(knlid),
                 Help.StringTo.Array<int>(type),
                 Help.StringTo.Array<int>(diff),
+                use, error, wrong,
                 size, index, out sum);
 
             Song.ViewData.ListResult result = new ListResult(list);

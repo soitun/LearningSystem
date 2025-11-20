@@ -11,11 +11,13 @@
     <div id="vapp" v-cloak>
         <div class="toolsbar">
             <btngroup show="取消收藏,全选/取消" ref='btngroup' :disabled="loading" path="Modify" width="960" height="80%"
-            @select="selectall" @cancel="cancelselected" idkey='Qus_ID' table="datatables"></btngroup>
-            <query_panel :model="form" :width="45" :loading="loading" @search="handleCurrentChange(1)">
+                @select="selectall" @cancel="cancelselected" idkey='Qus_ID' table="datatables"></btngroup>
+            <query_panel :model="form" :width="45" :loading="loading" @search="handleCurrentChange(1)"
+                @reset="queryreset">
                 <template>
                     <el-form-item label="题干">
-                        <el-input v-model.trim="form.search" clearable style="width:245px" placeholder="搜索"></el-input>
+                        <el-input v-model.trim="form.search" clearable style="width:245px" placeholder="搜索题干">
+                        </el-input>
                     </el-form-item>
                 </template>
                 <template slot="more">
@@ -29,7 +31,14 @@
                             </el-radio-button>
                         </el-radio-group>
                     </el-form-item>
-
+                    <el-form-item label="难度">
+                        <el-radio-group v-model="form.diff">
+                            <el-radio-button label="">所有</el-radio-button>
+                            <el-radio-button v-for="(n,i) in ['很简单', '简单', '有难度', '比较难', '很难']" :label="i+1">
+                                {{n}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
                     <el-form-item label="状态">
                         <!--是否试题有错误-->
                         <el-radio-group v-model="form.error">
@@ -66,17 +75,21 @@
                             </el-radio-button>
                         </el-radio-group>
                     </el-form-item>
+                    <el-form-item label="关键字">
+                        <tagselect ref="tagselect" :org="org" @change="v=>form.tagid=v.join(',')"></tagselect>
+                    </el-form-item>
                 </template>
             </query_panel>
         </div>
         <!-- 数据列表-->
         <section class="data-list">
-            <div class="datarow" v-for="(ques,index) in datas" :qid="item.Qus_ID">
+            <div v-if="!loadstate.get && datas.length<1" class="null">没有满足条件的数据</div>
+            <div v-else class="datarow" v-for="(ques,index) in datas" :qid="item.Qus_ID">
                 <div class="datarow-title">
                     <div class="index">{{(form.index - 1) * form.size + index + 1}}.</div>
                     <ques_type :type="ques.Qus_Type" :types="types" :showicon="true" :showname="true"></ques_type>
                     <ques_diff :ques="ques"></ques_diff>
-                    <div class="part">所在的分类</div>
+                    <parts :ques="ques"></parts>
                     <div>
                         <span class="el-icon-loading" v-show="loadingid==ques.Qus_ID"></span>
                         <el-checkbox v-model="ques.checked">选中</el-checkbox>
@@ -96,17 +109,15 @@
                 <div class="datarow-content" @click="$set(ques,'showdetail',!ques.showdetail)"
                     :showdetail="ques.showdetail">
                     <span v-html="showsearch(ques.Qus_Title,form.search)"></span>
-                    <div v-if="ques.Qus_Type==2 || ques.Qus_Type==2" class="qus_items">
-                        <div v-for="(item,index) in ques.Qus_Items"
+                    <div v-if="ques.Qus_Type==1 || ques.Qus_Type==2" class="qus_items" remark="单选、多选的选项">
+                        <div v-for="(item,index) in ques.Qus_Items" :correct="item.Ans_IsCorrect"
                             v-html="String.fromCharCode(65 + index) +'.'+item.Ans_Context">
                         </div>
                     </div>
+                    <answer :ques="ques"></answer>
                 </div>
                 <div class="datarow-footer">
-                    <span>
-                        <el-tag type="warning">标签，试题的标签</el-tag>
-                        <el-tag type="warning">试题的标签2</el-tag>
-                    </span>
+                    <tags :ques="ques"></tags>
                     <ques_collect :ques="ques" :accid="admin.Acc_Id"></ques_collect>
                 </div>
             </div>
