@@ -32,6 +32,8 @@ namespace Song.Entities {
     		
     		protected String _Cou_Intro;
     		
+    		protected Boolean _Cou_IsDeleted;
+    		
     		protected Boolean _Cou_IsFree;
     		
     		protected Boolean _Cou_IsLimitFree;
@@ -223,6 +225,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Cou_Intro, _Cou_Intro, value);
     				this._Cou_Intro = value;
+    			}
+    		}
+    		
+    		public Boolean Cou_IsDeleted {
+    			get {
+    				return this._Cou_IsDeleted;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Cou_IsDeleted, _Cou_IsDeleted, value);
+    				this._Cou_IsDeleted = value;
     			}
     		}
     		
@@ -628,6 +640,7 @@ namespace Song.Entities {
     					_.Cou_FreeEnd,
     					_.Cou_FreeStart,
     					_.Cou_Intro,
+    					_.Cou_IsDeleted,
     					_.Cou_IsFree,
     					_.Cou_IsLimitFree,
     					_.Cou_IsRec,
@@ -684,6 +697,7 @@ namespace Song.Entities {
     					this._Cou_FreeEnd,
     					this._Cou_FreeStart,
     					this._Cou_Intro,
+    					this._Cou_IsDeleted,
     					this._Cou_IsFree,
     					this._Cou_IsLimitFree,
     					this._Cou_IsRec,
@@ -762,6 +776,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Cou_Intro))) {
     				this._Cou_Intro = reader.GetString(_.Cou_Intro);
+    			}
+    			if ((false == reader.IsDBNull(_.Cou_IsDeleted))) {
+    				this._Cou_IsDeleted = reader.GetBoolean(_.Cou_IsDeleted);
     			}
     			if ((false == reader.IsDBNull(_.Cou_IsFree))) {
     				this._Cou_IsFree = reader.GetBoolean(_.Cou_IsFree);
@@ -959,6 +976,11 @@ namespace Song.Entities {
     			/// 字段名：Cou_Intro - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Cou_Intro = new WeiSha.Data.Field<Course>("Cou_Intro");
+    			
+    			/// <summary>
+    			/// 字段名：Cou_IsDeleted - 数据类型：Boolean
+    			/// </summary>
+    			public static WeiSha.Data.Field Cou_IsDeleted = new WeiSha.Data.Field<Course>("Cou_IsDeleted");
     			
     			/// <summary>
     			/// 字段名：Cou_IsFree - 数据类型：Boolean

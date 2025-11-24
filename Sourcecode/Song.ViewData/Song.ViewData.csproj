@@ -217,6 +217,7 @@
     <Compile Include="Methods\DocHelper.cs" />
     <Compile Include="Methods\Exam.cs" />
     <Compile Include="Methods\ExamQues.cs" />
+    <Compile Include="Methods\ExamTestPaper.cs" />
     <Compile Include="Methods\HelpDocument.cs" />
     <Compile Include="Methods\Knowledge.cs" />
     <Compile Include="Methods\Guide.cs" />

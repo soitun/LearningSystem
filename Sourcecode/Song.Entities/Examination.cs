@@ -10,6 +10,8 @@ namespace Song.Entities {
     		
     		protected Int32 _Exam_ID;
     		
+    		protected Int64 _Etp_Id;
+    		
     		protected DateTime _Exam_CrtTime;
     		
     		protected DateTime _Exam_Date;
@@ -21,6 +23,8 @@ namespace Song.Entities {
     		protected Int32 _Exam_GroupType;
     		
     		protected String _Exam_Intro;
+    		
+    		protected Boolean _Exam_IsDeleted;
     		
     		protected Boolean _Exam_IsManual;
     		
@@ -71,6 +75,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Exam_ID, _Exam_ID, value);
     				this._Exam_ID = value;
+    			}
+    		}
+    		
+    		public Int64 Etp_Id {
+    			get {
+    				return this._Etp_Id;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Etp_Id, _Etp_Id, value);
+    				this._Etp_Id = value;
     			}
     		}
     		
@@ -131,6 +145,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Exam_Intro, _Exam_Intro, value);
     				this._Exam_Intro = value;
+    			}
+    		}
+    		
+    		public Boolean Exam_IsDeleted {
+    			get {
+    				return this._Exam_IsDeleted;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Exam_IsDeleted, _Exam_IsDeleted, value);
+    				this._Exam_IsDeleted = value;
     			}
     		}
     		
@@ -372,12 +396,14 @@ namespace Song.Entities {
     		protected override WeiSha.Data.Field[] GetFields() {
     			return new WeiSha.Data.Field[] {
     					_.Exam_ID,
+    					_.Etp_Id,
     					_.Exam_CrtTime,
     					_.Exam_Date,
     					_.Exam_DateOver,
     					_.Exam_DateType,
     					_.Exam_GroupType,
     					_.Exam_Intro,
+    					_.Exam_IsDeleted,
     					_.Exam_IsManual,
     					_.Exam_IsRightClick,
     					_.Exam_IsShowBtn,
@@ -407,12 +433,14 @@ namespace Song.Entities {
     		protected override object[] GetValues() {
     			return new object[] {
     					this._Exam_ID,
+    					this._Etp_Id,
     					this._Exam_CrtTime,
     					this._Exam_Date,
     					this._Exam_DateOver,
     					this._Exam_DateType,
     					this._Exam_GroupType,
     					this._Exam_Intro,
+    					this._Exam_IsDeleted,
     					this._Exam_IsManual,
     					this._Exam_IsRightClick,
     					this._Exam_IsShowBtn,
@@ -443,6 +471,9 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Exam_ID))) {
     				this._Exam_ID = reader.GetInt32(_.Exam_ID);
     			}
+    			if ((false == reader.IsDBNull(_.Etp_Id))) {
+    				this._Etp_Id = reader.GetInt64(_.Etp_Id);
+    			}
     			if ((false == reader.IsDBNull(_.Exam_CrtTime))) {
     				this._Exam_CrtTime = reader.GetDateTime(_.Exam_CrtTime);
     			}
@@ -460,6 +491,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Exam_Intro))) {
     				this._Exam_Intro = reader.GetString(_.Exam_Intro);
+    			}
+    			if ((false == reader.IsDBNull(_.Exam_IsDeleted))) {
+    				this._Exam_IsDeleted = reader.GetBoolean(_.Exam_IsDeleted);
     			}
     			if ((false == reader.IsDBNull(_.Exam_IsManual))) {
     				this._Exam_IsManual = reader.GetBoolean(_.Exam_IsManual);
@@ -556,6 +590,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Exam_ID = new WeiSha.Data.Field<Examination>("Exam_ID");
     			
     			/// <summary>
+    			/// 字段名：Etp_Id - 数据类型：Int64
+    			/// </summary>
+    			public static WeiSha.Data.Field Etp_Id = new WeiSha.Data.Field<Examination>("Etp_Id");
+    			
+    			/// <summary>
     			/// 字段名：Exam_CrtTime - 数据类型：DateTime
     			/// </summary>
     			public static WeiSha.Data.Field Exam_CrtTime = new WeiSha.Data.Field<Examination>("Exam_CrtTime");
@@ -584,6 +623,11 @@ namespace Song.Entities {
     			/// 字段名：Exam_Intro - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Exam_Intro = new WeiSha.Data.Field<Examination>("Exam_Intro");
+    			
+    			/// <summary>
+    			/// 字段名：Exam_IsDeleted - 数据类型：Boolean
+    			/// </summary>
+    			public static WeiSha.Data.Field Exam_IsDeleted = new WeiSha.Data.Field<Examination>("Exam_IsDeleted");
     			
     			/// <summary>
     			/// 字段名：Exam_IsManual - 数据类型：Boolean

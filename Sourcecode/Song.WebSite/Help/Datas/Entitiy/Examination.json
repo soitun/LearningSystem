@@ -36,7 +36,7 @@
   },
   "Exam_Monitor": {
     "mark": "",
-    "intro": "不记得干啥用的了",
+    "intro": "不记得当初为啥设计它了，不记得干啥用的了",
     "relation": ""
   },
   "Exam_Date": {
@@ -67,12 +67,12 @@
   "Th_ID": {
     "mark": "教师id",
     "intro": "发布当前考试的教师的id",
-    "relation": ""
+    "relation": "Teacher"
   },
   "Th_Name": {
     "mark": "教师名称",
     "intro": "",
-    "relation": ""
+    "relation": "Teacher"
   },
   "Tp_Id": {
     "mark": "试卷id",

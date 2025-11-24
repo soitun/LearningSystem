@@ -28,6 +28,8 @@ namespace Song.Entities {
     		
     		protected String _Sbj_Intro;
     		
+    		protected Boolean _Sbj_IsDeleted;
+    		
     		protected Boolean _Sbj_IsRec;
     		
     		protected Boolean _Sbj_IsUse;
@@ -149,6 +151,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Sbj_Intro, _Sbj_Intro, value);
     				this._Sbj_Intro = value;
+    			}
+    		}
+    		
+    		public Boolean Sbj_IsDeleted {
+    			get {
+    				return this._Sbj_IsDeleted;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Sbj_IsDeleted, _Sbj_IsDeleted, value);
+    				this._Sbj_IsDeleted = value;
     			}
     		}
     		
@@ -302,6 +314,7 @@ namespace Song.Entities {
     					_.Sbj_CrtTime,
     					_.Sbj_Details,
     					_.Sbj_Intro,
+    					_.Sbj_IsDeleted,
     					_.Sbj_IsRec,
     					_.Sbj_IsUse,
     					_.Sbj_Level,
@@ -331,6 +344,7 @@ namespace Song.Entities {
     					this._Sbj_CrtTime,
     					this._Sbj_Details,
     					this._Sbj_Intro,
+    					this._Sbj_IsDeleted,
     					this._Sbj_IsRec,
     					this._Sbj_IsUse,
     					this._Sbj_Level,
@@ -378,6 +392,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Sbj_Intro))) {
     				this._Sbj_Intro = reader.GetString(_.Sbj_Intro);
+    			}
+    			if ((false == reader.IsDBNull(_.Sbj_IsDeleted))) {
+    				this._Sbj_IsDeleted = reader.GetBoolean(_.Sbj_IsDeleted);
     			}
     			if ((false == reader.IsDBNull(_.Sbj_IsRec))) {
     				this._Sbj_IsRec = reader.GetBoolean(_.Sbj_IsRec);
@@ -490,6 +507,11 @@ namespace Song.Entities {
     			/// 字段名：Sbj_Intro - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Sbj_Intro = new WeiSha.Data.Field<Subject>("Sbj_Intro");
+    			
+    			/// <summary>
+    			/// 字段名：Sbj_IsDeleted - 数据类型：Boolean
+    			/// </summary>
+    			public static WeiSha.Data.Field Sbj_IsDeleted = new WeiSha.Data.Field<Subject>("Sbj_IsDeleted");
     			
     			/// <summary>
     			/// 字段名：Sbj_IsRec - 数据类型：Boolean

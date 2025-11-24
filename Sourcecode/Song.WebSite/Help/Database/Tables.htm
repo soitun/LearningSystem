@@ -25,7 +25,7 @@
                     <el-input v-else class="mark" ref="mark" v-model="entity.mark" clearable
                         @keyup.enter="updateentity('mark')" @blur="updateentity('mark')">
                     </el-input>
-                    <el-input placeholder="搜索" prefix-icon="el-icon-search" class="query" clearable v-model="search">
+                    <el-input placeholder="搜索" prefix-icon="el-icon-search" class="query" clearable v-model.trim="search">
                     </el-input>
                 </div>
                 <div class="intro">

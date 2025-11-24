@@ -106,12 +106,12 @@
   },
   "Th_ID": {
     "mark": "教师ID\n",
-    "intro": "",
+    "intro": "编写该试卷的教师",
     "relation": "Teacher"
   },
   "Th_Name": {
-    "mark": "",
-    "intro": "",
+    "mark": "教师名称",
+    "intro": "编写该试卷的教师",
     "relation": "Teacher"
   },
   "Tp_PassScore": {

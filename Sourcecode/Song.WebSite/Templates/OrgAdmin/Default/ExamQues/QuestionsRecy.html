@@ -84,7 +84,8 @@
 
         <!-- 数据列表-->
         <section class="data-list">
-            <div v-if="!loadstate.get && datas.length<1" class="null">没有满足条件的数据</div>
+            <loading v-if="loading"></loading>
+            <div v-else-if="datas.length<1" class="null">没有满足条件的数据</div>
             <div v-else class="datarow" v-for="(ques,index) in datas" :qid="item.Qus_ID">
                 <div class="datarow-title">
                     <div class="index">{{(form.index - 1) * form.size + index + 1}}.</div>

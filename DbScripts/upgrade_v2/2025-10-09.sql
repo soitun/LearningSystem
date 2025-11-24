@@ -329,3 +329,61 @@ CREATE TABLE "QuesCollect" (
 CREATE INDEX "QuesCollect_IX_AccID" ON "QuesCollect"("Acc_ID");
 CREATE INDEX "QuesCollect_IX_QuesID" ON "QuesCollect"("Qus_ID");
 CREATE INDEX "QuesCollect_IX_CrtTime" ON "QuesCollect"("Qcl_CrtTime");
+
+
+-- 创建考试专用的试卷表 ExamTestPaper --
+DROP TABLE IF EXISTS "ExamTestPaper" CASCADE;
+CREATE TABLE IF NOT EXISTS "ExamTestPaper"
+(
+	"Etp_Id" bigint NOT NULL DEFAULT 0,
+	"Org_ID" integer NOT NULL DEFAULT 0,
+	"Org_Name" character varying(255) COLLATE pg_catalog."default",
+  "Acc_Id" integer NOT NULL DEFAULT 0,
+	"Acc_AccName" character varying(255) COLLATE pg_catalog."default" NOT NULL DEFAULT '',
+	"Etp_Author" character varying(50) COLLATE pg_catalog."default",
+	"Etp_Count" integer NOT NULL DEFAULT 0,
+	"Etp_CrtTime" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	"Etp_Diff" integer NOT NULL DEFAULT 0,
+	"Etp_Diff2" integer NOT NULL DEFAULT 0,
+	"Etp_FromConfig" text,
+	"Etp_FromType" integer NOT NULL DEFAULT 0,
+	"Etp_Intro" text,
+	"Etp_IsBuild" boolean NOT NULL DEFAULT false,
+	"Etp_IsFinal" boolean NOT NULL DEFAULT false,
+	"Etp_IsManual" boolean NOT NULL DEFAULT false,
+	"Etp_IsRec" boolean NOT NULL DEFAULT false,
+  "Etp_IsDeleted" boolean NOT NULL DEFAULT false,
+	"Etp_IsUse" boolean NOT NULL DEFAULT false,
+	"Etp_Lasttime" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	"Etp_Logo" character varying(255) COLLATE pg_catalog."default",
+	"Etp_Name" character varying(255) COLLATE pg_catalog."default",
+	"Etp_PassScore" integer NOT NULL DEFAULT 0,
+	"Etp_Remind" text,
+	"Etp_Span" integer NOT NULL DEFAULT 0,
+	"Etp_SubName" character varying(255) COLLATE pg_catalog."default",
+	"Etp_Total" integer NOT NULL DEFAULT 0,
+	"Etp_Type" integer NOT NULL DEFAULT 0,
+	"Etp_UID" character varying(255) COLLATE pg_catalog."default",
+	 CONSTRAINT key_examtestpaper PRIMARY KEY ("Etp_Id")
+);
+
+CREATE INDEX IF NOT EXISTS "ExamTestPaper_IX_Org_ID" ON "ExamTestPaper" ("Org_ID" ASC);
+CREATE INDEX IF NOT EXISTS "ExamTestPaper_IX_Acc_Id" ON "ExamTestPaper" ("Acc_Id" ASC);
+CREATE INDEX IF NOT EXISTS "ExamTestPaper_IX_Etp_CrtTime" ON "ExamTestPaper" ("Etp_CrtTime" ASC);
+CREATE INDEX IF NOT EXISTS "ExamTestPaper_IX_Etp_Diff" ON "ExamTestPaper" ("Etp_Diff" ASC);
+CREATE INDEX IF NOT EXISTS "ExamTestPaper_Etp_IsManual" ON "ExamTestPaper" ("Etp_IsManual" ASC);
+CREATE INDEX IF NOT EXISTS "ExamTestPaperr_IX_Etp_IsUse" ON "ExamTestPaper" ("Etp_IsUse" ASC);
+CREATE INDEX IF NOT EXISTS "ExamTestPaper_IX_Etp_IsDeleted" ON "ExamTestPaper" ("Etp_IsDeleted" ASC);
+CREATE INDEX IF NOT EXISTS "ExamTestPaper_IX_Etp_Name" ON "ExamTestPaper" ("Etp_Name" ASC);
+
+/*为考试添加是否删除的字段*/
+ALTER TABLE "Examination" ADD COLUMN "Exam_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
+CREATE INDEX "Examination_IX_IsDeleted" ON "Examination"("Exam_IsDeleted");
+ALTER TABLE "Examination" ADD COLUMN "Etp_Id" bigint NOT NULL DEFAULT 0;
+CREATE INDEX "Examination_IX_Etp_Id" ON "Examination"("Etp_Id");
+/*课程，专业，增加是否删除的字段*/
+ALTER TABLE "Course" ADD COLUMN "Cou_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
+CREATE INDEX "Course_IX_IsDeleted" ON "Course"("Cou_IsDeleted");
+ALTER TABLE "Subject" ADD COLUMN "Sbj_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
+CREATE INDEX "Subject_IX_IsDeleted" ON "Subject"("Sbj_IsDeleted");
+

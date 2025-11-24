@@ -153,6 +153,7 @@
     <Compile Include="ExamGroup.cs" />
     <Compile Include="Examination.cs" />
     <Compile Include="ExamResults.cs" />
+    <Compile Include="ExamTestPaper.cs" />
     <Compile Include="FuncPoint.cs" />
     <Compile Include="Guide.cs" />
     <Compile Include="GuideColumns.cs" />

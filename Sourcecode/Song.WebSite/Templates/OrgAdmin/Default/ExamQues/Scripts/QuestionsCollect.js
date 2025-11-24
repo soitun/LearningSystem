@@ -78,6 +78,7 @@ $ready([
                 var th = this;
                 if (index != null) this.form.index = index;
                 var loading = this.$fulloading();
+                th.loadstate.get = true;
                 $api.get("ExamQues/CollectPager", th.form).then(function (d) {
                     if (d.data.success) {
                         var result = d.data.result;
@@ -96,9 +97,10 @@ $ready([
                 }).catch(function (err) {
                     alert(err);
                     console.error(err);
-                }).finally(() => {
+                }).finally(() => {                  
                     th.$nextTick(function () {
                         loading.close();
+                        th.loadstate.get = false;
                     });
                 });
             },
