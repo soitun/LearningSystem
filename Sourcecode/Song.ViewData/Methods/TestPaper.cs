@@ -21,10 +21,10 @@ namespace Song.ViewData.Methods
     public class TestPaper : ViewMethod, IViewAPI
     {
         //资源的虚拟路径和物理路径
-        public static string PathKey = "TestPaper";
+        private static string PathKey = "TestPaper";
 
-        public static string VirPath = WeiSha.Core.Upload.Get[PathKey].Virtual;
-        public static string PhyPath = WeiSha.Core.Upload.Get[PathKey].Physics;
+        private static string VirPath = WeiSha.Core.Upload.Get[PathKey].Virtual;
+        private static string PhyPath = WeiSha.Core.Upload.Get[PathKey].Physics;
 
         #region 增删改查
 

@@ -376,14 +376,27 @@ CREATE INDEX IF NOT EXISTS "ExamTestPaperr_IX_Etp_IsUse" ON "ExamTestPaper" ("Et
 CREATE INDEX IF NOT EXISTS "ExamTestPaper_IX_Etp_IsDeleted" ON "ExamTestPaper" ("Etp_IsDeleted" ASC);
 CREATE INDEX IF NOT EXISTS "ExamTestPaper_IX_Etp_Name" ON "ExamTestPaper" ("Etp_Name" ASC);
 
-/*为考试添加是否删除的字段*/
+
+/*添加考试是否删除、关联试卷ID、试卷来源的字段*/
 ALTER TABLE "Examination" ADD COLUMN "Exam_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
 CREATE INDEX "Examination_IX_IsDeleted" ON "Examination"("Exam_IsDeleted");
+
 ALTER TABLE "Examination" ADD COLUMN "Etp_Id" bigint NOT NULL DEFAULT 0;
 CREATE INDEX "Examination_IX_Etp_Id" ON "Examination"("Etp_Id");
+
+ALTER TABLE "Examination" ADD COLUMN "Exam_Purpose" bigint NOT NULL DEFAULT 0;
+CREATE INDEX "Examination_IX_Purpose" ON "Examination"("Exam_Purpose");
+
+/*考试成绩中的试卷id*/
+ALTER TABLE "ExamResults" ADD COLUMN "Etp_Id" bigint NOT NULL DEFAULT 0;
+CREATE INDEX "ExamResults_IX_Etp_Id" ON "ExamResults"("Etp_Id");
+
+
 /*课程，专业，增加是否删除的字段*/
 ALTER TABLE "Course" ADD COLUMN "Cou_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
 CREATE INDEX "Course_IX_IsDeleted" ON "Course"("Cou_IsDeleted");
 ALTER TABLE "Subject" ADD COLUMN "Sbj_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
 CREATE INDEX "Subject_IX_IsDeleted" ON "Subject"("Sbj_IsDeleted");
+
+
 

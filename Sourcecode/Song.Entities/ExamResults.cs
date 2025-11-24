@@ -20,6 +20,8 @@ namespace Song.Entities {
     		
     		protected Int32 _Dep_Id;
     		
+    		protected Int64 _Etp_Id;
+    		
     		protected Int32 _Exam_ID;
     		
     		protected String _Exam_Name;
@@ -127,6 +129,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Dep_Id, _Dep_Id, value);
     				this._Dep_Id = value;
+    			}
+    		}
+    		
+    		public Int64 Etp_Id {
+    			get {
+    				return this._Etp_Id;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Etp_Id, _Etp_Id, value);
+    				this._Etp_Id = value;
     			}
     		}
     		
@@ -413,6 +425,7 @@ namespace Song.Entities {
     					_.Ac_IDCardNumber,
     					_.Ac_Name,
     					_.Dep_Id,
+    					_.Etp_Id,
     					_.Exam_ID,
     					_.Exam_Name,
     					_.Exam_Title,
@@ -451,6 +464,7 @@ namespace Song.Entities {
     					this._Ac_IDCardNumber,
     					this._Ac_Name,
     					this._Dep_Id,
+    					this._Etp_Id,
     					this._Exam_ID,
     					this._Exam_Name,
     					this._Exam_Title,
@@ -499,6 +513,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Dep_Id))) {
     				this._Dep_Id = reader.GetInt32(_.Dep_Id);
+    			}
+    			if ((false == reader.IsDBNull(_.Etp_Id))) {
+    				this._Etp_Id = reader.GetInt64(_.Etp_Id);
     			}
     			if ((false == reader.IsDBNull(_.Exam_ID))) {
     				this._Exam_ID = reader.GetInt32(_.Exam_ID);
@@ -632,6 +649,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Dep_Id = new WeiSha.Data.Field<ExamResults>("Dep_Id");
     			
     			/// <summary>
+    			/// 字段名：Etp_Id - 数据类型：Int64
+    			/// </summary>
+    			public static WeiSha.Data.Field Etp_Id = new WeiSha.Data.Field<ExamResults>("Etp_Id");
+    			
+    			/// <summary>
     			/// 字段名：Exam_ID - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Exam_ID = new WeiSha.Data.Field<ExamResults>("Exam_ID");
@@ -758,4 +780,3 @@ namespace Song.Entities {
     		}
     	}
     }
-    

@@ -138,5 +138,20 @@
     "mark": "人工批阅",
     "intro": "该场考试，是否需要人工批阅，例如有简答题",
     "relation": ""
+  },
+  "Etp_Id": {
+    "mark": "试卷ID",
+    "intro": "关联的考试专用试卷的ID",
+    "relation": "ExamTestPaper"
+  },
+  "Exam_IsDeleted": {
+    "mark": "是否删除",
+    "intro": "",
+    "relation": ""
+  },
+  "Exam_Purpose": {
+    "mark": "试卷类型",
+    "intro": "默认是0，表示关联的试卷来自课程，此时Tp_id应该有相应的值；如果是1，则表示关联的试卷来自考试专用试卷，此时Etp_ID应该有值",
+    "relation": ""
   }
 }

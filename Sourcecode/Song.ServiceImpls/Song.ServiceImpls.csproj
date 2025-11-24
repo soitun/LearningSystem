@@ -186,6 +186,7 @@
     <Compile Include="AccountLogin\Buffer.cs" />
     <Compile Include="Cache\EntitiesCache.cs" />
     <Compile Include="Cache\ExamResultsCache.cs" />
+    <Compile Include="ExamTestPaperCom.cs" />
     <Compile Include="DepartCom.cs" />
     <Compile Include="Exam\BatchResults.cs" />
     <Compile Include="Exam\HandlerExtensions.cs" />

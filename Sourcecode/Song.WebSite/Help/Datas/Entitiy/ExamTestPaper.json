@@ -1,0 +1,147 @@
+{
+  "Acc_AccName": {
+    "mark": "",
+    "intro": "",
+    "relation": "EmpAccount"
+  },
+  "Acc_Id": {
+    "mark": "",
+    "intro": "",
+    "relation": "EmpAccount"
+  },
+  "Etp_Author": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_Count": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_CrtTime": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_Diff": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_Diff2": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_FromConfig": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_FromType": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_Id": {
+    "mark": "主键",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_Intro": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_IsBuild": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_IsDeleted": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_IsFinal": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_IsManual": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_IsRec": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_IsUse": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_Lasttime": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_Logo": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_Name": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_PassScore": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_Remind": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_Span": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_SubName": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_Total": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_Type": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Etp_UID": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Org_ID": {
+    "mark": "",
+    "intro": "",
+    "relation": "Organization"
+  },
+  "Org_Name": {
+    "mark": "",
+    "intro": "",
+    "relation": "Organization"
+  }
+}

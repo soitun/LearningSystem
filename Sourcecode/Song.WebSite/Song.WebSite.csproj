@@ -3749,6 +3749,8 @@
     <Content Include="Help\Datas\Entitiy\InternalLink.json" />
     <Content Include="Help\Datas\Entitiy\QuesTags.json" />
     <Content Include="Help\Datas\Entitiy\Questions_QTags.json" />
+    <Content Include="Help\Datas\Entitiy\ExamTestPaper.json" />
+    <Content Include="Help\Datas\Entitiy\Questions_QKnl.json" />
     <None Include="packages.config" />
     <Content Include="Utilities\LLM\aliyun_model.json" />
     <Content Include="Utilities\jsontreejs\LICENSE" />
