@@ -138,10 +138,10 @@ namespace Song.ServiceImpls
                 throw ex;
             }
         }
-        public void PaperDelete(long identify)
+        public int PaperDelete(long identify)
         {
             Song.Entities.TestPaper tp = this.PaperSingle(identify);
-            if (tp == null) return;
+            if (tp == null) return 0;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
@@ -167,6 +167,7 @@ namespace Song.ServiceImpls
                     throw ex;
                 }
             }
+            return 1;
         }
 
         public TestPaper PaperSingle(long identify)

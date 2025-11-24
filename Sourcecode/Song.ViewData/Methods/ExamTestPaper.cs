@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WeiSha.Core;
+using Song.Entities;
+using Song.ServiceInterfaces;
+using Song.ViewData.Attri;
+using System.Web;
+using System.IO;
 
 namespace Song.ViewData.Methods
 {
@@ -16,5 +22,252 @@ namespace Song.ViewData.Methods
 
         private static string _virPath = WeiSha.Core.Upload.Get[_pathKey].Virtual;
         private static string _phyPath = WeiSha.Core.Upload.Get[_pathKey].Physics;
+
+        #region 增删改查
+
+        /// <summary>
+        /// 获取试卷信息
+        /// </summary>
+        /// <param name="id">试卷id</param>
+        /// <returns></returns>
+        [HttpPost]
+        public Song.Entities.ExamTestPaper ForID(long id)
+        {
+            Song.Entities.ExamTestPaper tp = Business.Do<IExamTestPaper>().PaperSingle(id);
+            if (tp == null) throw new Exception("试卷不存在！");
+            return _tran(tp);
+        }
+
+        ///<summary>
+        /// 创建试卷
+        /// </summary>
+        /// <param name="entity">试卷对象</param>
+        /// <returns></returns>
+        [Admin, Teacher]
+        [HttpPost, HttpGet(Ignore = true)]
+        [Upload(Config = "TestPaperLogo")]
+        [HtmlClear(Not = "entity")]
+        public Song.Entities.ExamTestPaper Add(Song.Entities.ExamTestPaper entity)
+        {
+
+            string filename = string.Empty, smallfile = string.Empty;
+            //只保存第一张图片
+            foreach (string key in this.Files)
+            {
+                HttpPostedFileBase file = this.Files[key];
+                filename = WeiSha.Core.Request.UniqueID() + Path.GetExtension(file.FileName);
+                file.SaveAs(_phyPath + filename);
+                break;
+            }
+            entity.Etp_Logo = filename;
+
+            Business.Do<IExamTestPaper>().PaperAdd(entity);
+            return entity;
+        }
+
+        /// <summary>
+        /// 修改试卷信息
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        [Admin, Teacher]
+        [HttpPost, HttpGet(Ignore = true)]
+        [Upload(Config = "TestPaperLogo")]
+        [HtmlClear(Not = "entity")]
+        public Song.Entities.ExamTestPaper Modify(Song.Entities.ExamTestPaper entity)
+        {
+            string filename = string.Empty, smallfile = string.Empty;
+
+            Song.Entities.ExamTestPaper old = Business.Do<IExamTestPaper>().PaperSingle(entity.Etp_Id);
+            if (old == null) throw new Exception("Not found entity for TestPaper！");
+            //如果有上传文件
+            if (this.Files.Count > 0)
+            {
+                //只保存第一张图片
+                foreach (string key in this.Files)
+                {
+                    HttpPostedFileBase file = this.Files[key];
+                    filename = WeiSha.Core.Request.UniqueID() + Path.GetExtension(file.FileName);
+                    file.SaveAs(_phyPath + filename);
+                    break;
+                }
+                entity.Etp_Logo = filename;
+                if (!string.IsNullOrWhiteSpace(old.Etp_Logo))
+                    WeiSha.Core.Upload.Get[_pathKey].DeleteFile(old.Etp_Logo);
+            }
+            //如果没有上传图片，且新对象没有图片，则删除旧图
+            else if (string.IsNullOrWhiteSpace(entity.Etp_Logo) && !string.IsNullOrWhiteSpace(old.Etp_Logo))
+            {
+                WeiSha.Core.Upload.Get[_pathKey].DeleteFile(old.Etp_Logo);
+            }
+
+            old.Copy<Song.Entities.ExamTestPaper>(entity);
+            Business.Do<IExamTestPaper>().PaperSave(old);
+            return old;
+        }
+
+        /// <summary>
+        /// 删除试卷
+        /// </summary>
+        /// <param name="id">试卷id，可以是多个，用逗号分隔</param>
+        /// <returns></returns>
+        [Admin, Teacher]
+        [HttpDelete]
+        public int Delete(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            foreach (long s in list)
+                i += Business.Do<IExamTestPaper>().PaperDelete(s);
+            return i;           
+        }
+        /// <summary>
+        /// 还原逻辑删除试题
+        /// </summary>
+        [Admin]
+        [HttpPost, HttpGet(Ignore = true)]
+        public int QuesRecycle(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            foreach (long s in list)
+                i += Business.Do<IExamTestPaper>().PaperRecycle(s);
+            return i;
+        }
+
+        /// <summary>
+        /// 删除试题分
+        /// </summary>
+        /// <param name="id">试题id，可以是多个，用逗号分隔</param>
+        /// <returns></returns>
+        [Admin]
+        [HttpDelete, HttpGet(Ignore = true)]
+        public int QuesRemove(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            foreach (long s in list)
+                i += Business.Do<IExamTestPaper>().PaperRemove(s);
+            return i;
+        }
+        /// <summary>
+        /// 修改试卷的状态
+        /// </summary>
+        /// <param name="id">试卷的id，可以是多个，用逗号分隔</param>
+        /// <param name="use">是否启用</param>
+        /// <param name="rec">是否推荐</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Admin, Teacher]
+        public int ModifyState(string id, bool use, bool? rec)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            string[] arr = id.Split(',');
+            foreach (string s in arr)
+            {
+                long idval = 0;
+                long.TryParse(s, out idval);
+                if (idval == 0) continue;
+                try
+                {
+                    if (rec != null)
+                    {
+                        Business.Do<IExamTestPaper>().PaperUpdate(idval,
+                        new WeiSha.Data.Field[] {
+                        Song.Entities.ExamTestPaper._.Etp_IsUse,
+                        Song.Entities.ExamTestPaper._.Etp_IsRec },
+                        new object[] { use, rec });
+                    }
+                    else
+                    {
+                        Business.Do<IExamTestPaper>().PaperUpdate(idval, new WeiSha.Data.Field[] { Song.Entities.ExamTestPaper._.Etp_IsUse },
+                            new object[] { use });
+                    }
+                    i++;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            return i;
+        }
+
+        /// <summary>
+        /// 前端的分页获取试卷
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="seach">检索字符</param>
+        /// <param name="diff">难度等级</param>
+        /// <param name="use">是否启用</param>
+        /// <param name="size">每页几条</param>
+        /// <param name="index">第几页</param>
+        /// <returns></returns>
+        public ListResult ShowPager(int orgid, string seach,  int diff, bool? use, int size, int index)
+        {
+            if (orgid <= 0)
+            {
+                Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
+                orgid = org.Org_ID;
+            }
+            int count;
+            List<Song.Entities.ExamTestPaper> tps = Business.Do<IExamTestPaper>().PaperPager(orgid, -1, seach, false, diff, use, size, index, out count);
+            for (int i = 0; i < tps.Count; i++)
+                tps[i] = _tran(tps[i]);
+            ListResult result = new ListResult(tps);
+            result.Index = index;
+            result.Size = size;
+            result.Total = count;
+            return result;
+        }
+
+        /// <summary>
+        /// 分页获取所有试卷
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="accid">管理员id</param>
+        /// <param name="seach">按名称检索</param>
+        /// <param name="isdeleted">是否删除</param>
+        /// <param name="use"></param>
+        /// <param name="diff">难度等级</param>
+        /// <param name="size">每页几条</param>
+        /// <param name="index">第几页</param>
+        /// <returns></returns>
+        public ListResult Pager(int orgid, int accid, string seach, bool? isdeleted, int diff, bool? use, int size, int index)
+        {
+            if (orgid <= 0)
+            {
+                Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
+                orgid = org.Org_ID;
+            }
+            int count;
+            List<Song.Entities.ExamTestPaper> tps = Business.Do<IExamTestPaper>()
+                .PaperPager(orgid, accid, seach, isdeleted, diff, use, size, index, out count);
+            for (int i = 0; i < tps.Count; i++)
+                tps[i] = _tran(tps[i]);
+            ListResult result = new ListResult(tps);
+            result.Index = index;
+            result.Size = size;
+            result.Total = count;
+            return result;
+        }
+
+        /// <summary>
+        /// 处理试卷对象的一些信息
+        /// </summary>
+        /// <param name="paper"></param>
+        /// <returns></returns>
+        private Song.Entities.ExamTestPaper _tran(Song.Entities.ExamTestPaper paper)
+        {
+            if (paper == null) return paper;
+            paper.Etp_Logo = System.IO.File.Exists(_phyPath + paper.Etp_Logo) ? _virPath + paper.Etp_Logo : "";   
+            return paper;
+        }
+
+        #endregion 增删改查
     }
 }

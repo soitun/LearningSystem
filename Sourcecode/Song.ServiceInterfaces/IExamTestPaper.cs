@@ -35,7 +35,16 @@ namespace Song.ServiceInterfaces
         /// 删除试卷，按主键ID；
         /// </summary>
         /// <param name="id">实体的主键</param>
-        void PaperDelete(long id);
+        int PaperDelete(long id);
+        /// <summary>
+        /// 回收，标记删除状态为false
+        /// </summary>
+        int PaperRecycle(long id);
+        /// <summary>
+        /// 真正删除，按主键ID；
+        /// </summary>
+        /// <param name="id">实体的主键</param>
+        int PaperRemove(long id);
         /// <summary>
         /// 获取单一试卷实体对象，按主键ID；
         /// </summary>
@@ -70,7 +79,7 @@ namespace Song.ServiceInterfaces
         /// <param name="isUse"></param>
         /// <param name="count">指定数量</param>
         /// <returns></returns>
-        List<ExamTestPaper> PaperCount( int orgid, string search, int accid, bool? isdeleted, int diff, bool? isUse, int count);
+        List<ExamTestPaper> PaperCount(int orgid, string search, int accid, bool? isdeleted, int diff, bool? isUse, int count);
         /// <summary>
         /// 计算有多少个试卷
         /// </summary>

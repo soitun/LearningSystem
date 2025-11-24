@@ -36,7 +36,7 @@ namespace Song.ServiceInterfaces
         /// 删除试卷，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void PaperDelete(long identify);
+        int PaperDelete(long identify);
         /// <summary>
         /// 获取单一试卷实体对象，按主键ID；
         /// </summary>

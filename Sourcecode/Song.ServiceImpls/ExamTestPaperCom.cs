@@ -80,10 +80,25 @@ namespace Song.ServiceImpls
         /// 删除试卷，按主键ID；
         /// </summary>
         /// <param name="id">实体的主键</param>
-        public void PaperDelete(long id)
+        public int PaperDelete(long id)
+        {
+            return Gateway.Default.Update<ExamTestPaper>(ExamTestPaper._.Etp_IsDeleted, true, ExamTestPaper._.Etp_Id == id);
+        }
+        /// <summary>
+        /// 回收，标记删除状态为false
+        /// </summary>
+        public int PaperRecycle(long id)
+        {
+            return Gateway.Default.Update<ExamTestPaper>(ExamTestPaper._.Etp_IsDeleted, false, ExamTestPaper._.Etp_Id == id);
+        }
+        /// <summary>
+        /// 真正删除，按主键ID；
+        /// </summary>
+        /// <param name="id">实体的主键</param>
+        public int PaperRemove(long id)
         {
             Song.Entities.ExamTestPaper tp = this.PaperSingle(id);
-            if (tp == null) return;
+            if (tp == null) return 0;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
@@ -97,7 +112,7 @@ namespace Song.ServiceImpls
                     //删除成绩
                     tran.Delete<ExamResults>(ExamResults._.Etp_Id == id);
                     WeiSha.Core.Upload.Get["ExamTestPaper"].DeleteDirectory(tp.Etp_Id.ToString());
-                    tran.Commit();                    
+                    tran.Commit();
                 }
                 catch (Exception ex)
                 {
@@ -105,7 +120,8 @@ namespace Song.ServiceImpls
                     throw ex;
                 }
             }
-        }
+            return 1;
+        }       
         /// <summary>
         /// 获取单一试卷实体对象，按主键ID；
         /// </summary>
