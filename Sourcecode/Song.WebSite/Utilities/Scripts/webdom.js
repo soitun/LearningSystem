@@ -182,26 +182,14 @@
         }
     };
     fn.html = function (str) {
-        if (str != undefined) {
-            return this.each(function () {
-                this.innerHTML = str;
-            });
-        } else {
-            return this.each(function () {
-                return this.innerHTML;
-            }, 1);
-        }
+        return this.each(function () {
+            return str !== undefined ? this.innerHTML = str : this.innerHTML;
+        }, str === undefined ? 1 : undefined);
     };
     fn.outHtml = function (str) {
-        if (str != undefined) {
-            return this.each(function () {
-                this.outerHTML = str;
-            });
-        } else {
-            return this.each(function () {
-                return this.outerHTML;
-            }, 1);
-        }
+        return this.each(function () {
+            return str !== undefined ? this.outerHTML = str : this.outerHTML;
+        }, str === undefined ? 1 : undefined);
     };
     fn.val = function (str) {
         if (str != undefined) {
@@ -229,7 +217,7 @@
         return this.each(function () {
             if (smooth) this.style.setProperty('transition', 'width 0.3s,height 0.3s,left 0.3s,top 0.3s');
             else this.style.setProperty('transition', '');
-        });     
+        });
     };
     //设置或获取属性
     //arguments:

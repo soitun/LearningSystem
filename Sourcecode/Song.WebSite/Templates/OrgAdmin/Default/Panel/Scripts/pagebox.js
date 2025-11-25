@@ -51,10 +51,10 @@
         /* 自定义事件 */
         //shown打开，shut关闭，load加载，fail加载失败，
         //click点击，drag拖动,focus得到焦点，blur失去焦点
-        //min最小化，full全屏，restore还原，resize缩放
+        //min最小化，full全屏，restore还原，resize缩放,move移动
         let customEvents = ['shown', 'shut', 'load', 'fail',
             'click', 'drag', 'focus', 'blur',
-            'mini', 'full', 'restore', 'resize'
+            'mini', 'full', 'restore', 'resize', 'move'
         ];
         eval($ctrl.event_generate(customEvents));
         //以下不支持双向绑定
@@ -660,6 +660,23 @@
         smooth = smooth == null ? true : smooth;
         return box.toSize(this.id, width, height, smooth);
     };
+    //窗体移动，从当前位置移动
+    fn.toMove = function (left, top) {
+        let x = this.left + parseInt(left);
+        let y = this.top + parseInt(top);
+        this.position(x, y);
+    };
+    //设置窗体的位置
+    fn.position = function (left, top) {
+        this.dom.smooth();
+        this.left = parseInt(left);
+        this.top = parseInt(top);
+        var th = this;
+        window.setTimeout(function () {
+            th.dom.smooth(false);
+            th.trigger('move', { 'width': th.width, 'height': th.height, 'left': th.left, 'top': th.top });
+        }, 300);
+    };    
     //显示背景的遮罩
     fn.showBgMark = function () {
         box.mask.show(this);
@@ -977,7 +994,7 @@
         ctrl.obj.height = height;
         window.setTimeout(function () {
             ctrl.obj.dom.smooth(false);
-            ctrl.obj.trigger('resize', {});
+            ctrl.obj.trigger('resize', { 'width': width, 'height': height, 'left': left, 'top': top });
         }, 300);
         return ctrl.obj;
 

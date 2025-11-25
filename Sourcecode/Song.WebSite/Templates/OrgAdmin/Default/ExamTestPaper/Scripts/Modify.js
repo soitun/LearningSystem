@@ -41,8 +41,9 @@ $ready(function () {
                 let winname = window.name;
                 let $pagebox = window.top.$pagebox;
                 let box = $pagebox.get(winname);
-                box.toSize(1200,900);
+                //box.toSize(1200,900);
                 //console.error(box);
+                box.toMove(10,10);
             },
         },
         filters: {
