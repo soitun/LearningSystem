@@ -380,8 +380,47 @@ empty::before {
     content: "\a01f";
     font-size: 1.2rem;
 }
-
-
+/*动画效果*/
+/*颤抖*/
+icon[quiver] {
+    animation: frames_quiver 1s infinite linear;
+}
+*[icon][quiver]::before { 
+    animation: frames_quiver 1s infinite linear;
+    display: inline-block;
+}
+@keyframes frames_quiver  {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+/*旋转*/
+icon[spin] {
+    animation: frames_spin 1s infinite linear;
+}
+*[icon][spin]::before { 
+    animation: frames_spin 1s infinite linear;
+    display: inline-block;
+}
+@keyframes frames_spin  {
+    0% {transform: rotate(0deg);}
+    100% {transform: rotate(360deg);}
+}
+/*水平翻转*/
+icon[flip] {
+    animation: frames_flip 1.5s infinite linear;    
+    transform-style: preserve-3d; 
+}
+*[icon][flip]::before { 
+    animation: frames_flip 1.5s infinite linear;
+    transform-style: preserve-3d; 
+    display: inline-block;
+}
+@keyframes frames_flip  {
+    0% {transform: rotateX(0deg);}
+    50% {transform: rotateX(180deg);}   
+    100% {transform: rotateX(0deg);}   
+}
 /*预载*/
 loading {
     color: #999;

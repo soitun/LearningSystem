@@ -74,12 +74,20 @@ a[link]:hover{
     color: #409EFF;
 }
 /*字体大小*/
-.large {
-	font-size: 16px;
+.huge {
+	font-size: 1.5rem;
 }
-
+.large {
+	font-size: 1.2rem;
+}
 .medium {
-	font-size: 14px;
+	font-size: 1rem;
+}
+.small {
+	font-size: .8rem;
+}
+.mini {
+	font-size: .6rem;
 }
 /*卡片*/
 
@@ -138,7 +146,62 @@ card-content {
 	box-sizing: border-box;
 }
 
-
+/* ElementUI  的Card */
+.el-card[type="primary"]{
+    color: #409eff;   
+    border-color: #b3d8ff;    
+}
+.el-card[type="primary"] .el-card__header {
+    background-color: #ecf5ff;
+    border-bottom: 1px solid #b3d8ff;
+}
+.el-card[type="success"]{
+    color: #46961e;   
+    border-color: #c2e7b0;    
+}
+.el-card[type="success"] .el-card__header {
+    background-color: #f0f9eb;
+    border-bottom: 1px solid #c2e7b0;
+}
+.el-card[type="info"]{
+    color: #909399;
+    border-color: #d3d4d6;  
+}
+.el-card[type="info"] .el-card__header {
+    background-color: #f4f4f5;
+    border-bottom: 1px solid #d3d4d6;
+}
+.el-card[type="warning"]{
+    color: #c47b0e;    
+    border-color: #f5dab1;   
+}
+.el-card[type="warning"] .el-card__header {
+    background-color: #fdf6ec;
+    border-bottom: 1px solid #f5dab1;
+}
+.el-card[type="danger"]{
+    color: #f56c6c;
+    border-color: #fbc4c4;
+}
+.el-card[type="danger"] .el-card__header {
+    background-color: #fef0f0;
+    border-bottom: 1px solid #fbc4c4;
+}
+/* card的箭头*/
+.el-card[arrow] .el-card__header{
+    position: relative;
+}
+.el-card[arrow] .el-card__header::after {
+	content: '\e6c6';
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	font-size: 1.2rem;
+	font-family: "webdesk_icon" !important;
+}
+.el-card[arrow]:hover .el-card__header::after {
+	animation: frames_quiver 1.5s infinite linear;
+}
 /*拖动柄*/
 
 .draghandle {

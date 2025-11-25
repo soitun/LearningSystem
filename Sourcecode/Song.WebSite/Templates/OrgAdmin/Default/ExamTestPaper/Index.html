@@ -10,7 +10,7 @@
 <body>
     <div id="vapp" v-cloak>
         <div class="toolsbar">
-            <btngroup show="新增,修改,删除" ref='btngroup' :disabled="loading" path="Modify" width="960" height="80%">
+            <btngroup show="新增,修改,删除" ref='btngroup' :disabled="loading" path="Modify" width="900" height="500">
             </btngroup>
             <query_panel :model="form" :width="45" :loading="loading" @search="handleCurrentChange(1)">
                 <template>

@@ -194,7 +194,9 @@ namespace Song.ViewData.Methods
         [HttpGet]
         public List<EmpAccount> Emplyees(int id)
         {
-            return Business.Do<IPosition>().GetAllEmplyee(id);
+            List<EmpAccount> list = Business.Do<IPosition>().GetAllEmplyee(id);
+            foreach (EmpAccount emp in list) emp.Acc_Pw = string.Empty;
+            return list;
         }
         /// <summary>
         /// 保存员工与岗位的关联

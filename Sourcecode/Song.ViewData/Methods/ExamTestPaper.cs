@@ -30,7 +30,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="id">试卷id</param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
         public Song.Entities.ExamTestPaper ForID(long id)
         {
             Song.Entities.ExamTestPaper tp = Business.Do<IExamTestPaper>().PaperSingle(id);
@@ -207,6 +207,7 @@ namespace Song.ViewData.Methods
         /// <param name="size">每页几条</param>
         /// <param name="index">第几页</param>
         /// <returns></returns>
+        [HttpGet]
         public ListResult ShowPager(int orgid, string seach,  int diff, bool? use, int size, int index)
         {
             if (orgid <= 0)
@@ -237,6 +238,7 @@ namespace Song.ViewData.Methods
         /// <param name="size">每页几条</param>
         /// <param name="index">第几页</param>
         /// <returns></returns>
+        [HttpGet]
         public ListResult Pager(int orgid, int accid, string seach, bool? isdeleted, int diff, bool? use, int size, int index)
         {
             if (orgid <= 0)

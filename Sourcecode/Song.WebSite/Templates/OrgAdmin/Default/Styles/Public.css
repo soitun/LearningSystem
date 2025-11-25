@@ -59,15 +59,6 @@ html, body, #vapp {
 	touch-action: pan-y;
 }
 
-/*字体大小*/
-.large {
-	font-size: 16px;
-}
-
-.medium {
-	font-size: 14px;
-}
-
 .van-dialog {
 	border-radius: 3px;
 }
