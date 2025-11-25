@@ -853,7 +853,7 @@
         };
         ctrl.obj.move = ctrl.obj.resize = false;
         //开始全屏放大      
-        if (smooth) ctrl.dom.css('transition', 'width 0.3s,height 0.3s,left 0.3s,top 0.3s');
+        if (smooth) ctrl.dom.smooth(true);
         ctrl.dom.addClass('pagebox_full');
         ctrl.obj.width = window.innerWidth - 3;
         ctrl.obj.height = window.innerHeight - 2;
@@ -891,7 +891,7 @@
             ctrl.dom.removeClass('pagebox_full');
         }
         let obj = ctrl.obj;
-        if (smooth) obj.dom.css('transition', 'width 0.3s,height 0.3s,left 0.3s,top 0.3s');
+        if (smooth) obj.dom.smooth(true);
         obj.dom.addClass('pagebox_min');
         //最小化后的所在区域
         let collect = $dom('.pagebox-collect');
@@ -916,7 +916,7 @@
         let ctrl = $ctrls.get(boxid);
         if (ctrl == null) return;
         if (!(ctrl.dom.hasClass('pagebox_full') || ctrl.dom.hasClass('pagebox_min'))) return ctrl.obj;
-        if (!smooth) ctrl.dom.css('transition', '');
+        if (!smooth) ctrl.dom.smooth(false);
         //从最大化还原
         if (ctrl.dom.hasClass('pagebox_full')) {
             ctrl.dom.removeClass('pagebox_full');
@@ -944,7 +944,7 @@
             ctrl.obj.move = ctrl.win_state.move;
             ctrl.obj.resize = ctrl.win_state.resize;
             window.setTimeout(function () {
-                ctrl.obj.dom.css('transition', '');
+                ctrl.obj.dom.smooth(false);
 
             }, 300);
         }, 10);
@@ -956,8 +956,8 @@
         smooth = smooth == null ? true : smooth;
         let ctrl = $ctrls.get(boxid);
         if (ctrl == null) return;
-        //增加平滑过渡效果
-        if (smooth) ctrl.obj.dom.css('transition', 'width 0.3s,height 0.3s,left 0.3s,top 0.3s');
+        //增加平滑过渡效果       
+        if (smooth) ctrl.obj.dom.smooth(true);
         //如果处于最大化状态，恢复到窗体状态
         if (ctrl.dom.hasClass('pagebox_full')) {
             ctrl.dom.removeClass('pagebox_full');
@@ -976,7 +976,7 @@
         ctrl.obj.width = width;
         ctrl.obj.height = height;
         window.setTimeout(function () {
-            ctrl.obj.dom.css('transition', '');
+            ctrl.obj.dom.smooth(false);
             ctrl.obj.trigger('resize', {});
         }, 300);
         return ctrl.obj;

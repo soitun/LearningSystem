@@ -216,11 +216,20 @@
             }, 1);
         }
     };
+    //设置焦点
     fn.focus = function () {
         this.each(function () {
             return this.focus();
         });
         return this;
+    };
+    //设置元素平滑效果
+    fn.smooth = function (smooth) {
+        smooth = smooth == null ? true : smooth;
+        return this.each(function () {
+            if (smooth) this.style.setProperty('transition', 'width 0.3s,height 0.3s,left 0.3s,top 0.3s');
+            else this.style.setProperty('transition', '');
+        });     
     };
     //设置或获取属性
     //arguments:
