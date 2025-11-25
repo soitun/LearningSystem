@@ -120,13 +120,13 @@
     "relation": ""
   },
   "Etp_Total": {
-    "mark": "",
-    "intro": "",
+    "mark": "满分",
+    "intro": "试卷的满分",
     "relation": ""
   },
   "Etp_Type": {
-    "mark": "",
-    "intro": "",
+    "mark": "试卷类型",
+    "intro": "1静态试卷，2动态随机试卷",
     "relation": ""
   },
   "Etp_UID": {

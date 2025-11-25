@@ -11,13 +11,13 @@
     <div id="vapp" v-cloak>
         <section>
             <div class="large">选择组卷方式</div>
-            <el-card shadow="hover" type="primary" arrow>
+            <el-card shadow="hover" type="primary" arrow @click.native ="gototype(2)">
                 <template slot="header">
                     <span icon="&#xe6cc" large>随机抽题</span>                   
                 </template>
                 系统将根据您设定的知识点、难度和题型，自动为每位考生生成一套独一无二的试卷。即使同一考场，每位考生的题目内容和顺序也可能不同，能有效防止旁窥作弊，考查学生对知识点的全面掌握。
             </el-card>
-            <el-card shadow="hover" type="success" arrow>
+            <el-card shadow="hover" type="success" arrow @click.native="gototype(1)">
                 <template slot="header">
                     <span icon="&#xa055" large>固定试题</span>                   
                 </template>

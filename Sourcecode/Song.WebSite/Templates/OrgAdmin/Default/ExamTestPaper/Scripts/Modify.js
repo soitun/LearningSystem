@@ -35,11 +35,15 @@ $ready(function () {
 
         },
         methods: {
-            //卡片鼠标移入
-            cardHover:function(el){
-                //el.style.backgroundColor = '#f5f5f5';
-                console.error(el);
-            }
+            //跳转到指定类型页面, type:1静态试卷，2动态随机试卷
+            gototype: function (type) {
+                //console.error(type);
+                let winname = window.name;
+                let $pagebox = window.top.$pagebox;
+                let box = $pagebox.get(winname);
+                box.toSize(1200,900);
+                //console.error(box);
+            },
         },
         filters: {
 

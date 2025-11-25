@@ -654,6 +654,12 @@
     fn.toMinimize = function (smooth) {
         return box.toMinimize(this.id, smooth);
     };
+    //重新设置窗体的大小
+    //smooth:是否平滑过渡，默认为true
+    fn.toSize = function (width, height, smooth) {
+        smooth = smooth == null ? true : smooth;
+        return box.toSize(this.id, width, height, smooth);
+    };
     //显示背景的遮罩
     fn.showBgMark = function () {
         box.mask.show(this);
@@ -938,11 +944,43 @@
             ctrl.obj.move = ctrl.win_state.move;
             ctrl.obj.resize = ctrl.win_state.resize;
             window.setTimeout(function () {
-                ctrl.dom.css('transition', '');
+                ctrl.obj.dom.css('transition', '');
 
             }, 300);
         }, 10);
         return ctrl.obj;
+    };
+    //重新设置窗体的大小
+    //smooth:是否平滑过渡，默认为true
+    box.toSize = function (boxid, width, height, smooth) {
+        smooth = smooth == null ? true : smooth;
+        let ctrl = $ctrls.get(boxid);
+        if (ctrl == null) return;
+        //增加平滑过渡效果
+        if (smooth) ctrl.obj.dom.css('transition', 'width 0.3s,height 0.3s,left 0.3s,top 0.3s');
+        //如果处于最大化状态，恢复到窗体状态
+        if (ctrl.dom.hasClass('pagebox_full')) {
+            ctrl.dom.removeClass('pagebox_full');
+            ctrl.obj.trigger('restore', {
+                'action': 'from-full'
+            });
+            ctrl.obj.level = $dom('.pagebox').level() + 2;
+            ctrl.obj.resize = true;
+            ctrl.obj._full = false;
+        }
+        //设置窗体的位置与宽高
+        let left = ctrl.obj.left - (width - ctrl.obj.width) / 2;
+        let top = ctrl.obj.top - (height - ctrl.obj.height) / 2;
+        ctrl.obj.left = left <= 0 ? 0 : left;
+        ctrl.obj.top = top <= 0 ? 0 : top;
+        ctrl.obj.width = width;
+        ctrl.obj.height = height;
+        window.setTimeout(function () {
+            ctrl.obj.dom.css('transition', '');
+            ctrl.obj.trigger('resize', {});
+        }, 300);
+        return ctrl.obj;
+
     };
     //拖动窗体所需的事件
     box.dragRealize = function () {
