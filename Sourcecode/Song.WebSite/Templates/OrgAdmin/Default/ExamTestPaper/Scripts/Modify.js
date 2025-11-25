@@ -43,7 +43,15 @@ $ready(function () {
                 let box = $pagebox.get(winname);
                 //box.toSize(1200,900);
                 //console.error(box);
-                box.toMove(10,10);
+                box.ondrag(function (s, e) {
+                    //console.error(box.width, box.height);
+                    //console.error(e);
+                });
+                box.onmove(function (s, e) {
+                    //console.error(box.left, box.top);
+                    console.error(e);
+                });
+                box.toMove(100, 100);
             },
         },
         filters: {

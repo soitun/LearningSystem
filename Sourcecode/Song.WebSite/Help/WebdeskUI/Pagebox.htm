@@ -343,13 +343,24 @@
                 <td>e.mouse:鼠标当前坐标,{x,y}<br>
                     e.move：移动的偏移量（相较于拖动之前）,{x,y}<br>
                     e.offset:当前窗体的位置,{left,top}<br>
+                    (如果是通过toSize方法设置窗体大小，则不会有鼠标相关信息);<br>
                     e.width:缩放宽度<br>
                     e.height:缩放高度<br>
                     e.target:缩放控件<br>
                     e.action:缩放的方向</td>
             </tr>
+            <tr>
+                <td>move</td>
+                <td>移动</td>
+                <td>&nbsp;</td>
+                <td> e.width:缩放宽度<br>
+                    e.height:缩放高度<br>
+                    e.left:窗体的x轴承坐标<br>
+                    e.top:窗体的y轴承坐标<br>
+                </td>
+            </tr>
         </table>
-
+        <p>&nbsp;</p>
     </div>
 </body>
 

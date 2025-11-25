@@ -676,7 +676,7 @@
             th.dom.smooth(false);
             th.trigger('move', { 'width': th.width, 'height': th.height, 'left': th.left, 'top': th.top });
         }, 300);
-    };    
+    };
     //显示背景的遮罩
     fn.showBgMark = function () {
         box.mask.show(this);
@@ -992,9 +992,10 @@
         ctrl.obj.top = top <= 0 ? 0 : top;
         ctrl.obj.width = width;
         ctrl.obj.height = height;
+
         window.setTimeout(function () {
             ctrl.obj.dom.smooth(false);
-            ctrl.obj.trigger('resize', { 'width': width, 'height': height, 'left': left, 'top': top });
+            ctrl.obj.trigger('resize', { 'width': width, 'height': height, 'left': left, 'top': top, 'action': 'resize' });
         }, 300);
         return ctrl.obj;
 
@@ -1030,7 +1031,8 @@
                     box.top = ago.offset.top + eargs.move.y;
                     ctrl.win_offset = ctrl.obj.dom.offset();
                     //触发拖动事件
-                    eargs.offset = ctrl.dom.offset();
+                    eargs.left = ctrl.dom.offset().left;
+                    eargs.top = ctrl.dom.offset().top;
                     box.trigger('drag', eargs);
                 }
             } else {
@@ -1050,10 +1052,11 @@
                             box.height = ago.height - eargs.move.y < minHeight ? minHeight : ago.height - eargs.move.y;
                             if (box.height > minHeight) box.top = ago.offset.top + eargs.move.y;
                         }
-                        //触发resize事件                     
-                        eargs.offset = ctrl.dom.offset();
+                        //触发resize事件
                         eargs.width = box.width;
                         eargs.height = box.height;
+                        eargs.left = ctrl.dom.offset().left;
+                        eargs.top = ctrl.dom.offset().top;
                         eargs.action = eargs.target.tagName;
                         ctrl.obj.trigger('resize', eargs);
                     }
@@ -1062,13 +1065,21 @@
             //
         });
         document.addEventListener('mouseup', function (e) {
-            //let mouse = $dom.mouse(e);
+            //如果处于拖动中，取消拖动时，触发move事件
+            let boxdom = $dom('div.pagebox_drag');
+            if (boxdom.length < 1) return;
+            let ctrl = $ctrls.get(boxdom.attr('boxid'));
+            let pbox = ctrl.obj;
+            //当鼠标点下时的历史信息，例如位置、宽高    
+            let ago = ctrl.mousedown;
+            if (ago.target == 'pagebox_dragbar') {
+                pbox.trigger('move', { 'width': pbox.width, 'height': pbox.height, 'left': pbox.left, 'top': pbox.top });
+            }
             $ctrls.removeAttr('mousedown');
             let page = $dom('.pagebox_focus');
-            page.removeClass('pagebox_drag');
+            page.removeClass('pagebox_drag');           
             let obj = box.get(page.attr("boxid"));
-            if (obj != null)
-                obj.hideBgMask();
+            if (obj != null) obj.hideBgMask();
         });
         window.addEventListener('blur', function (e) {
             //document.onmouseup();
