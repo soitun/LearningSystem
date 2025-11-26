@@ -192,9 +192,12 @@ namespace Song.ViewData.Methods
         /// <param name="id">岗位id</param>
         /// <returns></returns>
         [HttpGet]
-        public Song.Entities.EmpAccount[] Emplyees(int id)
+        public List<EmpAccount> Emplyees(int id)
         {
-            return Business.Do<IPosition>().GetAllEmplyee(id);
+            List<EmpAccount> list = Business.Do<IPosition>().GetAllEmplyee(id);
+            //清空账号的密码
+            foreach (EmpAccount emp in list) emp.Acc_Pw = string.Empty;
+            return list;
         }
         /// <summary>
         /// 保存员工与岗位的关联

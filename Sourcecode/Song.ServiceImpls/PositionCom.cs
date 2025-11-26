@@ -153,7 +153,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public EmpAccount[] GetAllEmplyee(int id)
+        public List<EmpAccount> GetAllEmplyee(int id)
         {
             return Gateway.Default.From<EmpAccount>().Where(EmpAccount._.Posi_Id == id).ToArray<EmpAccount>();
         }

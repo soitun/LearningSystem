@@ -69,7 +69,7 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        EmpAccount[] GetAllEmplyee(int posid);
+        List<EmpAccount> GetAllEmplyee(int posid);
         /// <summary>
         /// 获取当前角色的所有在职员工
         /// </summary>
