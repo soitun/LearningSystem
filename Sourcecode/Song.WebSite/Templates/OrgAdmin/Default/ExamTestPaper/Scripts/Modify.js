@@ -51,7 +51,7 @@ $ready(function () {
                     //console.error(box.left, box.top);
                     console.error(e);
                 });
-                box.toMove(100, 100);
+                box.toSize(1200, 900);
             },
         },
         filters: {

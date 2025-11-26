@@ -195,6 +195,7 @@ namespace Song.ViewData.Methods
         public List<EmpAccount> Emplyees(int id)
         {
             List<EmpAccount> list = Business.Do<IPosition>().GetAllEmplyee(id);
+            //清空账号的密码
             foreach (EmpAccount emp in list) emp.Acc_Pw = string.Empty;
             return list;
         }

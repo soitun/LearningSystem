@@ -742,7 +742,7 @@
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\Modify_Type2.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\MyTestPaper.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\Index.css" />
-    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\Modify.js" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\Modify.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\Modify_Type1.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\Modify_Type2.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\MyTestPaper.css" />

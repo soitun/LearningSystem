@@ -80,7 +80,13 @@
         this.height = this._method.calcSize(this._height, 'height');
         //最前面的窗体，用于设置当前窗体的位置，以免覆盖之前的
         let topbox = box.gettop();
-        if (topbox != null && topbox.full) topbox = null;
+        if (topbox != null) {
+            if (topbox.full || (topbox.left + topbox.width / 2) < box.availWidth / 3
+                || (topbox.left + topbox.width / 2) > box.availWidth() / 3 * 2
+                || (topbox.top + topbox.height / 2) < box.availHeight() / 3
+                || (topbox.top + topbox.height / 2) > box.availHeight() / 3 * 2
+            ) topbox = null;
+        }
         //如果位置没有设置
         if (!this.top && this.bottom) this.top = box.availHeight() - this.height - this.bottom;
         if (!this.top && !this.bottom) {
@@ -1077,7 +1083,7 @@
             }
             $ctrls.removeAttr('mousedown');
             let page = $dom('.pagebox_focus');
-            page.removeClass('pagebox_drag');           
+            page.removeClass('pagebox_drag');
             let obj = box.get(page.attr("boxid"));
             if (obj != null) obj.hideBgMask();
         });
@@ -1280,12 +1286,8 @@
             if (close) $pagebox.delayshut(name, 1500);
         },
         //查找自身
-        self: function (name, func, close) {
-            name = $dom.trim(name);
-            //当前pagebox窗体对象
-            let currbox = box.get(name);
-            if (close) currbox.shut();
-            return currbox;
+        self: function (name) {
+            return box.get($dom.trim(name));
         },
         //顶级窗体
         top: function (name, func, close) {
