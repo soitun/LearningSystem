@@ -81,7 +81,8 @@
         //最前面的窗体，用于设置当前窗体的位置，以免覆盖之前的
         let topbox = box.gettop();
         if (topbox != null) {
-            if (topbox.full || (topbox.left + topbox.width / 2) < box.availWidth / 3
+            if (topbox.full || this.showmask
+                || (topbox.left + topbox.width / 2) < box.availWidth / 3
                 || (topbox.left + topbox.width / 2) > box.availWidth() / 3 * 2
                 || (topbox.top + topbox.height / 2) < box.availHeight() / 3
                 || (topbox.top + topbox.height / 2) > box.availHeight() / 3 * 2
@@ -89,25 +90,13 @@
         }
         //如果位置没有设置
         if (!this.top && this.bottom) this.top = box.availHeight() - this.height - this.bottom;
-        if (!this.top && !this.bottom) {
-            if (topbox == null || this.showmask)
-                this.top = (box.availHeight() - document.body.scrollTop - this.height) / 2;
-            else
-                this.top = topbox.dom.offset().top + 30;
-        }
+        if (!this.top && !this.bottom) this.top = topbox != null ? topbox.dom.offset().top + 30
+            : (box.availHeight() - document.body.scrollTop - this.height) / 2;
         if (!this.left && this.right) this.left = box.availWidth() - this.width - this.right;
-        if (!this.left && !this.right) {
-            if (topbox == null || this.showmask)
-                this.left = (box.availWidth() - document.body.scrollLeft - this.width) / 2;
-            else
-                this.left = topbox.dom.offset().left + 30;
-        }
+        if (!this.left && !this.right) this.left = topbox != null ? topbox.dom.offset().left + 30
+            : (box.availWidth() - document.body.scrollLeft - this.width) / 2;
         //
-        $ctrls.add({
-            id: this.id,
-            obj: this,
-            type: 'pagebox'
-        });
+        $ctrls.add({ id: this.id, obj: this, type: 'pagebox' });
         this._isinit = true;
         return this;
     };
@@ -224,9 +213,7 @@
                     if (size == 'height') newval = Math.floor(window.innerHeight * parseInt(val) / 100);
                 }
                 //如果是像素                
-                if (String(val).substring(String(val).length - 2) == 'px') {
-                    newval = parseInt(val);
-                }
+                if (String(val).substring(String(val).length - 2) == 'px') newval = parseInt(val);
             }
             return newval;
         }
