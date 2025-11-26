@@ -155,7 +155,7 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public List<EmpAccount> GetAllEmplyee(int id)
         {
-            return Gateway.Default.From<EmpAccount>().Where(EmpAccount._.Posi_Id == id).ToArray<EmpAccount>();
+            return Gateway.Default.From<EmpAccount>().Where(EmpAccount._.Posi_Id == id).ToList<EmpAccount>();
         }
         /// <summary>
         /// 获取当前角色的所有在职员工
