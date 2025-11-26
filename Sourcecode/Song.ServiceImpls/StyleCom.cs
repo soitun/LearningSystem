@@ -203,6 +203,7 @@ namespace Song.ServiceImpls
                     foreach (Navigation item in items)
                     {
                         item.Org_ID = orgid;
+                        item.Nav_ID = 0;
                         if (string.IsNullOrWhiteSpace(item.Nav_Name))
                             item.Nav_Name = "null";
                         if (string.IsNullOrWhiteSpace(item.Nav_UID))

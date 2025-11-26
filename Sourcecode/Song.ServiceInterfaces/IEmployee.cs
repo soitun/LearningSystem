@@ -149,9 +149,9 @@ namespace Song.ServiceInterfaces
         /// 获取对象；即所有员工；
         /// </summary>
         /// <returns></returns>
-        EmpAccount[] GetAll(int orgid);        
+        List<EmpAccount> GetAll(int orgid);
 
-        EmpAccount[] GetAll(int orgid, int depId, bool? isUse, string searTxt);
+        List<EmpAccount> GetAll(int orgid, int depId, bool? isUse, string searTxt);
         /// <summary>
         /// 获取某个分厂的所有员工帐号；
         /// </summary>
@@ -159,7 +159,7 @@ namespace Song.ServiceInterfaces
         /// <param name="isUse"></param>
         /// <param name="searTxt">员工名称</param>
         /// <returns></returns>
-        EmpAccount[] GetAll4Org(int orgid, bool? isUse, string searTxt);
+        List<EmpAccount> GetAll4Org(int orgid, bool? isUse, string searTxt);
 
         /// <summary>
         /// 分页获取所有的员工帐号；
@@ -171,7 +171,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index">当前第几页</param>
         /// <param name="countSum">记录总数</param>
         /// <returns></returns>
-        EmpAccount[] GetPager(int orgid,int posi,string name, int size, int index, out int countSum);        
+        List<EmpAccount> GetPager(int orgid,int posi,string name, int size, int index, out int countSum);        
 
         #region 职务（头衔）管理
         /// <summary>

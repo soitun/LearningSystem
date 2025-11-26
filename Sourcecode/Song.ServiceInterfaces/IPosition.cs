@@ -64,6 +64,12 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <returns></returns>
         List<Position> GetAll(int orgid);
+        /// <summary>
+        /// 获取对象；即所有职位；
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="isUse"></param>
+        /// <returns></returns>
         List<Position> GetAll(int orgid,bool? isUse);
         /// <summary>
         /// 获取当前角色的所有员工

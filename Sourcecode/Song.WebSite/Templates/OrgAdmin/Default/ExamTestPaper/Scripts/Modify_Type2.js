@@ -2,6 +2,9 @@ $ready(function () {
     window.vapp = new Vue({
         el: '#vapp',
         data: {
+            id: $api.querystring('id'), //主键ID
+            //试卷对象
+            entity: {},
             loadstate: {
                 init: false,        //初始化
                 def: false,         //默认
@@ -11,10 +14,10 @@ $ready(function () {
             }
         },
         mounted: function () {
-        
+
         },
         created: function () {
-        
+
         },
         computed: {
             loading: function () {
@@ -22,22 +25,23 @@ $ready(function () {
                 for (let key in this.loadstate) {
                     if (this.loadstate.hasOwnProperty(key)
                         && this.loadstate[key])
-                    return true;
+                        return true;
                 }
                 return false;
             }
         },
         watch: {
-        
+            //是否存在试卷对象
+            exist: t => !$api.isnull(t.entity) && t.entity.Etp_Id != '',
         },
         methods: {
-        
+
         },
         filters: {
-        
+
         },
         components: {
-        
+
         }
     });
 });

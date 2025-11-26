@@ -452,7 +452,7 @@ namespace Song.ViewData.Methods
             Song.Entities.Organization org = LoginAdmin.Status.Organ(this.Letter);
             //总记录数
             int count;
-            EmpAccount[] eas = Business.Do<IEmployee>().GetPager(org.Org_ID, -1, name, size, index, out count);
+            List<EmpAccount> eas = Business.Do<IEmployee>().GetPager(org.Org_ID, -1, name, size, index, out count);
             foreach (EmpAccount ea in eas) ea.Acc_Pw = string.Empty;
             ListResult result = new ListResult(eas);
             result.Index = index;
@@ -475,7 +475,7 @@ namespace Song.ViewData.Methods
         {
             //总记录数
             int count;
-            EmpAccount[] eas = Business.Do<IEmployee>().GetPager(orgid, posi, name, size, index, out count);
+            List<EmpAccount> eas = Business.Do<IEmployee>().GetPager(orgid, posi, name, size, index, out count);
             foreach (EmpAccount ea in eas) ea.Acc_Pw = string.Empty;
             ListResult result = new ListResult(eas);
             result.Index = index;
@@ -489,9 +489,9 @@ namespace Song.ViewData.Methods
         /// <param name="search">按名称索引</param>
         /// <returns></returns>
         [HttpGet]
-        public Song.Entities.EmpAccount[] Search(string search)
+        public List<EmpAccount> Search(string search)
         {
-            EmpAccount[] eas = Business.Do<IEmployee>().GetAll(-1, -1, true, search);
+            List<EmpAccount> eas = Business.Do<IEmployee>().GetAll(-1, -1, true, search);
             foreach (EmpAccount ea in eas) ea.Acc_Pw = string.Empty;
             return eas;
         }
@@ -500,9 +500,9 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="search"></param>
         /// <returns></returns>
-        public Song.Entities.EmpAccount[] All(string search)
+        public List<EmpAccount> All(string search)
         {
-            EmpAccount[] eas = Business.Do<IEmployee>().GetAll(-1, -1, null, search);
+            List<EmpAccount> eas = Business.Do<IEmployee>().GetAll(-1, -1, null, search);
             foreach (EmpAccount ea in eas) ea.Acc_Pw = string.Empty;
             return eas;
         }

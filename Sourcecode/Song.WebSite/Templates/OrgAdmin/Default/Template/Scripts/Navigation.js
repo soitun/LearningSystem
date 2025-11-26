@@ -126,33 +126,16 @@ $ready(function () {
             //克隆一个新节点
             clone: function (data) {
                 var temp = {
-                    "Nav_ID": -1,
-                    "Nav_PID": '',
-                    "Nav_Name": "课程",
-                    "Nav_EnName": "",
-                    "Nav_Url": "",
-                    "Nav_Target": "",
-                    "Nav_Event": "",
-                    "Nav_Image": "",
-                    "Nav_Color": "",
-                    "Nav_Font": "",
-                    "Nav_Child": 0,
-                    "Nav_Order": 0,
-                    "Nav_Intro": "",
-                    "Nav_Title": "",
-                    "Nav_Type": "main",
-                    "Nav_Site": "web",
-                    "Nav_IsShow": true,
-                    "Nav_IsBold": false,
-                    "Nav_Logo": "",
-                    "Nav_Icon": "",
-                    "id": 0,
-                    "label": "",
-                    "ico": ""
-                }
+                    "Nav_ID": -1,      "Nav_PID": "",        "Nav_Name": "",      "Nav_EnName": "",
+                    "Nav_Url": "",     "Nav_Target": "",     "Nav_Event": "",     "Nav_Image": "",
+                    "Nav_Color": "",   "Nav_Font": "",       "Nav_Child": 0,      "Nav_Order": 0,
+                    "Nav_Intro": "",   "Nav_Title": "",      "Nav_Type": "main",  "Nav_Site": "web",
+                    "Nav_IsShow": true, "Nav_IsBold": false, "Nav_Logo": "",      "Nav_Icon": "",
+                    "id": 0,           "label": "",          "ico": ""
+                };
                 var obj = $api.clone(temp);
-                obj.Nav_ID = obj.id = -parseInt(Math.random() * 9999, 10) + 1;
-                obj.Nav_Name = "newnode" + obj.id;
+                obj.Nav_ID = obj.id = parseInt(Math.random() * 9999, 10) + 1;
+                obj.Nav_Name = "newnode - " + obj.id;
                 obj.children = [];
                 obj.Nav_Type = this.type;
                 obj.Nav_Site = this.site;
