@@ -1,32 +1,47 @@
 .panel {
-	width: 100%;
-	height: calc(100% - 55px);
+    width: 100%;
+    height: calc(100% - 55px);
     border: 1px solid #DCDFE6;
     box-sizing: border-box;
 }
-.panel>div:not(:first-child){
-	border: 1px solid #DCDFE6;
-	border-top: none;
-}
-.el-form {
-	height: calc(100% - 60px);
-	width: calc(100% - 15px);
-	padding-right: 10px;
 
-	overflow-y: auto;
-	box-sizing: border-box;
+.panel>div:not(:first-child) {
+    border: 1px solid #DCDFE6;
+    border-top: none;
+}
+
+.el-form {
+    height: calc(100% - 60px);
+    width: calc(100% - 15px);
+    padding-right: 10px;
+
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 .el-tabs--border-card {
-	box-shadow: none;
-	border: none;
+    box-shadow: none;
+    border: none;
 }
 
 .el-tabs__content {
-	display: none;
+    display: none;
+}
+/*简介*/
+div[ tab="general"]{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+div[ tab="general"]>div:last-child {
+    flex: 1;
+}
+div[ tab="general"]>div:last-child .el-form-item__content{
+    height: 100%;
 }
 /*编辑框*/
 .intro_editor {
-	width: 100%;
-	height: 100%;
+    width: 100%;
+    height: 100%;
 }

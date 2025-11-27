@@ -33,14 +33,13 @@
                         </el-switch>
                     </el-form-item>
                     <el-form-item label="难度范围" prop="Etp_Diff">
-                        <el-row>
-                            <el-col :span="1">&nbsp;</el-col>
-                            <el-col :span="10">
-                                <el-slider v-model="Etp_Diff" range show-stops :min="1" :max="5" @change="diffChange">
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-slider v-model="Etp_Diff" :step="1" range show-stops :min="1" :max="5"
+                                    @change="diffChange">
                                 </el-slider>
                             </el-col>
-                            <el-col :span="1">&nbsp;</el-col>
-                            <el-col :span="11">
+                            <el-col :span="10">
                                 <el-tag type="info">{{entity.Etp_Diff}} - {{entity.Etp_Diff2}}</el-tag>
                             </el-col>
                         </el-row>
@@ -51,9 +50,20 @@
                             <template slot="append">分钟</template>
                         </el-input>
                     </el-form-item>
+                    <el-form-item label="简介" prop="Etp_Intro">
+                        <editor :content="entity.Etp_Intro" id="intro" :menubar="false" model="general"
+                            class="intro_editor" upload="TestPaper" :dataid="entity.Etp_Id"
+                            @change="text=>entity.Etp_Intro=text"></editor>
+                    </el-form-item>
+
+                </div>
+                <div v-show="activeName=='range'" remark="出题范围" tab="range">
+                    dd
+                </div>
+                <div v-show="activeName=='score'" remark="分数" tab="score">
                     <el-form-item label="分数" prop="Etp_Total">
                         <el-input v-model="entity.Etp_Total" type="number" :min="1" style="width: 300px;">
-                            <template slot="prepend">满分</template>
+                            <template slot="prepend">试卷满分</template>
                             <template slot="append">分</template>
                         </el-input>
                     </el-form-item>

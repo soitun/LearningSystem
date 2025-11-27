@@ -122,6 +122,13 @@ $ready(function () {
                 this.entity['Etp_Diff'] = val[0];
                 this.entity['Etp_Diff2'] = val[1];
             },
+             //操作成功
+             operateSuccess: function (isclose) {
+                //如果处于课程编辑页，则刷新
+                var pagebox = window.top.$pagebox;
+                if (pagebox && pagebox.source.top)
+                    pagebox.source.top(window.name, 'vapp.fresh_frame', isclose);
+            }
         },
         filters: {
 
