@@ -1,46 +1,46 @@
 {
   "Acc_AccName": {
-    "mark": "",
+    "mark": "管理员名称",
     "intro": "",
     "relation": "EmpAccount"
   },
   "Acc_Id": {
-    "mark": "",
+    "mark": "管理员ID",
     "intro": "",
     "relation": "EmpAccount"
   },
   "Etp_Author": {
-    "mark": "",
+    "mark": "出卷人",
     "intro": "",
     "relation": ""
   },
   "Etp_Count": {
-    "mark": "",
-    "intro": "",
+    "mark": "题量",
+    "intro": "总共多少道题",
     "relation": ""
   },
   "Etp_CrtTime": {
-    "mark": "",
+    "mark": "创建时间",
     "intro": "",
     "relation": ""
   },
   "Etp_Diff": {
-    "mark": "",
+    "mark": "难度范围",
     "intro": "",
     "relation": ""
   },
   "Etp_Diff2": {
-    "mark": "",
+    "mark": "难度范围",
     "intro": "",
     "relation": ""
   },
   "Etp_FromConfig": {
-    "mark": "",
-    "intro": "",
+    "mark": "抽题配置项",
+    "intro": "试卷的抽题范置配置项，xml格式",
     "relation": ""
   },
   "Etp_FromType": {
-    "mark": "",
+    "mark": "抽题类型",
     "intro": "",
     "relation": ""
   },
@@ -50,17 +50,17 @@
     "relation": ""
   },
   "Etp_Intro": {
-    "mark": "",
-    "intro": "",
+    "mark": "简介",
+    "intro": "试卷简介",
     "relation": ""
   },
   "Etp_IsBuild": {
-    "mark": "",
-    "intro": "",
+    "mark": "生成试卷",
+    "intro": "是否已经生成试卷",
     "relation": ""
   },
   "Etp_IsDeleted": {
-    "mark": "",
+    "mark": "是否删除",
     "intro": "",
     "relation": ""
   },
@@ -70,52 +70,52 @@
     "relation": ""
   },
   "Etp_IsManual": {
-    "mark": "",
-    "intro": "",
+    "mark": "是否需要人工批阅",
+    "intro": "如果有简答题则需要人工批阅",
     "relation": ""
   },
   "Etp_IsRec": {
-    "mark": "",
+    "mark": "推荐",
     "intro": "",
     "relation": ""
   },
   "Etp_IsUse": {
-    "mark": "",
+    "mark": "启用",
     "intro": "",
     "relation": ""
   },
   "Etp_Lasttime": {
-    "mark": "",
+    "mark": "最后修改时间",
     "intro": "",
     "relation": ""
   },
   "Etp_Logo": {
-    "mark": "",
-    "intro": "",
+    "mark": "图片",
+    "intro": "试卷logo",
     "relation": ""
   },
   "Etp_Name": {
-    "mark": "",
+    "mark": "试卷名称",
     "intro": "",
     "relation": ""
   },
   "Etp_PassScore": {
-    "mark": "",
+    "mark": "及格分",
     "intro": "",
     "relation": ""
   },
   "Etp_Remind": {
-    "mark": "",
-    "intro": "",
+    "mark": "注意事项",
+    "intro": "用于显示试卷前面的一些提示",
     "relation": ""
   },
   "Etp_Span": {
-    "mark": "",
-    "intro": "",
+    "mark": "限时",
+    "intro": "试卷的考试限时，当试卷被考试用时，在考试管理可以再次定义限时。",
     "relation": ""
   },
   "Etp_SubName": {
-    "mark": "",
+    "mark": "副标题",
     "intro": "",
     "relation": ""
   },
@@ -135,7 +135,7 @@
     "relation": ""
   },
   "Org_ID": {
-    "mark": "",
+    "mark": "机构ID",
     "intro": "",
     "relation": "Organization"
   },

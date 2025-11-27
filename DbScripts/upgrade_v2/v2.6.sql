@@ -336,8 +336,7 @@ DROP TABLE IF EXISTS "ExamTestPaper" CASCADE;
 CREATE TABLE IF NOT EXISTS "ExamTestPaper"
 (
 	"Etp_Id" bigint NOT NULL DEFAULT 0,
-	"Org_ID" integer NOT NULL DEFAULT 0,
-	"Org_Name" character varying(255) COLLATE pg_catalog."default",
+	"Org_ID" integer NOT NULL DEFAULT 0,	
   "Acc_Id" integer NOT NULL DEFAULT 0,
 	"Acc_AccName" character varying(255) COLLATE pg_catalog."default" NOT NULL DEFAULT '',
 	"Etp_Author" character varying(50) COLLATE pg_catalog."default",
@@ -349,7 +348,6 @@ CREATE TABLE IF NOT EXISTS "ExamTestPaper"
 	"Etp_FromType" integer NOT NULL DEFAULT 0,
 	"Etp_Intro" text,
 	"Etp_IsBuild" boolean NOT NULL DEFAULT false,
-	"Etp_IsFinal" boolean NOT NULL DEFAULT false,
 	"Etp_IsManual" boolean NOT NULL DEFAULT false,
 	"Etp_IsRec" boolean NOT NULL DEFAULT false,
   "Etp_IsDeleted" boolean NOT NULL DEFAULT false,
@@ -363,7 +361,6 @@ CREATE TABLE IF NOT EXISTS "ExamTestPaper"
 	"Etp_SubName" character varying(255) COLLATE pg_catalog."default",
 	"Etp_Total" integer NOT NULL DEFAULT 0,
 	"Etp_Type" integer NOT NULL DEFAULT 0,
-	"Etp_UID" character varying(255) COLLATE pg_catalog."default",
 	 CONSTRAINT key_examtestpaper PRIMARY KEY ("Etp_Id")
 );
 

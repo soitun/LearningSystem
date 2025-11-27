@@ -34,8 +34,6 @@ namespace Song.Entities {
     		
     		protected Boolean _Etp_IsDeleted;
     		
-    		protected Boolean _Etp_IsFinal;
-    		
     		protected Boolean _Etp_IsManual;
     		
     		protected Boolean _Etp_IsRec;
@@ -60,11 +58,7 @@ namespace Song.Entities {
     		
     		protected Int32 _Etp_Type;
     		
-    		protected String _Etp_UID;
-    		
     		protected Int32 _Org_ID;
-    		
-    		protected String _Org_Name;
     		
     		public Int64 Etp_Id {
     			get {
@@ -196,16 +190,6 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Boolean Etp_IsFinal {
-    			get {
-    				return this._Etp_IsFinal;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Etp_IsFinal, _Etp_IsFinal, value);
-    				this._Etp_IsFinal = value;
-    			}
-    		}
-    		
     		public Boolean Etp_IsManual {
     			get {
     				return this._Etp_IsManual;
@@ -326,16 +310,6 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public String Etp_UID {
-    			get {
-    				return this._Etp_UID;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Etp_UID, _Etp_UID, value);
-    				this._Etp_UID = value;
-    			}
-    		}
-    		
     		public Int32 Org_ID {
     			get {
     				return this._Org_ID;
@@ -343,16 +317,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Org_ID, _Org_ID, value);
     				this._Org_ID = value;
-    			}
-    		}
-    		
-    		public String Org_Name {
-    			get {
-    				return this._Org_Name;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Org_Name, _Org_Name, value);
-    				this._Org_Name = value;
     			}
     		}
     		
@@ -389,7 +353,6 @@ namespace Song.Entities {
     					_.Etp_Intro,
     					_.Etp_IsBuild,
     					_.Etp_IsDeleted,
-    					_.Etp_IsFinal,
     					_.Etp_IsManual,
     					_.Etp_IsRec,
     					_.Etp_IsUse,
@@ -402,9 +365,7 @@ namespace Song.Entities {
     					_.Etp_SubName,
     					_.Etp_Total,
     					_.Etp_Type,
-    					_.Etp_UID,
-    					_.Org_ID,
-    					_.Org_Name};
+    					_.Org_ID};
     		}
     		
     		/// <summary>
@@ -425,7 +386,6 @@ namespace Song.Entities {
     					this._Etp_Intro,
     					this._Etp_IsBuild,
     					this._Etp_IsDeleted,
-    					this._Etp_IsFinal,
     					this._Etp_IsManual,
     					this._Etp_IsRec,
     					this._Etp_IsUse,
@@ -438,9 +398,7 @@ namespace Song.Entities {
     					this._Etp_SubName,
     					this._Etp_Total,
     					this._Etp_Type,
-    					this._Etp_UID,
-    					this._Org_ID,
-    					this._Org_Name};
+    					this._Org_ID};
     		}
     		
     		/// <summary>
@@ -486,9 +444,6 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Etp_IsDeleted))) {
     				this._Etp_IsDeleted = reader.GetBoolean(_.Etp_IsDeleted);
     			}
-    			if ((false == reader.IsDBNull(_.Etp_IsFinal))) {
-    				this._Etp_IsFinal = reader.GetBoolean(_.Etp_IsFinal);
-    			}
     			if ((false == reader.IsDBNull(_.Etp_IsManual))) {
     				this._Etp_IsManual = reader.GetBoolean(_.Etp_IsManual);
     			}
@@ -525,14 +480,8 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Etp_Type))) {
     				this._Etp_Type = reader.GetInt32(_.Etp_Type);
     			}
-    			if ((false == reader.IsDBNull(_.Etp_UID))) {
-    				this._Etp_UID = reader.GetString(_.Etp_UID);
-    			}
     			if ((false == reader.IsDBNull(_.Org_ID))) {
     				this._Org_ID = reader.GetInt32(_.Org_ID);
-    			}
-    			if ((false == reader.IsDBNull(_.Org_Name))) {
-    				this._Org_Name = reader.GetString(_.Org_Name);
     			}
     		}
     		
@@ -626,11 +575,6 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Etp_IsDeleted = new WeiSha.Data.Field<ExamTestPaper>("Etp_IsDeleted");
     			
     			/// <summary>
-    			/// 字段名：Etp_IsFinal - 数据类型：Boolean
-    			/// </summary>
-    			public static WeiSha.Data.Field Etp_IsFinal = new WeiSha.Data.Field<ExamTestPaper>("Etp_IsFinal");
-    			
-    			/// <summary>
     			/// 字段名：Etp_IsManual - 数据类型：Boolean
     			/// </summary>
     			public static WeiSha.Data.Field Etp_IsManual = new WeiSha.Data.Field<ExamTestPaper>("Etp_IsManual");
@@ -691,20 +635,9 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Etp_Type = new WeiSha.Data.Field<ExamTestPaper>("Etp_Type");
     			
     			/// <summary>
-    			/// 字段名：Etp_UID - 数据类型：String
-    			/// </summary>
-    			public static WeiSha.Data.Field Etp_UID = new WeiSha.Data.Field<ExamTestPaper>("Etp_UID");
-    			
-    			/// <summary>
     			/// 字段名：Org_ID - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Org_ID = new WeiSha.Data.Field<ExamTestPaper>("Org_ID");
-    			
-    			/// <summary>
-    			/// 字段名：Org_Name - 数据类型：String
-    			/// </summary>
-    			public static WeiSha.Data.Field Org_Name = new WeiSha.Data.Field<ExamTestPaper>("Org_Name");
     		}
     	}
     }
-    
