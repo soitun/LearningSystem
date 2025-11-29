@@ -16,33 +16,40 @@ icon {
     font-variant: normal;
     text-transform: none;
 }
-
+:root{
+    --icon-size: 1rem;
+    --icon-size-huge: 1.6rem;
+    --icon-size-large: 1.2rem;
+    --icon-size-medium: 1rem;
+    --icon-size-small: 0.8rem;
+    --icon-size-mini: 0.7rem;   
+}
 icon:not([icon]) {
     margin-right: 5px;
 }
 
 icon[huge]:not(:empty, [size]) {
-    font-size: 25px;
+    font-size: var(--icon-size-huge);
     line-height: 23px;
 }
 
 icon[large]:not(:empty) {
-    font-size: 20px;
+    font-size: var(--icon-size-large);
     line-height: 20px;
 }
 
 icon[medium]:not(:empty) {
-    font-size: 18px;
+    font-size: var(--icon-size-medium);
     line-height: 18px;
 }
 
 icon[small]:not(:empty) {
-    font-size: 16px;
+    font-size: var(--icon-size-small);
     line-height: 16px;
 }
 
 icon[mini]:not(:empty) {
-    font-size: 14px;
+    font-size: var(--icon-size-mini);
 }
 
 /*  图标引用方式二，显示Html标签内容的前面，但在在Vue组件代码中使用时，无法输出
@@ -55,23 +62,23 @@ icon[mini]:not(:empty) {
 }
 
 *[icon][huge]:not(:empty)::before {
-    font-size: 25px;
+    font-size: var(--icon-size-huge);
 }
 
 *[icon][large]:not(:empty)::before {
-    font-size: 20px;
+    font-size: var(--icon-size-large);
 }
 
 *[icon][medium]:not(:empty)::before {
-    font-size: 18px;
+    font-size: var(--icon-size-medium);
 }
 
 *[icon][small]:not(:empty)::before {
-    font-size: 16px;
+    font-size: var(--icon-size-small);
 }
 
 *[icon][mini]:not(:empty)::before {
-    font-size: 14px;
+    font-size: var(--icon-size-mini);
 }
 
 
@@ -89,23 +96,23 @@ icon[hide]::before {
 }
 
 icon[size='huge']::before {
-    font-size: 25px;
+    font-size: var(--icon-size-huge);
 }
 
 icon[size='large']::before {
-    font-size: 20px;
+    font-size: var(--icon-size-large);
 }
 
 icon[size='medium']::before {
-    font-size: 18px;
+    font-size: var(--icon-size-medium);
 }
 
 icon[size='small']::before {
-    font-size: 16px;
+    font-size: var(--icon-size-small);
 }
 
 icon[size='mini']::before {
-    font-size: 14px;
+    font-size: var(--icon-size-mini);
 }
 
 /*首页*/
