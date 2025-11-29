@@ -58,7 +58,22 @@
 
                 </div>
                 <div v-show="activeName=='range'" remark="出题范围" tab="range">
-                    dd
+                    <section class="range">
+                        <el-divider content-position="left">试题分类</el-divider>
+                        <el-divider content-position="left">关键字</el-divider>
+                        <el-divider content-position="left">关联知识点</el-divider>
+                    </section>
+                    <el-card shadow="never" type="primary" class="questype">
+                        <template slot="header">
+                            <span icon="&#xe75e" large>供选择的题量</span>
+                        </template>
+                        <loading v-if="loadstate.init">加载中...</loading>
+                        <el-row :gutter="20" v-else v-for="item in qtypeitems"> 
+                            <ques_type :type="item.type" :types="types" :showicon="true" :showname="true">
+                                <span>{{item.total}}</span>
+                            </ques_type>                                           
+                        </el-row>
+                    </el-card>
                 </div>
                 <div v-show="activeName=='score'" remark="分数" tab="score">
                     <el-form-item label="分数" prop="Etp_Total">
@@ -70,7 +85,7 @@
 
                     <el-form-item label="" prop="Etp_PassScore">
                         <el-input v-model="entity.Etp_PassScore" type="number" :min="0" style="width: 300px;">
-                            <template slot="prepend">及格分</template>
+                            <template slot="prepend">及格分数</template>
                             <template slot="append">分</template>
                         </el-input>
                     </el-form-item>

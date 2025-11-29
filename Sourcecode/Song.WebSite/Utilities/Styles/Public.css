@@ -75,19 +75,19 @@ a[link]:hover{
 }
 /*字体大小*/
 .huge {
-	font-size: 1.5rem;
+	font-size: 1.2rem;
 }
 .large {
-	font-size: 1.2rem;
+	font-size: 1.05rem;
 }
 .medium {
 	font-size: 1rem;
 }
 .small {
-	font-size: .8rem;
+	font-size: .9rem;
 }
 .mini {
-	font-size: .6rem;
+	font-size: .8rem;
 }
 /*卡片*/
 

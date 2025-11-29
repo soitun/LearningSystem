@@ -33,11 +33,11 @@
                 v-loading="loading || loading_sumbit">
                 <div class="custom-tree-node" slot-scope="{ node, data }">
                     <span class="tree-node draghandle">
-                        <span>{{data.serial}}</span> &nbsp;
+                        <span class="small">{{data.serial}}</span> &nbsp;
                         <icon v-if="data.Sbj_LogoSmall!=''" style="font-size: 18px;" @mouseover="hoverlogo(data)"
                             @mouseout="$dom('.logoSmall').hide()">&#xe672</icon>
                         <img :src="data.Sbj_LogoSmall" v-show="false" class="logoSmall" :id="'logo_'+data.Sbj_ID" />
-                        <span class="large" v-html="showsearch(data.Sbj_Name,filterText)"></span>
+                        <span class="medium" v-html="showsearch(data.Sbj_Name,filterText)"></span>
                         <span class="sbjcount" v-if="data.calcChild>0">({{data.calcChild}})</span>
                     </span>
                     <div class="column_count">

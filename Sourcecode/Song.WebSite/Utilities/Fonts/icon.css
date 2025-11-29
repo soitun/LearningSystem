@@ -207,19 +207,19 @@ icon[setup]::before {
 /*货币符号 人民币*/
 icon[money]::before {
     content: '\e624';
-    font-size: 16px;
+    font-size: var(--icon-size-medium);
 }
 
 /*卡券*/
 icon[coupon]::before {
     content: '\e847';
-    font-size: 16px;
+    font-size: var(--icon-size-medium);
 }
 
 /*积分*/
 icon[point]::before {
     content: '\e88a';
-    font-size: 16px;
+    font-size: var(--icon-size-medium);
 }
 
 /*身份证*/
@@ -235,7 +235,7 @@ icon[phone]::before {
 /*移动电话*/
 icon[mobile]::before {
     content: '\e677';
-    font-size: 16px;
+    font-size: var(--icon-size-medium);
 }
 
 /*关闭按钮*/
@@ -316,7 +316,7 @@ empty, empty * {
 }
 
 help, alert, help *, alert *, warning, warning *, empty, empty * {
-    font-size: 14px;
+    font-size: var(--icon-size-small);
     cursor: default;
 }
 
@@ -324,7 +324,7 @@ help::before, alert::before, warning::before, empty::before {
     font-family: "webdesk_icon" !important;
     display: inline-block;
     margin-right: 8px;
-    font-size: 16px;
+    font-size: var(--icon-size-medium);
 }
 
 /*多行帮助信息*/
@@ -351,22 +351,22 @@ help[margin], alert[margin], warning[margin], empty[margin] {
 /*大小*/
 help[large], alert[large], warning[large],empty[large], help[large] *, alert[large] *, warning[large] *, empty[large] * {
 
-    font-size: 18px;
+    font-size: var(--icon-size-large);
     line-height: 30px;
 }
 
 help[large]::before, alert[large]::before, warning[large]::before {
-    font-size: 25px;
+    font-size: var(--icon-size-large);
 }
 
 help[medium], alert[medium], warning[medium], help[medium] *, alert[medium] *, warning[medium] * {
-    font-size: 16px;
+    font-size: var(--icon-size-medium);
     line-height: 25px;
 }
 
 help[medium]::before, alert[medium]::before, warning[medium]::before, empty[medium]::before {
 
-    font-size: 20px;
+    font-size: var(--icon-size-medium);
 }
 
 
