@@ -62,12 +62,19 @@
                         <el-card shadow="never">
                             <template slot="header">
                                 <span icon="&#xa015" large>试题分类</span>
-                                <el-button type="primary" plain @click="opensubwin('SelectParts')">选择</el-button>
+                                <span>
+                                    <el-button type="primary" plain @click="opensubwin('SelectParts','left')">左</el-button>
+                                    <el-button type="primary" plain @click="opensubwin('SelectParts','right')">右</el-button>
+                                    <el-button type="primary" plain @click="opensubwin('SelectParts','top')">上</el-button>
+                                    <el-button type="primary" plain @click="opensubwin('SelectParts','bottom')">下</el-button>
+                                </span>
+                               
                             </template>
                         </el-card>
                         <el-card shadow="never">
                             <template slot="header">
                                 <span icon="&#xe841" large>关键字</span>
+                                <el-button type="primary" plain @click="opensubwin('SelectParts','left')">选择</el-button>
                                 <el-button type="primary" plain @click="opensubwin('Tags')">选择</el-button>
                             </template>
                         </el-card>

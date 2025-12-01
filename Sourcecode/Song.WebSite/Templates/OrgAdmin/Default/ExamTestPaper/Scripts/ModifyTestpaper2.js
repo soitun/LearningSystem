@@ -148,32 +148,17 @@ $ready(['../Question/Components/ques_type.js',],
                     this.entity['Etp_Diff2'] = val[1];
                 },
                 //打开子窗口
-                opensubwin: function (page) {
+                opensubwin: function (page,place) {
                     if (!window.top.$pagebox) return;
                     //当前窗口
                     var curbox = window.top.$pagebox.get(window.name);
-                    console.error(curbox);
-                    //创建
+                    //创建新窗口中
                     var subbox = window.top.$pagebox.create({
-                        width: 500, height: curbox.height, id: page,
-                        pid: window.name, ico: 'a053',
-                        showmask: true, max: false, min: false,
+                        width: 500, height: 300,
+                        id: page, ico: 'a053',
                         url: $dom.routepath() + page
-                    });
-                    let subleft = curbox.left - subbox.width;
-                    var curboxleft = curbox.left;       //当前窗体的x坐标
-                    if (subleft < 0) {
-                        subleft = 0;
-                        //curbox.left = subbox.width;
-                        curbox.toPlace(subbox.width, curbox.top);
-                    }
-                    subbox.left = subleft;
-                    subbox.top = curbox.top;
-                    subbox.onshut(function (sender, event) {
-                        //关闭时，还原父窗体
-                        curbox.toPlace(curboxleft, curbox.top);
-                    });
-                    subbox.open();
+                    });   
+                    curbox.opensub(subbox, place);
                 },
                 //操作成功
                 operateSuccess: function (isclose) {

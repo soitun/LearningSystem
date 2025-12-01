@@ -262,6 +262,58 @@
         if (this.showmask) this.showBgMark();
         return this.focus();
     };
+    //打开子窗口 subox:子窗体对象,place:子窗体相对父窗体的位置,如left,right,top,bottom,
+    fn.opensub = function (subox, place) {
+        subox._pid = this.id;
+        subox._showmask = true;
+        subox._max = false;
+        subox._min = false;
+        //计算子窗体的位置
+        var subleft = (box.availWidth() - subox.width) / 2;
+        var subtop = (box.availHeight() - subox.height) / 2;
+        //当前窗体的位置
+        var currleft = this.left;
+        var currtop = this.top;
+        if (place == 'left' || place == 'right') {
+            if (place == 'left') {
+                if (this.left - subox.width < 0) {
+                    subleft = 0;
+                    this.toPlace(subox.width, currtop);
+                }
+                else subleft = this.left - subox.width;
+            }
+            if (place == 'right') {
+                if (this.left + this.width + subox.width > box.availWidth()) {
+                    subleft = box.availWidth() - subox.width;
+                    this.toPlace(box.availWidth() - subox.width - this.width, currtop);
+                } else subleft = this.left + this.width;
+            }
+            subtop = currtop;
+            subox.height = this.height;
+        }
+        if (place == 'top' || place == 'bottom') {
+            if (place == 'top') {
+                if (this.top - subox.top < 0) {
+                    subtop = 0;
+                    this.toPlace(currleft, subox.height);
+                } else subtop = this.top - subox.height;               
+            }
+            if (place == 'bottom') {
+                if (this.top + this.height + subox.height > box.availHeight()) {
+                    subtop = box.availHeight() - subox.height;
+                    this.toPlace(currleft, box.availHeight() - subox.height - this.height);
+                } else subtop = this.top + this.height;                
+            }
+            subleft = currleft;
+            subox.width = this.width;
+        }       
+        subox.left = subleft;
+        subox.top = subtop;
+        //关闭时，还原父窗体位置
+        var th = this;
+        subox.onshut((s, e) => th.toPlace(currleft, currtop));
+        subox.open();
+    }
     //构建pagebox窗体
     fn._builder = {
         //生成外壳
@@ -654,7 +706,7 @@
         return box.toSize(this.id, width, height, smooth);
     };
     //窗体移动，从当前位置移动
-    fn.toMove = function (left, top) {        
+    fn.toMove = function (left, top) {
         let x = this.left + parseInt(left);
         let y = this.top + parseInt(top);
         this.toPlace(x, y);

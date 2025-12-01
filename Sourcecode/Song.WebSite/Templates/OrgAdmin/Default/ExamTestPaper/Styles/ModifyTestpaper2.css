@@ -79,6 +79,9 @@ div[tab="range"] section.range>div:not(:last-child) {
 div[tab="range"] .el-card__header {
     display: flex;
     justify-content: space-between;
+    line-height: 1;
+    align-items: center;
+    vertical-align: middle;
 }
 
 div[tab="range"] .qtype_card {
