@@ -11,10 +11,10 @@ $ready(function () {
             }
         },
         mounted: function () {
-        
+
         },
         created: function () {
-        
+
         },
         computed: {
             loading: function () {
@@ -22,22 +22,34 @@ $ready(function () {
                 for (let key in this.loadstate) {
                     if (this.loadstate.hasOwnProperty(key)
                         && this.loadstate[key])
-                    return true;
+                        return true;
                 }
                 return false;
             }
         },
         watch: {
-        
+
         },
         methods: {
-        
+            //打开子窗口
+            opensubwin: function (page, place) {
+                if (!window.top.$pagebox) return;
+                //当前窗口
+                var curbox = window.top.$pagebox.get(window.name);
+                //创建新窗口中
+                var subbox = window.top.$pagebox.create({
+                    width: 500, height: 300,
+                    id: page + Math.random(), ico: 'a053',
+                    url: $dom.routepath() + page
+                });
+                curbox.opensub(subbox, place);
+            },
         },
         filters: {
-        
+
         },
         components: {
-        
+
         }
     });
 });

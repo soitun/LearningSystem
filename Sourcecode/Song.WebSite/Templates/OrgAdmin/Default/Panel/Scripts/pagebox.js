@@ -268,6 +268,8 @@
         subox._showmask = true;
         subox._max = false;
         subox._min = false;
+        //偏移值，例如不要窗体太靠边，留白一部分
+        let space = 8;
         //计算子窗体的位置
         var subleft = (box.availWidth() - subox.width) / 2;
         var subtop = (box.availHeight() - subox.height) / 2;
@@ -277,16 +279,16 @@
         if (place == 'left' || place == 'right') {
             if (place == 'left') {
                 if (this.left - subox.width < 0) {
-                    subleft = 0;
-                    this.toPlace(subox.width, currtop);
+                    subleft = space;
+                    this.toPlace(subox.width + space * 2, currtop);
                 }
-                else subleft = this.left - subox.width;
+                else subleft = this.left - subox.width - space;
             }
             if (place == 'right') {
                 if (this.left + this.width + subox.width > box.availWidth()) {
-                    subleft = box.availWidth() - subox.width;
-                    this.toPlace(box.availWidth() - subox.width - this.width, currtop);
-                } else subleft = this.left + this.width;
+                    subleft = box.availWidth() - subox.width - space;
+                    this.toPlace(box.availWidth() - subox.width - this.width - space * 2, currtop);
+                } else subleft = this.left + this.width + space;
             }
             subtop = currtop;
             subox.height = this.height;
@@ -294,24 +296,26 @@
         if (place == 'top' || place == 'bottom') {
             if (place == 'top') {
                 if (this.top - subox.top < 0) {
-                    subtop = 0;
-                    this.toPlace(currleft, subox.height);
-                } else subtop = this.top - subox.height;               
+                    subtop = space;
+                    this.toPlace(currleft, subox.height + space * 2);
+                } else subtop = this.top - subox.height - space;
             }
             if (place == 'bottom') {
                 if (this.top + this.height + subox.height > box.availHeight()) {
-                    subtop = box.availHeight() - subox.height;
-                    this.toPlace(currleft, box.availHeight() - subox.height - this.height);
-                } else subtop = this.top + this.height;                
+                    subtop = box.availHeight() - subox.height - space;
+                    this.toPlace(currleft, box.availHeight() - subox.height - this.height - space * 2);
+                } else subtop = this.top + this.height + space;
             }
             subleft = currleft;
             subox.width = this.width;
-        }       
+        }
         subox.left = subleft;
         subox.top = subtop;
-        //关闭时，还原父窗体位置
-        var th = this;
-        subox.onshut((s, e) => th.toPlace(currleft, currtop));
+        if (place != null && place.length > 0) {
+            //关闭时，还原父窗体位置
+            var th = this;
+            subox.onshut((s, e) => th.toPlace(currleft, currtop));
+        }
         subox.open();
     }
     //构建pagebox窗体
