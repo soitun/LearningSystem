@@ -268,6 +268,9 @@
         subox._showmask = true;
         subox._max = false;
         subox._min = false;
+        //子窗体标题样式，默认继承父窗体的标题样式
+        subox.attrs.titstyle=this.attrs.titstyle;
+        subox.attrs.iconstyle = this.attrs.iconstyle;
         //偏移值，例如不要窗体太靠边，留白一部分
         let space = 8;
         //计算子窗体的位置
@@ -280,14 +283,14 @@
             if (place == 'left') {
                 if (this.left - subox.width < 0) {
                     subleft = space;
-                    this.toPlace(subox.width + space * 2, currtop);
+                    this.toPlace(subox.width + space * 1.5, currtop);
                 }
                 else subleft = this.left - subox.width - space;
             }
             if (place == 'right') {
                 if (this.left + this.width + subox.width > box.availWidth()) {
                     subleft = box.availWidth() - subox.width - space;
-                    this.toPlace(box.availWidth() - subox.width - this.width - space * 2, currtop);
+                    this.toPlace(box.availWidth() - subox.width - this.width - space * 1.5, currtop);
                 } else subleft = this.left + this.width + space;
             }
             subtop = currtop;
@@ -297,13 +300,13 @@
             if (place == 'top') {
                 if (this.top - subox.top < 0) {
                     subtop = space;
-                    this.toPlace(currleft, subox.height + space * 2);
+                    this.toPlace(currleft, subox.height + space * 1.5);
                 } else subtop = this.top - subox.height - space;
             }
             if (place == 'bottom') {
                 if (this.top + this.height + subox.height > box.availHeight()) {
                     subtop = box.availHeight() - subox.height - space;
-                    this.toPlace(currleft, box.availHeight() - subox.height - this.height - space * 2);
+                    this.toPlace(currleft, box.availHeight() - subox.height - this.height - space * 1.5);
                 } else subtop = this.top + this.height + space;
             }
             subleft = currleft;
