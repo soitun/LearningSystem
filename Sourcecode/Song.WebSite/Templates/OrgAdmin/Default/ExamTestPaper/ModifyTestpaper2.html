@@ -59,19 +59,35 @@
                 </div>
                 <div v-show="activeName=='range'" remark="出题范围" tab="range">
                     <section class="range">
-                        <el-divider content-position="left">试题分类</el-divider>
-                        <el-divider content-position="left">关键字</el-divider>
-                        <el-divider content-position="left">关联知识点</el-divider>
+                        <el-card shadow="never">
+                            <template slot="header">
+                                <span icon="&#xa015" large>试题分类</span>
+                                <el-button type="primary" plain @click="opensubwin('SelectParts')">选择</el-button>
+                            </template>
+                        </el-card>
+                        <el-card shadow="never">
+                            <template slot="header">
+                                <span icon="&#xe841" large>关键字</span>
+                                <el-button type="primary" plain @click="opensubwin('Tags')">选择</el-button>
+                            </template>
+                        </el-card>
+                        <el-card shadow="never">
+                            <template slot="header">
+                                <span icon="&#xe6fd" large>关联知识点</span>
+                                <el-button type="primary" plain @click="opensubwin('Knl')">选择</el-button>
+                            </template>
+                        </el-card>
                     </section>
-                    <el-card shadow="never" type="primary" class="questype">
+                    <el-card shadow="never" type="primary" class="qtype_card">
                         <template slot="header">
                             <span icon="&#xe75e" large>供选择的题量</span>
+                            <span>{{ qtypeitems.reduce((total, item) => total + item.total, 0)}} 道</span>
                         </template>
                         <loading v-if="loadstate.init">加载中...</loading>
-                        <el-row :gutter="20" v-else v-for="item in qtypeitems"> 
+                        <el-row :gutter="20" v-else v-for="item in qtypeitems">
                             <ques_type :type="item.type" :types="types" :showicon="true" :showname="true">
-                                <span>{{item.total}}</span>
-                            </ques_type>                                           
+                                <span>{{item.total}} 道</span>
+                            </ques_type>
                         </el-row>
                     </el-card>
                 </div>

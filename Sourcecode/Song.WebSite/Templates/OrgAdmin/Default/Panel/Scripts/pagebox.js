@@ -654,13 +654,13 @@
         return box.toSize(this.id, width, height, smooth);
     };
     //窗体移动，从当前位置移动
-    fn.toMove = function (left, top) {
+    fn.toMove = function (left, top) {        
         let x = this.left + parseInt(left);
         let y = this.top + parseInt(top);
-        this.position(x, y);
+        this.toPlace(x, y);
     };
-    //设置窗体的位置
-    fn.position = function (left, top) {
+    //设置窗体的位置，相对于浏览可视区域的绝对位置
+    fn.toPlace = function (left, top) {
         this.dom.smooth();
         this.left = parseInt(left);
         this.top = parseInt(top);
