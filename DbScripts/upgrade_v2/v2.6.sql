@@ -183,6 +183,7 @@ CREATE TABLE "QuesTags" (
     "Org_ID" INT NOT NULL,
     "Qtag_Name" VARCHAR(255) NOT NULL,
     "Cou_ID" BIGINT NOT NULL,
+    "Qtag_Count" INT NOT NULL DEFAULT 0,       -- 试题数量
     "Qtag_Order" INT NOT NULL DEFAULT 0,
     "Qtag_Weight" INT NOT NULL DEFAULT 0,             --权重
     "Qtag_CrtTime" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,    -- 创建时间
@@ -193,6 +194,7 @@ CREATE INDEX "QuesTags_IX_PID" ON "QuesTags"("Qtag_PID");
 CREATE INDEX "QuesTags_IX_OrgID" ON "QuesTags"("Org_ID");
 CREATE INDEX "QuesTags_IX_Name" ON "QuesTags"("Qtag_Name");
 CREATE INDEX "QuesTags_IX_CouID" ON "QuesTags"("Cou_ID");
+CREATE INDEX "QuesTags_IX_Count" ON "QuesTags"("Qtag_Count");
 CREATE INDEX "QuesTags_IX_Order" ON "QuesTags"("Qtag_Order");
 CREATE INDEX "QuesTags_IX_Weight" ON "QuesTags"("Qtag_Weight");
 /*是否删除的字段*/

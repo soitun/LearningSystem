@@ -101,11 +101,10 @@ div[tab="range"] .qtype_card .el-card__body {
 
 .qtype_card .el-card__body .el-row {
     margin-bottom: 10px;
-    font-size: 16px;
 }
 
 .qtype_card .el-card__body .el-row icon[ques_type][showname=true]::after {
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 .qtype_card .el-card__body .el-row icon[type=5] {

@@ -155,7 +155,7 @@ $ready(['../Question/Components/ques_type.js',],
                     //创建新窗口中
                     var subbox = window.top.$pagebox.create({
                         width: 500, height: 300,
-                        id: page, ico: 'a053',
+                        id: page, ico: 'a015',title:'试题分类选择',
                         url: $dom.routepath() + page
                     });   
                     curbox.opensub(subbox, place);

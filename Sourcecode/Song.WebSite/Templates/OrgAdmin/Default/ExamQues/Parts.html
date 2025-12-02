@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head resource>
     <meta charset="UTF-8">
-    <include file="../inc/meta.inc" /> 
+    <include file="../inc/meta.inc" />
     <title>试题分类</title>
 </head>
+
 <body>
-    <div id="vapp" v-cloak> 
+    <div id="vapp" v-cloak>
         <div class="toolsbar">
             <btngroup show="新增,展开/折叠" ref='btngroup' path="PartModify" @update_data="update_statdata"
                 @fold_open="fold=!fold" width="800" idkey='Qp_ID' height="500"></btngroup>
@@ -29,15 +31,18 @@
                 v-loading="loading || loading_sumbit">
                 <div class="custom-tree-node" slot-scope="{ node, data }">
                     <span class="tree-node draghandle">
-                        <span>{{data.serial}}</span> &nbsp;   
+                        <span>{{data.serial}}</span> &nbsp;
                         <span class="large" v-html="showsearch(data.Qp_Name,filterText)"></span>
                         <span class="sbjcount" v-if="data.calcChild>0">({{data.calcChild}})</span>
-                    </span>                 
+                    </span>
+                    <div class="column_count">
+                        <span title="试题数" question :zero="data.QuesCount<=0">{{data.QuesCount|commas}} 道</span>
+                    </div>
                     <div class="column_state">
                         <b class="el-icon-loading" v-if="loadingid==data.Qp_ID"></b>
                         <template v-else>
                             <el-tag :type="data.Qp_IsUse ? 'success' : 'info'" @click="changeState(data,'Qp_IsUse')">
-                                {{data.Qp_IsUse ? '启用' : '禁用'}}</el-tag>                          
+                                {{data.Qp_IsUse ? '启用' : '禁用'}}</el-tag>
                         </template>
                     </div>
                     <div class="column_btn">
@@ -54,6 +59,7 @@
 
             </el-tree>
         </div>
-    </div> 
+    </div>
 </body>
+
 </html>

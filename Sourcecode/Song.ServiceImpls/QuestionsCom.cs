@@ -30,10 +30,7 @@ namespace Song.ServiceImpls
             if (entity.Qus_ID <= 0) entity.Qus_ID = WeiSha.Core.Request.SnowID();
    
             entity.Qus_CrtTime = DateTime.Now;
-            entity.Qus_LastTime = DateTime.Now;
-            entity.Qus_Title = _ClearString(entity.Qus_Title);
-            entity.Qus_Answer = _ClearString(entity.Qus_Answer);
-            entity.Qus_Explain = _ClearString(entity.Qus_Explain);
+            entity.Qus_LastTime = DateTime.Now;           
             if (entity.Org_ID <= 0)
             {
                 Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
@@ -65,9 +62,7 @@ namespace Song.ServiceImpls
         public void QuesSave(Questions entity)
         {
             entity.Qus_LastTime = DateTime.Now;
-            entity.Qus_IsError = false;
-            entity.Qus_Title = _ClearString(entity.Qus_Title);
-            entity.Qus_Answer = _ClearString(entity.Qus_Answer);
+            entity.Qus_IsError = false;         
             //获取科目名称
             if (entity.Sbj_ID > 0 && string.IsNullOrWhiteSpace(entity.Sbj_Name))
             {
@@ -86,27 +81,7 @@ namespace Song.ServiceImpls
                     entity.Qus_ErrorInfo = "答案不得为空";
                 }
             }
-            if (entity.Qus_Type == 5)
-            {
-                //entity.Qus_Items
-                //HTML.ClearTag
-            }
-            entity.Qus_Explain = _ClearString(entity.Qus_Explain);
-            using (DbTrans tran = Gateway.Default.BeginTrans())
-            {
-                try
-                {
-                    tran.Save<Questions>(entity);
-                    tran.Update<QuesAnswer>(new Field[] { QuesAnswer._.Qus_ID }, new object[] { entity.Qus_ID }, QuesAnswer._.Qus_UID == entity.Qus_UID);
-                    tran.Commit();
-                    this.OnSave(entity, EventArgs.Empty);
-                }
-                catch (Exception ex)
-                {
-                    tran.Rollback();
-                    throw ex;
-                }
-            }
+            Gateway.Default.Save<Questions>(entity);
             //更新统计数据
             new Task(() =>
             {
@@ -115,10 +90,7 @@ namespace Song.ServiceImpls
         }
 
         public void QuesInput(Questions entity, List<Song.Entities.QuesAnswer> ansItem)
-        {
-            entity.Qus_Title = _ClearString(entity.Qus_Title);
-            entity.Qus_Answer = _ClearString(entity.Qus_Answer);
-            entity.Qus_Explain = _ClearString(entity.Qus_Explain);
+        {           
             //获取科目名称
             if (entity.Sbj_ID > 0 && string.IsNullOrWhiteSpace(entity.Sbj_Name))
             {
@@ -1626,45 +1598,6 @@ namespace Song.ServiceImpls
             return corrNum == ans5.Count;
         }
         #endregion
-
-        #region 私有方法
-        /// <summary>
-        /// 清理字符中的非法字符
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        private string _ClearString(string html)
-        {
-            if (string.IsNullOrWhiteSpace(html)) return html;
-            RegexOptions option = RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace;
-            //删除脚本
-            html = Regex.Replace(html, @"<script[^>]+?>[\s\S]*?</script>", "", option);
-            html = Regex.Replace(html, @"<script[^>]*>[\s\S]*?</script>", "", option);
-            ////删除HTML
-            ////html = Regex.Replace(html, @"<(.[^>]*)>", "", option);
-            //html = Regex.Replace(html, @"([\r\n])[\s]+", "", option);
-            //html = Regex.Replace(html, @"-->", "", option);
-            //html = Regex.Replace(html, @"<!--.*", "", option);
-            //html = Regex.Replace(html, @"&(quot|#34);", "\"", option);
-            //html = Regex.Replace(html, @"&(amp|#38);", "&", option);
-            ////html = Regex.Replace(html, @"&(lt|#60);", "<", option);
-            ////html = Regex.Replace(html, @"&(gt|#62);", ">", option);
-            //html = Regex.Replace(html, @"&(nbsp|#160);", " ", option);
-            //html = Regex.Replace(html, @"&(iexcl|#161);", "\xa1", option);
-            //html = Regex.Replace(html, @"&(cent|#162);", "\xa2", option);
-            //html = Regex.Replace(html, @"&(pound|#163);", "\xa3", option);
-            //html = Regex.Replace(html, @"&(copy|#169);", "\xa9", option);
-            //html = Regex.Replace(html, @"&#(\d+);", "", option);
-
-            html = Regex.Replace(html, @"//\(function\(\)[\s\S]+?}\)\(\);", "", option);
-            //html = html.Replace("<", "&lt;");
-            //html = html.Replace(">", "&gt;");
-            html = html.Replace("\r", "");
-            html = html.Replace("\n", "");
-            return html;
-        }
-        #endregion
-
 
         #region 事件
         public event EventHandler Save;

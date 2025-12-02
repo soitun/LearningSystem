@@ -26,7 +26,7 @@ namespace Song.ViewData.QuestionHandler
         /// <param name="course">当前课程</param>
         /// <param name="org">当前机构</param>
         /// <param name="mathing">excel列与字段的匹配关联</param>
-        public static void Type1(string excel,DataRow dr, int type, Song.Entities.Course course, Song.Entities.Organization org, JArray mathing)
+        public static void Type1(string excel, DataRow dr, int type, Song.Entities.Course course, Song.Entities.Organization org, JArray mathing)
         {
             Song.Entities.Questions obj = new Song.Entities.Questions();
             obj.Qus_IsUse = true;
@@ -123,7 +123,7 @@ namespace Song.ViewData.QuestionHandler
             if (obj.Cou_ID == 0) throw new Exception("当前试题所在课程并不存在");
             //if (obj.Ol_ID == 0) throw new Exception("当前试题所在章节并不存在");
             if (org != null) obj.Org_ID = org.Org_ID;
-            Business.Do<IQuestions>().QuesInput(obj, ansItem);
+            Import.QuesInput(obj, ansItem);
         }
 
         /// <summary>
@@ -237,7 +237,7 @@ namespace Song.ViewData.QuestionHandler
             if (obj.Cou_ID == 0) throw new Exception("当前试题所在课程并不存在");
             //if (obj.Ol_ID == 0) throw new Exception("当前试题所在章节并不存在");
             if (org != null) obj.Org_ID = org.Org_ID;
-            Business.Do<IQuestions>().QuesInput(obj, ansItem);
+            Import.QuesInput(obj, ansItem);
         }
         /// <summary>
         /// 导入判断题，将某一行数据加入到数据库
@@ -315,7 +315,7 @@ namespace Song.ViewData.QuestionHandler
             if (obj.Cou_ID == 0) throw new Exception("当前试题所在课程并不存在");
             //if (obj.Ol_ID == 0) throw new Exception("当前试题所在章节并不存在");
             if (org != null) obj.Org_ID = org.Org_ID;
-            Business.Do<IQuestions>().QuesInput(obj, null);
+            Import.QuesInput(obj, null);
         }
         /// <summary>
         /// 导入简答题，将某一行数据加入到数据库
@@ -390,7 +390,7 @@ namespace Song.ViewData.QuestionHandler
             if (obj.Cou_ID == 0) throw new Exception("当前试题所在课程并不存在");
             //if (obj.Ol_ID == 0) throw new Exception("当前试题所在章节并不存在");
             if (org != null) obj.Org_ID = org.Org_ID;
-            Business.Do<IQuestions>().QuesInput(obj, null);
+            Import.QuesInput(obj, null);
         }
         /// <summary>
         /// 导入填空题，将某一行数据加入到数据库
@@ -488,7 +488,7 @@ namespace Song.ViewData.QuestionHandler
             if (obj.Cou_ID == 0) throw new Exception("当前试题所在课程并不存在");
             //if (obj.Ol_ID == 0) throw new Exception("当前试题所在章节并不存在");
             if (org != null) obj.Org_ID = org.Org_ID;
-            Business.Do<IQuestions>().QuesInput(obj, ansItem);
+            Import.QuesInput(obj, ansItem);
         }
         /// <summary>
         /// 处理题干
@@ -517,6 +517,19 @@ namespace Song.ViewData.QuestionHandler
                 return System.IO.File.ReadAllText(path + "\\" + content);
             }
             return content;
+        }
+        /// <summary>
+        /// 导入试题，在导入之前做一些处理
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="ansItem"></param>
+        private static void QuesInput(Questions entity, List<Song.Entities.QuesAnswer> ansItem)
+        {
+            //清理脚本
+            entity.Qus_Title = CleanText.Title(entity.Qus_Title);
+            entity.Qus_Answer = CleanText.Content(entity.Qus_Answer);
+            entity.Qus_Explain = CleanText.Content(entity.Qus_Explain);
+            Business.Do<IQuestions>().QuesInput(entity, ansItem);
         }
     }
 }

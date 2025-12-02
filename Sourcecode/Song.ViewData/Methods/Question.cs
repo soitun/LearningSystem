@@ -73,6 +73,10 @@ namespace Song.ViewData.Methods
             {
                 entity.Qus_Items = Business.Do<IQuestions>().AnswerToItems(Helper.Question.AnswerToItems(entity));
             }
+            //清理脚本
+            entity.Qus_Title = QuestionHandler.CleanText.Title(entity.Qus_Title);
+            entity.Qus_Answer = QuestionHandler.CleanText.Content(entity.Qus_Answer);
+            entity.Qus_Explain = QuestionHandler.CleanText.Content(entity.Qus_Explain);
             Business.Do<IQuestions>().QuesAdd(entity);
             return entity.Qus_ID;
         }
@@ -88,6 +92,10 @@ namespace Song.ViewData.Methods
         {
             Song.Entities.Questions old = Business.Do<IQuestions>().QuesSingle(entity.Qus_ID);
             if (old == null) throw new Exception("Not found entity for Questions！");
+            //清理脚本
+            entity.Qus_Title = QuestionHandler.CleanText.Title(entity.Qus_Title);
+            entity.Qus_Answer = QuestionHandler.CleanText.Content(entity.Qus_Answer);
+            entity.Qus_Explain = QuestionHandler.CleanText.Content(entity.Qus_Explain);
             //是否更改章节id
             long oldOlid = old.Ol_ID, newOlid = entity.Ol_ID;
             old.Copy<Song.Entities.Questions>(entity);
@@ -95,7 +103,8 @@ namespace Song.ViewData.Methods
             if (entity.Qus_Type == 1 || entity.Qus_Type == 2 || entity.Qus_Type == 5)
             {
                 old.Qus_Items = Business.Do<IQuestions>().AnswerToItems(Helper.Question.AnswerToItems(entity));
-            }           
+            }
+            
             Business.Do<IQuestions>().QuesSave(old);
 
             //更新章节试题数

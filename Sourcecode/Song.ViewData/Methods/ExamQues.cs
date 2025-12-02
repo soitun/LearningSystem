@@ -53,8 +53,13 @@ namespace Song.ViewData.Methods
         [HtmlClear(Not = "entity")]
         public long QuesAdd(Song.Entities.Questions entity, QuesPart[] parts, QuesTags[] tags, QuesKnowledge[] knls)
         {
+            //清理脚本
+            entity.Qus_Title = QuestionHandler.CleanText.Title(entity.Qus_Title);
+            entity.Qus_Answer = QuestionHandler.CleanText.Content(entity.Qus_Answer);
+            entity.Qus_Explain = QuestionHandler.CleanText.Content(entity.Qus_Explain);
+
             //如果存在，不保存
-            Song.Entities.Questions old = Business.Do<IQuestions>().QuesSingle(entity.Qus_ID);
+            Song.Entities.Questions old = Business.Do<IExamQues>().QuesSingle(entity.Qus_ID);
             if (old != null) return old.Qus_ID;
             //处理单选、多选的选项
             if (entity.Qus_Type == 1 || entity.Qus_Type == 2 || entity.Qus_Type == 5)
@@ -62,13 +67,7 @@ namespace Song.ViewData.Methods
                 entity.Qus_Items = Business.Do<IQuestions>().AnswerToItems(Helper.Question.AnswerToItems(entity));
             }
             entity.Qus_Purpose = 1;    //考试专用
-            Business.Do<IQuestions>().QuesAdd(entity);
-            //保存关键字的关联
-            Business.Do<IExamQues>().TagConnectionQues(tags, entity.Qus_ID, 0);
-            //保存分类的关联
-            Business.Do<IExamQues>().PartConnectionQues(parts, entity.Qus_ID);
-            //保存知识点的关联
-            Business.Do<IExamQues>().KnlConnectionQues(knls, entity.Qus_ID);
+            Business.Do<IExamQues>().QuesAdd(entity, parts, tags, knls);          
             return entity.Qus_ID;
         }
         /// <summary>
@@ -84,24 +83,22 @@ namespace Song.ViewData.Methods
         [HtmlClear(Not = "entity")]
         public bool QuesModify(Questions entity, QuesPart[] parts, QuesTags[] tags, QuesKnowledge[] knls)
         {
+            //清理脚本
+            entity.Qus_Title = QuestionHandler.CleanText.Title(entity.Qus_Title);
+            entity.Qus_Answer = QuestionHandler.CleanText.Content(entity.Qus_Answer);
+            entity.Qus_Explain = QuestionHandler.CleanText.Content(entity.Qus_Explain);
+
             Song.Entities.Questions old = Business.Do<IQuestions>().QuesSingle(entity.Qus_ID);
             if (old == null) throw new Exception("Not found entity for Questions！");
-            //是否更改章节id
-            long oldOlid = old.Ol_ID, newOlid = entity.Ol_ID;
+            
             old.Copy<Song.Entities.Questions>(entity);
             //处理单选、多选的选项
             if (entity.Qus_Type == 1 || entity.Qus_Type == 2 || entity.Qus_Type == 5)
             {
-                old.Qus_Items = Business.Do<IQuestions>().AnswerToItems(Helper.Question.AnswerToItems(entity));
+                entity.Qus_Items = Business.Do<IQuestions>().AnswerToItems(Helper.Question.AnswerToItems(entity));
             }
-            old.Qus_Purpose = 1;    //考试专用
-            Business.Do<IQuestions>().QuesSave(old);
-            //保存关键字的关联
-            Business.Do<IExamQues>().TagConnectionQues(tags, entity.Qus_ID, 0);
-            //保存分类的关联
-            Business.Do<IExamQues>().PartConnectionQues(parts, entity.Qus_ID);
-            //保存知识点的关联
-            Business.Do<IExamQues>().KnlConnectionQues(knls, entity.Qus_ID);
+            entity.Qus_Purpose = 1;    //考试专用
+            Business.Do<IExamQues>().QuesSave(old, parts, tags, knls);
             return true;
         }
         /// <summary>

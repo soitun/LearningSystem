@@ -39,16 +39,11 @@ namespace Song.ServiceImpls
             if (entity.Org_ID <= 0)
             {
                 Song.Entities.Organization org = orgCom.OrganCurrent();
-                if (org != null)
-                {
-                    entity.Org_ID = org.Org_ID;
-                    entity.Org_Name = org.Org_Name;
-                }
+                if (org != null) entity.Org_ID = org.Org_ID;
+               
             }
             entity.Etp_CrtTime = DateTime.Now;
-
-            //判断是否有简称题，还没有编写
-
+            //判断是否有简答题，还没有编写
             //
             Gateway.Default.Save<ExamTestPaper>(entity);
             return entity.Etp_Id;

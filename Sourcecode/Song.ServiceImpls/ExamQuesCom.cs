@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Data;
-using WeiSha.Core;
-using Song.Entities;
-using WeiSha.Data;
+﻿using Song.Entities;
 using Song.ServiceInterfaces;
-using System.Linq;
+using System;
 using System.Collections;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using WeiSha.Core;
+using WeiSha.Data;
 
 namespace Song.ServiceImpls
 {
@@ -16,12 +13,97 @@ namespace Song.ServiceImpls
     {
         #region 试题
         /// <summary>
+        /// 获取单一实体对象，按主键ID；
+        /// </summary>
+        /// <param name="id">实体的主键</param>
+        /// <returns></returns>
+        public Questions QuesSingle(long id)
+        {
+            return Gateway.Default.From<Questions>().Where(Questions._.Qus_ID == id).ToFirst<Questions>();
+        }
+        /// <summary>
+        /// 添加试题
+        /// </summary>
+        /// <param name="entity">业务实体</param>
+        /// <param name="tags">试题关键字</param>
+        /// <param name="parts">试题分类</param>
+        /// <param name="knls">知识点</param>
+        public long QuesAdd(Questions entity, QuesPart[] parts, QuesTags[] tags, QuesKnowledge[] knls)
+        {
+            if (entity.Qus_ID <= 0) entity.Qus_ID = WeiSha.Core.Request.SnowID();
+            entity.Qus_CrtTime = DateTime.Now;
+            entity.Qus_LastTime = DateTime.Now;
+            if (entity.Org_ID <= 0)
+            {
+                Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
+                if (org != null) entity.Org_ID = org.Org_ID;
+            }
+            if (string.IsNullOrWhiteSpace(entity.Qus_UID)) entity.Qus_UID = WeiSha.Core.Request.UniqueID();
+
+            Gateway.Default.Save<Questions>(entity);
+            //保存关键字的关联
+            this.TagConnectionQues(tags, entity);
+            //保存分类的关联
+            this.PartConnectionQues(parts, entity.Qus_ID);
+            //保存知识点的关联
+            this.KnlConnectionQues(knls, entity.Qus_ID);
+
+            //更新试题分类、标签、知识点的题量统计
+            this.PartQusTotalUpdate(entity);
+            this.TagQusTotalUpdate(entity);
+            this.KnlQusTotalUpdate(entity);
+            return entity.Qus_ID;
+        }
+        /// <summary>
+        /// 修改
+        /// </summary>
+        /// <param name="entity">要修改的试题</param>
+        /// <param name="tags">试题关键字</param>
+        /// <param name="parts">试题分类</param>
+        /// <param name="knls">知识点</param>
+        public void QuesSave(Questions entity, QuesPart[] parts, QuesTags[] tags, QuesKnowledge[] knls)
+        {
+            entity.Qus_LastTime = DateTime.Now;
+            entity.Qus_IsError = false;
+            //获取科目名称
+            if (entity.Sbj_ID > 0 && string.IsNullOrWhiteSpace(entity.Sbj_Name))
+            {
+                Subject sbj = Business.Do<ISubject>().SubjectSingle(entity.Sbj_ID);
+                if (sbj != null) entity.Sbj_Name = sbj.Sbj_Name;
+            }
+            if (entity.Qus_Type == 4)
+            {
+                if (string.IsNullOrWhiteSpace(entity.Qus_Answer) || string.IsNullOrWhiteSpace(entity.Qus_Answer))
+                {
+                    entity.Qus_IsError = true;
+                    entity.Qus_ErrorInfo = "答案不得为空";
+                }
+            }
+            Questions former = this.QuesSingle(entity.Qus_ID);  //获取之前的试题信息
+            //保存
+            Gateway.Default.Save<Questions>(entity);
+
+            //保存关键字的关联
+            this.TagConnectionQues(tags, entity);
+            //保存分类的关联
+            this.PartConnectionQues(parts, entity.Qus_ID);
+            //保存知识点的关联
+            this.KnlConnectionQues(knls, entity.Qus_ID);
+
+            //更新试题分类、标签、知识点的题量统计
+            this.PartQusTotalUpdate(entity);
+            this.TagQusTotalUpdate(entity);
+            this.KnlQusTotalUpdate(entity, former);
+        }
+        /// <summary>
         /// 删除试题
         /// </summary>
         /// <param name="entity">试题实体</param>
         public int QuesDelete(Questions entity)
         {
-            return Gateway.Default.Update<Questions>(Questions._.Qus_IsDeleted, true, Questions._.Qus_ID == entity.Qus_ID);
+            int count = Gateway.Default.Update<Questions>(Questions._.Qus_IsDeleted, true, Questions._.Qus_ID == entity.Qus_ID);
+            this.PartQusTotalUpdate(entity);
+            return count;
         }
         /// <summary>
         /// 删除，按主键ID；
@@ -29,13 +111,16 @@ namespace Song.ServiceImpls
         /// <param name="id">实体的主键</param>
         public int QuesDelete(long id)
         {
-            return Gateway.Default.Update<Questions>(Questions._.Qus_IsDeleted, true, Questions._.Qus_ID == id);
+            Song.Entities.Questions qus = Gateway.Default.From<Questions>().Where(Questions._.Qus_ID == id).ToFirst<Questions>();
+            return this.QuesDelete(qus);
         }
         /// <summary>
         /// 回收，标记删除状态为false
         /// </summary>
         public int QuesRecycle(long id)
         {
+            Song.Entities.Questions qus = Gateway.Default.From<Questions>().Where(Questions._.Qus_ID == id).ToFirst<Questions>();
+            this.PartQusTotalUpdate(qus);
             return Gateway.Default.Update<Questions>(Questions._.Qus_IsDeleted, false, Questions._.Qus_ID == id);
         }
         /// <summary>
@@ -55,6 +140,11 @@ namespace Song.ServiceImpls
                     Gateway.Default.Delete<QuesCollect>(QuesCollect._.Qus_ID == id);
                     //删除错题记录
                     Gateway.Default.Delete<Student_Ques>(Student_Ques._.Qus_ID == id);
+
+                    //删除关联记录
+                    Gateway.Default.Delete<Questions_QKnl>(Questions_QKnl._.Qus_ID == id);
+                    Gateway.Default.Delete<Questions_QPart>(Questions_QPart._.Qus_ID == id);
+                    Gateway.Default.Delete<Questions_QTags>(Questions_QTags._.Qus_ID == id);
                     //
                     //删除试题
                     int n = tran.Delete<Questions>(Questions._.Qus_ID == id);
@@ -142,6 +232,28 @@ namespace Song.ServiceImpls
             countSum = section.Where(wc).Count();
             return section.Where(wc).OrderBy(Questions._.Qus_ID.Desc).ToList<Questions>(size, (index - 1) * size);
         }
+        /// <summary>
+        /// 试题统计更新，例如当试题被修改时，需要更新试题分类下的试题数量
+        /// </summary>
+        /// <param name="ques">要更新的试题对象</param>
+        /// <param name="former">原来的试题对象</param>
+        public void QuesStatisticalUpdate(Questions ques, Questions former)
+        {
+            WhereClip wc = Questions._.Qus_Purpose == 1;
+            wc.And(Questions._.Qus_IsDeleted == false && Questions._.Qus_IsUse == true);
+        }
+        ///// <summary>
+        ///// 试题统计更新，例如当试题被修改时，需要更新试题分类下的试题数量
+        ///// </summary>
+        ///// <param name="id">试题id</param>
+        //public void QuesStatisticalUpdate(Questions ques, Questions former)
+        //{
+        //    WhereClip wc = Questions._.Qus_Purpose == 1;
+        //    wc.And(Questions._.Qus_IsDeleted == false && Questions._.Qus_IsUse == true);
+        //    //关联分类的试题数
+        //    int partcount = Gateway.Default.From<Questions>().LeftJoin<Questions_QPart>(Questions_QPart._.Qus_ID == Questions._.Qus_ID).Where(wc).Count();
+        //    //int partcount = Gateway.Default.Count<Questions>(wc &&);
+        //}
         #endregion
 
         #region 试题分类
@@ -162,7 +274,7 @@ namespace Song.ServiceImpls
             {
                 object obj = Gateway.Default.Max<QuesPart>(QuesPart._.Qp_Order, QuesPart._.Org_ID == entity.Org_ID && QuesPart._.Qp_PID == entity.Qp_PID);
                 entity.Qp_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
-            }           
+            }
             return Gateway.Default.Save<QuesPart>(entity);
         }
         /// <summary>
@@ -255,7 +367,7 @@ namespace Song.ServiceImpls
                 try
                 {
                     foreach (long qpid in list)
-                        tran.Update<QuesPart>(QuesPart._.Qp_IsDeleted,true, QuesPart._.Qp_ID == qpid);                  
+                        tran.Update<QuesPart>(QuesPart._.Qp_IsDeleted, true, QuesPart._.Qp_ID == qpid);
                     tran.Commit();
                 }
                 catch (Exception ex)
@@ -525,6 +637,40 @@ namespace Song.ServiceImpls
             return section.Count();
         }
         /// <summary>
+        /// 试题统计更新，例如当试题被修改时，需要更新试题分类下的试题数量
+        /// </summary>
+        public void PartQusTotalUpdate(List<QuesPart> parts)
+        {
+            //试题条件
+            WhereClip queswc = Questions._.Qus_Purpose == 1;
+            queswc.And(Questions._.Qus_IsDeleted == false && Questions._.Qus_IsUse == true);
+            //当前试题关联的分类
+            foreach (QuesPart part in parts)
+            {
+                //分类的试题数
+                int partcount = Gateway.Default.From<Questions>().LeftJoin<Questions_QPart>(Questions_QPart._.Qus_ID == Questions._.Qus_ID).Where(queswc && Questions_QPart._.Qp_ID == part.Qp_ID).Count();
+                Gateway.Default.Update<QuesPart>(QuesPart._.QP_Count, partcount, QuesPart._.Qp_ID == part.Qp_ID);
+            }
+        }
+        /// <summary>
+        /// 试题统计更新，例如当试题被修改时，需要更新试题分类下的试题数量
+        /// </summary>
+        public void PartQusTotalUpdate(Questions ques)
+        {
+            List<QuesPart> list = this.PartForQues(ques.Qus_ID);
+            if (list == null || list.Count <= 0) return;
+            this.PartQusTotalUpdate(list);
+        }
+        /// <summary>
+        /// 更新试题分类所有试题数量
+        /// </summary>
+        public void PartQusTotalUpdate()
+        {
+            List<QuesPart> list = Gateway.Default.From<QuesPart>().ToList<QuesPart>();
+            if (list == null || list.Count <= 0) return;
+            this.PartQusTotalUpdate(list);
+        }
+        /// <summary>
         /// 试题所属的分类，由于是多对多关联，试题可能会属于多个分类
         /// </summary>
         /// <param name="quesid">试题id</param>
@@ -571,7 +717,7 @@ namespace Song.ServiceImpls
                     {
                         tran.Update<QuesPart>(
                             new Field[] { QuesPart._.Qp_PID, QuesPart._.Qp_Order },
-                            new object[] { part.Qp_PID, part.Qp_Order},
+                            new object[] { part.Qp_PID, part.Qp_Order },
                             QuesPart._.Qp_ID == part.Qp_ID);
                     }
                     tran.Commit();
@@ -593,26 +739,45 @@ namespace Song.ServiceImpls
         public int PartConnectionQues(long qpid, long qusid)
         {
             if (qpid <= 0 || qusid <= 0) return 0;
-            WhereClip wc = Questions_QPart._.Qus_ID == qusid && Questions_QPart._.Qp_ID == qpid;
-            Questions_QPart qqpart = Gateway.Default.From<Questions_QPart>().Where(wc).ToFirst<Questions_QPart>();
-            if (qqpart != null) return 0;
-            qqpart = new Questions_QPart()
-            {
-                Qus_ID = qusid,
-                Qp_ID = qpid
-            };
-            return Gateway.Default.Save<Questions_QPart>(qqpart);
+            Questions ques = Gateway.Default.From<Questions>().Where(Questions._.Qus_ID == qusid).ToFirst<Questions>();
+            QuesPart[] parts = Gateway.Default.From<QuesPart>().Where(QuesPart._.Qp_ID == qpid).ToArray<QuesPart>();          
+            return PartConnectionQues(parts, ques);
         }
         /// <summary>
         /// 创建试题分类与试题的关联
         /// </summary>
         public int PartConnectionQues(QuesPart[] parts, long qusid)
         {
-            if (qusid <= 0) return 0;         
-            Gateway.Default.Delete<Questions_QPart>(Questions_QPart._.Qus_ID == qusid);
+            if (qusid <= 0) return 0;
+            Questions ques = this.QuesSingle(qusid);
+            return PartConnectionQues(parts, ques);
+        }
+        /// <summary>
+        /// 创建试题分类与试题的关联
+        /// </summary>
+        public int PartConnectionQues(QuesPart[] parts, Questions ques)
+        {
+            //原有试题分类
+            List<QuesPart> list = this.PartForQues(ques.Qus_ID);
+
+            //删除原有与试题分类的关联
+            Gateway.Default.Delete<Questions_QPart>(Questions_QPart._.Qus_ID == ques.Qus_ID);
             int i = 0;
-            foreach (QuesPart p in parts)                        
-                i += this.PartConnectionQues(p.Qp_ID, qusid);
+            foreach (QuesPart part in parts)
+            {               
+                WhereClip wc = Questions_QPart._.Qus_ID == ques.Qus_ID && Questions_QPart._.Qp_ID == part.Qp_ID;
+                Questions_QPart qqpart = Gateway.Default.From<Questions_QPart>().Where(wc).ToFirst<Questions_QPart>();
+                if (qqpart != null) return 0;
+                qqpart = new Questions_QPart()
+                {
+                    Qus_ID = ques.Qus_ID,
+                    Qp_ID = part.Qp_ID
+                };
+                i += Gateway.Default.Save<Questions_QPart>(qqpart);
+                if (!list.Any(p => p.Qp_ID == part.Qp_ID)) list.Add(part);
+            }
+            //更新分类的试题数统计
+            this.PartQusTotalUpdate(list);
             return i;
         }
         #endregion
@@ -626,7 +791,7 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public bool CollectAdd(int accid, long qusid)
         {
-            QuesCollect qc=Gateway.Default.From<QuesCollect>().Where(QuesCollect._.Qus_ID == qusid && QuesCollect._.Acc_ID == accid).ToFirst<QuesCollect>();
+            QuesCollect qc = Gateway.Default.From<QuesCollect>().Where(QuesCollect._.Qus_ID == qusid && QuesCollect._.Acc_ID == accid).ToFirst<QuesCollect>();
             if (qc != null) return false;
             return Gateway.Default.Insert<QuesCollect>(new QuesCollect()
             {
@@ -659,7 +824,7 @@ namespace Song.ServiceImpls
                     foreach (long l in qusid)
                     {
                         i += tran.Delete<QuesCollect>(QuesCollect._.Qus_ID == l && QuesCollect._.Acc_ID == accid);
-                    }                  
+                    }
                     tran.Commit();
                 }
                 catch (Exception ex)
@@ -704,7 +869,7 @@ namespace Song.ServiceImpls
         {
             WhereClip wc = Questions._.Qus_Purpose == 1;    //用于考试的试题
             wc.And(QuesCollect._.Acc_ID == acid);
-            wc.And(Questions._.Qus_IsDeleted == false);          
+            wc.And(Questions._.Qus_IsDeleted == false);
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
             if (isError != null) wc.And(Questions._.Qus_IsError == (bool)isError);
             if (isWrong != null) wc.And(Questions._.Qus_IsWrong == (bool)isWrong);
@@ -1136,6 +1301,75 @@ namespace Song.ServiceImpls
             return section.Count();
         }
         /// <summary>
+        /// 试题统计更新，例如当试题被修改时，需要更新试题分类下的试题数量
+        /// </summary>
+        /// <param name="ques">要更新的试题对象</param>
+        /// <param name="former">原来的试题对象</param>
+        public void KnlQusTotalUpdate(Questions ques, Questions former)
+        {
+            //试题条件
+            WhereClip queswc = Questions._.Qus_Purpose == 1;
+            queswc.And(Questions._.Qus_IsDeleted == false && Questions._.Qus_IsUse == true);
+            //当前试题关联的分类
+            QuerySection<QuesKnowledge> section = null;
+            if (ques == null || former == null) section = Gateway.Default.From<QuesKnowledge>().Where(new WhereClip());
+            else
+            {
+                WhereClip wc = new WhereClip();
+                if (ques != null) wc |= Questions_QKnl._.Qus_ID == ques.Qus_ID;
+                if (former != null) wc |= Questions_QKnl._.Qus_ID == former.Qus_ID;
+                section = Gateway.Default.From<QuesKnowledge>().LeftJoin<Questions_QKnl>(Questions_QKnl._.Qk_ID == QuesKnowledge._.Qk_ID).Where(wc);
+            }
+            //当前试题关联的知识点      
+            using (SourceReader reader = section.ToReader())
+            {
+                while (reader.Read())
+                {
+                    object dvalue = reader["Qk_ID"];
+                    long qkid = Convert.ToInt64(dvalue);
+                    //知识点的试题数
+                    int partcount = Gateway.Default.From<Questions>().LeftJoin<Questions_QKnl>(Questions_QKnl._.Qus_ID == Questions._.Qus_ID).Where(queswc && Questions_QKnl._.Qk_ID == qkid).Count();
+                    Gateway.Default.Update<QuesKnowledge>(QuesKnowledge._.Qk_Count, partcount, QuesKnowledge._.Qk_ID == qkid);
+                }
+                reader.Close();
+                reader.Dispose();
+            }
+        }
+        /// <summary>
+        /// 试题统计更新，例如当试题被修改时，需要更新试题分类下的试题数量
+        /// </summary> 
+        public void KnlQusTotalUpdate(List<QuesKnowledge> knls)
+        {
+            //试题条件
+            WhereClip queswc = Questions._.Qus_Purpose == 1;
+            queswc.And(Questions._.Qus_IsDeleted == false && Questions._.Qus_IsUse == true);
+            //当前试题关联的知识点
+            foreach (QuesKnowledge knl in knls)
+            {
+                //知识点的试题数
+                int partcount = Gateway.Default.From<Questions>().LeftJoin<Questions_QKnl>(Questions_QKnl._.Qus_ID == Questions._.Qus_ID).Where(queswc && Questions_QKnl._.Qk_ID == knl.Qk_ID).Count();
+                Gateway.Default.Update<QuesKnowledge>(QuesKnowledge._.Qk_Count, partcount, QuesKnowledge._.Qk_ID == knl.Qk_ID);
+            }
+        }
+        /// <summary>
+        /// 试题统计更新，例如当试题被修改时，需要更新试题分类下的试题数量
+        /// </summary>
+        public void KnlQusTotalUpdate(Questions ques)
+        {
+            List<QuesKnowledge> list = this.KnlForQues(ques.Qus_ID);
+            if (list == null || list.Count <= 0) return;
+            this.KnlQusTotalUpdate(list);
+        }
+        /// <summary>
+        /// 更新试题分类所有试题数量
+        /// </summary>
+        public void KnlQusTotalUpdate()
+        {
+            List<QuesKnowledge> list = Gateway.Default.From<QuesKnowledge>().ToList<QuesKnowledge>();
+            if (list == null || list.Count <= 0) return;
+            this.KnlQusTotalUpdate(list);
+        }
+        /// <summary>
         /// 试题关联的知识点
         /// </summary>
         /// <param name="quesid">试题id</param>
@@ -1203,15 +1437,10 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public int KnlConnectionQues(long qkid, long qusid)
         {
-            WhereClip wc = Questions_QKnl._.Qus_ID == qusid && Questions_QKnl._.Qk_ID == qkid;
-            Questions_QKnl qqknl = Gateway.Default.From<Questions_QKnl>().Where(wc).ToFirst<Questions_QKnl>();
-            if (qqknl != null) return 0;
-            qqknl = new Questions_QKnl()
-            {
-                Qus_ID = qusid,
-                Qk_ID = qkid
-            };
-            return Gateway.Default.Save<Questions_QKnl>(qqknl);
+            if (qusid <= 0 || qusid <= 0) return 0;
+            Questions ques = Gateway.Default.From<Questions>().Where(Questions._.Qus_ID == qusid).ToFirst<Questions>();
+            QuesKnowledge[] knls = Gateway.Default.From<QuesKnowledge>().Where(QuesKnowledge._.Qk_ID == qkid).ToArray<QuesKnowledge>();
+            return KnlConnectionQues(knls, ques);
         }
         /// <summary>
         /// 创建知识点与试题的关联
@@ -1219,10 +1448,32 @@ namespace Song.ServiceImpls
         public int KnlConnectionQues(QuesKnowledge[] knls, long qusid)
         {
             if (qusid <= 0) return 0;
-            Gateway.Default.Delete<Questions_QKnl>(Questions_QKnl._.Qus_ID == qusid);
+            Questions ques = this.QuesSingle(qusid);
+            return this.KnlConnectionQues(knls, ques);           
+        }
+        /// <summary>
+        /// 创建知识点与试题的关联
+        /// </summary>
+        public int KnlConnectionQues(QuesKnowledge[] knls, Questions ques)
+        {
+            //原有试题知识点
+            List<QuesKnowledge> list = this.KnlForQues(ques.Qus_ID);
+
+            //删除原有与试题知识点的关联
+            Gateway.Default.Delete<Questions_QKnl>(Questions_QKnl._.Qus_ID == ques.Qus_ID);
             int i = 0;
-            foreach (QuesKnowledge p in knls)
-                i += this.KnlConnectionQues(p.Qk_ID, qusid);
+            foreach (QuesKnowledge knl in knls)
+            {
+                Questions_QKnl qqknl = new Questions_QKnl()
+                {
+                    Qus_ID = ques.Qus_ID,
+                    Qk_ID = knl.Qk_ID
+                };
+                i += Gateway.Default.Save<Questions_QKnl>(qqknl);
+                if (!list.Any(p => p.Qk_ID == knl.Qk_ID)) list.Add(knl);
+            }
+            //更新知识点的试题数统计
+            this.KnlQusTotalUpdate(list);
             return i;
         }
         #endregion
@@ -1234,7 +1485,7 @@ namespace Song.ServiceImpls
         /// <param name="entity"></param>
         /// <returns></returns>
         public int TagAdd(QuesTags entity)
-        {          
+        {
             entity.Qtag_CrtTime = DateTime.Now;
             if (entity.Org_ID <= 0)
             {
@@ -1250,7 +1501,7 @@ namespace Song.ServiceImpls
                 entity.Qtag_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
             return Gateway.Default.Save<QuesTags>(entity);
-        }       
+        }
         /// <summary>
         /// 是否已经存在
         /// </summary>
@@ -1381,7 +1632,7 @@ namespace Song.ServiceImpls
                 };
                 this.TagAdd(qtag);
             }
-            return this.TagConnectionQues(qtag.Qtag_ID, quesid, couid);
+            return this.TagConnectionQues(new QuesTags[] { qtag }, ques);
         }
         /// <summary>
         /// 创建关键字与试题的关联
@@ -1392,15 +1643,10 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public int TagConnectionQues(long tagid, long quesid, long couid)
         {
-            WhereClip wc = Questions_QTags._.Qus_ID == quesid && Questions_QTags._.Qtag_ID == tagid;
-            Questions_QTags qqtag = Gateway.Default.From<Questions_QTags>().Where(wc).ToFirst<Questions_QTags>();
-            if (qqtag != null) return 0;
-            qqtag = new Questions_QTags()
-            {
-                Qus_ID = quesid,
-                Qtag_ID = tagid
-            };
-            return Gateway.Default.Save<Questions_QTags>(qqtag);
+            Questions ques = Gateway.Default.From<Questions>().Where(Questions._.Qus_ID == quesid).ToFirst<Questions>();
+            QuesTags[] tags = Gateway.Default.From<QuesTags>().Where(QuesTags._.Qtag_ID == tagid).ToArray<QuesTags>();
+            ques.Cou_ID = couid;
+            return TagConnectionQues(tags, ques);
         }
         /// <summary>
         /// 创建关键字与试题的关联
@@ -1408,14 +1654,38 @@ namespace Song.ServiceImpls
         public int TagConnectionQues(QuesTags[] tags, long quesid, long couid)
         {
             if (quesid <= 0) return 0;
-            Questions ques = Gateway.Default.From<Questions>().Where(Questions._.Qus_ID == quesid).ToFirst<Questions>();            
-            Gateway.Default.Delete<Questions_QTags>(Questions_QTags._.Qus_ID == quesid);
+            Questions ques = Gateway.Default.From<Questions>().Where(Questions._.Qus_ID == quesid).ToFirst<Questions>();
+            ques.Cou_ID = couid;
+            return TagConnectionQues(tags, ques);
+        }
+        /// <summary>
+        /// 创建关键字与试题的关联
+        /// </summary>
+        public int TagConnectionQues(QuesTags[] tags, Questions ques)
+        {
+            //原有试题标签
+            List<QuesTags> list = this.TagForQues(ques.Qus_ID);
+
+            //删除原有与试题分类的关联
+            Gateway.Default.Delete<Questions_QTags>(Questions_QTags._.Qus_ID == ques.Qus_ID);
             int i = 0;
             foreach (QuesTags tag in tags)
             {
                 if (!this.TagIsExist(tag, true)) this.TagAdd(tag);
-                i += this.TagConnectionQues(tag.Qtag_ID, quesid, couid);
+                WhereClip wc = Questions_QTags._.Qus_ID == ques.Qus_ID && Questions_QTags._.Qtag_ID == tag.Qtag_ID;
+                Questions_QTags qqtag = Gateway.Default.From<Questions_QTags>().Where(wc).ToFirst<Questions_QTags>();
+                if (qqtag == null)
+                {
+                    qqtag = new Questions_QTags()
+                    {
+                        Qus_ID = ques.Qus_ID,
+                        Qtag_ID = tag.Qtag_ID
+                    };
+                }
+                i += Gateway.Default.Save<Questions_QTags>(qqtag);
+                if (!list.Any(p => p.Qtag_ID == tag.Qtag_ID)) list.Add(tag);
             }
+            this.TagQusTotalUpdate(list);
             return i;
         }
         /// <summary>
@@ -1467,8 +1737,8 @@ namespace Song.ServiceImpls
             wc &= Questions._.Qus_IsDeleted == false;
 
             if (couid > 0) wc.And(Questions._.Cou_ID == couid);
-            if (qtype > 0) wc.And(Questions._.Qus_Type == qtype); 
-            if(isuse != null) wc.And(Questions._.Qus_IsUse == (bool)isuse);
+            if (qtype > 0) wc.And(Questions._.Qus_Type == qtype);
+            if (isuse != null) wc.And(Questions._.Qus_IsUse == (bool)isuse);
 
             QuerySection<Questions> section = Gateway.Default.From<Questions>().LeftJoin<Questions_QTags>(Questions_QTags._.Qus_ID == Questions._.Qus_ID).Where(wc);
             return section.ToList<Questions>(count);
@@ -1502,6 +1772,41 @@ namespace Song.ServiceImpls
 
             QuerySection<Questions> section = Gateway.Default.From<Questions>().LeftJoin<Questions_QTags>(Questions_QTags._.Qus_ID == Questions._.Qus_ID).Where(wc);
             return section.Count();
+        }        
+        /// <summary>
+        /// 试题统计更新，例如当试题被修改时，需要更新试题标签下的试题数量
+        /// </summary>
+        public void TagQusTotalUpdate(List<QuesTags> tags)
+        {
+            //试题条件
+            WhereClip queswc = Questions._.Qus_Purpose == 1;
+            queswc.And(Questions._.Qus_IsDeleted == false && Questions._.Qus_IsUse == true);
+            //试题的标签
+            foreach (QuesTags tag in tags)
+            {
+                //标签的试题数
+                int partcount = Gateway.Default.From<Questions>().LeftJoin<Questions_QTags>(Questions_QTags._.Qus_ID == Questions._.Qus_ID).Where(queswc && Questions_QTags._.Qtag_ID == tag.Qtag_ID).Count();
+                Gateway.Default.Update<QuesTags>(QuesTags._.Qtag_Count, partcount, QuesTags._.Qtag_ID == tag.Qtag_ID);
+            }
+        }
+        /// <summary>
+        /// 试题统计更新，例如当试题被修改时，需要更新试题标签下的试题数量
+        /// </summary>
+        public void TagQusTotalUpdate(Questions ques)
+        {
+            if (ques == null) return;
+            List<QuesTags> tags = this.TagForQues(ques.Qus_ID);
+            if (tags == null || tags.Count <= 0) return;
+            this.TagQusTotalUpdate(tags);
+        }
+        /// <summary>
+        /// 更新试题标签所有试题数量
+        /// </summary>
+        public void TagQusTotalUpdate()
+        {
+            List<QuesTags> list = Gateway.Default.From<QuesTags>().ToList<QuesTags>();
+            if (list == null || list.Count <= 0) return;
+            this.TagQusTotalUpdate(list);
         }
         /// <summary>
         /// <summary>

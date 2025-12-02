@@ -1,22 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head resource>
     <meta charset="UTF-8">
-    <include file="../inc/meta.inc" /> 
+    <include file="../inc/meta.inc" />
     <title>选择试题分类</title>
 </head>
+
 <body>
-    <div id="vapp" v-cloak> 
-        选择试题分类
-        <div>
-            <span>
-                <el-button type="primary" plain @click="opensubwin('SelectParts','left')">左</el-button>
-                <el-button type="primary" plain @click="opensubwin('SelectParts','right')">右</el-button>
-                <el-button type="primary" plain @click="opensubwin('SelectParts','top')">上</el-button>
-                <el-button type="primary" plain @click="opensubwin('SelectParts','bottom')">下</el-button>
-                <el-button type="primary" plain @click="opensubwin('SelectParts')">默认</el-button>
-            </span>
+    <div id="vapp" v-cloak>
+        <div class="toolsbar">
+            <btngroup show="展开/折叠" ref='btngroup' path="PartModify" @fold_open="fold=!fold" width="800" idkey='Qp_ID'>
+            </btngroup>
+            <query_panel :model="form" :loading="loading">
+                <el-form-item label="">
+                    <el-tag type="success">
+                        <icon>&#xe750</icon>总计 {{total}} 个分类
+                    </el-tag>
+                </el-form-item>
+                <el-form-item label="">
+                    <el-input v-model="filterText" clearable style="width:160px" placeholder="搜索"
+                        suffix-icon="el-icon-search"></el-input>
+                </el-form-item>
+            </query_panel>
         </div>
-    </div> 
+        <div class="tree-box">
+            <el-tree ref="tree" :data="datas" node-key="Qp_ID" ref="tree" :props="defaultProps" expand-on-click-node
+                :filter-node-method="filterNode" :expand-on-click-node="false" v-loading="loading">
+                <div class="custom-tree-node" slot-scope="{ node, data }">
+                    <span class="tree-node">
+                        <span>{{data.serial}}</span> &nbsp;
+                        <span class="large" v-html="showsearch(data.Qp_Name,filterText)"></span>
+                        <span class="sbjcount" v-if="data.calcChild>0">({{data.calcChild}})</span>
+                    </span>
+                    <div class="qcount">{{data.QuesCount}} 道</div>
+                </div>
+
+            </el-tree>
+        </div>
+    </div>
 </body>
+
 </html>

@@ -16,7 +16,7 @@ $ready(function () {
         },
         mounted: function () {
             this.getentity();
-            this.gototype(2);
+            //this.gototype(2);
         },
         created: function () {
 

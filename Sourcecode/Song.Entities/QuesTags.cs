@@ -12,7 +12,9 @@ namespace Song.Entities {
     		
     		protected Int64 _Cou_ID;
     		
-    		protected Int64 _Org_ID;
+    		protected Int32 _Org_ID;
+    		
+    		protected Int32 _Qtag_Count;
     		
     		protected DateTime _Qtag_CrtTime;
     		
@@ -48,13 +50,23 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int64 Org_ID {
+    		public Int32 Org_ID {
     			get {
     				return this._Org_ID;
     			}
     			set {
     				this.OnPropertyValueChange(_.Org_ID, _Org_ID, value);
     				this._Org_ID = value;
+    			}
+    		}
+    		
+    		public Int32 Qtag_Count {
+    			get {
+    				return this._Qtag_Count;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Qtag_Count, _Qtag_Count, value);
+    				this._Qtag_Count = value;
     			}
     		}
     		
@@ -151,6 +163,7 @@ namespace Song.Entities {
     					_.Qtag_ID,
     					_.Cou_ID,
     					_.Org_ID,
+    					_.Qtag_Count,
     					_.Qtag_CrtTime,
     					_.Qtag_IsDeleted,
     					_.Qtag_Name,
@@ -168,6 +181,7 @@ namespace Song.Entities {
     					this._Qtag_ID,
     					this._Cou_ID,
     					this._Org_ID,
+    					this._Qtag_Count,
     					this._Qtag_CrtTime,
     					this._Qtag_IsDeleted,
     					this._Qtag_Name,
@@ -188,7 +202,10 @@ namespace Song.Entities {
     				this._Cou_ID = reader.GetInt64(_.Cou_ID);
     			}
     			if ((false == reader.IsDBNull(_.Org_ID))) {
-    				this._Org_ID = reader.GetInt64(_.Org_ID);
+    				this._Org_ID = reader.GetInt32(_.Org_ID);
+    			}
+    			if ((false == reader.IsDBNull(_.Qtag_Count))) {
+    				this._Qtag_Count = reader.GetInt32(_.Qtag_Count);
     			}
     			if ((false == reader.IsDBNull(_.Qtag_CrtTime))) {
     				this._Qtag_CrtTime = reader.GetDateTime(_.Qtag_CrtTime);
@@ -248,9 +265,14 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Cou_ID = new WeiSha.Data.Field<QuesTags>("Cou_ID");
     			
     			/// <summary>
-    			/// 字段名：Org_ID - 数据类型：Int64
+    			/// 字段名：Org_ID - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Org_ID = new WeiSha.Data.Field<QuesTags>("Org_ID");
+    			
+    			/// <summary>
+    			/// 字段名：Qtag_Count - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Qtag_Count = new WeiSha.Data.Field<QuesTags>("Qtag_Count");
     			
     			/// <summary>
     			/// 字段名：Qtag_CrtTime - 数据类型：DateTime
@@ -289,4 +311,3 @@ namespace Song.Entities {
     		}
     	}
     }
-    

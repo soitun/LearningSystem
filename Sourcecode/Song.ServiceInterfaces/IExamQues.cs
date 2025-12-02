@@ -13,6 +13,28 @@ namespace Song.ServiceInterfaces
     {
         #region 试题
         /// <summary>
+        /// 获取单一实体对象，按主键ID；
+        /// </summary>
+        /// <param name="id">实体的主键</param>
+        /// <returns></returns>
+        Questions QuesSingle(long id);
+        /// <summary>
+        /// 添加试题
+        /// </summary>
+        /// <param name="entity">业务实体</param>
+        /// <param name="tags">试题关键字</param>
+        /// <param name="parts">试题分类</param>
+        /// <param name="knls">知识点</param>
+        long QuesAdd(Questions entity, QuesPart[] parts, QuesTags[] tags, QuesKnowledge[] knls);
+        /// <summary>
+        /// 修改
+        /// </summary>
+        /// <param name="entity">要修改的试题</param>
+        /// <param name="tags">试题关键字</param>
+        /// <param name="parts">试题分类</param>
+        /// <param name="knls">知识点</param>
+        void QuesSave(Questions entity, QuesPart[] parts, QuesTags[] tags, QuesKnowledge[] knls);
+        /// <summary>
         /// 删除试题
         /// </summary>
         /// <param name="entity">试题实体</param>
@@ -52,6 +74,12 @@ namespace Song.ServiceInterfaces
         List<Questions> QuesPager(int orgid, string search, bool? isdeleted, long[] qpid, long[] tagid, long[] knlid,
             int[] type, int[] diff, bool? isUse, bool? isError, bool? isWrong,
             int size, int index, out int countSum);
+        /// <summary>
+        /// 试题统计更新，例如当试题被修改时，需要更新试题分类下的试题数量
+        /// </summary>
+        /// <param name="ques">要更新的试题对象</param>
+        /// <param name="former">原来的试题对象</param>
+        void QuesStatisticalUpdate(Questions ques, Questions former);
         #endregion
 
         #region 试题分类
@@ -189,6 +217,18 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         int PartQusTotal(int orgid, long qpid, int qtype, bool? isUse, bool children);
         /// <summary>
+        /// 试题统计更新，例如当试题被修改时，需要更新试题分类下的试题数量
+        /// </summary>
+        void PartQusTotalUpdate(List<QuesPart> parts);
+        /// <summary>
+        /// 试题统计更新，例如当试题被修改时，需要更新试题分类下的试题数量
+        /// </summary>
+        void PartQusTotalUpdate(Questions ques);
+        /// <summary>
+        /// 更新试题分类所有试题数量
+        /// </summary>
+        void PartQusTotalUpdate();
+        /// <summary>
         /// 试题所属的分类，由于是多对多关联，试题可能会属于多个分类
         /// </summary>
         /// <param name="quesid">试题id</param>
@@ -224,6 +264,10 @@ namespace Song.ServiceInterfaces
         /// 创建试题分类与试题的关联
         /// </summary>
         int PartConnectionQues(QuesPart[] parts, long qusid);
+        /// <summary>
+        /// 创建试题分类与试题的关联
+        /// </summary>
+        int PartConnectionQues(QuesPart[] parts, Questions ques);
         #endregion
 
         #region 收藏
@@ -409,6 +453,18 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         int KnlQusTotal(int orgid, long qkid, int qtype, bool? isUse, bool children);
         /// <summary>
+        /// 试题统计更新，例如当试题被修改时，需要更新试题分类下的试题数量
+        /// </summary> 
+        void KnlQusTotalUpdate(List<QuesKnowledge> knls);
+        /// <summary>
+        /// 试题统计更新，例如当试题被修改时，需要更新试题分类下的试题数量
+        /// </summary>
+        void KnlQusTotalUpdate(Questions ques);
+        /// <summary>
+        /// 更新试题分类所有试题数量
+        /// </summary>
+        void KnlQusTotalUpdate();
+        /// <summary>
         /// 试题关联的知识点
         /// </summary>
         /// <param name="quesid">试题id</param>
@@ -444,6 +500,10 @@ namespace Song.ServiceInterfaces
         /// 创建知识点与试题的关联
         /// </summary>
         int KnlConnectionQues(QuesKnowledge[] knls, long qusid);
+        /// <summary>
+        /// 创建知识点与试题的关联
+        /// </summary>
+        int KnlConnectionQues(QuesKnowledge[] knls, Questions ques);
         #endregion
 
         #region 关键字
@@ -522,6 +582,10 @@ namespace Song.ServiceInterfaces
         /// </summary>
         int TagConnectionQues(QuesTags[] tags, long quesid, long couid);
         /// <summary>
+        /// 创建关键字与试题的关联
+        /// </summary>
+        int TagConnectionQues(QuesTags[] tags, Questions ques);
+        /// <summary>
         /// 获取试题标签
         /// </summary>
         /// <param name="orgid">机构ID</param>
@@ -563,6 +627,18 @@ namespace Song.ServiceInterfaces
         /// <param name="isuse"></param>
         /// <returns></returns>
         int TagQusTotal(long qtagid, long couid, int qtype, bool? isuse);
+        /// <summary>
+        /// 试题统计更新，例如当试题被修改时，需要更新试题标签下的试题数量
+        /// </summary>
+        void TagQusTotalUpdate(List<QuesTags> tags);
+        /// <summary>
+        /// 试题统计更新，例如当试题被修改时，需要更新试题标签下的试题数量
+        /// </summary>
+        void TagQusTotalUpdate(Questions ques);
+        /// <summary>
+        /// 更新试题标签所有试题数量
+        /// </summary>
+        void TagQusTotalUpdate();
         /// <summary>
         /// 分页获取
         /// </summary>
