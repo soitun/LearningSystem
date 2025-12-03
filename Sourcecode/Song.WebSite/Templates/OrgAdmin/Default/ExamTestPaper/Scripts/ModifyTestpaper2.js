@@ -34,6 +34,10 @@ $ready(['../Question/Components/ques_type.js',],
                 //图片文件
                 upfile: null, //本地上传文件的对象         
                 Etp_Diff: [1, 5],     //难度范围
+
+                //选中的试题分类
+                parts: [],
+
                 //录入校验的规划
                 rules: {
                     Etp_Name: [
@@ -148,17 +152,34 @@ $ready(['../Question/Components/ques_type.js',],
                     this.entity['Etp_Diff2'] = val[1];
                 },
                 //打开子窗口
-                opensubwin: function (page,place) {
+                //page:页面名称，place:子窗口相对于当前窗口位置，left,right,top,bottom
+                opensubwin: function (page, place) {
                     if (!window.top.$pagebox) return;
+                    //子窗口页面路径
+                    var suburl = $dom.routepath() + page;
+                    if (page.toUpperCase() === 'SelectParts'.toUpperCase())
+                        suburl = $api.url.set(suburl, { 'id': this.parts.map(p => p.Qp_ID).join(',') });
                     //当前窗口
                     var curbox = window.top.$pagebox.get(window.name);
                     //创建新窗口中
                     var subbox = window.top.$pagebox.create({
                         width: 500, height: 300,
-                        id: page, ico: 'a015',title:'试题分类选择',
-                        url: $dom.routepath() + page
-                    });   
+                        id: page, ico: 'a015', title: '试题分类选择',
+                        url: suburl
+                    });
                     curbox.opensub(subbox, place);
+                },
+                //接收子窗口数据
+                //data:子窗口返回的数据
+                //func:要调用的函数名称
+                receive: function ([data, func]) {
+                    console.error(data);
+                    if (func == 'selectpart') {
+                        this.parts = data;
+                    }
+                },
+                //
+                selectpart: function (data) {
                 },
                 //操作成功
                 operateSuccess: function (isclose) {

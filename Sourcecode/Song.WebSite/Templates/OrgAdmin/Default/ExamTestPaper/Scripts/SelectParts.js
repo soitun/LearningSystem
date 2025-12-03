@@ -2,7 +2,9 @@ $ready(function () {
     window.vapp = new Vue({
         el: '#vapp',
         data: {
-            datas: [],      //所有数据
+            id: $api.querystring('id'),  //试题分类的id，多个id用逗号隔开
+
+            datas: [],      //所有数据,即试题分类       
             form: {
                 orgid: '', search: '', isuse: true
             },
@@ -10,12 +12,12 @@ $ready(function () {
                 children: 'children',
                 label: 'Qp_Name'
             },
-            expanded: [],        //树形默认展开的节点
-            expanded_storage: 'quespart_for_admin_tree',  //用于记录展开节点的storage名称
             filterText: '',      //查询过虑树形的字符
             total: 0,       //当前机构下的试题分类总数
             //是否折叠
             fold: false,
+            //选中的项
+            selecteditems: [],
 
             loadstate: {
                 init: false,        //初始化
@@ -26,14 +28,18 @@ $ready(function () {
             }
         },
         mounted: function () {
-            this.$refs.btngroup.addbtn({
+            this.$refs.btngroup.addbtn([{
                 text: '展开/折叠', tips: '展开树形或折叠树形',
                 id: 'fold_open', type: 'primary',
                 icon: 'e6ea'
-            });
+            }, {
+                text: '清空', tips: '清空选择',
+                id: 'clearn', type: 'warning',
+                icon: 'e800'
+            }]);
             var th = this;
             th.form.orgid = window.org.Org_ID;
-            th.getTreeData();
+            th.getTreeData();          
         },
         created: function () {
 
@@ -69,18 +75,18 @@ $ready(function () {
                 $api.get('ExamQues/PartTree', th.form).then(function (req) {
                     if (req.data.success) {
                         th.datas = th.clacCount(req.data.result);
-                        //获取默认展开的节点
-                        var arr = $api.storage(th.expanded_storage);
-                        if ($api.getType(arr) == 'Array') {
-                            th.expanded = arr;
-                        }
+                        th.$refs.tree.setCheckedKeys(th.id.split(','));
+                        th.$nextTick(() => {
+                            th.handleCheckChange();
+                        });
+
                     } else {
                         throw req.data.message;
                     }
                 }).catch(err => console.error(err))
                     .finally(() => th.loading = false);
             },
-            //计算课程数，ques数，test数
+            //计算课程数，ques数，
             clacCount: function (datas) {
                 this.total = 0;
                 this.calcSerial(datas);
@@ -106,20 +112,18 @@ $ready(function () {
                 if (childarr == null) return;
                 for (let i = 0; i < childarr.length; i++) {
                     childarr[i].serial = (lvl ? lvl : '') + (i + 1) + '.';
-                    //childarr[i]['CourseCount'] = 0;
                     childarr[i]['QuesCount'] = 0;
-                    //childarr[i]['TestCount'] = 0;
                     childarr[i]['calcChild'] = this.calcChild(childarr[i]);
                     this.total++;
                     this.calcSerial(childarr[i], childarr[i].serial);
                 }
             },
-            calcChild: function (sbj) {
-                if (!sbj.children) return 0;
-                var count = sbj.children.length;
-                for (var i = 0; i < sbj.children.length; i++) {
-                    count += this.calcChild(sbj.children[i]);
-                }
+            //计算子级节点的数量
+            calcChild: function (data) {
+                if (!data.children) return 0;
+                let count = data.children.length;
+                for (let i = 0; i < data.children.length; i++)
+                    count += this.calcChild(data.children[i]);
                 return count;
             },
             //过滤树形
@@ -145,6 +149,35 @@ $ready(function () {
                     el.children && el.children.length > 0 ? self.collapseAll2(el.children) : ""; // 子级递归
                 });
             },
+            //选择变更
+            handleCheckChange: function (data, checked, indeterminate) {
+                //当前选中的数据
+                //如果某个节点下的下级节点全部选中了，则只取当前节点；只有是半选，返回选中的子节点，且不包括自身（半选中）的节点。
+                let nodes = this.getProcessedCheckedKeys();
+                this.selecteditems = nodes;
+                //console.error(nodes);
+                //像主窗体传值
+                var pagebox = window.top.$pagebox;
+                if (pagebox && pagebox.source.top)
+                    pagebox.source.box(window.name, 'vapp.receive', false, [nodes, 'selectpart']);
+            },
+            // 获取处理后的选中节点ID数组
+            getProcessedCheckedKeys: function () {
+                const treeStore = this.$refs.tree.store;
+                const resultNodes = [];
+                // 递归遍历函数
+                const traverse = (node) => {
+                    // 获取当前节点的直接子节点列表
+                    const childNodes = node.root ? node.root.childNodes : node.childNodes;
+                    childNodes.forEach(child => {
+                        if (child.checked) resultNodes.push(child.data);    // 情况1: 节点被全选
+                        else if (child.indeterminate) traverse(child);    // 情况2: 节点处于半选状态
+                    });
+                };
+                // 从根store开始遍历
+                traverse(treeStore);
+                return resultNodes;
+            }
         },
         filters: {
 

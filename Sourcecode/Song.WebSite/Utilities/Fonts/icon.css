@@ -131,7 +131,13 @@ icon[back]::before {
 icon[fresh]::before {
     content: '\e694';
 }
-
+/*空*/
+icon[null]::before {
+    content: '\a01f';
+}
+icon[null]{
+    color: #999;
+}
 /*禁用*/
 icon[disabled]::before {
     content: '\e7ad';

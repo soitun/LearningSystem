@@ -69,7 +69,9 @@ div[tab="range"] section.range {
     grid-template-rows: repeat(3, 1fr);
     /* 3个等高的行 */
 }
-
+div[tab="range"] section.range .el-tag{
+    margin-right: 5px;
+}
 div[tab="range"] section.range>div:not(:last-child) {
     margin-bottom: 15px;
     flex: 1;
@@ -83,7 +85,12 @@ div[tab="range"] .el-card__header {
     align-items: center;
     vertical-align: middle;
 }
-
+div[tab="range"] .el-card__header>*:first-child{
+    margin-right: 15px;
+} 
+div[tab="range"] .el-card__header>*:last-child{
+    margin-left: auto;
+} 
 div[tab="range"] .qtype_card {
     width: 300px;
 }
