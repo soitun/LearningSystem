@@ -264,12 +264,13 @@
     };
     //打开子窗口 subox:子窗体对象,place:子窗体相对父窗体的位置,如left,right,top,bottom,
     fn.opensub = function (subox, place) {
+        subox.parent = this;
         subox._pid = this.id;
         subox._showmask = true;
         subox._max = false;
         subox._min = false;
         //子窗体标题样式，默认继承父窗体的标题样式
-        subox.attrs.titstyle=this.attrs.titstyle;
+        subox.attrs.titstyle = this.attrs.titstyle;
         subox.attrs.iconstyle = this.attrs.iconstyle;
         //偏移值，例如不要窗体太靠边，留白一部分
         let space = 8;
@@ -1323,35 +1324,40 @@
             }
             if (close) $pagebox.delayshut(name, 1500);
         },
-        //父级为pagebox
-        box: function (name, func, close) {
+        //父级为pagebox,
+        //name:为当前窗体的window.name
+        //func:要执行方法，必须是window下的，如果vue方法，需要带对象名，如vapp.func
+        //close:是否关闭当前窗体
+        //params:func方法要传递的参数
+        box: function (name, func, close, params) {
             name = $dom.trim(name);
             let pbox = box.parent(name);
             if (pbox == null) return;
-            this._emit_func(pbox, func, close);
+            this._emit_func(pbox, func, params);
             if (close) $pagebox.delayshut(name, 1500);
         },
-        //查找自身
+        //查找自身,name:为当前窗体的window.name
         self: function (name) {
             return box.get($dom.trim(name));
         },
         //顶级窗体
-        top: function (name, func, close) {
+        //name:为当前窗体的window.name
+        top: function (name, func, close, params) {
             name = $dom.trim(name);
             let pbox = box.parent(name);
             while (pbox.parent != null) pbox = box.parent(pbox.attr.pid);
-            this._emit_func(pbox, func);
+            this._emit_func(pbox, func, params);
             if (close) $pagebox.delayshut(name, 1500);
         },
         //执行窗体内页面的js方法
-        _emit_func: function (box, func) {
+        _emit_func: function (box, func, params) {
             let win = box.document();
             //tabs.js标签页的页面区域
             if (win && func != null) {
                 if (func.charAt(func.length - 1) == ')') eval('win.' + func);
                 else {
                     let f = eval('win.' + func);
-                    if (f != null) f();
+                    if (f != null) f(params);
                 }
             }
         }
