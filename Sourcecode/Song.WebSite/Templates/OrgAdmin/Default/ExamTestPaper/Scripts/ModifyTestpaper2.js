@@ -152,8 +152,8 @@ $ready(['../Question/Components/ques_type.js',],
                     this.entity['Etp_Diff2'] = val[1];
                 },
                 //打开子窗口
-                //page:页面名称，place:子窗口相对于当前窗口位置，left,right,top,bottom
-                opensubwin: function (page, place) {
+                //page:页面名称，
+                opensubwin: function (page, title, icon) {
                     if (!window.top.$pagebox) return;
                     //子窗口页面路径
                     var suburl = $dom.routepath() + page;
@@ -164,10 +164,11 @@ $ready(['../Question/Components/ques_type.js',],
                     //创建新窗口中
                     var subbox = window.top.$pagebox.create({
                         width: 500, height: 300,
-                        id: page, ico: 'a015', title: '试题分类选择',
+                        id: page, ico: icon, title: title,
                         url: suburl
                     });
-                    curbox.opensub(subbox, place);
+                    //打开子窗口,窗口位置:left,right,top,bottom
+                    curbox.opensub(subbox, 'left');
                 },
                 //接收子窗口数据
                 //data:子窗口返回的数据
