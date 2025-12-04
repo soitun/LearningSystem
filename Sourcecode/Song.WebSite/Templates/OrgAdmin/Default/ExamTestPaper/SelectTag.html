@@ -4,42 +4,31 @@
 <head resource>
     <meta charset="UTF-8">
     <include file="../inc/meta.inc" />
-    <title>试题知识点</title>
+    <title>试题关键字</title>
 </head>
 
 <body>
     <div id="vapp" v-cloak>
         <div class="toolsbar">
-            <btngroup show="展开/折叠,清空" ref='btngroup' path="PartModify" @fold_open="fold=!fold"
-                @clearn="$refs.tree.setCheckedKeys([])" idkey='Qp_ID'>
+            <btngroup show="清空" ref='btngroup' idkey='Qtag_ID'>
             </btngroup>
             <query_panel :model="form" :loading="loading">
                 <el-form-item label="">
                     <el-tag type="success">
-                        选中{{selecteditems.length}}分类，共 {{selecteditems.reduce((total, item) => total + item.QuesCount, 0)}} 道试题
+                        {{selecteditems.length}} 关键字，共 {{selecteditems.reduce((total, item) => total + item.Qtag_Count,
+                        0)}} 道试题
                     </el-tag>
                 </el-form-item>
                 <el-form-item label="">
-                    <el-input v-model="filterText" clearable style="width:120px" placeholder="检索"
+                    <el-input  v-model="form.name" clearable style="width:120px" placeholder="检索"
                         suffix-icon="el-icon-search"></el-input>
                 </el-form-item>
             </query_panel>
         </div>
-        <div class="tree-box">
-            <el-tree ref="tree" :data="datas" node-key="Qp_ID" ref="tree" show-checkbox :props="defaultProps"
-                :filter-node-method="filterNode" :check-on-click-node="true" @check-change="handleCheckChange"
-                v-loading="loading">
-                <div class="custom-tree-node" slot-scope="{ node, data }">
-                    <span class="tree-node">
-                        <span>{{data.serial}}</span> &nbsp;
-                        <span class="large" v-html="showsearch(data.Qp_Name,filterText)"></span>
-                        <span class="sbjcount" v-if="data.calcChild>0">({{data.calcChild}})</span>
-                    </span>
-                    <span class="qcount" title="试题数" question :zero="data.QuesCount<=0">{{data.QuesCount|commas}}
-                        道</span>
-
-                </div>
-            </el-tree>
+        <div class="data-box">
+            <el-checkbox border v-for="item in datas" v-model="item.checked" @change="changeSelect">{{item.Qtag_Name}}
+                <span class="qcount" question :zero="item.Qtag_Count<=0">({{item.Qtag_Count|commas}} 道)</span>
+            </el-checkbox>
         </div>
     </div>
 </body>

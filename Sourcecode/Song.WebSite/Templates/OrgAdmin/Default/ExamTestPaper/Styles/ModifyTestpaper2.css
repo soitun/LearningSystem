@@ -58,13 +58,14 @@ div[tab="general"]>div:last-child .el-form-item__content {
 div[tab="range"] {
     display: flex;
 }
-
+div[tab="range"] section.range .el-card{
+    display: flex;
+    flex-direction: column;
+}
 div[tab="range"] section.range {
     flex: 1;
     height: 100%;
-
     margin-right: 15px;
-
     display: grid;
     grid-template-rows: repeat(3, 1fr);
     /* 3个等高的行 */
@@ -76,6 +77,14 @@ div[tab="range"] section.range>div:not(:last-child) {
     margin-bottom: 15px;
     flex: 1;
     flex-grow: 1;
+}
+div[tab="range"] section.range .el-card .el-card__body{
+    padding: 10px;
+    overflow-y: auto;
+    flex: 1;
+}
+div[tab="range"] section.range .el-tag{
+    margin: 0px 5px 5px 0px;
 }
 
 div[tab="range"] .el-card__header {

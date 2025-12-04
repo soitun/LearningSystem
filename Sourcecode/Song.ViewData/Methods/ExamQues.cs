@@ -856,12 +856,12 @@ namespace Song.ViewData.Methods
             return i;
         }
         /// <summary>
-        /// 分页获取试题
+        /// 分页获取试题关键字
         /// </summary>
         /// <param name="orgid">机构id</param>
         /// <param name="couid">课程id</param>
         /// <param name="isdeleted">是否删除</param>
-        /// <param name="name">名称</param>
+        /// <param name="name">按名称检索</param>
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <returns></returns>

@@ -62,31 +62,45 @@
                         <el-card shadow="never">
                             <template slot="header">
                                 <span icon="&#xa015" large>试题分类</span>
-                                <el-tag type="success" v-if="parts?.length>0">
-                                    选中{{parts.length}}分类，共 {{parts.reduce((total, item) => total + item.QuesCount, 0)}}
+                                <el-tag type="warning" v-if="parts?.length>0">
+                                    选中 {{parts.length}} 分类，共 {{parts.reduce((total, item) => total + item.QuesCount,0)}}
                                     道试题
                                 </el-tag>
-                                <el-button type="primary" plain @click="opensubwin('SelectParts','按“试题分类”抽题','a015')">选择</el-button>
+                                <el-button type="primary" plain @click="opensubwin('SelectParts','按“试题分类”抽题','a015')">选择
+                                </el-button>
                             </template>
                             <icon null size="large" v-if="parts?.length<1">没有选择任何试题分类</icon>
-                            <el-tag v-else v-for="(p,i) in parts" :key="p.Qp_ID" closable
+                            <el-tag v-else v-for="(p,i) in parts" :key="p.Qp_ID" closable type="info"
                                 @close="tag=>parts.splice(i,1)"> {{p.Qp_Name}} </el-tag>
 
                         </el-card>
                         <el-card shadow="never">
                             <template slot="header">
                                 <span icon="&#xe841" large>关键字</span>
-                                <el-button type="primary" plain @click="opensubwin('SelectTag','按“关键字”抽题','e841')">选择</el-button>                               
+                                <el-tag type="warning" v-if="tags?.length>0">
+                                    选中 {{tags.length}} 个关键字，共 {{tags.reduce((total, item) => total + item.Qtag_Count,0)}}
+                                    道试题
+                                </el-tag>
+                                <el-button type="primary" plain @click="opensubwin('SelectTag','按“关键字”抽题','e841')">选择
+                                </el-button>
                             </template>
+                            <icon null size="large" v-if="tags?.length<1">没有选择任何关键字</icon>
+                            <el-tag v-else v-for="(p,i) in tags" :key="p.Qtag_ID" closable type="info"
+                                @close="tag=>tags.splice(i,1)"> {{p.Qtag_Name}} </el-tag>
                         </el-card>
                         <el-card shadow="never">
                             <template slot="header">
                                 <span icon="&#xe6fd" large>关联知识点</span>
-                                <el-button type="primary" plain @click="opensubwin('SelectKnl','按“关联知识点”抽题','e6fd')">选择</el-button>
+                                <el-tag type="warning" v-if="knls?.length>0">
+                                    选中 {{knls.length}} 个知识点，共 {{knls.reduce((total, item) => total + item.QuesCount,0)}}
+                                    道试题
+                                </el-tag>
+                                <el-button type="primary" plain @click="opensubwin('SelectKnl','按“关联知识点”抽题','e6fd')">选择
+                                </el-button>
                             </template>
                             <icon null size="large" v-if="knls?.length<1">没有选择任何知识点</icon>
-                            <el-tag v-else v-for="(p,i) in knls" :key="p.Qk_ID" closable
-                                @close="tag=>knls.splice(i,1)"> {{p.Qk_Name}} </el-tag>
+                            <el-tag v-else v-for="(p,i) in knls" :key="p.Qk_ID"  type="info" closable @close="tag=>knls.splice(i,1)">
+                                {{p.Qk_Name}} </el-tag>
                         </el-card>
                     </section>
                     <el-card shadow="never" type="primary" class="qtype_card">

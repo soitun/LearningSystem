@@ -68,7 +68,7 @@ $ready(function () {
             }
         },
         methods: {
-            //所取专业的数据，为树形数据
+            //所取分类的数据，为树形数据
             getTreeData: function () {
                 var th = this;
                 th.loading = true;
@@ -93,7 +93,7 @@ $ready(function () {
                 datas.forEach(d => this.ergodic_clacCount(d, 'QP_Count', 'QuesCount'));
                 return datas;
             },
-            //遍历计算各个专业的课程数，包括当前专业的子专业
+            //遍历计算各个分类的课程数，包括当前分类的子分类
             //field:要计算的字段
             //result:计算结果的字段名，主要为了保留field原始值，方便恢复
             ergodic_clacCount: function (sbj, field, result) {

@@ -1,3 +1,13 @@
+#vapp {
+    display: flex;
+    flex-direction: column;
+}
+.tree-box{
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+    box-sizing: border-box;
+}
 .el-tree-node__content{
     display: flex;
 }
