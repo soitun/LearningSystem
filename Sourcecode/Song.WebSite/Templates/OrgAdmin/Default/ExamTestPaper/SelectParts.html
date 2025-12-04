@@ -10,13 +10,13 @@
 <body>
     <div id="vapp" v-cloak>
         <div class="toolsbar">
-            <btngroup show="展开/折叠,清空" ref='btngroup' path="PartModify" @fold_open="fold=!fold"
+            <btngroup show="展开/折叠,清空" ref='btngroup'  @fold_open="fold=!fold"
                 @clearn="$refs.tree.setCheckedKeys([])" idkey='Qp_ID'>
             </btngroup>
             <query_panel :model="form" :loading="loading">
-                <el-form-item label="">
+                <el-form-item label="" v-if="selecteditems.length>0">
                     <el-tag type="success">
-                        选中{{selecteditems.length}}分类，共 {{selecteditems.reduce((total, item) => total + item.QuesCount, 0)}} 道试题
+                        {{selecteditems.length}} 分类，共 {{selecteditems.reduce((total, item) => total + item.QuesCount, 0)}} 道试题
                     </el-tag>
                 </el-form-item>
                 <el-form-item label="">

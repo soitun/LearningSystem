@@ -2,18 +2,18 @@ $ready(function () {
     window.vapp = new Vue({
         el: '#vapp',
         data: {
-            id: $api.querystring('id'),  //试题分类的id，多个id用逗号隔开
+            id: $api.querystring('id'),  //试题知识点的id，多个id用逗号隔开
 
-            datas: [],      //所有数据,即试题分类       
+            datas: [],      //所有数据,即试题知识点       
             form: {
                 orgid: '', search: '', isuse: true
             },
             defaultProps: {
                 children: 'children',
-                label: 'Qp_Name'
+                label: 'Qk_Name'
             },
             filterText: '',      //查询过虑树形的字符
-            total: 0,       //当前机构下的试题分类总数
+            total: 0,       //当前机构下的试题知识点总数
             //是否折叠
             fold: false,
             //选中的项
@@ -72,7 +72,7 @@ $ready(function () {
             getTreeData: function () {
                 var th = this;
                 th.loading = true;
-                $api.get('ExamQues/PartTree', th.form).then(function (req) {
+                $api.get('ExamQues/KnlTree', th.form).then(function (req) {
                     if (req.data.success) {
                         th.datas = th.clacCount(req.data.result);
                         th.$refs.tree.setCheckedKeys(th.id.split(','));
@@ -90,7 +90,7 @@ $ready(function () {
             clacCount: function (datas) {
                 this.total = 0;
                 this.calcSerial(datas);
-                datas.forEach(d => this.ergodic_clacCount(d, 'QP_Count', 'QuesCount'));
+                datas.forEach(d => this.ergodic_clacCount(d, 'Qk_Count', 'QuesCount'));
                 return datas;
             },
             //遍历计算各个专业的课程数，包括当前专业的子专业
@@ -131,13 +131,13 @@ $ready(function () {
                 if (!value) return true;
                 var txt = $api.trim(value.toLowerCase());
                 if (txt == '') return true;
-                return data.Qp_Name.toLowerCase().indexOf(txt) !== -1;
+                return data.Qk_Name.toLowerCase().indexOf(txt) !== -1;
             },
             // 全部展开
             unFoldAll2: function (data) {
                 let self = this;
                 data.forEach((el) => {
-                    self.$refs.tree.store.nodesMap[el.Qp_ID].expanded = true;
+                    self.$refs.tree.store.nodesMap[el.Qk_ID].expanded = true;
                     el.children && el.children.length > 0 ? self.unFoldAll2(el.children) : ""; // 子级递归
                 });
             },
@@ -145,7 +145,7 @@ $ready(function () {
             collapseAll2: function (data) {
                 let self = this;
                 data.forEach((el) => {
-                    self.$refs.tree.store.nodesMap[el.Qp_ID].expanded = false;
+                    self.$refs.tree.store.nodesMap[el.Qk_ID].expanded = false;
                     el.children && el.children.length > 0 ? self.collapseAll2(el.children) : ""; // 子级递归
                 });
             },
@@ -159,7 +159,7 @@ $ready(function () {
                 //像主窗体传值
                 var pagebox = window.top.$pagebox;
                 if (pagebox && pagebox.source.top)
-                    pagebox.source.box(window.name, 'vapp.receive', false, [nodes, 'selectpart']);
+                    pagebox.source.box(window.name, 'vapp.receive', false, [nodes, 'selectknl']);
             },
             // 获取处理后的选中节点ID数组
             getProcessedCheckedKeys: function () {

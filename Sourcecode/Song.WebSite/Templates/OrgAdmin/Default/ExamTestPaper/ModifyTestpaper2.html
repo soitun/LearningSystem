@@ -62,7 +62,7 @@
                         <el-card shadow="never">
                             <template slot="header">
                                 <span icon="&#xa015" large>试题分类</span>
-                                <el-tag type="success">
+                                <el-tag type="success" v-if="parts?.length>0">
                                     选中{{parts.length}}分类，共 {{parts.reduce((total, item) => total + item.QuesCount, 0)}}
                                     道试题
                                 </el-tag>
@@ -84,6 +84,9 @@
                                 <span icon="&#xe6fd" large>关联知识点</span>
                                 <el-button type="primary" plain @click="opensubwin('SelectKnl','按“关联知识点”抽题','e6fd')">选择</el-button>
                             </template>
+                            <icon null size="large" v-if="knls?.length<1">没有选择任何知识点</icon>
+                            <el-tag v-else v-for="(p,i) in knls" :key="p.Qk_ID" closable
+                                @close="tag=>knls.splice(i,1)"> {{p.Qk_Name}} </el-tag>
                         </el-card>
                     </section>
                     <el-card shadow="never" type="primary" class="qtype_card">

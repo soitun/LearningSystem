@@ -159,7 +159,7 @@ $ready(function () {
                 //像主窗体传值
                 var pagebox = window.top.$pagebox;
                 if (pagebox && pagebox.source.top)
-                    pagebox.source.box(window.name, 'vapp.receive', false, [nodes, 'selectpart']);
+                    pagebox.source.box(window.name, 'vapp.receive', false, [nodes, 'selecttag']);
             },
             // 获取处理后的选中节点ID数组
             getProcessedCheckedKeys: function () {

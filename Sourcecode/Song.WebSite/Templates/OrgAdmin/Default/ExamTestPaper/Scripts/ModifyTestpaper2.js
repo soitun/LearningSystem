@@ -35,8 +35,10 @@ $ready(['../Question/Components/ques_type.js',],
                 upfile: null, //本地上传文件的对象         
                 Etp_Diff: [1, 5],     //难度范围
 
-                //选中的试题分类
+                //关联的试题分类
                 parts: [],
+                tags: [],    //关联的关键字
+                knls: [],   //关联的知识点
 
                 //录入校验的规划
                 rules: {
@@ -157,8 +159,12 @@ $ready(['../Question/Components/ques_type.js',],
                     if (!window.top.$pagebox) return;
                     //子窗口页面路径
                     var suburl = $dom.routepath() + page;
-                    if (page.toUpperCase() === 'SelectParts'.toUpperCase())
+                    if (page.toLowerCase().indexOf('part') > -1)
                         suburl = $api.url.set(suburl, { 'id': this.parts.map(p => p.Qp_ID).join(',') });
+                    if (page.toLowerCase().indexOf('knl') > -1)
+                        suburl = $api.url.set(suburl, { 'id': this.knls.map(p => p.Qk_ID).join(',') });
+                    if (page.toLowerCase().indexOf('tag') > -1)
+                        suburl = $api.url.set(suburl, { 'id': this.tags.map(p => p.Qtag_ID).join(',') });
                     //当前窗口
                     var curbox = window.top.$pagebox.get(window.name);
                     //创建新窗口中
@@ -174,10 +180,10 @@ $ready(['../Question/Components/ques_type.js',],
                 //data:子窗口返回的数据
                 //func:要调用的函数名称
                 receive: function ([data, func]) {
-                    console.error(data);
-                    if (func == 'selectpart') {
-                        this.parts = data;
-                    }
+                    //console.error(data);
+                    if (func == 'selectpart') this.parts = data;
+                    if (func == 'selectknl') this.knls = data;
+                    if (func == 'selecttag') this.tags = data;
                 },
                 //
                 selectpart: function (data) {
