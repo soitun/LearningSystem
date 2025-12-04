@@ -70,7 +70,7 @@
                                 </el-button>
                             </template>
                             <icon null size="large" v-if="parts?.length<1">没有选择任何试题分类</icon>
-                            <el-tag v-else v-for="(p,i) in parts" :key="p.Qp_ID" closable type="info"
+                            <el-tag v-else v-for="(p,i) in parts" :key="p.Qp_ID" closable type="success"
                                 @close="tag=>parts.splice(i,1)"> {{p.Qp_Name}} </el-tag>
 
                         </el-card>
@@ -85,7 +85,7 @@
                                 </el-button>
                             </template>
                             <icon null size="large" v-if="tags?.length<1">没有选择任何关键字</icon>
-                            <el-tag v-else v-for="(p,i) in tags" :key="p.Qtag_ID" closable type="info"
+                            <el-tag v-else v-for="(p,i) in tags" :key="p.Qtag_ID" closable type="success"
                                 @close="tag=>tags.splice(i,1)"> {{p.Qtag_Name}} </el-tag>
                         </el-card>
                         <el-card shadow="never">
@@ -99,7 +99,7 @@
                                 </el-button>
                             </template>
                             <icon null size="large" v-if="knls?.length<1">没有选择任何知识点</icon>
-                            <el-tag v-else v-for="(p,i) in knls" :key="p.Qk_ID"  type="info" closable @close="tag=>knls.splice(i,1)">
+                            <el-tag v-else v-for="(p,i) in knls" :key="p.Qk_ID"  type="success" closable @close="tag=>knls.splice(i,1)">
                                 {{p.Qk_Name}} </el-tag>
                         </el-card>
                     </section>

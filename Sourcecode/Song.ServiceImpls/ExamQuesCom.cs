@@ -205,6 +205,8 @@ namespace Song.ServiceImpls
                 wc.And(wcdiff);
             }
             FromSection<Questions> section = Gateway.Default.From<Questions>();
+            //试题范围
+            WhereClip wcrange = new WhereClip();
             //试题分类
             if (qpid != null && qpid.Length > 0)
             {
@@ -212,7 +214,7 @@ namespace Song.ServiceImpls
                 WhereClip wcqp = new WhereClip();
                 List<long> list = this.PartTreeID(qpid, orgid);
                 foreach (long d in list) wcqp |= Questions_QPart._.Qp_ID == d;
-                wc.And(wcqp);
+                wcrange.Or(wcqp);
             }
             //试题关键字
             if (tagid != null && tagid.Length > 0)
@@ -220,7 +222,7 @@ namespace Song.ServiceImpls
                 section.LeftJoin<Questions_QTags>(Questions_QTags._.Qus_ID == Questions._.Qus_ID);
                 WhereClip wcqp = new WhereClip();
                 foreach (long t in tagid) wcqp |= Questions_QTags._.Qtag_ID == t;
-                wc.And(wcqp);
+                wcrange.Or(wcqp);
             }
             //关联知识点
             if (knlid != null && knlid.Length > 0)
@@ -229,8 +231,9 @@ namespace Song.ServiceImpls
                 WhereClip wcqp = new WhereClip();
                 List<long> list = this.KnlTreeID(knlid, orgid);
                 foreach (long k in list) wcqp |= Questions_QKnl._.Qk_ID == k;
-                wc.And(wcqp);
+                wcrange.Or(wcqp);
             }
+            wc.And(wcrange);
             countSum = section.Where(wc).Count();
             return section.Where(wc).OrderBy(Questions._.Qus_ID.Desc).ToList<Questions>(size, (index - 1) * size);
         }
@@ -271,6 +274,8 @@ namespace Song.ServiceImpls
                 wc.And(wcdiff);
             }
             FromSection<Questions> section = Gateway.Default.From<Questions>();
+            //试题范围
+            WhereClip wcrange = new WhereClip();
             //试题分类
             if (qpid != null && qpid.Length > 0)
             {
@@ -278,7 +283,7 @@ namespace Song.ServiceImpls
                 WhereClip wcqp = new WhereClip();
                 List<long> list = this.PartTreeID(qpid, orgid);
                 foreach (long d in list) wcqp |= Questions_QPart._.Qp_ID == d;
-                wc.And(wcqp);
+                wcrange.Or(wcqp);
             }
             //试题关键字
             if (tagid != null && tagid.Length > 0)
@@ -286,7 +291,7 @@ namespace Song.ServiceImpls
                 section.LeftJoin<Questions_QTags>(Questions_QTags._.Qus_ID == Questions._.Qus_ID);
                 WhereClip wcqp = new WhereClip();
                 foreach (long t in tagid) wcqp |= Questions_QTags._.Qtag_ID == t;
-                wc.And(wcqp);
+                wcrange.Or(wcqp);
             }
             //关联知识点
             if (knlid != null && knlid.Length > 0)
@@ -295,8 +300,9 @@ namespace Song.ServiceImpls
                 WhereClip wcqp = new WhereClip();
                 List<long> list = this.KnlTreeID(knlid, orgid);
                 foreach (long k in list) wcqp |= Questions_QKnl._.Qk_ID == k;
-                wc.And(wcqp);
+                wcrange.Or(wcqp);
             }
+            wc.And(wcrange);
             //试题类型
             string[] types = Business.Do<IQuestions>().QuestionTypes();
             Dictionary<string, int> dic = new Dictionary<string, int>();
