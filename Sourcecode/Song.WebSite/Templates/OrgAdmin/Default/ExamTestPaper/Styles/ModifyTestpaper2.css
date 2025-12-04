@@ -132,3 +132,6 @@ div[tab="range"] .qtype_card .el-card__body {
     padding: 0px 10px;
     justify-content: space-between;
 }
+.ques_type *[zero] {
+    color: #ccc;
+}

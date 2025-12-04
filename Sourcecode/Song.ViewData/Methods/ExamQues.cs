@@ -154,9 +154,9 @@ namespace Song.ViewData.Methods
         /// <param name="orgid">机构id</param>
         /// <param name="search"></param>
         /// <param name="isdeleted">是否删除</param>
-        /// <param name="qpid">试题分类</param>
-        /// <param name="tagid">标签</param>
-        /// <param name="knlid">知识点</param>
+        /// <param name="qpid">试题分类，多个分类用逗号分隔</param>
+        /// <param name="tagid">关键字，多个分类用逗号分隔</param>
+        /// <param name="knlid">知识点，多个分类用逗号分隔</param>
         /// <param name="type">试题类型</param>
         /// <param name="diff">难度</param>
         /// <param name="use">是否启用</param>
@@ -184,6 +184,29 @@ namespace Song.ViewData.Methods
             result.Size = size;
             result.Total = sum;
             return result;
+        }
+        /// <summary>
+        /// 获取试题数量
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="qpid"></param>
+        /// <param name="tagid"></param>
+        /// <param name="knlid"></param>
+        /// <param name="isdeleted"></param>
+        /// <param name="diff"></param>
+        /// <param name="isUse"></param>
+        /// <param name="isError"></param>
+        /// <param name="isWrong"></param>
+        /// <returns>试题类型，数量</returns>
+        public Dictionary<string, int> QuesTotal(int orgid, string qpid, string tagid, string knlid, bool? isdeleted, string diff,bool? use, bool? error, bool? wrong)
+        {
+            return Business.Do<IExamQues>().QuesTotal(orgid,
+                Help.StringTo.Array<long>(qpid),
+                Help.StringTo.Array<long>(tagid),
+                Help.StringTo.Array<long>(knlid),
+                isdeleted,
+                Help.StringTo.Array<int>(diff),
+                use, error, wrong);
         }
         #endregion
 

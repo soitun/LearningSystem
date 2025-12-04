@@ -106,12 +106,12 @@
                     <el-card shadow="never" type="primary" class="qtype_card">
                         <template slot="header">
                             <span icon="&#xe75e" large>供选择的题量</span>
-                            <span>{{ qtypeitems.reduce((total, item) => total + item.total, 0)}} 道</span>
-                        </template>
+                            <span>{{ questotal}} 道</span>
+                        </template>                       
                         <loading v-if="loadstate.init">加载中...</loading>
-                        <el-row :gutter="20" v-else v-for="item in qtypeitems">
-                            <ques_type :type="item.type" :types="types" :showicon="true" :showname="true">
-                                <span>{{item.total}} 道</span>
+                        <el-row :gutter="20" v-else v-for="(v,k,idx) in quescount">
+                            <ques_type :type="idx+1" :types="types" :showicon="true" :showname="true">
+                                <span :zero="v<1">{{v}} 道</span>
                             </ques_type>
                         </el-row>
                     </el-card>

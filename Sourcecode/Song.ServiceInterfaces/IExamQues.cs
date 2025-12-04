@@ -80,6 +80,20 @@ namespace Song.ServiceInterfaces
         /// <param name="ques">要更新的试题对象</param>
         /// <param name="former">原来的试题对象</param>
         void QuesStatisticalUpdate(Questions ques, Questions former);
+        /// <summary>
+        /// 获取试题数量
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="qpid"></param>
+        /// <param name="tagid"></param>
+        /// <param name="knlid"></param>
+        /// <param name="isdeleted"></param>
+        /// <param name="diff"></param>
+        /// <param name="isUse"></param>
+        /// <param name="isError"></param>
+        /// <param name="isWrong"></param>
+        /// <returns>试题类型，数量</returns>
+        Dictionary<string, int> QuesTotal(int orgid, long[] qpid, long[] tagid, long[] knlid, bool? isdeleted, int[] diff, bool? isUse, bool? isError, bool? isWrong);
         #endregion
 
         #region 试题分类
@@ -154,6 +168,13 @@ namespace Song.ServiceInterfaces
         /// <param name="qpid">当前试题分类id</param>
         /// <param name="orgid">试题分类所属机构的ID,如果小于等于零，则取从数据库读取qpid再取orgid，所以建议正确赋值，可以减少数据库读取次数</param>
         List<long> PartTreeID(long qpid, int orgid);
+        /// <summary>
+        /// 当前试题分类下的所有子试题分类id
+        /// </summary>
+        /// <param name="qpid"></param>
+        /// <param name="orgid"></param>
+        /// <returns></returns>
+        List<long> PartTreeID(long[] qpid, int orgid);
         /// <summary>
         /// 获取试题分类名称，如果为多级，则带上父级名称
         /// </summary>
@@ -390,6 +411,10 @@ namespace Song.ServiceInterfaces
         /// <param name="qkid">当前试题知识点id</param>
         /// <param name="orgid">试题知识点所属机构的ID,如果小于等于零，则取从数据库读取qkid再取orgid，所以建议正确赋值，可以减少数据库读取次数</param>
         List<long> KnlTreeID(long qkid, int orgid);
+        /// <summary>
+        /// 当前试题知识点下的所有子试题知识点id
+        /// </summary>
+        List<long> KnlTreeID(long[] qkid, int orgid);
         /// <summary>
         /// 获取试题知识点名称，如果为多级，则带上父级名称
         /// </summary>

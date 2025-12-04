@@ -210,7 +210,8 @@ namespace Song.ServiceImpls
             {
                 section.LeftJoin<Questions_QPart>(Questions_QPart._.Qus_ID == Questions._.Qus_ID);
                 WhereClip wcqp = new WhereClip();
-                foreach (long d in qpid) wcqp |= Questions_QPart._.Qp_ID == d;
+                List<long> list = this.PartTreeID(qpid, orgid);
+                foreach (long d in list) wcqp |= Questions_QPart._.Qp_ID == d;
                 wc.And(wcqp);
             }
             //试题关键字
@@ -226,7 +227,8 @@ namespace Song.ServiceImpls
             {
                 section.LeftJoin<Questions_QKnl>(Questions_QKnl._.Qus_ID == Questions._.Qus_ID);
                 WhereClip wcqp = new WhereClip();
-                foreach (long k in knlid) wcqp |= Questions_QKnl._.Qk_ID == k;
+                List<long> list = this.KnlTreeID(knlid, orgid);
+                foreach (long k in list) wcqp |= Questions_QKnl._.Qk_ID == k;
                 wc.And(wcqp);
             }
             countSum = section.Where(wc).Count();
@@ -242,18 +244,69 @@ namespace Song.ServiceImpls
             WhereClip wc = Questions._.Qus_Purpose == 1;
             wc.And(Questions._.Qus_IsDeleted == false && Questions._.Qus_IsUse == true);
         }
-        ///// <summary>
-        ///// 试题统计更新，例如当试题被修改时，需要更新试题分类下的试题数量
-        ///// </summary>
-        ///// <param name="id">试题id</param>
-        //public void QuesStatisticalUpdate(Questions ques, Questions former)
-        //{
-        //    WhereClip wc = Questions._.Qus_Purpose == 1;
-        //    wc.And(Questions._.Qus_IsDeleted == false && Questions._.Qus_IsUse == true);
-        //    //关联分类的试题数
-        //    int partcount = Gateway.Default.From<Questions>().LeftJoin<Questions_QPart>(Questions_QPart._.Qus_ID == Questions._.Qus_ID).Where(wc).Count();
-        //    //int partcount = Gateway.Default.Count<Questions>(wc &&);
-        //}
+        /// <summary>
+        /// 获取试题数量
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="qpid"></param>
+        /// <param name="tagid"></param>
+        /// <param name="knlid"></param>
+        /// <param name="isUse"></param>
+        /// <param name="isError"></param>
+        /// <param name="isWrong"></param>
+        /// <returns>试题类型，数量</returns>
+        public Dictionary<string, int> QuesTotal(int orgid, long[] qpid, long[] tagid, long[] knlid, bool? isdeleted, int[] diff, bool? isUse, bool? isError, bool? isWrong)
+        {
+            WhereClip wc = Questions._.Qus_Purpose == 1;    //用于考试的试题
+            if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
+            if (isdeleted != null) wc.And(Questions._.Qus_IsDeleted == isdeleted);    //删除状态
+            if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
+            if (isError != null) wc.And(Questions._.Qus_IsError == (bool)isError);
+            if (isWrong != null) wc.And(Questions._.Qus_IsWrong == (bool)isWrong);            
+            //难度  
+            if (diff != null && diff.Length > 0)
+            {
+                WhereClip wcdiff = new WhereClip();
+                foreach (int d in diff) wcdiff |= Questions._.Qus_Diff == d;
+                wc.And(wcdiff);
+            }
+            FromSection<Questions> section = Gateway.Default.From<Questions>();
+            //试题分类
+            if (qpid != null && qpid.Length > 0)
+            {
+                section.LeftJoin<Questions_QPart>(Questions_QPart._.Qus_ID == Questions._.Qus_ID);
+                WhereClip wcqp = new WhereClip();
+                List<long> list = this.PartTreeID(qpid, orgid);
+                foreach (long d in list) wcqp |= Questions_QPart._.Qp_ID == d;
+                wc.And(wcqp);
+            }
+            //试题关键字
+            if (tagid != null && tagid.Length > 0)
+            {
+                section.LeftJoin<Questions_QTags>(Questions_QTags._.Qus_ID == Questions._.Qus_ID);
+                WhereClip wcqp = new WhereClip();
+                foreach (long t in tagid) wcqp |= Questions_QTags._.Qtag_ID == t;
+                wc.And(wcqp);
+            }
+            //关联知识点
+            if (knlid != null && knlid.Length > 0)
+            {
+                section.LeftJoin<Questions_QKnl>(Questions_QKnl._.Qus_ID == Questions._.Qus_ID);
+                WhereClip wcqp = new WhereClip();
+                List<long> list = this.KnlTreeID(knlid, orgid);
+                foreach (long k in list) wcqp |= Questions_QKnl._.Qk_ID == k;
+                wc.And(wcqp);
+            }
+            //试题类型
+            string[] types = Business.Do<IQuestions>().QuestionTypes();
+            Dictionary<string, int> dic = new Dictionary<string, int>();
+            for(int i = 0; i < types.Length; i++)
+            {
+                int total = section.Where(wc && Questions._.Qus_Type == (i+1)).Count();
+                dic.Add(types[i], total);
+            }
+            return dic;
+        }
         #endregion
 
         #region 试题分类
@@ -446,6 +499,22 @@ namespace Song.ServiceImpls
             //取同一个机构下的所有专业
             List<QuesPart> sbjs = Gateway.Default.From<QuesPart>().Where(QuesPart._.Org_ID == orgid).ToList<QuesPart>();
             list = _parttreeid(qpid, sbjs);
+            return list;
+        }
+        /// <summary>
+        /// 当前试题分类下的所有子试题分类id
+        /// </summary>
+        /// <param name="qpid"></param>
+        /// <param name="orgid"></param>
+        /// <returns></returns>
+        public List<long> PartTreeID(long[] qpid, int orgid)
+        {
+            List<long> list = new List<long>();
+            foreach (long qid in qpid)
+            {
+                List<long> tm = this.PartTreeID(qid, orgid);
+                foreach (long t in tm) if (!list.Contains(t)) list.Add(t);
+            }
             return list;
         }
         private List<long> _parttreeid(long id, List<QuesPart> parts)
@@ -1110,6 +1179,19 @@ namespace Song.ServiceImpls
             //取同一个机构下的所有专业
             List<QuesKnowledge> sbjs = Gateway.Default.From<QuesKnowledge>().Where(QuesKnowledge._.Org_ID == orgid).ToList<QuesKnowledge>();
             list = _knltreeid(qkid, sbjs);
+            return list;
+        }
+        /// <summary>
+        /// 当前试题知识点下的所有子试题知识点id
+        /// </summary>
+        public List<long> KnlTreeID(long[] qkid, int orgid)
+        {
+            List<long> list = new List<long>();
+            foreach (long kid in qkid)
+            {
+                List<long> tm = this.KnlTreeID(kid, orgid);
+                foreach (long t in tm) if (!list.Contains(t)) list.Add(t);
+            }
             return list;
         }
         private List<long> _knltreeid(long id, List<QuesKnowledge> Knls)

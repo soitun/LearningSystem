@@ -39,6 +39,9 @@ $ready(['../Question/Components/ques_type.js',],
                 parts: [],
                 tags: [],    //关联的关键字
                 knls: [],   //关联的知识点
+                //试题数量
+                quescount: [],
+                questotal: 0,
 
                 //录入校验的规划
                 rules: {
@@ -99,7 +102,7 @@ $ready(['../Question/Components/ques_type.js',],
                     def: false,         //默认
                     get: false,         //加载数据
                     update: false,      //更新数据
-                    del: false          //删除数据
+                    total: false          //获取试题数量
                 }
             },
             mounted: function () {
@@ -122,7 +125,7 @@ $ready(['../Question/Components/ques_type.js',],
                             rate: 0,   //分数占比
                         }
                     });
-                    //console.error(th.qtypeitems);
+                    th.getquestotal();
                 }).catch(err => console.error(err))
                     .finally(() => th.loadstate.init = false);
             },
@@ -143,9 +146,18 @@ $ready(['../Question/Components/ques_type.js',],
                 isadd: t => t.id == null || t.id == '' || this.id == 0,
                 //是否存在试卷对象
                 exist: t => !$api.isnull(t.entity) && t.entity.Etp_Id != '',
+                //试题的选择范围，这里是临时变量，用时监听选择范围是否变化
+                range: function () {
+                    return {  a: this.parts, b: this.tags, c: this.knls };
+                },
             },
             watch: {
-
+                //当范围发生变化时
+                range: {
+                    handler: function (v) {
+                        this.getquestotal();
+                    },
+                },
             },
             methods: {
                 //难度范围变更时
@@ -180,13 +192,32 @@ $ready(['../Question/Components/ques_type.js',],
                 //data:子窗口返回的数据
                 //func:要调用的函数名称
                 receive: function ([data, func]) {
-                    //console.error(data);
                     if (func == 'selectpart') this.parts = data;
                     if (func == 'selectknl') this.knls = data;
                     if (func == 'selecttag') this.tags = data;
+                    this.getquestotal();
                 },
-                //
-                selectpart: function (data) {
+                //获取可供选择的试题数量
+                getquestotal: function () {
+                    var th = this;
+                    th.loadstate.total = true;
+                    console.error(3);
+                    let form = { "orgid": "", "qpid": "", "tagid": "", "knlid": "", "isdeleted": false, "diff": "", "use": true, "error": false, "wrong": false };
+                    form.orgid = th.org.Org_ID;
+                    form.qpid = th.parts.map(p => p.Qp_ID).join(',');
+                    form.tagid = th.tags.map(p => p.Qtag_ID).join(',');
+                    form.knlid = th.knls.map(p => p.Qk_ID).join(',');
+                    $api.get("ExamQues/QuesTotal", form)
+                        .then(req => {
+                            if (req.data.success) {
+                                th.quescount = req.data.result;
+                                th.questotal = Object.values(this.quescount).reduce((sum, price) => sum + price, 0);
+                            } else {
+                                console.error(req.data.exception);
+                                throw req.config.way + ' ' + req.data.message;
+                            }
+                        }).catch(err => console.error(err))
+                        .finally(() => th.loadstate.total = false);
                 },
                 //操作成功
                 operateSuccess: function (isclose) {
