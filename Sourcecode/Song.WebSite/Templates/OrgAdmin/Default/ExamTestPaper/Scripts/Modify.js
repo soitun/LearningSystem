@@ -1,4 +1,4 @@
-$ready(function () {
+$ready(['Components/papertype.js',],function () {
     window.vapp = new Vue({
         el: '#vapp',
         data: {

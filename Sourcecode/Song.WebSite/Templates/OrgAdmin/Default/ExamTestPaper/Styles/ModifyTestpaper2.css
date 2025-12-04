@@ -9,7 +9,13 @@
     border: 1px solid #DCDFE6;
     border-top: none;
 }
-
+.papertype{
+    position: absolute;
+    right: 20px;
+    top: 8px;
+    z-index: 10;
+    color: brown;
+}
 .el-form {
     height: calc(100% - 60px);
     width: calc(100% - 15px);

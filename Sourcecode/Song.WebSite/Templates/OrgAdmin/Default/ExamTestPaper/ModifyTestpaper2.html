@@ -9,6 +9,7 @@
 
 <body>
     <div id="vapp" v-cloak>
+        <papertype type="2"></papertype>
         <div class="panel">
             <el-tabs type="border-card" v-model="activeName">
                 <el-tab-pane :name="tab.tab" v-for="(tab,i) in tabs">
@@ -78,7 +79,8 @@
                             <template slot="header">
                                 <span icon="&#xe841" large>关键字</span>
                                 <el-tag type="warning" v-if="tags?.length>0">
-                                    选中 {{tags.length}} 个关键字，共 {{tags.reduce((total, item) => total + item.Qtag_Count,0)}}
+                                    选中 {{tags.length}} 个关键字，共 {{tags.reduce((total, item) => total +
+                                    item.Qtag_Count,0)}}
                                     道试题
                                 </el-tag>
                                 <el-button type="primary" plain @click="opensubwin('SelectTag','按“关键字”抽题','e841')">选择
@@ -99,22 +101,26 @@
                                 </el-button>
                             </template>
                             <icon null size="large" v-if="knls?.length<1">没有选择任何知识点</icon>
-                            <el-tag v-else v-for="(p,i) in knls" :key="p.Qk_ID"  type="success" closable @close="tag=>knls.splice(i,1)">
+                            <el-tag v-else v-for="(p,i) in knls" :key="p.Qk_ID" type="success" closable
+                                @close="tag=>knls.splice(i,1)">
                                 {{p.Qk_Name}} </el-tag>
                         </el-card>
                     </section>
-                    <el-card shadow="never" type="primary" class="qtype_card">
-                        <template slot="header">
-                            <span icon="&#xe75e" large>供选择的题量</span>
-                            <span>{{ questotal}} 道</span>
-                        </template>                       
-                        <loading v-if="loadstate.init">加载中...</loading>
-                        <el-row :gutter="20" v-else v-for="(v,k,idx) in quescount">
-                            <ques_type :type="idx+1" :types="types" :showicon="true" :showname="true">
-                                <span :zero="v<1">{{v}} 道</span>
-                            </ques_type>
-                        </el-row>
-                    </el-card>
+                    <!--题量，分数-->
+                    <div class="qtype_card">
+                        <el-card shadow="never" type="primary">
+                            <template slot="header">
+                                <span icon="&#xe75e" large>供选择的题量</span>
+                                <span>{{ questotal}} 道</span>
+                            </template>
+                            <loading v-if="loadstate.init">加载中...</loading>
+                            <el-row :gutter="20" v-else v-for="(v,k,idx) in quescount">
+                                <ques_type :type="idx+1" :types="types" :showicon="true" :showname="true">
+                                    <span :zero="v<1">{{v}} 道</span>
+                                </ques_type>
+                            </el-row>
+                        </el-card>
+                    </div>
                 </div>
                 <div v-show="activeName=='score'" remark="分数" tab="score">
                     <el-form-item label="分数" prop="Etp_Total">

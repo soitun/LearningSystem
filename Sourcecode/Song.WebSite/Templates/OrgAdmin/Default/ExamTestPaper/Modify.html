@@ -14,13 +14,13 @@
             <div class="large">选择组卷方式</div>
             <el-card shadow="hover" type="primary" arrow @click.native="gototype(2)">
                 <template slot="header">
-                    <span icon="&#xe6cc" large>随机抽题</span>
+                    <papertype type="2"></papertype>                   
                 </template>
                 系统将根据您设定的知识点、难度和题型，自动为每位考生生成一套独一无二的试卷。即使同一考场，每位考生的题目内容和顺序也可能不同，能有效防止旁窥作弊，考查学生对知识点的全面掌握。
             </el-card>
             <el-card shadow="hover" type="success" arrow @click.native="gototype(1)">
                 <template slot="header">
-                    <span icon="&#xa055" large>固定试题</span>
+                    <papertype type="1"></papertype>    
                 </template>
                 所有考生都将回答完全相同的一套题目。试卷内容、题目顺序固定不变，适用于标准化的统一测评，便于进行统一的讲解和分析。
             </el-card>

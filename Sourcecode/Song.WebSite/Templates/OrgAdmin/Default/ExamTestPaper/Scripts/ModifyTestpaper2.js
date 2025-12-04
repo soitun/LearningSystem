@@ -1,4 +1,5 @@
-$ready(['../Question/Components/ques_type.js',],
+$ready(['../Question/Components/ques_type.js',
+    'Components/papertype.js'],
     function () {
         window.vapp = new Vue({
             el: '#vapp',
@@ -148,7 +149,7 @@ $ready(['../Question/Components/ques_type.js',],
                 exist: t => !$api.isnull(t.entity) && t.entity.Etp_Id != '',
                 //试题的选择范围，这里是临时变量，用时监听选择范围是否变化
                 range: function () {
-                    return {  a: this.parts, b: this.tags, c: this.knls };
+                    return { a: this.parts, b: this.tags, c: this.knls };
                 },
             },
             watch: {
