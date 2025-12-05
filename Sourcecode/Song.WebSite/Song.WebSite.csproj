@@ -731,6 +731,7 @@
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Tags.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\TagsRecy.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Testpaper.html" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Components\papertype.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Index.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Modify.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\ModifyTestpaper1.html" />
@@ -3309,7 +3310,6 @@
     <Folder Include="Templates\Manage\Default\Learningcard\Images\" />
     <Folder Include="Templates\Manage\Default\RechargeCode\Images\" />
     <Folder Include="Templates\Manage\_public\Organs\" />
-    <Folder Include="Templates\OrgAdmin\Default\ExamTestPaper\Components\" />
     <Folder Include="Templates\OrgAdmin\Default\Panel\Images\" />
     <Folder Include="Templates\OrgAdmin\Default\Teacher\Components\Styles\" />
     <Folder Include="Templates\SSO\Default\Components\" />
