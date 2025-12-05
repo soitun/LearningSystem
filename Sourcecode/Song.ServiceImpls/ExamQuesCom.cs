@@ -258,14 +258,14 @@ namespace Song.ServiceImpls
         /// <param name="isError"></param>
         /// <param name="isWrong"></param>
         /// <returns>试题类型，数量</returns>
-        public Dictionary<string, int> QuesTotal(int orgid, long[] qpid, long[] tagid, long[] knlid, bool? isdeleted, int[] diff, bool? isUse, bool? isError, bool? isWrong)
+        public Dictionary<int, int> QuesTotal(int orgid, long[] qpid, long[] tagid, long[] knlid, bool? isdeleted, int[] diff, bool? isUse, bool? isError, bool? isWrong)
         {
             WhereClip wc = Questions._.Qus_Purpose == 1;    //用于考试的试题
             if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
             if (isdeleted != null) wc.And(Questions._.Qus_IsDeleted == isdeleted);    //删除状态
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
             if (isError != null) wc.And(Questions._.Qus_IsError == (bool)isError);
-            if (isWrong != null) wc.And(Questions._.Qus_IsWrong == (bool)isWrong);            
+            if (isWrong != null) wc.And(Questions._.Qus_IsWrong == (bool)isWrong);
             //难度  
             if (diff != null && diff.Length > 0)
             {
@@ -305,11 +305,11 @@ namespace Song.ServiceImpls
             wc.And(wcrange);
             //试题类型
             string[] types = Business.Do<IQuestions>().QuestionTypes();
-            Dictionary<string, int> dic = new Dictionary<string, int>();
-            for(int i = 0; i < types.Length; i++)
+            Dictionary<int, int> dic = new Dictionary<int, int>();
+            for (int i = 0; i < types.Length; i++)
             {
-                int total = section.Where(wc && Questions._.Qus_Type == (i+1)).Count();
-                dic.Add(types[i], total);
+                int total = section.Where(wc && Questions._.Qus_Type == (i + 1)).Count();
+                dic.Add(i + 1, total);
             }
             return dic;
         }

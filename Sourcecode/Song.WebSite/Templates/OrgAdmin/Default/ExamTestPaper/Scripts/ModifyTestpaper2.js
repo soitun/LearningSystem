@@ -10,10 +10,10 @@ $ready(['../Question/Components/ques_type.js',
                 types: [],       //题型
                 tabs: [
                     { name: '基本信息', tab: 'general', icon: 'e72f' },
-                    { name: '出题范围', tab: 'range', icon: 'e731' },
-                    { name: '分数', tab: 'score', icon: 'e731' },
+                    { name: '出题&计分', tab: 'range', icon: 'e731' },
                     { name: '注意事项', tab: 'remind', icon: 'e697' },
-                    { name: '其它', tab: 'other', icon: 'e67e' }
+                    { name: '其它', tab: 'other', icon: 'e67e' },
+                    //{ name: '帮助说明', tab: 'help', icon: 'a026' },
                 ],
                 activeName: 'range',
                 //试卷对象  
@@ -22,7 +22,7 @@ $ready(['../Question/Components/ques_type.js',
                     Etp_IsUse: true,
                     Etp_Span: 120,    //默认限时 120分钟
                     Etp_Type: 2,
-                    Etp_Total: 100, Etp_PassScore: 60,
+                    Etp_Total: 100, Etp_PassScore: 60,      //总分，及格分
                     Etp_Diff: 1,
                     Etp_Diff2: 5,
                     Etp_FromConfig: '',
@@ -36,12 +36,11 @@ $ready(['../Question/Components/ques_type.js',
                 upfile: null, //本地上传文件的对象         
                 Etp_Diff: [1, 5],     //难度范围
 
-                //关联的试题分类
-                parts: [],
+                //试题选择范围
+                parts: [],      //关联的试题分类
                 tags: [],    //关联的关键字
                 knls: [],   //关联的知识点
-                //试题数量
-                quescount: [],
+                //供出卷的试题数量
                 questotal: 0,
 
                 //录入校验的规划
@@ -116,10 +115,11 @@ $ready(['../Question/Components/ques_type.js',
                     $api.cache('Question/Types:99999')
                 ).then(([types]) => {
                     th.types = types.data.result;
+                    //各题型的题量分数的配置
                     th.qtypeitems = th.types.map((t, i) => {
                         return {
                             type: i + 1,  //题型，数字表示
-                            name: t, //题型名称
+                            name: t,    //题型名称
                             total: 0,       //可供选择的题量
                             count: 0,        //题量
                             score: 0,   //分数
@@ -202,7 +202,6 @@ $ready(['../Question/Components/ques_type.js',
                 getquestotal: function () {
                     var th = this;
                     th.loadstate.total = true;
-                    console.error(3);
                     let form = { "orgid": "", "qpid": "", "tagid": "", "knlid": "", "isdeleted": false, "diff": "", "use": true, "error": false, "wrong": false };
                     form.orgid = th.org.Org_ID;
                     form.qpid = th.parts.map(p => p.Qp_ID).join(',');
@@ -211,14 +210,55 @@ $ready(['../Question/Components/ques_type.js',
                     $api.get("ExamQues/QuesTotal", form)
                         .then(req => {
                             if (req.data.success) {
-                                th.quescount = req.data.result;
-                                th.questotal = Object.values(this.quescount).reduce((sum, price) => sum + price, 0);
+                                var result = req.data.result;
+                                for (let i = 0; i < this.qtypeitems.length; i++) {
+                                    const el = this.qtypeitems[i];
+                                    el.total = result[i].total;
+                                    th.$set(el, 'total', result[i].total);
+                                    th.$set(this.qtypeitems, i, el);
+                                }
+                                th.questotal = result.reduce((total, item) => total + item.total, 0);
                             } else {
                                 console.error(req.data.exception);
                                 throw req.config.way + ' ' + req.data.message;
                             }
                         }).catch(err => console.error(err))
                         .finally(() => th.loadstate.total = false);
+                },
+                //计算每道题的分数
+                calcQuesnum: function (number, count) {
+                    if (number <= 0 || count <= 0) return 0;
+                    let val = count / number;
+                    return Math.floor(val * 100) / 100;
+                },
+                //当分数占比变更时
+                changePercent: function () {
+                    this.error = '';
+                    var total = this.total ? this.total : 0;
+                    var surplus = total;
+                    for (let i = 0; i < this.items.length; i++) {
+                        this.items[i].TPI_Number = Math.floor(total * this.items[i].TPI_Percent / 100);
+                        surplus -= this.items[i].TPI_Number;
+                    }
+                    if (surplus < 0) {
+                        this.error = '各题型分数合计后大于总分 ' + this.total;
+                        return false;
+                    }
+                    //有没有分完的分数
+                    if (this.sumPercent == 100 && surplus > 0) {
+                        var max_item = this.items[0];   //题量最多的项
+                        for (let i = 1; i < this.items.length; i++) {
+                            max_item = max_item.TPI_Count > this.items[i].TPI_Count ? max_item : this.items[i];
+                        }
+                        max_item.TPI_Number += surplus;
+                        console.log(max_item);
+                    }
+                    //如果大于100%
+                    if (this.sumPercent != 100) {
+                        this.error = '各题型占比的合计必须等于 100%';
+                        return false;
+                    }
+                    return true;
                 },
                 //操作成功
                 operateSuccess: function (isclose) {

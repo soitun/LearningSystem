@@ -92,8 +92,8 @@ namespace Song.ServiceInterfaces
         /// <param name="isUse"></param>
         /// <param name="isError"></param>
         /// <param name="isWrong"></param>
-        /// <returns>试题类型，数量</returns>
-        Dictionary<string, int> QuesTotal(int orgid, long[] qpid, long[] tagid, long[] knlid, bool? isdeleted, int[] diff, bool? isUse, bool? isError, bool? isWrong);
+        /// <returns>试题类型(数字），数量</returns>
+        Dictionary<int, int> QuesTotal(int orgid, long[] qpid, long[] tagid, long[] knlid, bool? isdeleted, int[] diff, bool? isUse, bool? isError, bool? isWrong);
         #endregion
 
         #region 试题分类

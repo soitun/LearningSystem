@@ -194,19 +194,33 @@ namespace Song.ViewData.Methods
         /// <param name="knlid"></param>
         /// <param name="isdeleted"></param>
         /// <param name="diff"></param>
-        /// <param name="isUse"></param>
-        /// <param name="isError"></param>
-        /// <param name="isWrong"></param>
+        /// <param name="use"></param>
+        /// <param name="error"></param>
+        /// <param name="wrong"></param>
         /// <returns>试题类型，数量</returns>
-        public Dictionary<string, int> QuesTotal(int orgid, string qpid, string tagid, string knlid, bool? isdeleted, string diff,bool? use, bool? error, bool? wrong)
+        public JArray QuesTotal(int orgid, string qpid, string tagid, string knlid, bool? isdeleted, string diff,bool? use, bool? error, bool? wrong)
         {
-            return Business.Do<IExamQues>().QuesTotal(orgid,
+            Dictionary<int, int> dic = Business.Do<IExamQues>().QuesTotal(orgid,
                 Help.StringTo.Array<long>(qpid),
                 Help.StringTo.Array<long>(tagid),
                 Help.StringTo.Array<long>(knlid),
                 isdeleted,
                 Help.StringTo.Array<int>(diff),
                 use, error, wrong);
+            string[] types = Business.Do<IQuestions>().QuestionTypes();
+            JArray arr = new JArray();
+            foreach (KeyValuePair<int, int> kv in dic)
+            {
+                JObject jo = new JObject();
+                jo.Add("type", kv.Key);     //试题类型
+                jo.Add("name", types[kv.Key - 1]);  //试题类型名称
+                jo.Add("total", kv.Value);      //试题数量
+                //jo.Add("count", 0);
+                //jo.Add("score", 0);
+                //jo.Add("rate", 0);
+                arr.Add(jo);
+            }
+            return arr;
         }
         #endregion
 

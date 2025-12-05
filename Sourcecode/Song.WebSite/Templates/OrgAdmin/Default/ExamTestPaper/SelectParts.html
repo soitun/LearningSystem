@@ -31,7 +31,7 @@
                 v-loading="loading">
                 <div class="custom-tree-node" slot-scope="{ node, data }">
                     <span class="tree-node">
-                        <span>{{data.serial}}</span> &nbsp;
+                        <span class="serial">{{data.serial}}</span> &nbsp;
                         <span class="large" v-html="showsearch(data.Qp_Name,filterText)"></span>
                         <span class="sbjcount" v-if="data.calcChild>0">({{data.calcChild}})</span>
                     </span>
