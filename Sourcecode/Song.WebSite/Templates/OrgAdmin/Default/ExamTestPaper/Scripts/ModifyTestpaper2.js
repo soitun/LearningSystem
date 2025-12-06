@@ -15,11 +15,11 @@ $ready(['../Question/Components/ques_type.js',
                     { name: '其它', tab: 'other', icon: 'e67e' },
                     //{ name: '帮助说明', tab: 'help', icon: 'a026' },
                 ],
-                activeName: 'range',
+                activeName: 'general',
                 //试卷对象  
                 entity: {
                     Etp_Id: 0,        //主键
-                    Etp_Name: '测试', Etp_SubName: '',
+                    Etp_Name: '', Etp_SubName: '',
                     Etp_IsUse: true,
                     Etp_Span: 120,    //默认限时 120分钟
                     Etp_Type: 2,
@@ -27,9 +27,7 @@ $ready(['../Question/Components/ques_type.js',
                     Etp_Diff: 1,
                     Etp_Diff2: 5,
                     Etp_FromConfig: '',
-                    Etp_FromType: 0,
-                    Sbj_ID: 0,
-                    Cou_ID: 0           //所属课程的id
+                    Etp_Count: 0,       //总题量                   
                 },
                 //试题的类型数据，例如题型，该题型的题量，分数，分数占比，
                 qtypeitems: [],
@@ -92,10 +90,10 @@ $ready(['../Question/Components/ques_type.js',
                         {
                             validator: function (rule, value, callback) {
                                 let items = vapp.qtypeitems;
-                                let percent = items.reduce((a, b) => { return a + b.percent; }, 0);
-                                if (percent > 100) {
-                                    callback(new Error('各题型分数占比之和不能大于100'));
-                                }
+                                let percent = items.reduce((a, b) => a + b.percent, 0);
+                                if (percent > 100) return callback(new Error('各题型分数占比之和不能大于100'));
+                                if (percent != 100) return callback(new Error('各题型分数占比之和必须等于100'));
+
                                 for (let i = 0; i < items.length; i++) {
                                     const el = items[i];
                                     if (el.count > el.total) {
@@ -143,6 +141,7 @@ $ready(['../Question/Components/ques_type.js',
                         }
                     });
                     th.getquestotal();
+                    if (!th.isadd) th.getentity();
                 }).catch(err => console.error(err))
                     .finally(() => th.loadstate.init = false);
             },
@@ -177,6 +176,40 @@ $ready(['../Question/Components/ques_type.js',
                 },
             },
             methods: {
+                //获取实体
+                getentity: function () {
+                    if (this.isadd) return;
+                    var th = this;
+                    th.loadstate.get = true;
+                    $api.get("ExamTestPaper/Details", { "id": th.id })
+                        .then(req => {
+                            if (req.data.success) {
+                                let result = req.data.result;
+                                th.entity = result.paper;
+                                th.parts = result?.parts ?? [];
+                                th.knls = result?.knls ?? [];
+                                th.tags = result?.tags ?? [];
+                                //试题题型分配数据
+                                let questions = result?.questions ?? [];
+                                //th.qtypeitems = questions;
+                                for (let i = 0; i < th.qtypeitems.length; i++) {
+                                    const item = th.qtypeitems[i];
+                                    for (let j = 0; j < questions.length; j++) {
+                                        const ques = questions[j];
+                                        if (item.type == ques.type) {
+                                            item.count = Number(ques.count);
+                                            item.score = Number(ques.score);
+                                            item.percent = Number(ques.percent);
+                                        }
+                                    }
+                                }
+                            } else {
+                                console.error(req.data.exception);
+                                throw req.config.way + ' ' + req.data.message;
+                            }
+                        }).catch(err => console.error(err))
+                        .finally(() => th.loadstate.get = false);
+                },
                 //难度范围变更时
                 diffChange: function (val) {
                     this.entity['Etp_Diff'] = val[0];
@@ -276,7 +309,8 @@ $ready(['../Question/Components/ques_type.js',
                             //如果验证未通过，则显示输入项所在的选项卡
                             th.$nextTick(() => {
                                 let err = $dom('.el-form-item.is-error').first();
-                                if (err) {
+                                console.error(3);
+                                if (err && err.length > 0) {
                                     while (err.attr('tab') == null) err = err.parent();
                                     this.activeName = err.attr('tab');
                                 }
@@ -315,7 +349,7 @@ $ready(['../Question/Components/ques_type.js',
                     //如果处于课程编辑页，则刷新
                     var pagebox = window.top.$pagebox;
                     if (pagebox && pagebox.source.top)
-                        pagebox.source.top(window.name, 'vapp.fresh_frame', isclose);
+                        pagebox.source.tab(window.name, 'vapp.fresh_row', isclose);
                 }
             },
             filters: {

@@ -9,6 +9,8 @@ using Song.ServiceInterfaces;
 using Song.ViewData.Attri;
 using System.Web;
 using System.IO;
+using Newtonsoft.Json.Linq;
+using System.Xml;
 
 namespace Song.ViewData.Methods
 {
@@ -37,7 +39,57 @@ namespace Song.ViewData.Methods
             if (tp == null) throw new Exception("试卷不存在！");
             return _tran(tp);
         }
+        /// <summary>
+        /// 获取试卷信息详情，包括抽题范围
+        /// </summary>
+        /// <param name="id">试卷id</param>
+        /// <returns>paper:试卷对象，parts:试题分类,knls:知识点, tags:关键字，questions:试题题型分配</returns>
+        [HttpGet]
+        public JObject Details(long id)
+        {
+            Song.Entities.ExamTestPaper tp = Business.Do<IExamTestPaper>().PaperSingle(id);
+            if (tp == null) throw new Exception("试卷不存在！");
+            JObject jo=new JObject();
+            jo.Add("paper", _tran(tp).ToJObject());
 
+            XmlDocument xmldoc = new XmlDocument();
+            xmldoc.LoadXml(tp.Etp_FromConfig);
+            //试题分类
+            XmlNode nodeparts = xmldoc.SelectSingleNode("/testpaper/range/parts");
+            List<QuesPart> parts = Business.Do<IExamQues>().PartSingle(Helper.StringTo.Array<long>(nodeparts.InnerText));
+            JArray partsarr = parts.ToJArray();
+            foreach(JObject part in partsarr)
+            {
+                part.Add("QuesCount", Business.Do<IExamQues>().PartQusTotal(-1, Convert.ToInt64(part["Qp_ID"].ToString()), -1, true, true));
+            }   
+            jo.Add("parts", partsarr);
+            //关联的知识点
+            XmlNode nodeknls = xmldoc.SelectSingleNode("/testpaper/range/knls");
+            List<QuesKnowledge> knls = Business.Do<IExamQues>().KnlSingle(Helper.StringTo.Array<long>(nodeknls.InnerText));
+            JArray knlsarr = knls.ToJArray();
+            foreach (JObject knl in knlsarr)
+            {
+                knl.Add("QuesCount", Business.Do<IExamQues>().KnlQusTotal(-1, Convert.ToInt64(knl["Qk_ID"].ToString()), -1, true, true));
+            }
+            jo.Add("knls", knlsarr);
+            //关联的标签
+            XmlNode nodetags = xmldoc.SelectSingleNode("/testpaper/range/tags");
+            List<QuesTags> tags = Business.Do<IExamQues>().TagSingle(Helper.StringTo.Array<long>(nodetags.InnerText));
+            jo.Add("tags", tags?.ToJArray());
+            //
+            //各题型的占比
+            XmlNodeList nodeitems = xmldoc.SelectNodes("/testpaper/questions/item");
+            JArray joitems = new JArray();
+            foreach (XmlNode item in nodeitems)
+            {
+                JObject joitem = new JObject();
+                foreach(XmlAttribute att in item.Attributes)
+                    joitem.Add(att.Name, att.Value);               
+                joitems.Add(joitem);               
+            }
+            jo.Add("questions", joitems);
+            return jo;
+        }
         ///<summary>
         /// 创建试卷
         /// </summary>

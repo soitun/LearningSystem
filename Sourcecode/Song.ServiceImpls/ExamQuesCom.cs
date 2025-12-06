@@ -488,6 +488,19 @@ namespace Song.ServiceImpls
             return Gateway.Default.From<QuesPart>().Where(QuesPart._.Qp_ID == id).ToFirst<QuesPart>();
         }
         /// <summary>
+        /// 按主键获取实体对象
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public List<QuesPart> PartSingle(long[] id)
+        {
+            if (id.Length == 0) return null;
+            WhereClip wc=new WhereClip();
+            for (int i = 0; i < id.Length; i++)
+                wc.Or(QuesPart._.Qp_ID == id[i]);
+            return Gateway.Default.From<QuesPart>().Where(wc).ToList<QuesPart>();
+        }
+        /// <summary>
         /// 当前试题分类下的所有子试题分类id，包括自身
         /// </summary>
         /// <param name="qpid">当前试题分类id</param>
@@ -703,7 +716,7 @@ namespace Song.ServiceImpls
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
             if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
 
-            List<long> listqpid = children ? new List<long>() { qpid } : this.PartTreeID(qpid, orgid);
+            List<long> listqpid = children ? this.PartTreeID(qpid, orgid) : new List<long>() { qpid };
             WhereClip wc2 = new WhereClip();
             foreach (long l in listqpid) wc2.Or(Questions_QPart._.Qp_ID == l);
             wc.And(wc2);
@@ -1168,6 +1181,19 @@ namespace Song.ServiceImpls
             return Gateway.Default.From<QuesKnowledge>().Where(QuesKnowledge._.Qk_ID == id).ToFirst<QuesKnowledge>();
         }
         /// <summary>
+        /// 按ID获取实体
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public List<QuesKnowledge> KnlSingle(long[] id)
+        {
+            if (id.Length == 0) return null;
+            WhereClip wc=new WhereClip();
+            for (int i = 0; i < id.Length; i++)
+                wc.Or(QuesKnowledge._.Qk_ID == id[i]);
+            return Gateway.Default.From<QuesKnowledge>().Where(wc).ToList<QuesKnowledge>();
+        }
+        /// <summary>
         /// 当前试题知识点下的所有子试题知识点id，包括自身
         /// </summary>
         /// <param name="qkid">当前试题知识点id</param>
@@ -1380,7 +1406,7 @@ namespace Song.ServiceImpls
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
             if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
 
-            List<long> listqkid = children ? new List<long>() { qkid } : this.KnlTreeID(qkid, orgid);
+            List<long> listqkid = children ? this.KnlTreeID(qkid, orgid) : new List<long>() { qkid };
             WhereClip wc2 = new WhereClip();
             foreach (long l in listqkid) wc2.Or(Questions_QKnl._.Qk_ID == l);
             wc.And(wc2);
@@ -1683,6 +1709,19 @@ namespace Song.ServiceImpls
         public QuesTags TagSingle(long id)
         {
             return Gateway.Default.From<QuesTags>().Where(QuesTags._.Qtag_ID == id).ToFirst<QuesTags>();
+        }
+        /// <summary>
+        /// 通过id获取实体
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public List<QuesTags> TagSingle(long[] id)
+        {
+            if (id.Length == 0) return null;
+            WhereClip wc=new WhereClip();
+            for (int i = 0; i < id.Length; i++)
+                wc.Or(QuesTags._.Qtag_ID == id[i]);
+            return Gateway.Default.From<QuesTags>().Where(wc).ToList<QuesTags>();
         }
         /// <summary>
         /// 获取单一实体对象，按主键名称；

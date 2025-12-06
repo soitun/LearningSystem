@@ -56,7 +56,8 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        ExamTestPaper PaperSingle(string name);
+        ExamTestPaper PaperSingle(string name);      
+
         /// <summary>
         /// 获取指定数据的试卷
         /// </summary>

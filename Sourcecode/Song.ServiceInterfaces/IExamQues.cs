@@ -163,6 +163,12 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         QuesPart PartSingle(long id);
         /// <summary>
+        /// 按主键获取实体对象
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        List<QuesPart> PartSingle(long[] id);
+        /// <summary>
         /// 当前试题分类下的所有子试题分类id
         /// </summary>
         /// <param name="qpid">当前试题分类id</param>
@@ -406,6 +412,12 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         QuesKnowledge KnlSingle(long id);
         /// <summary>
+        /// 按ID获取实体
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        List<QuesKnowledge> KnlSingle(long[] id);
+        /// <summary>
         /// 当前试题知识点下的所有子试题知识点id
         /// </summary>
         /// <param name="qkid">当前试题知识点id</param>
@@ -578,6 +590,12 @@ namespace Song.ServiceInterfaces
         /// <param name="id">实体的主键</param>
         /// <returns></returns>
         QuesTags TagSingle(long id);
+        /// <summary>
+        /// 通过id获取实体
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        List<QuesTags> TagSingle(long[] id);
         /// <summary>
         /// 获取单一实体对象，按主键名称；
         /// </summary>

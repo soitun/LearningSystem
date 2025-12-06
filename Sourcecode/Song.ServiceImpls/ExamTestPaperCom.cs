@@ -215,7 +215,7 @@ namespace Song.ServiceImpls
             if (isdeleted != null) wc &= ExamTestPaper._.Etp_IsDeleted == (bool)isdeleted;
             if (isUse != null) wc &= ExamTestPaper._.Etp_IsUse == (bool)isUse;
             if (!string.IsNullOrWhiteSpace(sear)) wc &= ExamTestPaper._.Etp_Name.Contains(sear);
-            countSum = Gateway.Default.Count<TestPaper>(wc);
+            countSum = Gateway.Default.Count<ExamTestPaper>(wc);
             return Gateway.Default.From<ExamTestPaper>().Where(wc).OrderBy(ExamTestPaper._.Etp_Id.Desc).ToList<ExamTestPaper>(size, (index - 1) * size);
         }
 
