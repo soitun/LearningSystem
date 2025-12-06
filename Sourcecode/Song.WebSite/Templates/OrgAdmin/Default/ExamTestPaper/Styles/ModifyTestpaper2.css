@@ -157,13 +157,16 @@ div[tab="range"] .qtype_card .el-card__body {
     justify-content: space-between;
 }
 
-.ques_type *[zero] {
-    color: #ccc;
+.ques_type .option_count[zero], .option_count[zero] *{
+    color: #ccc !important;
 }
 
 .ques_type .option_count {
-    color: #777;
+    color: #444;
 }
 .qtypeitems{
     margin-bottom: 10px;
+}
+.ques_type .option_count b {
+    color: rgb(153, 0, 0);
 }
