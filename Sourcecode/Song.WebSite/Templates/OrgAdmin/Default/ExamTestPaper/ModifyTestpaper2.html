@@ -67,7 +67,7 @@
                                     选中 {{parts.length}} 分类，共 {{parts.reduce((total, item) => total + item.QuesCount,0)}}
                                     道试题
                                 </el-tag>
-                                <el-button type="primary" plain @click="opensubwin('SelectParts','按“试题分类”抽题','a015')">选择
+                                <el-button type="primary" plain @click="opensubwin('SelectParts','按“试题分类”抽题','a015',500)">选择
                                 </el-button>
                             </template>
                             <icon null size="large" v-if="parts?.length<1">没有选择任何试题分类</icon>
@@ -82,7 +82,7 @@
                                     item.Qtag_Count,0)}}
                                     道试题
                                 </el-tag>
-                                <el-button type="primary" plain @click="opensubwin('SelectTag','按“关键字”抽题','e841')">选择
+                                <el-button type="primary" plain @click="opensubwin('SelectTag','按“关键字”抽题','e841',400)">选择
                                 </el-button>
                             </template>
                             <icon null size="large" v-if="tags?.length<1">没有选择任何关键字</icon>
@@ -96,7 +96,7 @@
                                     选中 {{knls.length}} 个知识点，共 {{knls.reduce((total, item) => total + item.QuesCount,0)}}
                                     道试题
                                 </el-tag>
-                                <el-button type="primary" plain @click="opensubwin('SelectKnl','按“关联知识点”抽题','e6fd')">选择
+                                <el-button type="primary" plain @click="opensubwin('SelectKnl','按“关联知识点”抽题','e6fd',600)">选择
                                 </el-button>
                             </template>
                             <icon null size="large" v-if="knls?.length<1">没有选择任何知识点</icon>
@@ -106,7 +106,7 @@
                         </el-card>
                     </section>
                     <!--题量，分数-->
-                    <div class="qtype_card">
+                    <section class="rangeright">
                         <el-card shadow="never" type="primary">
                             <template slot="header">
                                 <span icon="&#xe829" huge>分数</span>
@@ -125,11 +125,16 @@
                                 </el-input>
                             </el-form-item>
                         </el-card>
-                        <el-card shadow="never" type="primary">
-                            <template slot="header">
-                                <span icon="&#xe75e" large>题量</span>
-                                <loading v-if="loadstate.total" bubble>loading...</loading>
-                                <span v-else>可选 {{ questotal}} 道</span>
+                        <!--题型分数的分配-->
+                        <el-card shadow="never" type="info" class="qtype_card">
+                            <template slot="header">  
+                                <el-form-item label="" prop="total" label-width="40">
+                                    <span icon="&#xe75e" large>题量</span>
+                                    <loading v-if="loadstate.total" bubble>loading...</loading>
+                                    <span v-else class="small option_count">可选 <b>{{ questotal}}</b> 道</span>
+                                </el-form-item>
+                                <el-button type="primary" plain @click="opensubwin('SelectTag','设置试卷分数','e841',600,'right')">详细设置
+                                </el-button>
                             </template>
                             <div v-for="(m,idx) in qtypeitems" class="qtypeitems">
                                 <el-row :gutter="20">
@@ -139,20 +144,20 @@
                                     </ques_type>
                                 </el-row>
                                 <el-row :gutter="20">
-                                    <el-col :span="12">
+                                    <el-col :span="10">
                                         <el-input v-model.number="m.count" type="number" :min="0" :max="m.total">                                            
                                             <template slot="append">道</template>
                                         </el-input>
                                     </el-col>
-                                    <el-col :span="12">
-                                        <el-input v-model.number="m.score" type="number" :min="1">                                            
-                                            <template slot="append">分</template>
+                                    <el-col :span="14">
+                                        <el-input v-model.number="m.percent" type="number" :min="0" :max="100" @input="m.score=m.percent*entity.Etp_Total/100">                                            
+                                            <template slot="append">%，计 {{m.score}} 分</template>
                                         </el-input>
                                     </el-col>
                                 </el-row>                              
                             </div>
                         </el-card>
-                    </div>
+                    </section>
                 </div>
 
                 <div v-show="activeName=='remind'" remark="注意事项" class="intro_editor" tab="remind">

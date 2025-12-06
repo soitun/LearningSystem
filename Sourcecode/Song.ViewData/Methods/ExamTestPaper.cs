@@ -49,6 +49,11 @@ namespace Song.ViewData.Methods
         [HtmlClear(Not = "entity")]
         public Song.Entities.ExamTestPaper Add(Song.Entities.ExamTestPaper entity)
         {
+            //当前管理员
+            EmpAccount acc = LoginAdmin.Status.User(this.Letter);
+            if (acc == null) return null;
+            entity.Acc_Id = acc.Acc_Id;
+            entity.Acc_AccName= acc.Acc_AccName;
 
             string filename = string.Empty, smallfile = string.Empty;
             //只保存第一张图片
@@ -76,8 +81,13 @@ namespace Song.ViewData.Methods
         [HtmlClear(Not = "entity")]
         public Song.Entities.ExamTestPaper Modify(Song.Entities.ExamTestPaper entity)
         {
-            string filename = string.Empty, smallfile = string.Empty;
+            //当前管理员
+            EmpAccount acc = LoginAdmin.Status.User(this.Letter);
+            if (acc == null) return null;
+            entity.Acc_Id = acc.Acc_Id;
+            entity.Acc_AccName = acc.Acc_AccName;
 
+            string filename = string.Empty, smallfile = string.Empty;
             Song.Entities.ExamTestPaper old = Business.Do<IExamTestPaper>().PaperSingle(entity.Etp_Id);
             if (old == null) throw new Exception("Not found entity for TestPaper！");
             //如果有上传文件

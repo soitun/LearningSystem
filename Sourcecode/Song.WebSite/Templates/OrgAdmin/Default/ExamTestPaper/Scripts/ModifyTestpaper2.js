@@ -87,6 +87,30 @@ $ready(['../Question/Components/ques_type.js',
 
                             }, trigger: 'blur'
                         }
+                    ],
+                    total: [
+                        {
+                            validator: function (rule, value, callback) {
+                                let items = vapp.qtypeitems;
+                                let percent = items.reduce((a, b) => { return a + b.percent; }, 0);
+                                if (percent > 100) {
+                                    callback(new Error('各题型分数占比之和不能大于100'));
+                                }
+                                for (let i = 0; i < items.length; i++) {
+                                    const el = items[i];
+                                    if (el.count > el.total) {
+                                        return callback(new Error('' + el.name + '题的数量不能大于' + el.total + '道'));
+                                    }
+                                    if (el.count <= 0 && el.percent > 0) {
+                                        return callback(new Error('' + el.name + '题的数量不能小于1道'));
+                                    }
+                                    if (el.percent <= 0 && el.count > 0) {
+                                        return callback(new Error('' + el.name + '题的分数不可小于1分'));
+                                    }
+                                }
+                                callback();
+                            }, trigger: 'blur'
+                        }
                     ]
                 },
                 loadstate: {
@@ -114,8 +138,8 @@ $ready(['../Question/Components/ques_type.js',
                             name: t,    //题型名称
                             total: 0,       //可供选择的题量
                             count: 0,        //题量
-                            score: 0,   //分数
-                            rate: 0,   //分数占比
+                            score: 0,       //分数
+                            percent: 0,   //分数占比
                         }
                     });
                     th.getquestotal();
@@ -160,7 +184,7 @@ $ready(['../Question/Components/ques_type.js',
                 },
                 //打开子窗口
                 //page:页面名称，
-                opensubwin: function (page, title, icon) {
+                opensubwin: function (page, title, icon, width, position) {
                     if (!window.top.$pagebox) return;
                     //子窗口页面路径
                     var suburl = $dom.routepath() + page;
@@ -174,12 +198,13 @@ $ready(['../Question/Components/ques_type.js',
                     var curbox = window.top.$pagebox.get(window.name);
                     //创建新窗口中
                     var subbox = window.top.$pagebox.create({
-                        width: 500, height: 300,
+                        width: width, height: 300,
                         id: page, ico: icon, title: title,
                         url: suburl
                     });
                     //打开子窗口,窗口位置:left,right,top,bottom
-                    curbox.opensub(subbox, 'left');
+                    if (position == null) position = 'left';
+                    curbox.opensub(subbox, position);
                 },
                 //接收子窗口数据
                 //data:子窗口返回的数据
@@ -217,58 +242,73 @@ $ready(['../Question/Components/ques_type.js',
                         }).catch(err => console.error(err))
                         .finally(() => th.loadstate.total = false);
                 },
-                //计算每道题的分数
-                calcQuesnum: function (number, count) {
-                    if (number <= 0 || count <= 0) return 0;
-                    let val = count / number;
-                    return Math.floor(val * 100) / 100;
-                },
-                //当分数占比变更时
-                changePercent: function () {
-                    this.error = '';
-                    var total = this.total ? this.total : 0;
-                    var surplus = total;
-                    for (let i = 0; i < this.items.length; i++) {
-                        this.items[i].TPI_Number = Math.floor(total * this.items[i].TPI_Percent / 100);
-                        surplus -= this.items[i].TPI_Number;
-                    }
-                    if (surplus < 0) {
-                        this.error = '各题型分数合计后大于总分 ' + this.total;
-                        return false;
-                    }
-                    //有没有分完的分数
-                    if (this.sumPercent == 100 && surplus > 0) {
-                        var max_item = this.items[0];   //题量最多的项
-                        for (let i = 1; i < this.items.length; i++) {
-                            max_item = max_item.TPI_Count > this.items[i].TPI_Count ? max_item : this.items[i];
-                        }
-                        max_item.TPI_Number += surplus;
-                        console.log(max_item);
-                    }
-                    //如果大于100%
-                    if (this.sumPercent != 100) {
-                        this.error = '各题型占比的合计必须等于 100%';
-                        return false;
-                    }
-                    return true;
-                },
                 //确认操作，保存数据
                 btnEnter: function (formName, isclose) {
                     var th = this;
                     this.$refs[formName].validate((valid, fields) => {
                         if (valid) {
-                            console.error('检验通过');
+                            console.log('检验通过');
+                            let xml = th.buildXml();
+                            th.entity.Etp_FromConfig = xml;
+                            th.entity.Etp_Type = 2;
+                            console.error(xml);
+                            let apipath = th.isadd ? 'ExamTestPaper/Add' : 'ExamTestPaper/Modify';
+                            //接口参数，如果有上传文件，则增加file
+                            var para = { 'entity': th.entity };
+                            if (th.upfile != null) para['file'] = th.upfile;
+                            th.loadstate.update = true;
+                            $api.post(apipath, para).then(function (req) {
+                                if (req.data.success) {
+                                    var result = req.data.result;
+                                    th.$message({
+                                        type: 'success', center: true,
+                                        message: '操作成功!'
+                                    });
+                                    th.operateSuccess(isclose);
+                                } else {
+                                    throw req.data.message;
+                                }
+                            }).catch(function (err) {
+                                alert(err, '错误');
+                            }).finally(() => th.loadstate.update = false);
+
                         } else {
                             //如果验证未通过，则显示输入项所在的选项卡
                             th.$nextTick(() => {
-                                let err = $dom('.el-form-item__error');
-                                if (err.length < 1) return;
-                                while (err.attr('tab') == null) err = err.parent();
-                                this.activeName = err.attr('tab');
+                                let err = $dom('.el-form-item.is-error').first();
+                                if (err) {
+                                    while (err.attr('tab') == null) err = err.parent();
+                                    this.activeName = err.attr('tab');
+                                }
                             });
 
                         }
                     });
+                },
+                //生成xml数据，格式说明参考同文件夹下的ModifyTestpaper2.xml
+                buildXml: function () {
+                    var count = 0;
+                    var xml = '<testpaper type="2">';
+                    //抽题范围
+                    xml += '<range>';
+                    xml += '<parts>' + this.parts.map(p => p.Qp_ID).join(',') + '</parts>';
+                    xml += '<knls>' + this.knls.map(p => p.Qk_ID).join(',') + '</knls>';
+                    xml += '<tags>' + this.tags.map(p => p.Qtag_ID).join(',') + '</tags>';
+                    xml += '</range>'
+                    //题型分数分配
+                    xml += '<questions>'
+                    let items = this.qtypeitems;
+                    for (let i = 0; i < items.length; i++) {
+                        const m = items[i];
+                        xml += '<item type="' + m.type + '" name="' + m.name + '"'
+                            + ' score="' + m.score + '"'
+                            + ' count="' + m.count + '"'
+                            + ' percent="' + m.percent + '"'
+                        xml += ' />';
+                    }
+                    xml += '</questions>';
+                    xml += '</testpaper>';
+                    return xml;
                 },
                 //操作成功
                 operateSuccess: function (isclose) {
