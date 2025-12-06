@@ -46,7 +46,7 @@
                         </el-row>
                     </el-form-item>
                     <el-form-item label="时长" prop="Etp_Span">
-                        <el-input placeholder="请输入内容" v-model="entity.Etp_Span" type="number" style="width: 300px;">
+                        <el-input placeholder="请输入内容" v-model.trim="entity.Etp_Span" type="number" style="width: 300px;">
                             <template slot="prepend">限时</template>
                             <template slot="append">分钟</template>
                         </el-input>

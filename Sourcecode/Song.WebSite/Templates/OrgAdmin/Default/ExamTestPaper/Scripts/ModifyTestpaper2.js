@@ -19,6 +19,7 @@ $ready(['../Question/Components/ques_type.js',
                 //试卷对象  
                 entity: {
                     Etp_Id: 0,        //主键
+                    Etp_Name: '测试', Etp_SubName: '',
                     Etp_IsUse: true,
                     Etp_Span: 120,    //默认限时 120分钟
                     Etp_Type: 2,
@@ -62,11 +63,8 @@ $ready(['../Question/Components/ques_type.js',
                         { required: true, message: '限时不得为空', trigger: 'blur' },
                         {
                             validator: function (rule, value, callback) {
-                                if (Number(value) <= 0) {
-                                    callback(new Error('请输入大于零的整数'));
-                                } else {
-                                    callback();
-                                }
+                                if (/^[1-9]\d*$/.test(value)) return callback();
+                                callback(new Error('请输入大于零的整数'));
                             }, trigger: 'blur'
                         }
                     ],
@@ -74,11 +72,8 @@ $ready(['../Question/Components/ques_type.js',
                         { required: true, message: '分数不得为空', trigger: 'blur' },
                         {
                             validator: function (rule, value, callback) {
-                                if (Number(value) <= 0) {
-                                    callback(new Error('请输入大于零的整数'));
-                                } else {
-                                    callback();
-                                }
+                                if (/^[1-9]\d*$/.test(value)) return callback();
+                                callback(new Error('请输入大于零的整数'));
                             }, trigger: 'blur'
                         }
                     ],
@@ -86,13 +81,10 @@ $ready(['../Question/Components/ques_type.js',
                         { required: true, message: '分数不得为空', trigger: 'blur' },
                         {
                             validator: function (rule, value, callback) {
-                                if (Number(value) <= 0) {
-                                    callback(new Error('请输入大于零的整数'));
-                                } else if (Number(value) > vapp.entity.Etp_Total) {
-                                    callback(new Error('及格分不得大于满分'));
-                                } else {
-                                    callback();
-                                }
+                                if (!(/^[1-9]\d*$/.test(value))) return callback(new Error('请输入大于零的整数'));
+                                if (Number(value) > vapp.entity.Etp_Total) callback(new Error('及格分不得大于满分'));
+                                else callback();
+
                             }, trigger: 'blur'
                         }
                     ]
@@ -261,40 +253,20 @@ $ready(['../Question/Components/ques_type.js',
                     return true;
                 },
                 //确认操作，保存数据
-                btnEnter:function(formName,isclose){
+                btnEnter: function (formName, isclose) {
                     var th = this;
                     this.$refs[formName].validate((valid, fields) => {
                         if (valid) {
-                            if (th.loading) return;
-                            let sbj = th.clone(th.entity);
-                            th.loading = true;
-                            //接口路径
-                            let apipath = th.id == '' ? 'ExamQues/PartAdd' : 'ExamQues/PartModify';
-                            //接口参数，如果有上传文件，则增加file
-                            let para = { 'entity': sbj };
-                            $api.post(apipath, para).then(function (req) {
-                                th.loading = false;
-                                if (req.data.success) {
-                                    var result = req.data.result;
-                                    th.$notify({
-                                        type: 'success', position: 'bottom-left',
-                                        message: isclose ? '保存成功，并关闭！' : '保存当前编辑成功！'
-                                    });
-                                    th.operateSuccess(isclose);
-                                } else {
-                                    throw req.data.message;
-                                }
-                            }).catch(err => alert(err, '错误'))
-                                .finally(() => th.loading = false);
+                            console.error('检验通过');
                         } else {
-                            //未通过验证的字段
-                            let field = Object.keys(fields)[0];
-                            let label = $dom('label[for="' + field + '"]');
-                            while (label.attr('tab') == null)
-                                label = label.parent();
-                            th.activeName = label.attr('tab');
-                            console.log('error submit!!');
-                            return false;
+                            //如果验证未通过，则显示输入项所在的选项卡
+                            th.$nextTick(() => {
+                                let err = $dom('.el-form-item__error');
+                                if (err.length < 1) return;
+                                while (err.attr('tab') == null) err = err.parent();
+                                this.activeName = err.attr('tab');
+                            });
+
                         }
                     });
                 },
