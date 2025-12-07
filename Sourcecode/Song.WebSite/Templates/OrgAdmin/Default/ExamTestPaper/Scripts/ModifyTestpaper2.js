@@ -174,7 +174,7 @@ $ready(['../Question/Components/ques_type.js',
                 },
             },
             watch: {
-                //当范围发生变化时
+                //当出题范围发生变化时
                 range: {
                     handler: function (v) {
                         this.getquestotal();
@@ -182,7 +182,7 @@ $ready(['../Question/Components/ques_type.js',
                 },
             },
             methods: {
-                //获取实体
+                //获取试卷的数据实体
                 getentity: function () {
                     if (this.isadd) return;
                     var th = this;
@@ -209,8 +209,8 @@ $ready(['../Question/Components/ques_type.js',
                                         }
                                     }
                                 }
-                                //
-                                th.quescount=result.quescount;
+                                //试卷出卷范围的题量，如选中的试题分类的试题数
+                                th.quescount = result.quescount;
                             } else {
                                 console.error(req.data.exception);
                                 throw req.config.way + ' ' + req.data.message;
@@ -284,6 +284,16 @@ $ready(['../Question/Components/ques_type.js',
                         }).catch(err => console.error(err))
                         .finally(() => th.loadstate.total = false);
                 },
+                //向“更多分数设置”的窗体传递数据
+                scoretransmit: function () {
+                    console.error('scoretransmit');
+                    //试卷对象，题型分数分配的数据
+                    return [this.entity, this.qtypeitems];
+                },
+                //接收“更多分数设置”的窗体数据
+                scorereceive: function () {
+
+                },
                 //确认操作，保存数据
                 btnEnter: function (formName, isclose) {
                     var th = this;
@@ -293,7 +303,7 @@ $ready(['../Question/Components/ques_type.js',
                             let xml = th.buildXml();
                             th.entity.Etp_FromConfig = xml;
                             th.entity.Etp_Type = 2;
-                            th.entity.Etp_Count= th.qtypeitems.reduce((total, item) => total + item.count, 0);
+                            th.entity.Etp_Count = th.qtypeitems.reduce((total, item) => total + item.count, 0);
                             //console.error(xml);
                             let apipath = th.isadd ? 'ExamTestPaper/Add' : 'ExamTestPaper/Modify';
                             //接口参数，如果有上传文件，则增加file
