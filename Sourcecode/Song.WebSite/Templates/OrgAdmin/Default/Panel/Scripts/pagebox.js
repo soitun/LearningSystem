@@ -1304,25 +1304,20 @@
         //name:为当前窗体的window.name
         //func:要执行的方法，必须是window下的
         //close:是否关闭当前窗体
-        tab: function (name, func, close) {
+        tab: function (name, func, close, params) {
             name = $dom.trim(name);
             //当前pagebox窗体对象
             let currbox = box.get(name);
             if (currbox == null) return;
             //tabs.js标签页的页面区域
             let iframe = $dom('iframe[name=\'' + currbox.pid + '\']');
+            var result = null;
             if (iframe.length > 0) {
                 let win = iframe[0].contentWindow;
-                //刷新父页面数据
-                if (win && func != null) {
-                    if (func.charAt(func.length - 1) == ')') { eval('win.' + func); }
-                    else {
-                        let f = eval('win.' + func);
-                        if (f != null) f();
-                    }
-                }
+                result = this._emit_func(win, func, params);
             }
             if (close) $pagebox.delayshut(name, 1500);
+            return result;
         },
         //父级为pagebox,
         //name:为当前窗体的window.name
@@ -1333,8 +1328,9 @@
             name = $dom.trim(name);
             let pbox = box.parent(name);
             if (pbox == null) return;
-            this._emit_func(pbox, func, params);
+            let result = this._emit_func(pbox.document(), func, params);
             if (close) $pagebox.delayshut(name, 1500);
+            return result;
         },
         //查找自身,name:为当前窗体的window.name
         self: function (name) {
@@ -1346,18 +1342,18 @@
             name = $dom.trim(name);
             let pbox = box.parent(name);
             while (pbox.parent != null) pbox = box.parent(pbox.attr.pid);
-            this._emit_func(pbox, func, params);
+            let result = this._emit_func(pbox.document(), func, params);
             if (close) $pagebox.delayshut(name, 1500);
+            return result;
         },
         //执行窗体内页面的js方法
-        _emit_func: function (box, func, params) {
-            let win = box.document();
+        _emit_func: function (win, func, params) {
             //tabs.js标签页的页面区域
             if (win && func != null) {
-                if (func.charAt(func.length - 1) == ')') eval('win.' + func);
+                if (func.charAt(func.length - 1) == ')') return eval('win.' + func);
                 else {
                     let f = eval('win.' + func);
-                    if (f != null) f(params);
+                    if (f != null) return f(params);
                 }
             }
         }
