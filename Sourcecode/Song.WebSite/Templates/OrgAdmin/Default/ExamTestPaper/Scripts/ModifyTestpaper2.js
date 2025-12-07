@@ -293,7 +293,8 @@ $ready(['../Question/Components/ques_type.js',
                             let xml = th.buildXml();
                             th.entity.Etp_FromConfig = xml;
                             th.entity.Etp_Type = 2;
-                            console.error(xml);
+                            th.entity.Etp_Count= th.qtypeitems.reduce((total, item) => total + item.count, 0);
+                            //console.error(xml);
                             let apipath = th.isadd ? 'ExamTestPaper/Add' : 'ExamTestPaper/Modify';
                             //接口参数，如果有上传文件，则增加file
                             var para = { 'entity': th.entity };

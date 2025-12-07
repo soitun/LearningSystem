@@ -50,9 +50,7 @@
                         <span class="large" v-html="showsearch(data.Qk_Name,filterText)"></span>
                         <span class="sbjcount" v-if="data.calcChild>0">({{data.calcChild}})</span>
                     </span>
-                    <span class="qcount" title="试题数" question :zero="data.QuesCount<=0">{{data.QuesCount|commas}}
-                        道</span>
-
+                    <quescount :id="data.Qk_ID"></quescount>
                 </div>
             </el-tree>
         </div>

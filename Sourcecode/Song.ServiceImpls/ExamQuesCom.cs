@@ -308,7 +308,8 @@ namespace Song.ServiceImpls
             Dictionary<int, int> dic = new Dictionary<int, int>();
             for (int i = 0; i < types.Length; i++)
             {
-                int total = section.Where(wc && Questions._.Qus_Type == (i + 1)).Count();
+                //section.Where(wc && Questions._.Qus_Type == (i + 1));
+                int total = section.Where(wc && Questions._.Qus_Type == (i + 1)).SubQuery("c").Select(Questions._.Qus_ID.At("c")).GroupBy(Questions._.Qus_ID.At("c").Group).Count();
                 dic.Add(i + 1, total);
             }
             return dic;
@@ -748,7 +749,7 @@ namespace Song.ServiceImpls
             wc.And(wc2);
 
             QuerySection<Questions> section = Gateway.Default.From<Questions>().LeftJoin<Questions_QPart>(Questions_QPart._.Qus_ID == Questions._.Qus_ID).Where(wc);
-            return section.Count();
+            return section.SubQuery("c").Select(Questions._.Qus_ID.At("c")).GroupBy(Questions._.Qus_ID.At("c").Group).Count();
         }
         /// <summary>
         /// 试题统计更新，例如当试题被修改时，需要更新试题分类下的试题数量
@@ -1463,8 +1464,8 @@ namespace Song.ServiceImpls
             foreach (long l in listqkid) wc2.Or(Questions_QKnl._.Qk_ID == l);
             wc.And(wc2);
 
-            QuerySection<Questions> section = Gateway.Default.From<Questions>().LeftJoin<Questions_QKnl>(Questions_QKnl._.Qus_ID == Questions._.Qus_ID).Where(wc);
-            return section.Count();
+            QuerySection<Questions> section = Gateway.Default.From<Questions>().LeftJoin<Questions_QKnl>(Questions_QKnl._.Qus_ID == Questions._.Qus_ID).Where(wc);  
+            return section.SubQuery("c").Select(Questions._.Qus_ID.At("c")).GroupBy(Questions._.Qus_ID.At("c").Group).Count();
         }
         /// <summary>
         /// 试题统计更新，例如当试题被修改时，需要更新试题分类下的试题数量
@@ -1965,7 +1966,7 @@ namespace Song.ServiceImpls
             wc.And(wc2);
 
             QuerySection<Questions> section = Gateway.Default.From<Questions>().LeftJoin<Questions_QTags>(Questions_QTags._.Qus_ID == Questions._.Qus_ID).Where(wc);
-            return section.Count();
+            return section.SubQuery("c").Select(Questions._.Qus_ID.At("c")).GroupBy(Questions._.Qus_ID.At("c").Group).Count();
         }
         /// <summary>
         /// 试题统计更新，例如当试题被修改时，需要更新试题标签下的试题数量

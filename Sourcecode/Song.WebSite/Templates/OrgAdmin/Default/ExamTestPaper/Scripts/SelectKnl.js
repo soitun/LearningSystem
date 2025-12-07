@@ -177,8 +177,8 @@ $ready(function () {
                 //如果某个节点下的下级节点全部选中了，则只取当前节点；只有是半选，返回选中的子节点，且不包括自身（半选中）的节点。
                 let nodes = this.getProcessedCheckedKeys();
                 this.selecteditems = nodes;
-                 //像主窗体传值，传三个值：选中的分类，选中的试题数，调用函数名
-                 this.getquestotal().then(total => { 
+                //像主窗体传值，传三个值：选中的分类，选中的试题数，调用函数名
+                this.getquestotal().then(total => {
                     var pagebox = window.top.$pagebox;
                     if (pagebox && pagebox.source.top)
                         pagebox.source.box(window.name, 'vapp.receive', false, [nodes, total, 'selectknl']);
@@ -206,7 +206,48 @@ $ready(function () {
 
         },
         components: {
-
+            'quescount': {
+                props: ['id'],
+                data: function () {
+                    return {
+                        total: 0,
+                        loading: false,
+                    }
+                },
+                watch: {
+                    'id': {
+                        handler: function (nv, ov) {
+                            this.getquestotal(nv).then(total => {                               
+                                this.total = total;
+                            });
+                        }, immediate: true,
+                    }
+                },
+                methods: {
+                    //获取选中分类的试题总数
+                    getquestotal: function () {
+                        var th = this;
+                        return new Promise((resolve, reject) => {
+                            th.loading = true;
+                            let form = { "orgid": window.org.Org_ID, "qkid": th.id, "qtype": "", "use": true, "children": true };                      
+                            $api.get("ExamQues/KnlQusTotal", form)
+                                .then(req => {
+                                    if (req.data.success) {                                      
+                                        resolve(req.data.result);
+                                    } else {
+                                        console.error(req.data.exception);
+                                        throw req.config.way + ' ' + req.data.message;
+                                    }
+                                }).catch(err => console.error(err))
+                                .finally(() => th.loading = false);
+                        });
+                    },
+                },
+                template: `<template>
+                    <loading asterisk v-if="loading"></loading>
+                    <span v-else class="qcount" title="试题数" question :zero="total<=0">{{total|commas}}道</span>
+                </template>`
+            }
         }
     });
 });

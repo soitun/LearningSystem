@@ -203,7 +203,48 @@ $ready(function () {
 
         },
         components: {
-
+            'quescount': {
+                props: ['id'],
+                data: function () {
+                    return {                       
+                        total: 0,
+                        loading: false,
+                    }
+                },
+                watch: {
+                    'id': {
+                        handler: function (nv, ov) {
+                            this.getquestotal(nv).then(total => {                               
+                                this.total = total;
+                            });
+                        }, immediate: true,
+                    }
+                },
+                methods: {
+                    //获取选中分类的试题总数
+                    getquestotal: function () {
+                        var th = this;
+                        return new Promise((resolve, reject) => {
+                            th.loading = true;
+                            let form = { "orgid": window.org.Org_ID, "qpid": th.id, "qtype": "", "use": true, "children": true };
+                            $api.get("ExamQues/PartQusTotal", form)
+                                .then(req => {
+                                    if (req.data.success) {
+                                        resolve(req.data.result);
+                                    } else {
+                                        console.error(req.data.exception);
+                                        throw req.config.way + ' ' + req.data.message;
+                                    }
+                                }).catch(err => console.error(err))
+                                .finally(() => th.loading = false);
+                        });
+                    },
+                },
+                template: `<template>
+                    <loading asterisk v-if="loading"></loading>
+                    <span v-else class="qcount" title="试题数" question :zero="total<=0">{{total|commas}}道</span>
+                </template>`
+            }
         }
     });
 });
