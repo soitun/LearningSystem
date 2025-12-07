@@ -66,7 +66,7 @@
                                 <el-tag type="warning" v-if="parts?.length>0">
                                     选中 {{parts.length}} 分类，共 {{quescount.part}}道试题
                                 </el-tag>
-                                <el-button type="primary" plain @click="opensubwin('SelectParts','按“试题分类”抽题','a015',500)">选择
+                                <el-button type="primary" plain @click="opensubwin('SelectParts','按 “试题分类” 出题','a015',500)">选择
                                 </el-button>
                             </template>
                             <icon null size="large" v-if="parts?.length<1">没有选择任何试题分类</icon>
@@ -79,7 +79,7 @@
                                 <el-tag type="warning" v-if="tags?.length>0">
                                     选中 {{tags.length}} 个关键字，共 {{quescount.tag}} 道试题
                                 </el-tag>
-                                <el-button type="primary" plain @click="opensubwin('SelectTag','按“关键字”抽题','e841',400)">选择
+                                <el-button type="primary" plain @click="opensubwin('SelectTag','按 “关键字” 出题','e841',400)">选择
                                 </el-button>
                             </template>
                             <icon null size="large" v-if="tags?.length<1">没有选择任何关键字</icon>
@@ -92,7 +92,7 @@
                                 <el-tag type="warning" v-if="knls?.length>0">
                                     选中 {{knls.length}} 个知识点，共 {{quescount.knl}} 道试题
                                 </el-tag>
-                                <el-button type="primary" plain @click="opensubwin('SelectKnl','按“关联知识点”抽题','e6fd',600)">选择
+                                <el-button type="primary" plain @click="opensubwin('SelectKnl','按 “关联知识点” 出题','e6fd',600)">选择
                                 </el-button>
                             </template>
                             <icon null size="large" v-if="knls?.length<1">没有选择任何知识点</icon>

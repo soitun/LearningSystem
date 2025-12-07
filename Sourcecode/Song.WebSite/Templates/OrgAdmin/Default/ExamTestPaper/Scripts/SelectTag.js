@@ -8,7 +8,8 @@ $ready(function () {
             form: { "orgid": "", "couid": "", "isdeleted": false, "name": "", "size": 999, "index": 1 },
 
             total: 0,       //当前机构下的试题关键字总数    
-            questotal: 0,   //选中分类的试题总数      
+            questotal: 0,   //选中分类的试题总数    
+            showhelp: false, //是否显示帮助  
             //选中的项
             selecteditems: [],
 

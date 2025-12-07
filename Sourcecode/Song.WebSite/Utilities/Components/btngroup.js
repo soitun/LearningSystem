@@ -42,7 +42,7 @@ Vue.component('btngroup', {
                 icon: 'e73e'
             }, {
                 text: '说明', tips: '相关说明',
-                id: 'help', type: 'warning',
+                id: 'help', type: 'info',
                 class: 'el-icon-document-copy',
                 icon: 'a026'
             }],

@@ -17,6 +17,7 @@ $ready(function () {
             questotal: 0,   //选中分类的试题总数
             //是否折叠
             fold: false,
+            showhelp: false, //是否显示帮助
             //选中的项
             selecteditems: [],
 

@@ -17,6 +17,7 @@ $ready(function () {
             questotal: 0,   //选中分类的试题总数
             //是否折叠
             fold: false,
+            showhelp: false, //是否显示帮助
             //选中的项
             selecteditems: [],
 
@@ -174,7 +175,7 @@ $ready(function () {
                 let nodes = this.getProcessedCheckedKeys();
                 this.selecteditems = nodes;
                 //像主窗体传值，传三个值：选中的分类，选中的试题数，调用函数名
-                this.getquestotal().then(total => { 
+                this.getquestotal().then(total => {
                     var pagebox = window.top.$pagebox;
                     if (pagebox && pagebox.source.top)
                         pagebox.source.box(window.name, 'vapp.receive', false, [nodes, total, 'selectpart']);
