@@ -244,6 +244,16 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         int PartQusTotal(int orgid, long qpid, int qtype, bool? isUse, bool children);
         /// <summary>
+        /// 获取试题分类的下的试题数量
+        /// </summary>
+        /// <param name="orgid">当前机构</param>
+        /// <param name="qpid">试题分类id</param>
+        /// <param name="qtype">题型</param>
+        /// <param name="isUse">是否启用的试题</param>
+        /// <param name="children">是否包括下级，如果false，则取当前分类的试题</param>
+        /// <returns></returns>
+        int PartQusTotal(int orgid, long[] qpid, int qtype, bool? isUse, bool children);
+        /// <summary>
         /// 试题统计更新，例如当试题被修改时，需要更新试题分类下的试题数量
         /// </summary>
         void PartQusTotalUpdate(List<QuesPart> parts);
@@ -490,6 +500,16 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         int KnlQusTotal(int orgid, long qkid, int qtype, bool? isUse, bool children);
         /// <summary>
+        /// 获取试题知识点的下的试题数量
+        /// </summary>
+        /// <param name="orgid">当前机构</param>
+        /// <param name="qkid">试题知识点id</param>
+        /// <param name="qtype">题型</param>
+        /// <param name="isUse">是否启用的试题</param>
+        /// <param name="children">是否包括下级，如果false，则取当前分类的试题</param>
+        /// <returns></returns>
+        int KnlQusTotal(int orgid, long[] qkid, int qtype, bool? isUse, bool children);
+        /// <summary>
         /// 试题统计更新，例如当试题被修改时，需要更新试题分类下的试题数量
         /// </summary> 
         void KnlQusTotalUpdate(List<QuesKnowledge> knls);
@@ -670,6 +690,14 @@ namespace Song.ServiceInterfaces
         /// <param name="isuse"></param>
         /// <returns></returns>
         int TagQusTotal(long qtagid, long couid, int qtype, bool? isuse);
+        /// <summary>
+        /// 获取试题标签的下的试题数量
+        /// </summary>
+        /// <param name="qtagid">试题标签id</param>
+        /// <param name="couid"></param>
+        /// <param name="qtype">题型</param>
+        /// <param name="isuse"></param>
+        int TagQusTotal(long[] qtagid, long couid, int qtype, bool? isuse);
         /// <summary>
         /// 试题统计更新，例如当试题被修改时，需要更新试题标签下的试题数量
         /// </summary>

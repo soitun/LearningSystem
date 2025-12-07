@@ -14,6 +14,7 @@ $ready(function () {
             },
             filterText: '',      //查询过虑树形的字符
             total: 0,       //当前机构下的试题知识点总数
+            questotal: 0,   //选中分类的试题总数
             //是否折叠
             fold: false,
             //选中的项
@@ -39,7 +40,7 @@ $ready(function () {
             }]);
             var th = this;
             th.form.orgid = window.org.Org_ID;
-            th.getTreeData();          
+            th.getTreeData();
         },
         created: function () {
 
@@ -85,6 +86,26 @@ $ready(function () {
                     }
                 }).catch(err => console.error(err))
                     .finally(() => th.loading = false);
+            },
+            //获取选中知识点的试题总数
+            getquestotal: function () {
+                var th = this;
+                return new Promise((resolve, reject) => {
+                    th.loadstate.get = true;
+                    let form = { "orgid": window.org.Org_ID, "qkid": "", "qtype": "", "use": true, "children": true };
+                    form.qkid = th.selecteditems.map(p => p.Qk_ID).join(',');
+                    $api.get("ExamQues/KnlQusTotal", form)
+                        .then(req => {
+                            if (req.data.success) {
+                                th.questotal = req.data.result;
+                                resolve(th.questotal);
+                            } else {
+                                console.error(req.data.exception);
+                                throw req.config.way + ' ' + req.data.message;
+                            }
+                        }).catch(err => console.error(err))
+                        .finally(() => th.loadstate.get = false);
+                });
             },
             //计算课程数，ques数，
             clacCount: function (datas) {
@@ -155,11 +176,12 @@ $ready(function () {
                 //如果某个节点下的下级节点全部选中了，则只取当前节点；只有是半选，返回选中的子节点，且不包括自身（半选中）的节点。
                 let nodes = this.getProcessedCheckedKeys();
                 this.selecteditems = nodes;
-                //console.error(nodes);
-                //像主窗体传值
-                var pagebox = window.top.$pagebox;
-                if (pagebox && pagebox.source.top)
-                    pagebox.source.box(window.name, 'vapp.receive', false, [nodes, 'selectknl']);
+                 //像主窗体传值，传三个值：选中的分类，选中的试题数，调用函数名
+                 this.getquestotal().then(total => { 
+                    var pagebox = window.top.$pagebox;
+                    if (pagebox && pagebox.source.top)
+                        pagebox.source.box(window.name, 'vapp.receive', false, [nodes, total, 'selectknl']);
+                });
             },
             // 获取处理后的选中节点ID数组
             getProcessedCheckedKeys: function () {

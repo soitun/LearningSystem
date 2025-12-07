@@ -7,7 +7,8 @@ $ready(function () {
             datas: [],      //所有数据,即试题关键字       
             form: { "orgid": "", "couid": "", "isdeleted": false, "name": "", "size": 999, "index": 1 },
 
-            total: 0,       //当前机构下的试题关键字总数          
+            total: 0,       //当前机构下的试题关键字总数    
+            questotal: 0,   //选中分类的试题总数      
             //选中的项
             selecteditems: [],
 
@@ -70,6 +71,26 @@ $ready(function () {
                 }).catch(err => console.error(err))
                     .finally(() => th.loading = false);
             },
+             //获取选中分类的试题总数
+             getquestotal: function () {
+                var th = this;
+                return new Promise((resolve, reject) => {
+                    th.loadstate.get = true;
+                    let form = { "qtagid": "","couid": 0, "qtype": -1,  "use": true };
+                    form.qtagid = th.selecteditems.map(p => p.Qtag_ID).join(',');
+                    $api.get("ExamQues/TagQusTotal", form)
+                        .then(req => {
+                            if (req.data.success) {
+                                th.questotal = req.data.result;
+                                resolve(th.questotal);
+                            } else {
+                                console.error(req.data.exception);
+                                throw req.config.way + ' ' + req.data.message;
+                            }
+                        }).catch(err => console.error(err))
+                        .finally(() => th.loadstate.get = false);
+                });
+            },
             //选中变更时
             changeSelect: function (d) {
                 let arr = [];
@@ -78,10 +99,12 @@ $ready(function () {
                         arr.push(this.datas[i]);
                 }
                 this.selecteditems = arr;
-                //像主窗体传值
-                var pagebox = window.top.$pagebox;
-                if (pagebox && pagebox.source.top)
-                    pagebox.source.box(window.name, 'vapp.receive', false, [arr, 'selecttag']);
+                //像主窗体传值，传三个值：选中的分类，选中的试题数，调用函数名
+                this.getquestotal().then(total => { 
+                    var pagebox = window.top.$pagebox;
+                    if (pagebox && pagebox.source.top)
+                        pagebox.source.box(window.name, 'vapp.receive', false, [arr, total, 'selecttag']);
+                });
             }
         },
         filters: {

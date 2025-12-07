@@ -56,26 +56,29 @@ namespace Song.ViewData.Methods
             xmldoc.LoadXml(tp.Etp_FromConfig);
             //试题分类
             XmlNode nodeparts = xmldoc.SelectSingleNode("/testpaper/range/parts");
-            List<QuesPart> parts = Business.Do<IExamQues>().PartSingle(Helper.StringTo.Array<long>(nodeparts.InnerText));
-            JArray partsarr = parts.ToJArray();
-            foreach(JObject part in partsarr)
-            {
-                part.Add("QuesCount", Business.Do<IExamQues>().PartQusTotal(-1, Convert.ToInt64(part["Qp_ID"].ToString()), -1, true, true));
-            }   
-            jo.Add("parts", partsarr);
+            List<QuesPart> parts = Business.Do<IExamQues>().PartSingle(Helper.StringTo.Array<long>(nodeparts.InnerText));      
+            jo.Add("parts", parts.ToJArray());
             //关联的知识点
             XmlNode nodeknls = xmldoc.SelectSingleNode("/testpaper/range/knls");
             List<QuesKnowledge> knls = Business.Do<IExamQues>().KnlSingle(Helper.StringTo.Array<long>(nodeknls.InnerText));
-            JArray knlsarr = knls.ToJArray();
-            foreach (JObject knl in knlsarr)
-            {
-                knl.Add("QuesCount", Business.Do<IExamQues>().KnlQusTotal(-1, Convert.ToInt64(knl["Qk_ID"].ToString()), -1, true, true));
-            }
-            jo.Add("knls", knlsarr);
+            //JArray knlsarr = knls.ToJArray();
+            //foreach (JObject knl in knlsarr)
+            //{
+            //    knl.Add("QuesCount", Business.Do<IExamQues>().KnlQusTotal(-1, Convert.ToInt64(knl["Qk_ID"].ToString()), -1, true, true));
+            //}
+            jo.Add("knls", knls.ToJArray());
             //关联的标签
             XmlNode nodetags = xmldoc.SelectSingleNode("/testpaper/range/tags");
             List<QuesTags> tags = Business.Do<IExamQues>().TagSingle(Helper.StringTo.Array<long>(nodetags.InnerText));
             jo.Add("tags", tags?.ToJArray());
+            //选择范围的试题数量
+            JObject joquescount=new JObject();
+            int partcount = Business.Do<IExamQues>().PartQusTotal(-1, parts.Select(p => p.Qp_ID).ToArray(), -1, true, true);
+            joquescount.Add("part", partcount);
+            joquescount.Add("knl", Business.Do<IExamQues>().KnlQusTotal(-1, knls.Select(p => p.Qk_ID).ToArray(), -1, true, true));
+            joquescount.Add("tag", Business.Do<IExamQues>().TagQusTotal(tags.Select(p => p.Qtag_ID).ToArray(), -1, -1,  true));
+            joquescount.Add("total", 0);
+            jo.Add("quescount", joquescount);
             //
             //各题型的占比
             XmlNodeList nodeitems = xmldoc.SelectNodes("/testpaper/questions/item");

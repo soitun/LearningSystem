@@ -710,13 +710,39 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public int PartQusTotal(int orgid, long qpid, int qtype, bool? isUse, bool children)
         {
+            return PartQusTotal(orgid, new long[] { qpid }, qtype, isUse, children);
+        }
+        /// <summary>
+        /// 获取试题分类的下的试题数量
+        /// </summary>
+        /// <param name="orgid">当前机构</param>
+        /// <param name="qpid">试题分类id</param>
+        /// <param name="qtype">题型</param>
+        /// <param name="isUse">是否启用的试题</param>
+        /// <param name="children">是否包括下级，如果false，则取当前分类的试题</param>
+        /// <returns></returns>
+        public int PartQusTotal(int orgid, long[] qpid, int qtype, bool? isUse, bool children)
+        {
             WhereClip wc = new WhereClip();
             wc.And(Questions._.Qus_Purpose == 1);   //考试专用试题
             if (qtype > 0) wc.And(Questions._.Qus_Type == qtype);
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
             if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
 
-            List<long> listqpid = children ? this.PartTreeID(qpid, orgid) : new List<long>() { qpid };
+            //计算所有子级
+            List<long> listqpid = new List<long>();
+            if (!children) listqpid = qpid.ToList();
+            else
+            {
+                foreach (long id in qpid)
+                {
+                    List<long> list = this.PartTreeID(id, orgid);
+                    foreach (long l in list)
+                    {
+                        if (!listqpid.Contains(l)) listqpid.Add(l);
+                    }
+                }
+            }
             WhereClip wc2 = new WhereClip();
             foreach (long l in listqpid) wc2.Or(Questions_QPart._.Qp_ID == l);
             wc.And(wc2);
@@ -1400,13 +1426,39 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public int KnlQusTotal(int orgid, long qkid, int qtype, bool? isUse, bool children)
         {
+            return KnlQusTotal(orgid, new long[] { qkid }, qtype, isUse, children);
+        }
+        /// <summary>
+        /// 获取试题知识点的下的试题数量
+        /// </summary>
+        /// <param name="orgid">当前机构</param>
+        /// <param name="qkid">试题知识点id</param>
+        /// <param name="qtype">题型</param>
+        /// <param name="isUse">是否启用的试题</param>
+        /// <param name="children">是否包括下级，如果false，则取当前分类的试题</param>
+        /// <returns></returns>
+        public int KnlQusTotal(int orgid, long[] qkid, int qtype, bool? isUse, bool children)
+        {
             WhereClip wc = new WhereClip();
             wc.And(Questions._.Qus_Purpose == 1);   //考试专用试题
             if (qtype > 0) wc.And(Questions._.Qus_Type == qtype);
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
             if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
 
-            List<long> listqkid = children ? this.KnlTreeID(qkid, orgid) : new List<long>() { qkid };
+            //计算所有子级
+            List<long> listqkid = new List<long>();
+            if (!children) listqkid = qkid.ToList();
+            else
+            {
+                foreach (long id in qkid)
+                {
+                    List<long> list = this.KnlTreeID(id, orgid);
+                    foreach (long l in list)
+                    {
+                        if (!listqkid.Contains(l)) listqkid.Add(l);
+                    }
+                }
+            }
             WhereClip wc2 = new WhereClip();
             foreach (long l in listqkid) wc2.Or(Questions_QKnl._.Qk_ID == l);
             wc.And(wc2);
@@ -1889,6 +1941,17 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public int TagQusTotal(long qtagid, long couid, int qtype, bool? isuse)
         {
+            return TagQusTotal(new long[] { qtagid }, couid, qtype, isuse);
+        }
+        /// <summary>
+        /// 获取试题标签的下的试题数量
+        /// </summary>
+        /// <param name="qtagid">试题标签id</param>
+        /// <param name="couid"></param>
+        /// <param name="qtype">题型</param>
+        /// <param name="isuse"></param>
+        public int TagQusTotal(long[] qtagid, long couid, int qtype, bool? isuse)
+        {
             WhereClip wc = new WhereClip();
             wc.And(Questions._.Qus_Purpose == 1);   //考试专用试题
             wc &= Questions._.Qus_IsDeleted == false;
@@ -1897,9 +1960,13 @@ namespace Song.ServiceImpls
             if (couid > 0) wc.And(Questions._.Cou_ID == couid);
             if (isuse != null) wc.And(Questions._.Qus_IsUse == (bool)isuse);
 
+            WhereClip wc2 = new WhereClip();
+            foreach (long l in qtagid) wc2.Or(Questions_QTags._.Qtag_ID == l);
+            wc.And(wc2);
+
             QuerySection<Questions> section = Gateway.Default.From<Questions>().LeftJoin<Questions_QTags>(Questions_QTags._.Qus_ID == Questions._.Qus_ID).Where(wc);
             return section.Count();
-        }        
+        }
         /// <summary>
         /// 试题统计更新，例如当试题被修改时，需要更新试题标签下的试题数量
         /// </summary>

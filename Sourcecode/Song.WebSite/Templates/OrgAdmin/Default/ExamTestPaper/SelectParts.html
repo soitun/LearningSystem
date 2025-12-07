@@ -10,13 +10,14 @@
 <body>
     <div id="vapp" v-cloak>
         <div class="toolsbar">
-            <btngroup show="展开/折叠,清空" ref='btngroup'  @fold_open="fold=!fold"
-                @clearn="$refs.tree.setCheckedKeys([])" idkey='Qp_ID'>
+            <btngroup show="展开/折叠,清空" ref='btngroup' @fold_open="fold=!fold" @clearn="$refs.tree.setCheckedKeys([])"
+                idkey='Qp_ID'>
             </btngroup>
             <query_panel :model="form" :loading="loading">
-                <el-form-item label="" v-if="selecteditems.length>0">
-                    <el-tag type="success">
-                        {{selecteditems.length}} 分类，共 {{selecteditems.reduce((total, item) => total + item.QuesCount, 0)}} 道试题
+                <loading v-if="loadstate.get">加载中...</loading>
+                <el-form-item label="" v-else>
+                    <el-tag v-if="selecteditems.length>0" type="success">
+                        {{selecteditems.length}} 分类，共 {{questotal}} 道
                     </el-tag>
                 </el-form-item>
                 <el-form-item label="">
@@ -37,7 +38,6 @@
                     </span>
                     <span class="qcount" title="试题数" question :zero="data.QuesCount<=0">{{data.QuesCount|commas}}
                         道</span>
-
                 </div>
             </el-tree>
         </div>

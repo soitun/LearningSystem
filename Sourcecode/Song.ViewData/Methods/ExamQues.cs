@@ -530,13 +530,12 @@ namespace Song.ViewData.Methods
         /// 获取试题分类的下的试题数量
         /// </summary>
         /// <param name="orgid">当前机构</param>
-        /// <param name="qpid">试题分类id</param>
+        /// <param name="qpid">试题分类id，多个id用逗号分隔</param>
         /// <param name="qtype">题型</param>
-        /// <param name="isUse">是否启用的试题</param>
+        /// <param name="use">是否启用的试题</param>
         /// <param name="children">是否包括下级，如果false，则取当前分类的试题</param>
-        /// <returns></returns>
-        public int PartQusTotal(int orgid, long qpid, int qtype, bool? isUse, bool children)
-            => Business.Do<IExamQues>().PartQusTotal(orgid, qpid, qtype, isUse, children);
+        public int PartQusTotal(int orgid, string qpid, int qtype, bool? use, bool children)
+          => Business.Do<IExamQues>().PartQusTotal(orgid, Helper.StringTo.Array<long>(qpid), qtype, use, children);
 
         /// <summary>
         /// 试题所属的分类
@@ -751,13 +750,13 @@ namespace Song.ViewData.Methods
         /// 获取试题知识点的下的试题数量
         /// </summary>
         /// <param name="orgid">当前机构</param>
-        /// <param name="qkid">试题知识点id</param>
+        /// <param name="qkid">试题知识点id,多个id用逗号分隔</param>
         /// <param name="qtype">题型</param>
-        /// <param name="isUse">是否启用的试题</param>
+        /// <param name="use">是否启用的试题</param>
         /// <param name="children">是否包括下级，如果false，则取当前分类的试题</param>
         /// <returns></returns>
-        public int KnlQusTotal(int orgid, long qkid, int qtype, bool? isUse, bool children)
-            => Business.Do<IExamQues>().KnlQusTotal(orgid, qkid, qtype, isUse, children);
+        public int KnlQusTotal(int orgid, string qkid, int qtype, bool? use, bool children)
+            => Business.Do<IExamQues>().KnlQusTotal(orgid, Helper.StringTo.Array<long>(qkid), qtype, use, children);
         #endregion
 
         #region 试题关键字
@@ -930,13 +929,13 @@ namespace Song.ViewData.Methods
         /// <summary>
         /// 获取试题关键字的下的试题数量
         /// </summary>
-        /// <param name="qtagid">试题标签的id</param>
+        /// <param name="qtagid">试题标签的id，多个id用逗号分隔</param>
         /// <param name="couid"></param>
         /// <param name="qtype">题型</param>
-        /// <param name="isuse">是否启用</param>
+        /// <param name="use">是否启用</param>
         /// <returns></returns>
-        public int TagQusTotal(long qtagid, long couid, int qtype, bool? isuse)
-            => Business.Do<IExamQues>().TagQusTotal(qtagid, couid, qtype, isuse);
+        public int TagQusTotal(string qtagid, long couid, int qtype, bool? use)
+            => Business.Do<IExamQues>().TagQusTotal(Helper.StringTo.Array<long>(qtagid), couid, qtype, use);
         #endregion
     }
 }

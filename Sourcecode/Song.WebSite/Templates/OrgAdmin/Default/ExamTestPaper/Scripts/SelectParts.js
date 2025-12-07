@@ -14,6 +14,7 @@ $ready(function () {
             },
             filterText: '',      //查询过虑树形的字符
             total: 0,       //当前机构下的试题分类总数
+            questotal: 0,   //选中分类的试题总数
             //是否折叠
             fold: false,
             //选中的项
@@ -22,9 +23,7 @@ $ready(function () {
             loadstate: {
                 init: false,        //初始化
                 def: false,         //默认
-                get: false,         //加载数据
-                update: false,      //更新数据
-                del: false          //删除数据
+                get: false,         //加载数据                      
             }
         },
         mounted: function () {
@@ -39,7 +38,7 @@ $ready(function () {
             }]);
             var th = this;
             th.form.orgid = window.org.Org_ID;
-            th.getTreeData();          
+            th.getTreeData();
         },
         created: function () {
 
@@ -71,7 +70,7 @@ $ready(function () {
             //所取分类的数据，为树形数据
             getTreeData: function () {
                 var th = this;
-                th.loading = true;
+                th.loadstate.init = true;
                 $api.get('ExamQues/PartTree', th.form).then(function (req) {
                     if (req.data.success) {
                         th.datas = th.clacCount(req.data.result);
@@ -79,12 +78,31 @@ $ready(function () {
                         th.$nextTick(() => {
                             th.handleCheckChange();
                         });
-
                     } else {
                         throw req.data.message;
                     }
                 }).catch(err => console.error(err))
-                    .finally(() => th.loading = false);
+                    .finally(() => th.loadstate.init = false);
+            },
+            //获取选中分类的试题总数
+            getquestotal: function () {
+                var th = this;
+                return new Promise((resolve, reject) => {
+                    th.loadstate.get = true;
+                    let form = { "orgid": window.org.Org_ID, "qpid": "", "qtype": "", "use": true, "children": true };
+                    form.qpid = th.selecteditems.map(p => p.Qp_ID).join(',');
+                    $api.get("ExamQues/PartQusTotal", form)
+                        .then(req => {
+                            if (req.data.success) {
+                                th.questotal = req.data.result;
+                                resolve(th.questotal);
+                            } else {
+                                console.error(req.data.exception);
+                                throw req.config.way + ' ' + req.data.message;
+                            }
+                        }).catch(err => console.error(err))
+                        .finally(() => th.loadstate.get = false);
+                });
             },
             //计算课程数，ques数，
             clacCount: function (datas) {
@@ -155,11 +173,12 @@ $ready(function () {
                 //如果某个节点下的下级节点全部选中了，则只取当前节点；只有是半选，返回选中的子节点，且不包括自身（半选中）的节点。
                 let nodes = this.getProcessedCheckedKeys();
                 this.selecteditems = nodes;
-                //console.error(nodes);
-                //像主窗体传值
-                var pagebox = window.top.$pagebox;
-                if (pagebox && pagebox.source.top)
-                    pagebox.source.box(window.name, 'vapp.receive', false, [nodes, 'selectpart']);
+                //像主窗体传值，传三个值：选中的分类，选中的试题数，调用函数名
+                this.getquestotal().then(total => { 
+                    var pagebox = window.top.$pagebox;
+                    if (pagebox && pagebox.source.top)
+                        pagebox.source.box(window.name, 'vapp.receive', false, [nodes, total, 'selectpart']);
+                });
             },
             // 获取处理后的选中节点ID数组
             getProcessedCheckedKeys: function () {

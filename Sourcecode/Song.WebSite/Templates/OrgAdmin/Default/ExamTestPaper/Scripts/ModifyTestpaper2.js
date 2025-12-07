@@ -37,10 +37,16 @@ $ready(['../Question/Components/ques_type.js',
 
                 //试题选择范围
                 parts: [],      //关联的试题分类
-                tags: [],    //关联的关键字
-                knls: [],   //关联的知识点
+                tags: [],       //关联的关键字
+                knls: [],       //关联的知识点
+                //各个选择范围的试题数量
+                rangeques: {
+                    part: 0, tag: 0, knl: 0
+                },
                 //供出卷的试题数量
-                questotal: 0,
+                quescount: {
+                    part: 0, tag: 0, knl: 0, total: 0
+                },
 
                 //录入校验的规划
                 rules: {
@@ -203,6 +209,8 @@ $ready(['../Question/Components/ques_type.js',
                                         }
                                     }
                                 }
+                                //
+                                th.quescount=result.quescount;
                             } else {
                                 console.error(req.data.exception);
                                 throw req.config.way + ' ' + req.data.message;
@@ -242,10 +250,11 @@ $ready(['../Question/Components/ques_type.js',
                 //接收子窗口数据
                 //data:子窗口返回的数据
                 //func:要调用的函数名称
-                receive: function ([data, func]) {
-                    if (func == 'selectpart') this.parts = data;
-                    if (func == 'selectknl') this.knls = data;
-                    if (func == 'selecttag') this.tags = data;
+                receive: function ([data, count, func]) {
+                    if (func == 'selectpart') [this.parts, this.quescount.part] = [data, count];
+                    if (func == 'selectknl') [this.knls, this.quescount.knl] = [data, count];
+                    if (func == 'selecttag') [this.tags, this.quescount.tag] = [data, count];
+                    //
                     this.getquestotal();
                 },
                 //获取可供选择的试题数量
@@ -267,7 +276,7 @@ $ready(['../Question/Components/ques_type.js',
                                     th.$set(el, 'total', result[i].total);
                                     th.$set(this.qtypeitems, i, el);
                                 }
-                                th.questotal = result.reduce((total, item) => total + item.total, 0);
+                                th.quescount.total = result.reduce((total, item) => total + item.total, 0);
                             } else {
                                 console.error(req.data.exception);
                                 throw req.config.way + ' ' + req.data.message;

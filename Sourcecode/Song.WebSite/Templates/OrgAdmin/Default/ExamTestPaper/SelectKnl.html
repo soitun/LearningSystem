@@ -16,8 +16,7 @@
             <query_panel :model="form" :loading="loading">
                 <el-form-item label="" v-if="selecteditems.length>0">
                     <el-tag type="success">
-                        {{selecteditems.length}} 个知识点， {{selecteditems.reduce((total, item) => total + item.QuesCount,
-                        0)}} 道试题
+                        {{selecteditems.length}} 个知识点， {{questotal}} 道试题
                     </el-tag>
                 </el-form-item>
                 <el-form-item label="">

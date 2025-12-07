@@ -179,7 +179,7 @@ $ready(function () {
                     getquestotal: function () {
                         var th = this;
                         th.loading = true;
-                        $api.get("ExamQues/KnlQusTotal", { "orgid": -1, "qkid": th.knl.Qk_ID, "qtype": "", "isUse": "", "children": true })
+                        $api.get("ExamQues/KnlQusTotal", { "orgid": -1, "qkid": th.knl.Qk_ID, "qtype": "", "use": "", "children": true })
                             .then(req => {
                                 if (req.data.success) {
                                     th.total = req.data.result;                                   

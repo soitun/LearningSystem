@@ -247,7 +247,7 @@ $ready(function () {
                     getcount: function () {
                         var th = this;
                         th.loading = true;
-                        $api.get("ExamQues/TagQusTotal", { "qtagid": th.tag.Qtag_ID, "couid": 0, "qtype": -1, "isuse": null })
+                        $api.get("ExamQues/TagQusTotal", { "qtagid": th.tag.Qtag_ID, "couid": 0, "qtype": -1, "use": null })
                             .then(req => {
                                 if (req.data.success) {
                                     th.count = req.data.result;
