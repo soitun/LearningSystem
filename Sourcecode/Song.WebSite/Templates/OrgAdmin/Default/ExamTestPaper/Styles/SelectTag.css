@@ -39,3 +39,7 @@
 .qcount[zero] {
     color: #ccc;
 }
+.help *:not(help){
+    color: #333;
+    line-height: 25px;
+}

@@ -53,15 +53,15 @@ a {
 }
 
 .el-table, .el-table__expanded-cell {
-    //background-color: transparent !important;
+    background-color: transparent !important;
 }
 
 .el-table th, .el-table tr {
-    //background-color: transparent !important;
+    background-color: transparent !important;
 }
 
 .el-table--enable-row-transition .el-table__body td, .el-table .cell {
-    //background-color: transparent !important;
+   background-color: transparent !important;
 }
 
 /*表单行距*/

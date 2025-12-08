@@ -30,6 +30,7 @@
     font-size: 14px;
     color: #777;
 }
-.large{
+.help *:not(help){
     color: #333;
+    line-height: 25px;
 }

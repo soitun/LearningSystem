@@ -10,7 +10,7 @@
 <body>
     <div id="vapp" v-cloak>
         <div class="toolsbar">
-            <btngroup show="清空,说明" ref='btngroup'  @help="showhelp=true" idkey='Qtag_ID'>
+            <btngroup show="清空,说明" ref='btngroup' @clearn="changeSelect(null)" @help="showhelp=true" idkey='Qtag_ID'>
             </btngroup>
             <query_panel :model="form" :loading="loading">
                 <el-form-item label="">
@@ -29,11 +29,11 @@
             <span slot="title">
                 <icon help></icon>说明
             </span>
-            <el-row class="large">
+            <el-row class="help medium">
                 <el-row> 1、选择的试题数量<br />
                     由于试题可以关联多个关键字，选中的关键字的试题数之和，可能与实际试题数量不一致。<br />
-                    例如：一道试题关联两个关键字，那么这两个关键字的试题量都显示为1，如果选择中这两个键字，试题数之和应该为2，但是这“两道题”实际为一道题。
-                    于是在计算可选择的试题量时，会显示为 1 道。
+                    <help multi>例如：一道试题关联两个关键字，那么这两个关键字的试题量都显示为1，如果选择中这两个键字，试题数之和应该为2，但是这“两道题”实际为一道题。
+                    于是在计算可选择的试题量时，会显示为 1 道。</help>
                 </el-row>
             </el-row>
         </el-dialog>

@@ -66,18 +66,19 @@ $ready(function () {
                             }
                         }
                         th.datas = result;
+                        th.changeSelect(1);
                     } else {
                         throw req.data.message;
                     }
                 }).catch(err => console.error(err))
                     .finally(() => th.loading = false);
             },
-             //获取选中分类的试题总数
-             getquestotal: function () {
+            //获取选中关键字的试题总数
+            getquestotal: function () {
                 var th = this;
                 return new Promise((resolve, reject) => {
                     th.loadstate.get = true;
-                    let form = { "qtagid": "","couid": 0, "qtype": -1,  "use": true };
+                    let form = { "qtagid": "", "couid": 0, "qtype": -1, "use": true };
                     form.qtagid = th.selecteditems.map(p => p.Qtag_ID).join(',');
                     $api.get("ExamQues/TagQusTotal", form)
                         .then(req => {
@@ -95,13 +96,18 @@ $ready(function () {
             //选中变更时
             changeSelect: function (d) {
                 let arr = [];
-                for (let i = 0; i < this.datas.length; i++) {
-                    if (this.datas[i].checked)
-                        arr.push(this.datas[i]);
+                if (d != null) {
+                    for (let i = 0; i < this.datas.length; i++) {
+                        if (this.datas[i].checked) arr.push(this.datas[i]);
+                    }
+                } else {
+                    for (let i = 0; i < this.datas.length; i++)
+                        this.datas[i].checked = false;
                 }
+
                 this.selecteditems = arr;
                 //像主窗体传值，传三个值：选中的分类，选中的试题数，调用函数名
-                this.getquestotal().then(total => { 
+                this.getquestotal().then(total => {
                     var pagebox = window.top.$pagebox;
                     if (pagebox && pagebox.source.top)
                         pagebox.source.box(window.name, 'vapp.receive', false, [arr, total, 'selecttag']);
