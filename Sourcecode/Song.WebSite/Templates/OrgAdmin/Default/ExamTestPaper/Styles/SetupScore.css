@@ -1,0 +1,84 @@
+#vapp {
+    display: flex;
+}
+
+section.left {
+    width: 400px;
+    overflow-y: auto;
+   
+}
+section.left .el-form{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin: 0px;
+}
+.el-form-item:last-child {
+    margin-bottom: 0 !important;
+}
+select.right {
+    flex: 1;
+    overflow-y: auto;
+}
+
+section.left .el-card:not(:last-child) {
+    margin-bottom: 10px;
+}
+
+section.left .el-card:last-child {
+    flex: 1;
+}
+
+section.left .el-card__header {
+    display: flex;
+    justify-content: space-between;
+}
+
+section.left .el-card__body .typerow {
+    margin-bottom: 15px;
+}
+section.left .el-card__body .typerow>*:first-child { 
+    padding: 8px;   
+}
+section.left .el-card__body .typerow:not(:first-child) {
+    padding-top: 10px;
+}
+section.left .el-card__body .typerow icon[ques_type][showname=true]::after {
+    font-size: 1rem;
+}
+
+section.left .el-card__body .typerow icon[type=5] {
+    margin-left: -4px;
+}
+.el-card.qtype_card .el-card__header .small {
+    font-size: 14px !important;
+    margin-left: 5px;
+}
+.el-card.qtype_card .el-card__header .small *{
+    font-size: 14px !important;
+}
+section.left  .ques_type {
+    display: flex;
+    padding: 0px 10px;
+    justify-content: space-between;
+}
+
+.qtype_card .option_count[zero], .option_count[zero] * {
+    color: #ccc !important;
+}
+
+.qtype_card .option_count {
+    color: #444;
+}
+
+.qtype_card {
+    margin-bottom: 10px;
+}
+
+.qtype_card .option_count b {
+    color: rgb(153, 0, 0);
+}
+
+.sortable-ghost{
+    background-color: #444;
+}

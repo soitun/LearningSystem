@@ -15,8 +15,7 @@
             <query_panel :model="form" :loading="loading">
                 <el-form-item label="">
                     <el-tag type="success">
-                        {{selecteditems.length}} 关键字，共 {{selecteditems.reduce((total, item) => total + item.Qtag_Count,
-                        0)}} 道
+                        {{selecteditems.length}} 关键字，共 {{questotal}} 道
                     </el-tag>
                 </el-form-item>
                 <el-form-item label="">

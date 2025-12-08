@@ -196,19 +196,16 @@ $ready(['../Question/Components/ques_type.js',
                                 th.knls = result?.knls ?? [];
                                 th.tags = result?.tags ?? [];
                                 //试题题型分配数据
-                                let questions = result?.questions ?? [];
-                                //th.qtypeitems = questions;
-                                for (let i = 0; i < th.qtypeitems.length; i++) {
-                                    const item = th.qtypeitems[i];
-                                    for (let j = 0; j < questions.length; j++) {
-                                        const ques = questions[j];
-                                        if (item.type == ques.type) {
-                                            item.count = Number(ques.count);
-                                            item.score = Number(ques.score);
-                                            item.percent = Number(ques.percent);
-                                        }
-                                    }
+                                let questions = result?.questions ?? [];              
+                                for (let i = 0; i < questions.length; i++) {
+                                    const ques = questions[i];
+                                    const item=th.qtypeitems.find(el => Number(el.type) == Number(ques.type));
+                                    ques.total = Number(item.total);     
+                                    ques.count = Number(ques.count);
+                                    ques.score = Number(ques.score);
+                                    ques.percent = Number(ques.percent);                                                                    
                                 }
+                                th.qtypeitems = questions;
                                 //试卷出卷范围的题量，如选中的试题分类的试题数
                                 th.quescount = result.quescount;
                             } else {
@@ -286,13 +283,15 @@ $ready(['../Question/Components/ques_type.js',
                 },
                 //向“更多分数设置”的窗体传递数据
                 scoretransmit: function () {
-                    console.error('scoretransmit');
-                    //试卷对象，题型分数分配的数据
-                    return [this.entity, this.qtypeitems];
+                    //console.error('scoretransmit');
+                    //试卷对象，题型，题型分数分配的数据
+                    return [this.entity, this.types, this.qtypeitems];
                 },
                 //接收“更多分数设置”的窗体数据
-                scorereceive: function () {
-
+                scorereceive: function ([entity, qtypeitems]) {
+                    this.entity = entity;
+                    this.qtypeitems = qtypeitems;
+                    console.error('来自子窗体数据');
                 },
                 //确认操作，保存数据
                 btnEnter: function (formName, isclose) {
