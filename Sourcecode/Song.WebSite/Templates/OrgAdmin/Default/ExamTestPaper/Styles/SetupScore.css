@@ -5,20 +5,23 @@
 section.left {
     width: 400px;
     overflow-y: auto;
-   
+    margin-right: 8px;
 }
-section.left .el-form{
+
+section.left .el-form {
     display: flex;
     flex-direction: column;
     height: 100%;
     margin: 0px;
 }
+
 .el-form-item:last-child {
     margin-bottom: 0 !important;
 }
-select.right {
+
+section.right {
+    display: flex;
     flex: 1;
-    overflow-y: auto;
 }
 
 section.left .el-card:not(:last-child) {
@@ -37,12 +40,15 @@ section.left .el-card__header {
 section.left .el-card__body .typerow {
     margin-bottom: 15px;
 }
-section.left .el-card__body .typerow>*:first-child { 
-    padding: 8px;   
+
+section.left .el-card__body .typerow>*:first-child {
+    padding: 8px;
 }
+
 section.left .el-card__body .typerow:not(:first-child) {
     padding-top: 10px;
 }
+
 section.left .el-card__body .typerow icon[ques_type][showname=true]::after {
     font-size: 1rem;
 }
@@ -50,14 +56,17 @@ section.left .el-card__body .typerow icon[ques_type][showname=true]::after {
 section.left .el-card__body .typerow icon[type=5] {
     margin-left: -4px;
 }
+
 .el-card.qtype_card .el-card__header .small {
     font-size: 14px !important;
     margin-left: 5px;
 }
-.el-card.qtype_card .el-card__header .small *{
+
+.el-card.qtype_card .el-card__header .small * {
     font-size: 14px !important;
 }
-section.left  .ques_type {
+
+section.left .ques_type {
     display: flex;
     padding: 0px 10px;
     justify-content: space-between;
@@ -71,14 +80,47 @@ section.left  .ques_type {
     color: #444;
 }
 
-.qtype_card {
-    margin-bottom: 10px;
-}
-
 .qtype_card .option_count b {
     color: rgb(153, 0, 0);
 }
 
-.sortable-ghost{
+.score:not([zero]) {
+    color: darkgreen;
+    font-weight: bold;
+}
+
+.sortable-ghost {
     background-color: #444;
+}
+
+/*右侧区域*/
+section.right .el-card {
+    flex: 1;
+    box-sizing: border-box;
+}
+
+.scoreitems .scores {
+    display: flex;
+}
+
+.scoreitems .scores>div {
+    border: solid 1px #aaa;
+    border-radius: 3px;
+    display: flex;
+    margin: 0px 10px 10px 0px;
+}
+
+.scoreitems .scores>div>span {
+    padding: 5px 10px;
+    line-height: 20px;
+}
+
+.scoreitems .scores>div>span:first-child {
+    border-right: solid 1px #aaa;
+    background-color: #aaa;
+    color: #fff;
+}
+
+.scoreitems .ques_type icon::after {
+    font-size: 16px;
 }

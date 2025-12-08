@@ -32,7 +32,7 @@
                     </el-form-item>
                 </el-card>
                 <!--题型分数的分配-->
-                <el-card shadow="never" type="info" class="qtype_card">
+                <el-card shadow="never" type="success" class="qtype_card">
                     <template slot="header">
                         <span>
                             <icon large>&#xe75e</icon>题量
@@ -42,10 +42,11 @@
                     </template>
                     <div v-for="(m,idx) in qtypeitems" class="qtypeitems" :index="idx" :type="m.type">
                         <div class="typerow">
-                            <ques_type :type="m.type" :types="types" :showicon="true" :showname="true" class="draghandle">
+                            <ques_type :type="m.type" :types="types" :showicon="true" :showname="true"
+                                class="draghandle">
                                 <span :zero="m.total<1" class="small option_count">可选 <b>{{m.total}}</b>
                                     道</span>
-                            </ques_type>                           
+                            </ques_type>
                             <el-row :gutter="20">
                                 <el-col :span="10">
                                     <el-input v-model.number="m.count" type="number" :min="0" :max="m.total">
@@ -55,7 +56,8 @@
                                 <el-col :span="14">
                                     <el-input v-model.number="m.percent" type="number" :min="0" :max="100"
                                         @input="chanageTotal">
-                                        <template slot="append">%，计 {{m.score}} 分</template>
+                                        <template slot="append">%，计 <span class="score"
+                                                :zero="m.score<1">{{m.score}}</span> 分</template>
                                     </el-input>
                                 </el-col>
                             </el-row>
@@ -65,7 +67,24 @@
             </el-form>
         </section>
         <section class="right">
-
+            <el-card shadow="never" type="info" class="qtype_card">
+                <template slot="header">
+                    <span>
+                        <icon large>&#xe75e</icon>分数预览
+                    </span>
+                </template>                
+                <div v-for="(m,idx) in scoreitems" class="scoreitems" v-if="m.count>0" :type="m.type">
+                    <el-divider content-position="left">
+                        <ques_type :type="m.type" :types="types" :showicon="true" :showname="true">
+                            <span :zero="m.score<1"> <b>{{m.score}}</b> 分</span>
+                        </ques_type>
+                    </el-divider>
+                    <scores :count="m.count" :score="m.score"></scores>
+                </div>
+                <icon null v-if="scoreitems.reduce((a, b) => a + b.count, 0)<=0">
+                    未设置任何试题
+                </icon>
+            </el-card>
         </section>
     </div>
 </body>

@@ -8,6 +8,7 @@ $ready(['../Question/Components/ques_type.js',],
                 entity: {},
                 //试题的类型数据，例如题型，该题型的题量，分数，分数占比，
                 qtypeitems: [],
+                scoreitems: [],      //用于分数计算，是qtypeitems的拷贝
                 //录入校验的规划
                 rules: {
                     Etp_Total: [
@@ -103,8 +104,7 @@ $ready(['../Question/Components/ques_type.js',],
                     var pagebox = window.top.$pagebox;
                     if (pagebox && pagebox.source.top) {
                         [this.entity, this.types, this.qtypeitems] = pagebox.source.box(window.name, 'vapp.scoretransmit', false);
-                        //console.error(this.entity);
-                        //console.error(this.qtypeitems);
+                        this.scoreitems = this.qtypeitems;
                     }
                 },
                 //当试卷总分更改时
@@ -137,7 +137,10 @@ $ready(['../Question/Components/ques_type.js',],
                             th.$nextTick(function () {
                                 th.rowdrop();
                                 th.transmit(th.entity, arr);
+
                             });
+                            th.scoreitems = [];
+                            th.scoreitems = arr;
                         }
                     });
                 },
@@ -146,7 +149,44 @@ $ready(['../Question/Components/ques_type.js',],
 
             },
             components: {
-
+                //试题题型的分数
+                'scores': {
+                    props: ['count', 'score'],
+                    data: function () {
+                        return {
+                            list: []
+                        }
+                    },
+                    computed: {
+                        'data': t => [t.count, t.score]
+                    },
+                    watch: {
+                        'data': {
+                            handler: function (val) {
+                                let [count, score] = val;
+                                this.list = [];
+                                if (count == 0) this.list = [];
+                                else {
+                                    let num = Math.floor(score / count);
+                                    let tmtotal = 0;  //题型总分，计算所得
+                                    for (let i = 0; i < count; i++) {
+                                        tmtotal += num;
+                                        this.list.push(num);
+                                    }
+                                    if (tmtotal != score)
+                                        this.list[this.list.length - 1] += score - tmtotal;
+                                }
+                            }, immediate: true,
+                        }
+                    },
+                    methods: {},
+                    template: `<div class="scores">
+                <div v-for="(item,idx) in list">
+                    <span>{{idx+1}}</span>
+                    <span>{{item}} 分</span>
+                </div>
+            </div>`
+                }
             }
         });
     });
