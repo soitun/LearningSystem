@@ -296,6 +296,27 @@ $ready(['../Question/Components/ques_type.js',
                     this.qtypeitems = qtypeitems;
                     console.error('来自子窗体数据');
                 },
+                //当试卷总分更改时
+                chanageTotal: function () {
+                    let tptotal = this.entity.Etp_Total;
+                    let tmscore = 0;
+                    this.qtypeitems.forEach(el => {
+                        el.score = Math.floor(el.percent * tptotal / 100);
+                        tmscore += el.score;
+                    });
+                    //重新计算各题型占比的总和
+                    let percenttotal = this.qtypeitems.reduce((a, b) => a + b.percent, 0);
+                    if (percenttotal == 100) {
+                        if (tmscore - tptotal > 0) {
+                            const maxel = this.qtypeitems.reduce((p, c) => p.score > c.score ? p : c);
+                            this.$set(maxel, 'score', maxel.score - (tmscore - tptotal));
+                        } else {
+                            const minxel = this.qtypeitems.reduce((p, c) => p.score < c.score ? p : c);
+                            this.$set(minxel, 'score', minxel.score - (tmscore - tptotal));
+                        }
+                    }
+                    this.$refs['form'].validate();
+                },
                 //确认操作，保存数据
                 btnEnter: function (formName, isclose) {
                     var th = this;

@@ -110,7 +110,7 @@
                                 </el-button>
                             </template>
                             <el-form-item label="" prop="Etp_Total" label-width="0">
-                                <el-input v-model="entity.Etp_Total" type="number" :min="1">
+                                <el-input v-model="entity.Etp_Total" type="number" :min="1" @input="chanageTotal">
                                     <template slot="prepend">满分</template>
                                     <template slot="append">分</template>
                                 </el-input>

@@ -169,18 +169,12 @@ $ready(['../Question/Components/ques_type.js',],
                     let percenttotal = this.qtypeitems.reduce((a, b) => a + b.percent, 0);
                     if (percenttotal == 100) {
                         if (tmscore - tptotal > 0) {
-                            const maxel = this.qtypeitems.reduce((prev, current) =>
-                                prev.score > current.score ? prev : current
-                            );
+                            const maxel = this.qtypeitems.reduce((p, c) => p.score > c.score ? p : c);
                             this.$set(maxel, 'score', maxel.score - (tmscore - tptotal));
                         } else {
-                            const minxel = this.qtypeitems.reduce((prev, current) =>
-                                prev.score < current.score ? prev : current
-                            );
+                            const minxel = this.qtypeitems.reduce((p, c) => p.score < c.score ? p : c);
                             this.$set(minxel, 'score', minxel.score - (tmscore - tptotal));
                         }
-                        //console.error('合计分：'+tmscore);
-                        //console.error('实际分：'+this.qtypeitems.reduce((a, b) => a +b.score,0));
                     }
                     this.$refs['form'].validate();
                 },
