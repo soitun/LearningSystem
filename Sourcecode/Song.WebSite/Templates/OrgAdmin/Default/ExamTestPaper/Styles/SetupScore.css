@@ -35,8 +35,11 @@ section.left .el-card:last-child {
 section.left .el-card__header {
     display: flex;
     justify-content: space-between;
+    height: 45px;
 }
-
+section.left .el-card__header *{
+    line-height: 24px;
+}
 section.left .el-card__body .typerow {
     margin-bottom: 15px;
 }
@@ -101,10 +104,14 @@ section.right .el-card {
 
 .scoreitems .scores {
     display: flex;
+    --score-color: #fff;
+    --score-border:  #62b1ff;
+    --score-zero-border: #eee;
+    --score-zero-color: #777;
 }
 
 .scoreitems .scores>div {
-    border: solid 1px #aaa;
+    border: solid 1px var(--score-border);
     border-radius: 3px;
     display: flex;
     margin: 0px 10px 10px 0px;
@@ -116,11 +123,24 @@ section.right .el-card {
 }
 
 .scoreitems .scores>div>span:first-child {
-    border-right: solid 1px #aaa;
-    background-color: #aaa;
-    color: #fff;
+    border-right: solid 1px var(--score-border);
+    background-color: var(--score-border);
+    color: var(--score-color);
 }
-
+.scoreitems .scores>div>span:last-child {
+    color: #409EFF;
+}
+.scoreitems .scores>div[zero]{
+    border: solid 1px var(--score-zero-border);
+}
+.scoreitems .scores>div[zero] span:first-child{
+    border-right: solid 1px var(--score-zero-border);
+    background-color: var(--score-zero-border);
+    color: var(--score-zero-color);
+}
+.scoreitems .scores>div[zero]>span:last-child {
+    color: var(--score-zero-color);
+}
 .scoreitems .ques_type icon::after {
     font-size: 16px;
 }

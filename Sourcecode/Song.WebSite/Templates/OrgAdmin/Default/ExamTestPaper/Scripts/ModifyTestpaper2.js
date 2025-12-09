@@ -67,8 +67,10 @@ $ready(['../Question/Components/ques_type.js',
                         { required: true, message: '限时不得为空', trigger: 'blur' },
                         {
                             validator: function (rule, value, callback) {
-                                if (/^[1-9]\d*$/.test(value)) return callback();
-                                callback(new Error('请输入大于零的整数'));
+                                if (!(/^[1-9]\d*$/.test(value))) return callback(new Error('请输入大于零的整数'));;
+                                if (Number(value) < Number(vapp.entity.Etp_PassScore))
+                                    return callback(new Error('试卷总分不得小于及格分'));;
+                                callback();
                             }, trigger: 'blur'
                         }
                     ],

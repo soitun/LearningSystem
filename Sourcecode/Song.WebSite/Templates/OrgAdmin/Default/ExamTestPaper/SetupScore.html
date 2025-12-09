@@ -64,6 +64,7 @@
                         </div>
                     </div>
                 </el-card>
+                <help multi>说明：拖动题型，可以改变顺序</help>
             </el-form>
         </section>
         <section class="right">
@@ -76,14 +77,12 @@
                 <div v-for="(m,idx) in scoreitems" class="scoreitems" v-if="m.count>0" :type="m.type">
                     <el-divider content-position="left">
                         <ques_type :type="m.type" :types="types" :showicon="true" :showname="true">
-                            <span :zero="m.score<1"> <b>{{m.score}}</b> 分</span>
+                            <span :zero="m.score<1"> （<b>{{m.score}}</b> 分）</span>
                         </ques_type>
                     </el-divider>
                     <scores :count="m.count" :score="m.score"></scores>
-                </div>
-                <icon null v-if="scoreitems.reduce((a, b) => a + b.count, 0)<=0">
-                    未设置任何试题
-                </icon>
+                </div> 
+                <el-empty description="未设置任何试题"  v-if="scoreitems.reduce((a, b) => a + b.count, 0)<=0"></el-empty>
             </el-card>
         </section>
     </div>

@@ -15,8 +15,10 @@ $ready(['../Question/Components/ques_type.js',],
                         { required: true, message: '分数不得为空', trigger: 'blur' },
                         {
                             validator: function (rule, value, callback) {
-                                if (/^[1-9]\d*$/.test(value)) return callback();
-                                callback(new Error('请输入大于零的整数'));
+                                if (!(/^[1-9]\d*$/.test(value))) return callback(new Error('请输入大于零的整数'));;
+                                if (Number(value) < Number(vapp.entity.Etp_PassScore))
+                                    return callback(new Error('试卷总分不得小于及格分'));;
+                                callback();
                             }, trigger: 'blur'
                         }
                     ],
@@ -167,23 +169,25 @@ $ready(['../Question/Components/ques_type.js',],
                                 this.list = [];
                                 if (count == 0) this.list = [];
                                 else {
-                                    let num = Math.floor(score / count);
+                                    let num = Math.floor(score / count * 10) / 10;
                                     let tmtotal = 0;  //题型总分，计算所得
                                     for (let i = 0; i < count; i++) {
                                         tmtotal += num;
                                         this.list.push(num);
                                     }
-                                    if (tmtotal != score)
-                                        this.list[this.list.length - 1] += score - tmtotal;
+                                    if (tmtotal != score) {
+                                        let last = this.list[this.list.length - 1];
+                                        this.list[this.list.length - 1] = Math.floor((last + score - tmtotal) * 10) / 10;
+                                    }
                                 }
                             }, immediate: true,
                         }
                     },
                     methods: {},
                     template: `<div class="scores">
-                <div v-for="(item,idx) in list">
+                <div v-for="(item,idx) in list" :zero="item<=0">
                     <span>{{idx+1}}</span>
-                    <span>{{item}} 分</span>
+                    <span :zero="item<=0">{{item}} 分</span>
                 </div>
             </div>`
                 }
