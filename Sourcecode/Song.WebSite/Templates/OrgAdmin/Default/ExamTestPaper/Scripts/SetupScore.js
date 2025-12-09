@@ -15,7 +15,7 @@ $ready(['../Question/Components/ques_type.js',],
                         { required: true, message: '分数不得为空', trigger: 'blur' },
                         {
                             validator: function (rule, value, callback) {
-                                if (!(/^[1-9]\d*$/.test(value))) return callback(new Error('请输入大于零的整数'));;
+                                if (!(/^[1-9]\d*$/.test(value))) return callback(new Error('请输入大于零的整数'));
                                 if (Number(value) < Number(vapp.entity.Etp_PassScore))
                                     return callback(new Error('试卷总分不得小于及格分'));;
                                 callback();
@@ -56,7 +56,8 @@ $ready(['../Question/Components/ques_type.js',],
                                 callback();
                             }, trigger: 'blur'
                         }
-                    ]
+                    ],
+
                 },
                 loadstate: {
                     init: false,        //初始化
@@ -67,11 +68,51 @@ $ready(['../Question/Components/ques_type.js',],
                 }
             },
             mounted: function () {
-                this.receive();
+                var th = this;
+                this.receive().then(qtypeitems => {
+                    //添加题型录入的验证方法
+                    for (var i = 0; i < qtypeitems.length; i++) {
+                        const item = qtypeitems[i];
+                        //题型数量的录入验证
+                        let rulecount = [{
+                            validator: function (rule, value, callback) {
+                                let field = rule.field;
+                                let type = Number(field.substring(field.length - 1));   //题型
+                                let item = vapp.qtypeitems.find(i => i.type == type);
+                                if (item.count < 0) return callback(new Error('请输入大于零的整数'));
+                                //试题数不得大于可选数
+                                if (item.count > item.total) return callback(new Error("试题数不得大于可选数"));
+                                //分数占比大于零，试题不得为零
+                                if (item.percent > 0 && item.count == 0) return callback(new Error("试题数不可为零"));
+                                callback();
+                            }, trigger: 'blur'
+                        }];
+                        th.$set(th.rules, 'count' + item.type, rulecount);
+                        //题型分数点比的验证
+                        let rulepercent = [{
+                            validator: function (rule, value, callback) {
+                                let field = rule.field;
+                                let type = Number(field.substring(field.length - 1));   //题型
+                                let item = vapp.qtypeitems.find(i => i.type == type);
+                                if (item.percent < 0) return callback(new Error('请输入大于零的整数'));
+                                //分数占比大于零，试题不得为零
+                                if (item.percent == 0 && item.count > 0) return callback(new Error("不可为零"));
+                                //分数占比大于零，试题不得为零
+                                let total = vapp.qtypeitems.reduce((a, b) => a + b.percent, 0);
+                                if (total != 100 && item.percent != 0) return callback(new Error("各题型的占比之和必须为100"));
+                                callback();
+
+                            }, trigger: 'blur'
+                        }];
+                        th.$set(th.rules, 'percent' + item.type, rulepercent);
+                    }
+                });
                 this.$nextTick(function () {
-                    //初始化
+                    //初始化题型的排序方法
                     vapp.rowdrop();
                 });
+
+
             },
             created: function () {
 
@@ -102,19 +143,39 @@ $ready(['../Question/Components/ques_type.js',],
                 },
                 //接收“更多分数设置”的主窗体数据
                 receive: function () {
-                    //像主窗体传值，传三个值：选中的分类，选中的试题数，调用函数名
-                    var pagebox = window.top.$pagebox;
-                    if (pagebox && pagebox.source.top) {
-                        [this.entity, this.types, this.qtypeitems] = pagebox.source.box(window.name, 'vapp.scoretransmit', false);
-                        this.scoreitems = this.qtypeitems;
-                    }
+                    return new Promise((resolve, reject) => {
+                        //像主窗体传值，传三个值：选中的分类，选中的试题数，调用函数名
+                        var pagebox = window.top.$pagebox;
+                        if (pagebox && pagebox.source.top) {
+                            [this.entity, this.types, this.qtypeitems] = pagebox.source.box(window.name, 'vapp.scoretransmit', false);
+                            this.scoreitems = this.qtypeitems;
+                            resolve(this.qtypeitems);
+                        }
+                    });
                 },
                 //当试卷总分更改时
                 chanageTotal: function () {
                     let tptotal = this.entity.Etp_Total;
+                    let tmscore = 0;
                     this.qtypeitems.forEach(el => {
                         el.score = Math.floor(el.percent * tptotal / 100);
+                        tmscore += el.score;
                     });
+                    //重新计算各题型占比的总和
+                    let percenttotal = this.qtypeitems.reduce((a, b) => a + b.percent, 0);
+                    if (percenttotal == 100) {
+                        const maxel = this.qtypeitems.reduce((prev, current) =>
+                            prev.score > current.score ? prev : current
+                        );
+                        this.$set(maxel, 'score', maxel.score - (tmscore - tptotal));
+                        //console.error('合计分：'+tmscore);
+                        //console.error('实际分：'+this.qtypeitems.reduce((a, b) => a +b.score,0));
+                    }
+                    this.$refs['form'].validate();
+                },
+                //当题型的试题量变化时
+                changeCount: function (e) {
+                    this.$refs['form'].validate();
                 },
                 //行的拖动
                 rowdrop: function () {
@@ -169,7 +230,7 @@ $ready(['../Question/Components/ques_type.js',],
                                 this.list = [];
                                 if (count == 0) this.list = [];
                                 else {
-                                    let num = Math.floor(score / count * 10) / 10;
+                                    let num = Math.floor(score / count * 100) / 100;
                                     let tmtotal = 0;  //题型总分，计算所得
                                     for (let i = 0; i < count; i++) {
                                         tmtotal += num;
@@ -177,7 +238,7 @@ $ready(['../Question/Components/ques_type.js',],
                                     }
                                     if (tmtotal != score) {
                                         let last = this.list[this.list.length - 1];
-                                        this.list[this.list.length - 1] = Math.floor((last + score - tmtotal) * 10) / 10;
+                                        this.list[this.list.length - 1] = Math.floor((last + score - tmtotal) * 100) / 100;
                                     }
                                 }
                             }, immediate: true,
@@ -187,7 +248,7 @@ $ready(['../Question/Components/ques_type.js',],
                     template: `<div class="scores">
                 <div v-for="(item,idx) in list" :zero="item<=0">
                     <span>{{idx+1}}</span>
-                    <span :zero="item<=0">{{item}} 分</span>
+                    <span :zero="item<=0"><b>{{item}}</b> 分</span>
                 </div>
             </div>`
                 }

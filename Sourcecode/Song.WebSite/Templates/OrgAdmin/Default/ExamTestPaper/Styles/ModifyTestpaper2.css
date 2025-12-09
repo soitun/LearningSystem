@@ -81,9 +81,9 @@ div[tab="range"] section.range {
     height: 100%;
     margin-right: 15px;
     display: grid;
-     /* 3个等高的行 */
+    /* 3个等高的行 */
     grid-template-rows: repeat(3, 1fr);
-   
+
 }
 
 div[tab="range"] section.range .el-tag {
@@ -124,6 +124,7 @@ div[tab="range"] .el-card__header>*:first-child {
 div[tab="range"] .el-card__header>*:last-child {
     margin-left: auto;
 }
+
 /*出题范围界面的右侧*/
 div[tab="range"] .rangeright {
     width: 400px;
@@ -146,16 +147,8 @@ div[tab="range"] .rangeright .el-card__body {
     justify-content: space-between;
 }
 
-.rangeright .el-card__body .el-row {
-    margin-bottom: 10px;
-}
-
-.rangeright .el-card__body .el-row icon[ques_type][showname=true]::after {
+.rangeright .el-card__body icon[ques_type][showname=true]::after {
     font-size: 1rem;
-}
-
-.rangeright .el-card__body .el-row icon[type=5] {
-    margin-left: -4px;
 }
 
 .el-card.qtype_card .el-card__header>*:first-child {
@@ -163,22 +156,35 @@ div[tab="range"] .rangeright .el-card__body {
 }
 
 .el-card.qtype_card .el-card__header .el-form-item {
-    margin: 0px !important;    
+    margin: 0px !important;
 }
-.el-card.qtype_card .el-card__header .el-form-item *:not(.el-form-item__error){
+
+.el-card.qtype_card .el-card__header .el-form-item *:not(.el-form-item__error) {
     font-size: 16px;
 }
+
 .el-card.qtype_card .el-card__header .small {
     font-size: 14px !important;
     margin-left: 5px;
 }
-.el-card.qtype_card .el-card__header .small *{
+
+.el-card.qtype_card .el-card__header .small * {
     font-size: 14px !important;
 }
+
 .rangeright .ques_type {
     display: flex;
     padding: 0px 10px;
     justify-content: space-between;
+}
+
+.qtypeitems {
+    margin-bottom: 20px;
+}
+
+.qtypeitems>span {
+    display: flex;
+    margin-bottom: 5px;
 }
 
 .qtype_card .option_count[zero], .option_count[zero] * {
@@ -189,10 +195,13 @@ div[tab="range"] .rangeright .el-card__body {
     color: #444;
 }
 
-.qtype_card {
-    margin-bottom: 10px;
-}
-
 .qtype_card .option_count b {
     color: rgb(153, 0, 0);
+}
+
+.qtypeitems .ques_type>*:first-child {
+    margin-right: auto;
+}
+.option_score{
+    margin-left: 10px;
 }

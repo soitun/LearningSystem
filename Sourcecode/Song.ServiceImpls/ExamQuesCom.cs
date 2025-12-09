@@ -731,22 +731,25 @@ namespace Song.ServiceImpls
             if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
 
             //计算所有子级
-            List<long> listqpid = new List<long>();
-            if (!children) listqpid = qpid.ToList();
-            else
+            if (qpid != null)
             {
-                foreach (long id in qpid)
+                List<long> listqpid = new List<long>();
+                if (!children) listqpid = qpid.ToList();
+                else
                 {
-                    List<long> list = this.PartTreeID(id, orgid);
-                    foreach (long l in list)
+                    foreach (long id in qpid)
                     {
-                        if (!listqpid.Contains(l)) listqpid.Add(l);
+                        List<long> list = this.PartTreeID(id, orgid);
+                        foreach (long l in list)
+                        {
+                            if (!listqpid.Contains(l)) listqpid.Add(l);
+                        }
                     }
                 }
+                WhereClip wc2 = new WhereClip();
+                foreach (long l in listqpid) wc2.Or(Questions_QPart._.Qp_ID == l);
+                wc.And(wc2);
             }
-            WhereClip wc2 = new WhereClip();
-            foreach (long l in listqpid) wc2.Or(Questions_QPart._.Qp_ID == l);
-            wc.And(wc2);
 
             QuerySection<Questions> section = Gateway.Default.From<Questions>().LeftJoin<Questions_QPart>(Questions_QPart._.Qus_ID == Questions._.Qus_ID).Where(wc);
             return section.SubQuery("c").Select(Questions._.Qus_ID.At("c")).GroupBy(Questions._.Qus_ID.At("c").Group).Count();
@@ -1447,22 +1450,25 @@ namespace Song.ServiceImpls
             if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
 
             //计算所有子级
-            List<long> listqkid = new List<long>();
-            if (!children) listqkid = qkid.ToList();
-            else
+            if (qkid != null)
             {
-                foreach (long id in qkid)
+                List<long> listqkid = new List<long>();
+                if (!children) listqkid = qkid.ToList();
+                else
                 {
-                    List<long> list = this.KnlTreeID(id, orgid);
-                    foreach (long l in list)
+                    foreach (long id in qkid)
                     {
-                        if (!listqkid.Contains(l)) listqkid.Add(l);
+                        List<long> list = this.KnlTreeID(id, orgid);
+                        foreach (long l in list)
+                        {
+                            if (!listqkid.Contains(l)) listqkid.Add(l);
+                        }
                     }
                 }
+                WhereClip wc2 = new WhereClip();
+                foreach (long l in listqkid) wc2.Or(Questions_QKnl._.Qk_ID == l);
+                wc.And(wc2);
             }
-            WhereClip wc2 = new WhereClip();
-            foreach (long l in listqkid) wc2.Or(Questions_QKnl._.Qk_ID == l);
-            wc.And(wc2);
 
             QuerySection<Questions> section = Gateway.Default.From<Questions>().LeftJoin<Questions_QKnl>(Questions_QKnl._.Qus_ID == Questions._.Qus_ID).Where(wc);  
             return section.SubQuery("c").Select(Questions._.Qus_ID.At("c")).GroupBy(Questions._.Qus_ID.At("c").Group).Count();
@@ -1961,9 +1967,12 @@ namespace Song.ServiceImpls
             if (couid > 0) wc.And(Questions._.Cou_ID == couid);
             if (isuse != null) wc.And(Questions._.Qus_IsUse == (bool)isuse);
 
-            WhereClip wc2 = new WhereClip();
-            foreach (long l in qtagid) wc2.Or(Questions_QTags._.Qtag_ID == l);
-            wc.And(wc2);
+            if (qtagid != null)
+            {
+                WhereClip wc2 = new WhereClip();
+                foreach (long l in qtagid) wc2.Or(Questions_QTags._.Qtag_ID == l);
+                wc.And(wc2);
+            }
 
             QuerySection<Questions> section = Gateway.Default.From<Questions>().LeftJoin<Questions_QTags>(Questions_QTags._.Qus_ID == Questions._.Qus_ID).Where(wc);
             return section.SubQuery("c").Select(Questions._.Qus_ID.At("c")).GroupBy(Questions._.Qus_ID.At("c").Group).Count();

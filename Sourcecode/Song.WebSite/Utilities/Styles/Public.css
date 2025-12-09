@@ -164,7 +164,7 @@ card-content {
     border-bottom: 1px solid #c2e7b0;
 }
 .el-card[type="info"]{
-    color: #909399;
+    color: #666;
     border-color: #d3d4d6;  
 }
 .el-card[type="info"] .el-card__header {

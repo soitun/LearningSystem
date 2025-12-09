@@ -15,7 +15,7 @@ $ready(['../Question/Components/ques_type.js',
                     { name: '其它', tab: 'other', icon: 'e67e' },
                     //{ name: '帮助说明', tab: 'help', icon: 'a026' },
                 ],
-                activeName: 'general',
+                activeName: 'range',
                 //试卷对象  
                 entity: {
                     Etp_Id: 0,        //主键
@@ -142,6 +142,7 @@ $ready(['../Question/Components/ques_type.js',
                         return {
                             type: i + 1,  //题型，数字表示
                             name: t,    //题型名称
+                            byname: '',    //题型的别名
                             total: 0,       //可供选择的题量
                             count: 0,        //题量
                             score: 0,       //分数
@@ -329,8 +330,8 @@ $ready(['../Question/Components/ques_type.js',
                         } else {
                             //如果验证未通过，则显示输入项所在的选项卡
                             th.$nextTick(() => {
-                                let err = $dom('.el-form-item.is-error').first();
-                                console.error(3);
+                                console.error('录入验证失败');
+                                let err = $dom('.el-form-item.is-error').first();                               
                                 if (err && err.length > 0) {
                                     while (err.attr('tab') == null) err = err.parent();
                                     this.activeName = err.attr('tab');
@@ -355,7 +356,7 @@ $ready(['../Question/Components/ques_type.js',
                     let items = this.qtypeitems;
                     for (let i = 0; i < items.length; i++) {
                         const m = items[i];
-                        xml += '<item type="' + m.type + '" name="' + m.name + '"'
+                        xml += '<item type="' + m.type + '" name="' + m.name + '" byname="' + m.byname + '"'
                             + ' score="' + m.score + '"'
                             + ' count="' + m.count + '"'
                             + ' percent="' + m.percent + '"'
