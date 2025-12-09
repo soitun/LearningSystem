@@ -126,6 +126,10 @@ $ready(['../Question/Components/ques_type.js',],
                             return true;
                     }
                     return false;
+                },
+                //各题型占比总和
+                percenttotal: function () {
+                    return this.qtypeitems.reduce((a, b) => a + b.percent, 0);
                 }
             },
             watch: {
@@ -164,10 +168,17 @@ $ready(['../Question/Components/ques_type.js',],
                     //重新计算各题型占比的总和
                     let percenttotal = this.qtypeitems.reduce((a, b) => a + b.percent, 0);
                     if (percenttotal == 100) {
-                        const maxel = this.qtypeitems.reduce((prev, current) =>
-                            prev.score > current.score ? prev : current
-                        );
-                        this.$set(maxel, 'score', maxel.score - (tmscore - tptotal));
+                        if (tmscore - tptotal > 0) {
+                            const maxel = this.qtypeitems.reduce((prev, current) =>
+                                prev.score > current.score ? prev : current
+                            );
+                            this.$set(maxel, 'score', maxel.score - (tmscore - tptotal));
+                        } else {
+                            const minxel = this.qtypeitems.reduce((prev, current) =>
+                                prev.score < current.score ? prev : current
+                            );
+                            this.$set(minxel, 'score', minxel.score - (tmscore - tptotal));
+                        }
                         //console.error('合计分：'+tmscore);
                         //console.error('实际分：'+this.qtypeitems.reduce((a, b) => a +b.score,0));
                     }

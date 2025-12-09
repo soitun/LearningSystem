@@ -138,15 +138,12 @@
                                         <span :zero="m.total<1" class="small option_count"> / 可选 <b>{{m.total}}</b>
                                             道</span>
                                             <span class="small option_score">(计<b>{{m.score}}</b>分)</span>
-                                    </ques_type>
-                                
-                               
+                                    </ques_type>                               
                                     <el-form-item label="" label-width="0">
                                         <el-input v-model="m.byname"  prop="byname" >
                                             <template slot="prepend">题型别名</template>                                           
                                         </el-input>                      
-                                    </el-form-item>                                   
-                                                           
+                                    </el-form-item>      
                             </div>
                         </el-card>
                     </section>
