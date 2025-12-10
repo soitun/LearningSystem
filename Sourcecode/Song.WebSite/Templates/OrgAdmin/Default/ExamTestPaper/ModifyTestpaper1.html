@@ -1,13 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head resource>
     <meta charset="UTF-8">
-    <include file="../inc/meta.inc" /> 
+    <include file="../inc/meta.inc" />
     <title>固定试卷</title>
 </head>
+
 <body>
-    <div id="vapp" v-cloak> 
-    
-    </div> 
+    <div id="vapp" v-cloak>
+        <section class="left">
+            <el-card shadow="never" type="primary">
+                <template slot="header">
+                    <span icon="&#xe72f" medium>基本信息</span>
+                    
+                </template>     
+                <p class="subname">{{entity.Etp_SubName}}</p>
+                <p class="name">
+                    {{entity.Etp_Name}}
+                </p>          
+                <div>
+                    <span>考试时间 {{entity.Etp_Span}} 分钟</span>
+                    <span>满分 {{entity.Etp_Total}}  分</span>
+                    <span> {{entity.Etp_PassScore}} 分  及格</span>
+                </div>
+                <div>
+                    注意事项:<br/>
+                    <div v-html="entity.Etp_Remind"></div>
+                </div>
+            </el-card>
+            <section class="content">
+
+            </section>
+        </section>
+        <section class="right">
+            <el-card shadow="never" type="primary">
+                <template slot="header">
+                    <span icon="&#xe67e" medium>其它</span>
+                    
+                </template>
+               
+            </el-card>
+            <el-card shadow="never" type="primary">
+                <template slot="header">
+                    <span icon="&#xe829" large>分数</span>
+                    
+                </template>
+               
+            </el-card>
+            <el-card shadow="never" type="primary">
+                <template slot="header">
+                    <span icon="&#xe75e" medium>题卡</span>
+                   
+                </template>
+               
+            </el-card>
+        </section>
+    </div>
 </body>
+
 </html>

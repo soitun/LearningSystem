@@ -1,0 +1,31 @@
+#vapp{
+    display: flex;
+
+}
+#vapp>*:first-child{
+    flex: 1;
+    margin-right: 15px;
+    display: flex;
+    flex-direction: column;
+}
+section.right{
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+}
+section.left .el-card{
+    margin-bottom: 15px;
+}
+section.right .el-card:not(:last-child){
+    margin-bottom: 15px;
+}
+section.right .el-card:last-child{
+    flex: 1;
+}
+/*试题主题区*/
+
+/*试题区域*/
+section.content{
+    flex: 1;
+    background: rgb(239, 255, 224);
+}

@@ -15,7 +15,7 @@ $ready(['../Question/Components/ques_type.js',
                     { name: '其它', tab: 'other', icon: 'e67e' },
                     //{ name: '帮助说明', tab: 'help', icon: 'a026' },
                 ],
-                activeName: 'range',
+                activeName: 'general',
                 //试卷对象  
                 entity: {
                     Etp_Id: 0,        //主键
