@@ -11,10 +11,19 @@ $ready(function () {
             }
         },
         mounted: function () {
-        
+
         },
         created: function () {
-        
+            //更改当前窗体的标题
+            var pagebox = window.top.$pagebox;
+            if (pagebox && pagebox.source) {
+                let box = pagebox.source.self(window.name);
+                box.title = box.title.substring(0, box.title.lastIndexOf('-') + 1) + ' 固定试题';
+                window.setTimeout(function () {
+                    box.full = true;
+                }, 200);
+               
+            }
         },
         computed: {
             loading: function () {
@@ -22,22 +31,22 @@ $ready(function () {
                 for (let key in this.loadstate) {
                     if (this.loadstate.hasOwnProperty(key)
                         && this.loadstate[key])
-                    return true;
+                        return true;
                 }
                 return false;
             }
         },
         watch: {
-        
+
         },
         methods: {
-        
+
         },
         filters: {
-        
+
         },
         components: {
-        
+
         }
     });
 });

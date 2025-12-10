@@ -155,7 +155,12 @@ $ready(['../Question/Components/ques_type.js',
                     .finally(() => th.loadstate.init = false);
             },
             created: function () {
-
+                //更改当前窗体的标题
+                var pagebox = window.top.$pagebox;
+                if (pagebox && pagebox.source) {
+                    let box = pagebox.source.self(window.name);
+                    box.title = box.title.substring(0, box.title.lastIndexOf('-') + 1) + ' 随机出题';
+                }
             },
             computed: {
                 loading: function () {
@@ -199,14 +204,14 @@ $ready(['../Question/Components/ques_type.js',
                                 th.knls = result?.knls ?? [];
                                 th.tags = result?.tags ?? [];
                                 //试题题型分配数据
-                                let questions = result?.questions ?? [];              
+                                let questions = result?.questions ?? [];
                                 for (let i = 0; i < questions.length; i++) {
                                     const ques = questions[i];
-                                    const item=th.qtypeitems.find(el => Number(el.type) == Number(ques.type));
-                                    ques.total = Number(item.total);     
+                                    const item = th.qtypeitems.find(el => Number(el.type) == Number(ques.type));
+                                    ques.total = Number(item.total);
                                     ques.count = Number(ques.count);
                                     ques.score = Number(ques.score);
-                                    ques.percent = Number(ques.percent);                                                                    
+                                    ques.percent = Number(ques.percent);
                                 }
                                 th.qtypeitems = questions;
                                 //试卷出卷范围的题量，如选中的试题分类的试题数
@@ -294,7 +299,7 @@ $ready(['../Question/Components/ques_type.js',
                 scorereceive: function ([entity, qtypeitems]) {
                     this.entity = entity;
                     this.qtypeitems = qtypeitems;
-                    console.error('来自子窗体数据');
+                    // /console.error('来自子窗体数据');
                 },
                 //当试卷总分更改时
                 chanageTotal: function () {
@@ -352,7 +357,7 @@ $ready(['../Question/Components/ques_type.js',
                             //如果验证未通过，则显示输入项所在的选项卡
                             th.$nextTick(() => {
                                 console.error('录入验证失败');
-                                let err = $dom('.el-form-item.is-error').first();                               
+                                let err = $dom('.el-form-item.is-error').first();
                                 if (err && err.length > 0) {
                                     while (err.attr('tab') == null) err = err.parent();
                                     this.activeName = err.attr('tab');

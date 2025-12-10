@@ -52,7 +52,7 @@ $ready(['Components/papertype.js',],function () {
             gototype: function (type) {
                 let typepurl = [{
                     page: 'ModifyTestpaper1',       //静态试卷
-                    width: 500, height: 600
+                    width: 1200, height: 600
                 }, {
                     page: 'ModifyTestpaper2',       //动态随机试卷
                     width: 1000, height: 800
