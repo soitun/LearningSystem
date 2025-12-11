@@ -14,15 +14,38 @@ $ready(function () {
             //试卷对象  
             entity: {
                 Etp_Id: 0,        //主键
-                Etp_Name: '考试的标题', Etp_SubName: '2025年中考',
+                Etp_Name: '试卷的名称', Etp_SubName: '',
                 Etp_IsUse: true,
                 Etp_Span: 120,    //默认限时 120分钟
                 Etp_Type: 2,
                 Etp_Total: 100, Etp_PassScore: 60,      //总分，及格分
                 Etp_Diff: 1,
                 Etp_Diff2: 5,
-                Etp_FromConfig: '',
+                Etp_Remind: '',
                 Etp_Count: 0,       //总题量                   
+            },
+            //录入校验的规划
+            rules: {                
+                Etp_Total: [
+                    { required: true, message: '分数不得为空', trigger: 'blur' },
+                    {
+                        validator: function (rule, value, callback) {
+                            if (/^[1-9]\d*$/.test(value)) return callback();
+                            callback(new Error('请输入大于零的整数'));
+                        }, trigger: 'blur'
+                    }
+                ],
+                Etp_PassScore: [
+                    { required: true, message: '分数不得为空', trigger: 'blur' },
+                    {
+                        validator: function (rule, value, callback) {
+                            if (!(/^[1-9]\d*$/.test(value))) return callback(new Error('请输入大于零的整数'));
+                            if (Number(value) > vapp.entity.Etp_Total) callback(new Error('及格分不得大于满分'));
+                            else callback();
+
+                        }, trigger: 'blur'
+                    }
+                ],
             },
             loadstate: {
                 init: false,        //初始化
@@ -66,7 +89,7 @@ $ready(function () {
                 let box = pagebox.source.self(window.name);
                 box.title = box.title.substring(0, box.title.lastIndexOf('-') + 1) + ' 固定试题';
                 window.setTimeout(function () {
-                    box.full = true;
+                    //box.full = true;
                 }, 200);
             }
         },

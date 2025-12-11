@@ -1,31 +1,86 @@
-#vapp{
+#vapp {
     display: flex;
 
 }
-#vapp>*:first-child{
+
+:root {
+    --chinese-font: "隶书", "LiSu", "STKaiti", "KaiTi", "楷体",
+        "Microsoft YaHei", "微软雅黑", sans-serif;
+}
+
+#vapp>*:first-child {
     flex: 1;
     margin-right: 15px;
     display: flex;
     flex-direction: column;
 }
-section.right{
+/*右侧区间*/
+section.right {
     width: 500px;
     display: flex;
     flex-direction: column;
 }
-section.left .el-card{
+section.right .el-form{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 0px;
+}
+section.left .el-card {
     margin-bottom: 15px;
 }
-section.right .el-card:not(:last-child){
+
+section.right .el-form>.el-card:not(:last-child) {
     margin-bottom: 15px;
 }
-section.right .el-card:last-child{
+
+section.right .el-form .el-card:last-child {
     flex: 1;
 }
+.el-form-item:last-child {
+    margin-bottom: 0 !important;
+}
 /*试题主题区*/
+.theme .el-card__body {
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.null{
+    font-family: var(--chinese-font);
+}
+
+.tpname {
+    font-size: 2rem;
+    font-family: var(--chinese-font);
+    margin: .5rem;
+}
+
+.tpsubname {
+    font-size: 1.2rem;
+    font-family: var(--chinese-font);
+    margin: .5rem 0px 1.2rem 0px;
+}
+
+.tpinfo {
+    margin: 8px;
+}
+
+.tpinfo>* {
+    margin: 5px 10px;
+}
+
+.tpremind {
+    text-align: left;
+    flex: 1;
+    line-height: 1.5;
+}
+
 
 /*试题区域*/
-section.content{
+section.content {
     flex: 1;
     background: rgb(239, 255, 224);
 }
