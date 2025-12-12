@@ -39,9 +39,10 @@
         <section class="right">
             <el-form ref="form" :model="entity" :rules="rules" @submit.native.prevent
                 label-width="100px">
-                <el-card shadow="never" type="primary">
+                <el-card shadow="never" type="info">
                     <template slot="header">
                         <span icon="&#xe829" huge>卷面信息</span>
+                        <papertype type="1"></papertype>
                     </template>
                     <el-form-item label="" prop="Etp_Total" label-width="0">
                         <el-input v-model="entity.Etp_Total" type="number" :min="1">

@@ -44,7 +44,12 @@ html, body {
     background-position: bottom;
 }
 
+html:has(meta[license="false"])  {
+	/* 直接在CSS中使用SVG定义文字背景 */
+	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><text x='20' y='120' font-family='Arial' font-size='20' fill='rgba(255,0,0,.1)' transform='rotate(45 100 100)'>社区版 - 仅限学习交流</text></svg>");
+	background-repeat: repeat;
 
+}
 
 /*特殊字体*/
 

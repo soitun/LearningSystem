@@ -1,0 +1,6 @@
+.papertype[type='2'] span { 
+    color: #409eff;
+}
+.papertype[type='1'] span { 
+    color: #46961e;
+}
