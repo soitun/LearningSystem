@@ -298,7 +298,7 @@
             subox.height = this.height;
         }
         if (place == 'top' || place == 'bottom') {
-            if (place == 'top') {              
+            if (place == 'top') {
                 if (this.top - subox.height < space) {
                     subtop = space;
                     this.toPlace(currleft, subox.height + space * 2);
@@ -311,7 +311,7 @@
                 } else subtop = this.top + this.height + space;
             }
             subleft = currleft;
-            subox.width = this.width;
+            subox.width = this._width;
         }
         subox.left = subleft;
         subox.top = subtop;
@@ -1024,6 +1024,14 @@
     //smooth:是否平滑过渡，默认为true
     box.toSize = function (boxid, width, height, smooth) {
         smooth = smooth == null ? true : smooth;
+        if (typeof width === 'string') {
+            if (width.endsWith('%')) width = parseInt(width.substring(0, width.length - 1)) / 100 * box.availWidth();
+            else width = parseInt(width);
+        }
+        if (typeof height === 'string') {
+            if (height.endsWith('%')) height = parseInt(height.substring(0, height.length - 1)) / 100 * box.availHeight();
+            else height = parseInt(height);
+        }
         let ctrl = $ctrls.get(boxid);
         if (ctrl == null) return;
         //增加平滑过渡效果       

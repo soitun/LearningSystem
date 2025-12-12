@@ -140,6 +140,17 @@ $ready(['../Question/Components/ques_type.js',
                     //试卷对象，题型
                     return [this.entity, this.types];
                 },
+                //接子的窗体数据
+                receive: function ([entity, upfile]) {
+                    this.entity.Etp_Name = entity.Etp_Name;
+                    this.entity.Etp_SubName = entity.Etp_SubName;
+                    this.entity.Etp_Span = entity.Etp_Span;
+                    this.entity.Etp_Remind = entity.Etp_Remind;
+                    this.entity.Etp_Intro = entity.Etp_Intro;
+                    this.upfile = upfile;                   
+                },
+                btnEnter: function () { 
+                },
             },
             filters: {
 

@@ -48,6 +48,7 @@ section.right .el-form>.el-card:not(:last-child) {
 
 section.right .el-form .el-card:last-child {
     flex: 1;
+    margin-bottom: 60px;
 }
 
 .el-form-item:last-child {

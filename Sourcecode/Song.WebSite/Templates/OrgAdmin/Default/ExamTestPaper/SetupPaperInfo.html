@@ -22,17 +22,34 @@
                 label-width="100px">
                 <div v-show="activeName=='general'" remark="基本信息" tab="general">
                     <el-form-item label="试卷标题" prop="Etp_Name">
-                        <el-input v-model="entity.Etp_Name"></el-input>
+                        <el-input v-model="entity.Etp_Name" maxlength="255"></el-input>
                     </el-form-item>
                     <el-form-item label="副标题" prop="Etp_SubName">
-                        <el-input v-model="entity.Etp_SubName"></el-input>
+                        <el-input v-model="entity.Etp_SubName" maxlength="255"></el-input>
+                    </el-form-item>                  
+                    <el-form-item label="难度范围" prop="Etp_Diff">
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-slider v-model="Etp_Diff" :step="1" range show-stops :min="1" :max="5"
+                                    @change="arr=>{entity.Etp_Diff=arr[0];entity.Etp_Diff2=arr[1];}">
+                                </el-slider>
+                            </el-col>
+                            <el-col :span="10">
+                                <el-tag type="info">{{entity.Etp_Diff}} - {{entity.Etp_Diff2}}</el-tag>
+                            </el-col>
+                        </el-row>
                     </el-form-item>
                     <el-form-item label="时长" prop="Etp_Span">
-                        <el-input placeholder="请输入内容" v-model.trim="entity.Etp_Span" type="number"
-                            style="width: 300px;">
+                        <el-input placeholder="请输入内容" v-model.trim="entity.Etp_Span" type="number" style="width: 300px;">
                             <template slot="prepend">限时</template>
                             <template slot="append">分钟</template>
                         </el-input>
+                    </el-form-item>
+                    <el-form-item label="">
+                        <el-switch v-model="entity.Etp_IsUse" active-color="#13ce66" active-text="启用">
+                        </el-switch>
+                        <el-switch v-model="entity.Etp_IsRec" active-color="#13ce66" active-text="推荐">
+                        </el-switch>
                     </el-form-item>
                     <el-form-item label="注意事项" prop="Etp_Remind">
                         <editor :content="entity.Etp_Remind" id="range" :menubar="false" model="general"

@@ -6,7 +6,8 @@ $ready(function () {
             //试卷对象  
             entity: {},
             //图片文件
-            upfile: null, //本地上传文件的对象         
+            upfile: null, //本地上传文件的对象      
+            Etp_Diff: [1, 5],     //难度范围   
             tabs: [
                 { name: '基本信息', tab: 'general', icon: 'e72f' },
                 { name: '简介', tab: 'intro', icon: 'e6cb' },
@@ -126,12 +127,19 @@ $ready(function () {
                     }
                 });
             },
-              //确认操作，保存数据
-              btnEnter: function (formName, isclose) {
+            //确认操作，保存数据
+            btnEnter: function (formName, isclose) {
                 var th = this;
                 this.$refs[formName].validate((valid, fields) => {
                     if (valid) {
-                        console.log('检验通过');                       
+                        //像主窗体传值，当前实体，图片对象
+                        var pagebox = window.top.$pagebox;
+                        if (pagebox && pagebox.source.box){
+                            pagebox.source.box(window.name, 'vapp.receive', false, [th.entity, th.upfile]);
+                            let curbox = pagebox.source.self(window.name);
+                            curbox.shut();
+                        }
+
 
                     } else {
                         //如果验证未通过，则显示输入项所在的选项卡

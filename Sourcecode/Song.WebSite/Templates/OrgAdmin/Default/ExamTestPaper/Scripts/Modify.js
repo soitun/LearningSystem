@@ -51,10 +51,10 @@ $ready(['Components/papertype.js',],function () {
             //跳转到指定类型页面, type:1静态试卷，2动态随机试卷
             gototype: function (type) {
                 let typepurl = [{
-                    page: 'ModifyTestpaper1',       //静态试卷
-                    width: 1200, height: 600
+                    page: 'ModifyTestpaper1',       //固定试题的试卷
+                    width: 1200, height: '80%'
                 }, {
-                    page: 'ModifyTestpaper2',       //动态随机试卷
+                    page: 'ModifyTestpaper2',       //随机出题的试卷
                     width: 1000, height: 800
                 }];
 

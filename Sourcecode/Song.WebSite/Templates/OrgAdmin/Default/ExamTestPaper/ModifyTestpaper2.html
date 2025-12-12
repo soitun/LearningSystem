@@ -22,10 +22,10 @@
                 label-width="100px">
                 <div v-show="activeName=='general'" remark="基本信息" tab="general">
                     <el-form-item label="试卷标题" prop="Etp_Name">
-                        <el-input v-model="entity.Etp_Name"></el-input>
+                        <el-input v-model="entity.Etp_Name" maxlength="255"></el-input>
                     </el-form-item>
                     <el-form-item label="副标题" prop="Etp_SubName">
-                        <el-input v-model="entity.Etp_SubName"></el-input>
+                        <el-input v-model="entity.Etp_SubName" maxlength="255"></el-input>
                     </el-form-item>
                     <el-form-item label="">
                         <el-switch v-model="entity.Etp_IsUse" active-color="#13ce66" active-text="启用">
