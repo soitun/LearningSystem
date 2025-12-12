@@ -11,7 +11,7 @@ $ready(['../Question/Components/ques_type.js',
                 tabs: [
                     { name: '基本信息', tab: 'general', icon: 'e72f' },
                     { name: '出题&计分', tab: 'range', icon: 'e731' },
-                    { name: '注意事项', tab: 'remind', icon: 'e697' },
+                    { name: '简介', tab: 'intro', icon: 'e6cb' },
                     { name: '其它', tab: 'other', icon: 'e67e' },
                     //{ name: '帮助说明', tab: 'help', icon: 'a026' },
                 ],

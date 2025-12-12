@@ -732,6 +732,7 @@
     <Content Include="Templates\OrgAdmin\Default\ExamQues\TagsRecy.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Testpaper.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Components\papertype.js" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Components\Styles\papertype.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Index.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Modify.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\ModifyTestpaper1.html" />
@@ -746,10 +747,12 @@
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\SelectKnl.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\SelectParts.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\SelectTag.js" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\SetupPaperInfo.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\SetupScore.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\SelectKnl.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\SelectParts.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\SelectTag.html" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\SetupPaperInfo.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\SetupScore.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\Index.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\Modify.css" />
@@ -759,6 +762,7 @@
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\SelectKnl.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\SelectParts.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\SelectTag.css" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\SetupPaperInfo.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\SetupScore.css" />
     <Content Include="Templates\OrgAdmin\Default\Exam\AbsenceList.html" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Components\createbatchscore.js" />

@@ -1,3 +1,6 @@
+.papertype{
+    cursor: default;
+}
 .papertype[type='2'] span { 
     color: #409eff;
 }

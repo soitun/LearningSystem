@@ -15,7 +15,7 @@ $ready(['../Question/Components/ques_type.js',
                 //试卷对象  
                 entity: {
                     Etp_Id: 0,        //主键
-                    Etp_Name: '试卷的名称', Etp_SubName: '',
+                    Etp_Name: '试卷名称，随便打几个字', Etp_SubName: '',
                     Etp_IsUse: true,
                     Etp_Span: 120,    //默认限时 120分钟
                     Etp_Type: 2,
@@ -37,7 +37,7 @@ $ready(['../Question/Components/ques_type.js',
                         }
                     ],
                     Etp_PassScore: [
-                        { required: true, message: '分数不得为空', trigger: 'blur' },
+                        { required: true, message: '及格分不得为空', trigger: 'blur' },
                         {
                             validator: function (rule, value, callback) {
                                 if (!(/^[1-9]\d*$/.test(value))) return callback(new Error('请输入大于零的整数'));
@@ -111,7 +111,35 @@ $ready(['../Question/Components/ques_type.js',
 
             },
             methods: {
-
+                //打开试卷基础信息的页面
+                openpaperinfo: function (page, title, icon, height) {
+                    if (!window.top.$pagebox) return;
+                    //子窗口页面路径
+                    var suburl = $dom.routepath() + page;
+                    //当前窗口
+                    var curbox = window.top.$pagebox.get(window.name);
+                    //创建新窗口中
+                    var subbox = window.top.$pagebox.create({
+                        height: height, id: page, ico: icon, title: title,
+                        url: suburl
+                    });
+                    curbox.opensub(subbox, 'top');
+                },
+                //接收子窗口数据
+                //data:子窗口返回的数据
+                //func:要调用的函数名称
+                receive: function ([data, count, func]) {
+                    if (func == 'selectpart') [this.parts, this.quescount.part] = [data, count];
+                    if (func == 'selectknl') [this.knls, this.quescount.knl] = [data, count];
+                    if (func == 'selecttag') [this.tags, this.quescount.tag] = [data, count];
+                    //
+                    this.getquestotal();
+                },
+                //向“更多分数设置”的窗体传递数据
+                transmit: function () {
+                    //试卷对象，题型
+                    return [this.entity, this.types];
+                },
             },
             filters: {
 
