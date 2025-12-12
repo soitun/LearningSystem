@@ -213,7 +213,7 @@ $ready(['../Question/Components/ques_type.js',
                                     ques.score = Number(ques.score);
                                     ques.percent = Number(ques.percent);
                                 }
-                                th.qtypeitems = questions;
+                                th.qtypeitems = questions.length<1 ? th.qtypeitems : questions;
                                 //试卷出卷范围的题量，如选中的试题分类的试题数
                                 th.quescount = result.quescount;
                             } else {
@@ -382,7 +382,7 @@ $ready(['../Question/Components/ques_type.js',
                     let items = this.qtypeitems;
                     for (let i = 0; i < items.length; i++) {
                         const m = items[i];
-                        xml += '<item type="' + m.type + '" name="' + m.name + '" byname="' + m.byname + '"'
+                        xml += '<ques type="' + m.type + '" name="' + m.name + '" byname="' + m.byname + '"'
                             + ' score="' + m.score + '"'
                             + ' count="' + m.count + '"'
                             + ' percent="' + m.percent + '"'

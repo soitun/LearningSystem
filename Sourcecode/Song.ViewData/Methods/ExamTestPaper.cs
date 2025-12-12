@@ -49,7 +49,7 @@ namespace Song.ViewData.Methods
         {
             Song.Entities.ExamTestPaper tp = Business.Do<IExamTestPaper>().PaperSingle(id);
             if (tp == null) throw new Exception("试卷不存在！");
-            JObject jo=new JObject();
+            JObject jo = new JObject();
             jo.Add("paper", _tran(tp).ToJObject());
 
             XmlDocument xmldoc = new XmlDocument();
@@ -61,32 +61,35 @@ namespace Song.ViewData.Methods
             //关联的知识点
             XmlNode nodeknls = xmldoc.SelectSingleNode("/testpaper/range/knls");
             List<QuesKnowledge> knls = Business.Do<IExamQues>().KnlSingle(Helper.StringTo.Array<long>(nodeknls.InnerText));
-            jo.Add("knls",  knls?.ToJArray());
+            jo.Add("knls", knls?.ToJArray());
             //关联的标签
             XmlNode nodetags = xmldoc.SelectSingleNode("/testpaper/range/tags");
             List<QuesTags> tags = Business.Do<IExamQues>().TagSingle(Helper.StringTo.Array<long>(nodetags.InnerText));
             jo.Add("tags", tags?.ToJArray());
             //选择范围的试题数量
-            JObject joquescount=new JObject();
+            JObject joquescount = new JObject();
             long[] qpid = parts == null ? null : parts.Select(p => p.Qp_ID).ToArray();
             int partcount = Business.Do<IExamQues>().PartQusTotal(-1, qpid, -1, true, true);
             joquescount.Add("part", partcount);
             joquescount.Add("knl", Business.Do<IExamQues>().KnlQusTotal(-1, knls?.Select(p => p.Qk_ID).ToArray(), -1, true, true));
-            joquescount.Add("tag", Business.Do<IExamQues>().TagQusTotal(tags?.Select(p => p.Qtag_ID).ToArray(), -1, -1,  true));
+            joquescount.Add("tag", Business.Do<IExamQues>().TagQusTotal(tags?.Select(p => p.Qtag_ID).ToArray(), -1, -1, true));
             joquescount.Add("total", 0);
             jo.Add("quescount", joquescount);
             //
             //各题型的占比
-            XmlNodeList nodeitems = xmldoc.SelectNodes("/testpaper/questions/item");
-            JArray joitems = new JArray();
-            foreach (XmlNode item in nodeitems)
+            XmlNodeList nodeitems = xmldoc.SelectNodes("/testpaper/questions/ques");
+            if (nodeitems != null && nodeitems.Count > 0)
             {
-                JObject joitem = new JObject();
-                foreach(XmlAttribute att in item.Attributes)
-                    joitem.Add(att.Name, att.Value);               
-                joitems.Add(joitem);               
+                JArray joitems = new JArray();
+                foreach (XmlNode item in nodeitems)
+                {
+                    JObject joitem = new JObject();
+                    foreach (XmlAttribute att in item.Attributes)
+                        joitem.Add(att.Name, att.Value);
+                    joitems.Add(joitem);
+                }
+                jo.Add("questions", joitems);
             }
-            jo.Add("questions", joitems);
             return jo;
         }
         ///<summary>
