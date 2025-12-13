@@ -13,15 +13,16 @@
         <!--属性依次为：
             type:试题类型（数字），
             name:试题类型（中文名称），
+            byname:题型的别名，
             total:可选的总题数，在出卷时没有用处
             count：当前题型的数量
-            score:当前题型的分数
+            number:当前题型的分数
             percent:当前题型分数占试卷中总的百分比
 
             当计算每道试题的分数时，只有count与percent有用，其它都无用
-            score可以通过试卷总分乘以percent得到
+            number
         -->
-        <ques type="1" name="单选" total="5" count="5" score="5" percent="20" />
-        <ques type="2" name="多选" total="5" count="5" score="5" percent="20" />
+        <ques type="1" name="单选" byname="" total="5" count="5" number="5" percent="20" />
+        <ques type="2" name="多选" byname="" total="5" count="5" number="5" percent="20" />
     </questions>
 </testpaper>

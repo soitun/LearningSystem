@@ -64,8 +64,8 @@
                                     <el-form-item label="" :prop="'percent'+m.type" label-width="0">
                                         <el-input v-model.number="m.percent" type="number" :min="0" :max="100"
                                             @input="chanageTotal">
-                                            <template slot="append">%，计 <span class="score"
-                                                    :zero="m.score<1">{{m.score}}</span> 分</template>
+                                            <template slot="append">%，计 <span class="number"
+                                                    :zero="m.number<1">{{m.number}}</span> 分</template>
                                         </el-input>
                                     </el-form-item>
                                 </el-col>
@@ -96,10 +96,10 @@
                                         class="truename">{{types[m.type-1]}}题</span></span>
                                 <span v-else>{{types[m.type-1]}}题</span>
                             </span>
-                            <span :zero="m.score<1"> （<b>{{m.score}}</b> 分）</span>
+                            <span :zero="m.number<1"> （<b>{{m.number}}</b> 分）</span>
                         </ques_type>
                     </el-divider>
-                    <scores :count="m.count" :score="m.score"></scores>
+                    <scores :count="m.count" :number="m.number"></scores>
                 </div>
                 <el-empty description="未设置任何试题" v-if="scoreitems.reduce((a, b) => a + b.count, 0)<=0"></el-empty>
             </el-card>

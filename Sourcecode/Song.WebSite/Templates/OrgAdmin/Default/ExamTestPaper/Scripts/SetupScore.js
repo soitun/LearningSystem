@@ -162,18 +162,18 @@ $ready(['../Question/Components/ques_type.js',],
                     let tptotal = this.entity.Etp_Total;
                     let tmscore = 0;
                     this.qtypeitems.forEach(el => {
-                        el.score = Math.floor(el.percent * tptotal / 100);
-                        tmscore += el.score;
+                        el.number = Math.floor(el.percent * tptotal / 100);
+                        tmscore += el.number;
                     });
                     //重新计算各题型占比的总和
                     let percenttotal = this.qtypeitems.reduce((a, b) => a + b.percent, 0);
                     if (percenttotal == 100) {
                         if (tmscore - tptotal > 0) {
-                            const maxel = this.qtypeitems.reduce((p, c) => p.score > c.score ? p : c);
-                            this.$set(maxel, 'score', maxel.score - (tmscore - tptotal));
+                            const maxel = this.qtypeitems.reduce((p, c) => p.number > c.number ? p : c);
+                            this.$set(maxel, 'number', maxel.number - (tmscore - tptotal));
                         } else {
-                            const minxel = this.qtypeitems.reduce((p, c) => p.score < c.score ? p : c);
-                            this.$set(minxel, 'score', minxel.score - (tmscore - tptotal));
+                            const minxel = this.qtypeitems.reduce((p, c) => p.number < c.number ? p : c);
+                            this.$set(minxel, 'number', minxel.number - (tmscore - tptotal));
                         }
                     }
                     this.$refs['form'].validate();
@@ -219,31 +219,31 @@ $ready(['../Question/Components/ques_type.js',],
             components: {
                 //试题题型的分数
                 'scores': {
-                    props: ['count', 'score'],
+                    props: ['count', 'number'],
                     data: function () {
                         return {
                             list: []
                         }
                     },
                     computed: {
-                        'data': t => [t.count, t.score]
+                        'data': t => [t.count, t.number]
                     },
                     watch: {
                         'data': {
                             handler: function (val) {
-                                let [count, score] = val;
+                                let [count, number] = val;
                                 this.list = [];
                                 if (count == 0) this.list = [];
                                 else {
-                                    let num = Math.floor(score / count * 100) / 100;
+                                    let num = Math.floor(number / count * 100) / 100;
                                     let tmtotal = 0;  //题型总分，计算所得
                                     for (let i = 0; i < count; i++) {
                                         tmtotal += num;
                                         this.list.push(num);
                                     }
-                                    if (tmtotal != score) {
+                                    if (tmtotal != number) {
                                         let last = this.list[this.list.length - 1];
-                                        this.list[this.list.length - 1] = Math.floor((last + score - tmtotal) * 100) / 100;
+                                        this.list[this.list.length - 1] = Math.floor((last + number - tmtotal) * 100) / 100;
                                     }
                                 }
                             }, immediate: true,

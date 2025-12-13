@@ -74,7 +74,7 @@ $ready(['../Question/Components/ques_type.js',
                             byname: '',    //题型的别名
                             total: 0,       //可供选择的题量
                             count: 0,        //题量
-                            score: 0,       //分数
+                            number: 0,       //分数
                             percent: 0,   //分数占比
                         }
                     });

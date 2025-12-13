@@ -145,7 +145,7 @@ $ready(['../Question/Components/ques_type.js',
                             byname: '',    //题型的别名
                             total: 0,       //可供选择的题量
                             count: 0,        //题量
-                            score: 0,       //分数
+                            number: 0,       //题型的分数
                             percent: 0,   //分数占比
                         }
                     });
@@ -210,7 +210,7 @@ $ready(['../Question/Components/ques_type.js',
                                     const item = th.qtypeitems.find(el => Number(el.type) == Number(ques.type));
                                     ques.total = Number(item.total);
                                     ques.count = Number(ques.count);
-                                    ques.score = Number(ques.score);
+                                    ques.number = Number(ques.number);
                                     ques.percent = Number(ques.percent);
                                 }
                                 th.qtypeitems = questions.length<1 ? th.qtypeitems : questions;
@@ -306,18 +306,18 @@ $ready(['../Question/Components/ques_type.js',
                     let tptotal = this.entity.Etp_Total;
                     let tmscore = 0;
                     this.qtypeitems.forEach(el => {
-                        el.score = Math.floor(el.percent * tptotal / 100);
-                        tmscore += el.score;
+                        el.number = Math.floor(el.percent * tptotal / 100);
+                        tmscore += el.number;
                     });
                     //重新计算各题型占比的总和
                     let percenttotal = this.qtypeitems.reduce((a, b) => a + b.percent, 0);
                     if (percenttotal == 100) {
                         if (tmscore - tptotal > 0) {
-                            const maxel = this.qtypeitems.reduce((p, c) => p.score > c.score ? p : c);
-                            this.$set(maxel, 'score', maxel.score - (tmscore - tptotal));
+                            const maxel = this.qtypeitems.reduce((p, c) => p.number > c.number ? p : c);
+                            this.$set(maxel, 'number', maxel.number - (tmscore - tptotal));
                         } else {
-                            const minxel = this.qtypeitems.reduce((p, c) => p.score < c.score ? p : c);
-                            this.$set(minxel, 'score', minxel.score - (tmscore - tptotal));
+                            const minxel = this.qtypeitems.reduce((p, c) => p.number < c.number ? p : c);
+                            this.$set(minxel, 'number', minxel.number - (tmscore - tptotal));
                         }
                     }
                     this.$refs['form'].validate();
@@ -383,7 +383,7 @@ $ready(['../Question/Components/ques_type.js',
                     for (let i = 0; i < items.length; i++) {
                         const m = items[i];
                         xml += '<ques type="' + m.type + '" name="' + m.name + '" byname="' + m.byname + '"'
-                            + ' score="' + m.score + '"'
+                            + ' number="' + m.number + '"'
                             + ' count="' + m.count + '"'
                             + ' percent="' + m.percent + '"'
                         xml += ' />';

@@ -15,16 +15,16 @@
             name:试题类型（中文名称），
             total:可选的总题数，在出卷时没有用处
             count：当前题型的数量
-            score:当前题型的分数
+            number:当前题型的分数
             percent:当前题型分数占试卷中总的百分比
 
             当计算每道试题的分数时，只有count与percent有用，其它都无用
-            score可以通过试卷总分乘以percent得到
+            number可以通过试卷总分乘以percent得到
 
             下面是之前的配置项
             ques type="1" count="30" number="30"
         -->
-        <ques type="1" name="单选" total="5" count="5" score="5" percent="20">
+        <ques type="1" name="单选" byname="" total="5" count="5" number="5" percent="20">
             <!--
                 属性依次为：
                 id:试题ID
@@ -37,7 +37,7 @@
             -->
             <q id="69583" num="0.99" ans="928" sucess="true" score="0.99" />
         </ques>
-        <ques type="2" name="多选" total="5" count="5" score="5" percent="20" >
+        <ques type="2" name="多选" total="5" count="5" number="5" percent="20" >
             <q id="69583" num="0.99" ans="928" sucess="true" score="0.99" />
         </ques>
     </questions>
