@@ -40,12 +40,56 @@ namespace Song.ViewData.Methods
             return _tran(tp);
         }
         /// <summary>
-        /// 获取试卷信息详情，包括抽题范围
+        /// 获取固定试卷的详情
         /// </summary>
         /// <param name="id">试卷id</param>
         /// <returns>paper:试卷对象，parts:试题分类,knls:知识点, tags:关键字，questions:试题题型分配</returns>
         [HttpGet]
-        public JObject Details(long id)
+        public JObject ForDetails1(long id)
+        {
+            Song.Entities.ExamTestPaper tp = Business.Do<IExamTestPaper>().PaperSingle(id);
+            if (tp == null) throw new Exception("试卷不存在！");
+            JObject jo = new JObject();
+            jo.Add("paper", _tran(tp).ToJObject());
+            XmlDocument xmldoc = new XmlDocument();
+            xmldoc.LoadXml(tp.Etp_FromConfig);
+            //各题型的占比
+            XmlNodeList nodeitems = xmldoc.SelectNodes("/testpaper/questions/ques");
+            if (nodeitems != null && nodeitems.Count > 0)
+            {
+                JArray joques = new JArray();
+                foreach (XmlNode item in nodeitems)
+                {
+                    JObject joitem = new JObject();
+                    foreach (XmlAttribute att in item.Attributes)
+                        joitem.Add(att.Name, att.Value);
+                    //试题
+                    XmlNodeList nodeques = item.SelectNodes("q");
+                    JArray jarr = new JArray();
+                    if (nodeques != null && nodeques.Count > 0)
+                    {                           
+                        foreach (XmlNode q in nodeques)
+                        {
+                            JObject joq = new JObject();
+                            foreach (XmlAttribute att in q.Attributes)
+                                joq.Add(att.Name, att.Value);
+                            jarr.Add(joq);
+                        }
+                    }
+                    joitem.Add("ques", jarr);
+                    joques.Add(joitem);
+                }
+                jo.Add("questions", joques);
+            }
+            return jo;
+        }
+        /// <summary>
+        /// 获取随机试卷信息详情，包括抽题范围
+        /// </summary>
+        /// <param name="id">试卷id</param>
+        /// <returns>paper:试卷对象，parts:试题分类,knls:知识点, tags:关键字，questions:试题题型分配</returns>
+        [HttpGet]
+        public JObject ForDetails2(long id)
         {
             Song.Entities.ExamTestPaper tp = Business.Do<IExamTestPaper>().PaperSingle(id);
             if (tp == null) throw new Exception("试卷不存在！");

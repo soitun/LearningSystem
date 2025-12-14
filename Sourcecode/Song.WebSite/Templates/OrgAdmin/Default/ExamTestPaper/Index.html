@@ -77,16 +77,9 @@
                     <icon>&#xe81a</icon> {{scope.row.Etp_Span}} 分钟
                 </template>
             </el-table-column>
-            <el-table-column label="类型" align="center" width="80">
+            <el-table-column label="类型" align="center" width="120">
                 <template slot-scope="scope">
-                    <template v-if="scope.row.Etp_Type==1">
-                        固定试题
-                    </template>
-                    <template v-if="scope.row.Etp_Type==2" remark="随机试题">
-                        <div>
-                            随机试题
-                        </div>
-                    </template>
+                    <papertype :type="scope.row.Etp_Type"></papertype> 
                 </template>
             </el-table-column>
             <el-table-column label="难度" width="100" align="center">

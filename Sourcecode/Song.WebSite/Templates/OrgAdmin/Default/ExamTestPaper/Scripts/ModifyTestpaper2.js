@@ -195,7 +195,7 @@ $ready(['../Question/Components/ques_type.js',
                     if (this.isadd) return;
                     var th = this;
                     th.loadstate.get = true;
-                    $api.get("ExamTestPaper/Details", { "id": th.id })
+                    $api.get("ExamTestPaper/ForDetails2", { "id": th.id })
                         .then(req => {
                             if (req.data.success) {
                                 let result = req.data.result;
@@ -397,7 +397,7 @@ $ready(['../Question/Components/ques_type.js',
                     //如果处于课程编辑页，则刷新
                     var pagebox = window.top.$pagebox;
                     if (pagebox && pagebox.source.top)
-                        pagebox.source.tab(window.name, 'vapp.fresh_row', isclose);
+                        pagebox.source.tab(window.name, 'vapp.fresh_row', isclose,this.id);
                 }
             },
             filters: {

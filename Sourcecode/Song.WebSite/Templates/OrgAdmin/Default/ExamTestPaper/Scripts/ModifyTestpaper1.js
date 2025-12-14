@@ -15,7 +15,7 @@ $ready(['../Question/Components/ques_type.js',
                 //试卷对象  
                 entity: {
                     Etp_Id: 0,        //主键
-                    Etp_Name: '2', Etp_SubName: '',
+                    Etp_Name: '', Etp_SubName: '',
                     Etp_IsUse: true,
                     Etp_Span: 120,    //默认限时 120分钟
                     Etp_Type: 2,
@@ -26,9 +26,9 @@ $ready(['../Question/Components/ques_type.js',
                     Etp_Count: 0,       //总题量                   
                 },
                 //录入校验的规划
-                rules: {
+                rules1: {
                     Etp_Name: [
-                        { required: true, message: '标题不得为空', trigger: 'blur' },
+                        { required: true, message: '试卷名称不得为空', trigger: 'blur' },
                         { min: 1, max: 255, message: '最长输入255个字符', trigger: 'change' },
                         { validator: validate.name.proh, trigger: 'change' },   //禁止使用特殊字符
                         { validator: validate.name.danger, trigger: 'change' },
@@ -39,7 +39,9 @@ $ready(['../Question/Components/ques_type.js',
                                 return callback();
                             }, trigger: 'blur'
                         }
-                    ],
+                    ]
+                },
+                rules2: {
                     Etp_Total: [
                         { required: true, message: '分数不得为空', trigger: 'blur' },
                         {
@@ -59,32 +61,9 @@ $ready(['../Question/Components/ques_type.js',
 
                             }, trigger: 'blur'
                         }
-                    ],
-                    total: [
-                        {
-                            validator: function (rule, value, callback) {
-                                let items = vapp.qtypeitems;
-                                let percent = items.reduce((a, b) => a + b.percent, 0);
-                                if (percent > 100) return callback(new Error('各题型分数占比之和不能大于100'));
-                                if (percent != 100) return callback(new Error('各题型分数占比之和必须等于100'));
-
-                                for (let i = 0; i < items.length; i++) {
-                                    const el = items[i];
-                                    if (el.count > el.total) {
-                                        return callback(new Error('' + el.name + '题的数量不能大于' + el.total + '道'));
-                                    }
-                                    if (el.count <= 0 && el.percent > 0) {
-                                        return callback(new Error('' + el.name + '题的数量不能小于1道'));
-                                    }
-                                    if (el.percent <= 0 && el.count > 0) {
-                                        return callback(new Error('' + el.name + '题的分数不可小于1分'));
-                                    }
-                                }
-                                callback();
-                            }, trigger: 'blur'
-                        }
-                    ],
+                    ]
                 },
+                rules3: {},
                 loadstate: {
                     init: false,        //初始化
                     def: false,         //默认
@@ -116,9 +95,9 @@ $ready(['../Question/Components/ques_type.js',
                             ques: []     //题型下的试题
                         }
                     });
-                     //添加题型录入的验证方法
-                     for (var i = 0; i <  th.qtypeitems.length; i++) {
-                        const item =  th.qtypeitems[i];
+                    //添加题型录入的验证方法
+                    for (var i = 0; i < th.qtypeitems.length; i++) {
+                        const item = th.qtypeitems[i];
                         //题型分数点比的验证
                         let rulepercent = [{
                             validator: function (rule, value, callback) {
@@ -135,8 +114,8 @@ $ready(['../Question/Components/ques_type.js',
 
                             }, trigger: 'blur'
                         }];
-                        th.$set(th.rules, 'percent' + item.type, rulepercent);
-                     }
+                        th.$set(th.rules3, 'percent' + item.type, rulepercent);
+                    }
                     if (!th.isadd) th.getentity();
                 }).catch(err => console.error(err))
                     .finally(() => th.loadstate.init = false);
@@ -173,6 +152,34 @@ $ready(['../Question/Components/ques_type.js',
 
             },
             methods: {
+                //获取试卷的数据实体
+                getentity: function () {
+                    if (this.isadd) return;
+                    var th = this;
+                    th.loadstate.get = true;
+                    $api.get("ExamTestPaper/ForDetails1", { "id": th.id })
+                        .then(req => {
+                            if (req.data.success) {
+                                let result = req.data.result;
+                                th.entity = result.paper;
+                                //试题题型分配数据
+                                let questions = result?.questions ?? [];
+                                for (let i = 0; i < questions.length; i++) {
+                                    const ques = questions[i];
+                                    const item = th.qtypeitems.find(el => Number(el.type) == Number(ques.type));
+                                    ques.total = Number(item.total);
+                                    ques.count = Number(ques.count);
+                                    ques.number = Number(ques.number);
+                                    ques.percent = Number(ques.percent);
+                                }
+                                th.qtypeitems = questions.length < 1 ? th.qtypeitems : questions;
+                            } else {
+                                console.error(req.data.exception);
+                                throw req.config.way + ' ' + req.data.message;
+                            }
+                        }).catch(err => console.error(err))
+                        .finally(() => th.loadstate.get = false);
+                },
                 //打开试卷基础信息的页面
                 openpaperinfo: function (page, title, icon, height) {
                     if (!window.top.$pagebox) return;
@@ -187,20 +194,10 @@ $ready(['../Question/Components/ques_type.js',
                     });
                     curbox.opensub(subbox, 'top');
                 },
-                //接收子窗口数据
-                //data:子窗口返回的数据
-                //func:要调用的函数名称
-                receive: function ([data, count, func]) {
-                    if (func == 'selectpart') [this.parts, this.quescount.part] = [data, count];
-                    if (func == 'selectknl') [this.knls, this.quescount.knl] = [data, count];
-                    if (func == 'selecttag') [this.tags, this.quescount.tag] = [data, count];
-                    //
-                    this.getquestotal();
-                },
                 //向“更多分数设置”的窗体传递数据
                 transmit: function () {
                     //试卷对象，题型
-                    return [this.entity, this.types];
+                    return [this.entity, this.types, this.upfile];
                 },
                 //接子的窗体数据
                 receive: function ([entity, upfile]) {
@@ -252,16 +249,72 @@ $ready(['../Question/Components/ques_type.js',
                             this.$refs.form2.validate(),
                             this.$refs.form3.validate()
                         ]);
-                        this.submitData()
+                        this.submitData(isclose)
                     } catch (error) {
                         console.log('表单验证失败')
                         return false
                     }
                 },
                 //提交数据
-                submitData: function () {
+                submitData: function (isclose) {
                     console.error('录入验证通过');
+                    var th = this;
+                    let xml = th.buildXml();
+                    th.entity.Etp_FromConfig = xml;
+                    th.entity.Etp_Type = 1;
+                    th.entity.Etp_Count = th.qtypeitems.reduce((total, item) => total + item.ques.length, 0);
+                    //console.error(xml);
+                    let apipath = th.isadd ? 'ExamTestPaper/Add' : 'ExamTestPaper/Modify';
+                    //接口参数，如果有上传文件，则增加file
+                    var para = { 'entity': th.entity };
+                    if (th.upfile != null) para['file'] = th.upfile;
+                    th.loadstate.update = true;
+                    $api.post(apipath, para).then(function (req) {
+                        if (req.data.success) {
+                            var result = req.data.result;
+                            th.$message({
+                                type: 'success', center: true,
+                                message: '操作成功!'
+                            });
+                            th.operateSuccess(isclose);
+                        } else {
+                            throw req.data.message;
+                        }
+                    }).catch(function (err) {
+                        alert(err, '错误');
+                    }).finally(() => th.loadstate.update = false);
                 },
+                //生成xml数据，格式说明参考同文件夹下的ModifyTestpaper2.xml
+                buildXml: function () {
+                    var count = 0;
+                    var xml = '<testpaper type="1">';
+                    //题型分数分配
+                    xml += '<questions>'
+                    let items = this.qtypeitems;
+                    for (let i = 0; i < items.length; i++) {
+                        const m = items[i];
+                        xml += '<ques type="' + m.type + '" name="' + m.name + '" byname="' + m.byname + '"'
+                            + ' number="' + m.number + '"'
+                            + ' count="' + m.count + '"'
+                            + ' percent="' + m.percent + '"'
+                        xml += ' >';
+                        for (let j = 0; j < m.ques.length; j++) {
+                            const q = m.ques[j];
+                            xml += '<q id="' + q.Qus_ID + '"/>';
+                        }
+                        xml += '</ques>';
+                    }
+                    xml += '</questions>';
+                    xml += '</testpaper>';
+                    return xml;
+                },
+                //操作成功
+                operateSuccess: function (isclose) {
+                    //如果处于课程编辑页，则刷新
+                    var pagebox = window.top.$pagebox;
+                    if (pagebox && pagebox.source.top)
+                        pagebox.source.tab(window.name, 'vapp.fresh_row', isclose, this.id);
+                }
             },
             filters: {
                 //汉字序号，例如一、二、
