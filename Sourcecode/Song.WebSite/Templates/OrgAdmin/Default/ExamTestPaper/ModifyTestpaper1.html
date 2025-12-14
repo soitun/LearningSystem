@@ -16,31 +16,54 @@
                     <el-button type="primary" plain @click="openpaperinfo('SetupPaperInfo','设置试卷信息','e667',600)">设置试卷信息
                     </el-button>
                 </template>
-                <p class="tpname">
-                    <span v-if="entity.Etp_Name==''" class="null">(试卷名称-未命名)</span>
-                    <template v-else>{{entity.Etp_Name}}</template>
-                </p>
-                <p class="tpsubname">
-                    <span v-if="entity.Etp_SubName==''" class="null">(未编写副标题)</span>
-                    <template v-else>{{entity.Etp_SubName}}</template>
-                <div class="tpinfo">
-                    <span>考试时间 {{entity.Etp_Span}} 分钟</span>
-                    <span>满分 {{entity.Etp_Total}} 分</span>
-                    <span> {{entity.Etp_PassScore}} 分 及格</span>
-                </div>
-                <div class="tpremind">
-                    注意事项:<br />
-                    <span v-if="entity.Etp_Remind==''" class="null">(未编写注意事项)</span>
-                    <span v-else v-html="entity.Etp_Remind"></span>
-                </div>
+                <el-form ref="form1" :model="entity" :rules="rules" v-loading="loading" @submit.native.prevent
+                    label-width="100px">
+                    <p class="tpname">
+                        <span v-if="entity.Etp_Name==''" class="null">(试卷名称-未命名)</span>
+                        <template v-else>{{entity.Etp_Name}}</template>
+                        <el-form-item label="" prop="Etp_Name" label-width="0"></el-form-item>
+                    </p>
+                    <p class="tpsubname">
+                        <span v-if="entity.Etp_SubName==''" class="null">(未编写副标题)</span>
+                        <template v-else>{{entity.Etp_SubName}}</template>
+                    <div class="tpinfo">
+                        <span>考试时间 {{entity.Etp_Span}} 分钟</span>
+                        <span>满分 {{entity.Etp_Total}} 分</span>
+                        <span> {{entity.Etp_PassScore}} 分 及格</span>
+                    </div>
+                    <div class="tpremind">
+                        注意事项:<br />
+                        <span v-if="entity.Etp_Remind==''" class="null">(未编写注意事项)</span>
+                        <span v-else v-html="entity.Etp_Remind"></span>
+                    </div>
+                </el-form>
             </el-card>
             <section class="content">
+                <el-card shadow="never" type="info" v-for="(m,idx) in qtypeitems">
+                    <template slot="header">
+                        <span>{{idx|chiserial}}
+                            <ques_type :type="m.type" :types="types" :showicon="false" :showname="true">
+
+                            </ques_type>
+                        </span>
+                        <div class="qtype_btns" remark="题型按钮区">
+                            <el-link icon="el-icon-edit-outline" type="primary">题型别名</el-link>
+                            <span>
+                                <el-link icon="el-icon-arrow-up" type="primary" :disabled="idx==0"
+                                    @click="typemove(idx,-1)">上移</el-link>
+                                <el-link icon="el-icon-arrow-down" type="primary" :disabled="idx>=qtypeitems.length-1"
+                                    @click="typemove(idx,1)">下移</el-link>
+                            </span>
+                            <el-link icon="el-icon-magic-stick" type="primary">选择试题</el-link>
+                        </div>
+                    </template>
+
+                </el-card>
 
             </section>
         </section>
         <section class="right">
-            <el-form ref="form" :model="entity" :rules="rules" @submit.native.prevent
-                label-width="100px">
+            <el-form ref="form2" :model="entity" :rules="rules" @submit.native.prevent label-width="100px">
                 <el-card shadow="never" type="success">
                     <template slot="header">
                         <span icon="&#xe829" huge>卷面信息</span>
@@ -52,7 +75,7 @@
                         </span>
                     </template>
                     <el-form-item label="" prop="Etp_Total" label-width="0">
-                        <el-input v-model="entity.Etp_Total" type="number" :min="1">
+                        <el-input v-model="entity.Etp_Total" type="number" :min="1" @input="chanageTotal">
                             <template slot="prepend">满分</template>
                             <template slot="append">分</template>
                         </el-input>
@@ -63,14 +86,47 @@
                             <template slot="append">分</template>
                         </el-input>
                     </el-form-item>
-                
+
                 </el-card>
-                <el-card shadow="never" type="primary">
+                <el-card shadow="never" type="primary" class="quescard">
                     <template slot="header">
                         <span icon="&#xe75e" medium>题卡</span>
-
+                        <warning v-if="percenttotal!=100 && percenttotal!=0">当前各题型分数占比之和：{{percenttotal}} %</warning>
+                        <div> <b>{{ qtypeitems.reduce((a, b) => a +b.count,0)}}</b> 道 |
+                            <span>折叠</span>
+                        </div>
                     </template>
+                    <el-form ref="form3" :model="entity" :rules="rules" @submit.native.prevent label-width="100px">
+                        <div v-for="(m,idx) in qtypeitems" class="scoreitems" :type="m.type">
+                            <div>
+                                <el-row :gutter="20">
+                                    <el-col :span="16">
+                                        {{idx|chiserial}}
+                                        <span v-if="m.byname!='' && m.byname!='undefined'">{{m.byname}} - <span
+                                                class="truename">{{types[m.type-1]}}题</span></span>
+                                        <span v-else>{{types[m.type-1]}}题</span>
+                                        </span>
+                                        <span :zero="m.number<1"> （{{m.ques.length}} 道，<b>{{m.number}}</b> 分）</span>
+                                    </el-col>
+                                    <el-col :span="8">
+                                        <el-form-item label="" :prop="'percent'+m.type" label-width="0">
+                                            <el-input v-model.number="m.percent" type="number" :min="0" :max="100"
+                                                @input="chanageTotal">
+                                                <template slot="append">%</template>
+                                            </el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
 
+
+                            </div>
+                            <el-divider content-position="left">
+
+                            </el-divider>
+                        </div>
+                        <el-empty description="未设置任何试题" v-if="qtypeitems.reduce((a, b) => a + b.ques.length, 0)<0">
+                        </el-empty>
+                    </el-form>
                 </el-card>
             </el-form>
         </section>

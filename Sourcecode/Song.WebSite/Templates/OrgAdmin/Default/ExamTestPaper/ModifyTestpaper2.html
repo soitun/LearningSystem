@@ -129,10 +129,11 @@
                                     <span icon="&#xe75e" large>题型</span>                                    
                                 </el-form-item>
                                 <loading v-if="loadstate.total" bubble>loading...</loading>
-                                    <span v-else class="small option_count">可选 <b>{{ quescount.total}}</b> 道</span>
+                                    <span v-else class="small option_count">
+                                        已选 <b>{{ qtypeitems.reduce((a, b) => a +b.count,0)}}</b> 道 /
+                                        可选 <b>{{ quescount.total}}</b> 道</span>
                             </template>
-                            <div v-for="(m,idx) in qtypeitems" class="qtypeitems">
-                              
+                            <div v-for="(m,idx) in qtypeitems" class="qtypeitems">                              
                                     <ques_type :type="m.type" :types="types" :showicon="true" :showname="true">
                                         <span class="small option_count">已选<b>{{m.count}}</b>道</span>
                                         <span :zero="m.total<1" class="small option_count"> / 可选 <b>{{m.total}}</b>

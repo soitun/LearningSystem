@@ -39,51 +39,7 @@ $ready(function () {
                             callback();
                         }, trigger: 'blur'
                     }
-                ],
-                Etp_Total: [
-                    { required: true, message: '分数不得为空', trigger: 'blur' },
-                    {
-                        validator: function (rule, value, callback) {
-                            if (/^[1-9]\d*$/.test(value)) return callback();
-                            callback(new Error('请输入大于零的整数'));
-                        }, trigger: 'blur'
-                    }
-                ],
-                Etp_PassScore: [
-                    { required: true, message: '分数不得为空', trigger: 'blur' },
-                    {
-                        validator: function (rule, value, callback) {
-                            if (!(/^[1-9]\d*$/.test(value))) return callback(new Error('请输入大于零的整数'));
-                            if (Number(value) > vapp.entity.Etp_Total) callback(new Error('及格分不得大于满分'));
-                            else callback();
-
-                        }, trigger: 'blur'
-                    }
-                ],
-                total: [
-                    {
-                        validator: function (rule, value, callback) {
-                            let items = vapp.qtypeitems;
-                            let percent = items.reduce((a, b) => a + b.percent, 0);
-                            if (percent > 100) return callback(new Error('各题型分数占比之和不能大于100'));
-                            if (percent != 100) return callback(new Error('各题型分数占比之和必须等于100'));
-
-                            for (let i = 0; i < items.length; i++) {
-                                const el = items[i];
-                                if (el.count > el.total) {
-                                    return callback(new Error('' + el.name + '题的数量不能大于' + el.total + '道'));
-                                }
-                                if (el.count <= 0 && el.percent > 0) {
-                                    return callback(new Error('' + el.name + '题的数量不能小于1道'));
-                                }
-                                if (el.percent <= 0 && el.count > 0) {
-                                    return callback(new Error('' + el.name + '题的分数不可小于1分'));
-                                }
-                            }
-                            callback();
-                        }, trigger: 'blur'
-                    }
-                ]
+                ],              
             },
             loadstate: {
                 init: false,        //初始化

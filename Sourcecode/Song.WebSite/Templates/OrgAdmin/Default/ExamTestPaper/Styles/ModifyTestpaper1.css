@@ -8,21 +8,34 @@
         "Microsoft YaHei", "微软雅黑", sans-serif;
 }
 
-#vapp>*:first-child {
-    flex: 1;
-    margin-right: 15px;
-    display: flex;
-    flex-direction: column;
-}
 
 .el-card__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 50px;   
+    height: 50px;
 }
 
+/*左侧区间*/
+#vapp>*:first-child {
+    flex: 1;
+    margin-right: 10px;
+    padding-right: 5px;
+    flex-direction: column;
+}
 
+section.left {
+    overflow-y: auto;
+}
+
+section.left .el-card.theme {
+    height: auto;
+}
+
+section.left .el-card {
+    margin-bottom: 15px;
+
+}
 
 /*右侧区间*/
 section.right {
@@ -38,9 +51,7 @@ section.right .el-form {
     margin: 0px;
 }
 
-section.left .el-card {
-    margin-bottom: 15px;
-}
+
 
 section.right .el-form>.el-card:not(:last-child) {
     margin-bottom: 15px;
@@ -53,6 +64,10 @@ section.right .el-form .el-card:last-child {
 
 .el-form-item:last-child {
     margin-bottom: 0 !important;
+}
+
+section.right .quescard .el-form-item__error {
+    left: -10px !important;
 }
 
 /*试题主题区*/
@@ -97,5 +112,20 @@ section.right .el-form .el-card:last-child {
 /*试题区域*/
 section.content {
     flex: 1;
-    background: rgb(239, 255, 224);
+}
+
+/*当某个题型没有试题时，不显示空白区域，以及标题的下划线*/
+section.content>.el-card .el-card__body:empty {
+    display: none;
+}
+
+section.content>.el-card:has(.el-card__body:empty) .el-card__header {
+    border: none;
+}
+
+/*题型的按钮区*/
+.qtype_btns {
+    width: 250px;
+    display: flex;
+    justify-content: space-between;
 }

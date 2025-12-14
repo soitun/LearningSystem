@@ -15,7 +15,7 @@ $ready(['../Question/Components/ques_type.js',
                 //试卷对象  
                 entity: {
                     Etp_Id: 0,        //主键
-                    Etp_Name: '试卷名称，随便打几个字', Etp_SubName: '',
+                    Etp_Name: '2', Etp_SubName: '',
                     Etp_IsUse: true,
                     Etp_Span: 120,    //默认限时 120分钟
                     Etp_Type: 2,
@@ -27,6 +27,19 @@ $ready(['../Question/Components/ques_type.js',
                 },
                 //录入校验的规划
                 rules: {
+                    Etp_Name: [
+                        { required: true, message: '标题不得为空', trigger: 'blur' },
+                        { min: 1, max: 255, message: '最长输入255个字符', trigger: 'change' },
+                        { validator: validate.name.proh, trigger: 'change' },   //禁止使用特殊字符
+                        { validator: validate.name.danger, trigger: 'change' },
+                        {
+                            validator: function (rule, value, callback) {
+                                let v = $api.trim(value);
+                                if (v == '' || v.length < 1) return callback(new Error('不能全部是空格'));
+                                return callback();
+                            }, trigger: 'blur'
+                        }
+                    ],
                     Etp_Total: [
                         { required: true, message: '分数不得为空', trigger: 'blur' },
                         {
@@ -44,6 +57,30 @@ $ready(['../Question/Components/ques_type.js',
                                 if (Number(value) > vapp.entity.Etp_Total) callback(new Error('及格分不得大于满分'));
                                 else callback();
 
+                            }, trigger: 'blur'
+                        }
+                    ],
+                    total: [
+                        {
+                            validator: function (rule, value, callback) {
+                                let items = vapp.qtypeitems;
+                                let percent = items.reduce((a, b) => a + b.percent, 0);
+                                if (percent > 100) return callback(new Error('各题型分数占比之和不能大于100'));
+                                if (percent != 100) return callback(new Error('各题型分数占比之和必须等于100'));
+
+                                for (let i = 0; i < items.length; i++) {
+                                    const el = items[i];
+                                    if (el.count > el.total) {
+                                        return callback(new Error('' + el.name + '题的数量不能大于' + el.total + '道'));
+                                    }
+                                    if (el.count <= 0 && el.percent > 0) {
+                                        return callback(new Error('' + el.name + '题的数量不能小于1道'));
+                                    }
+                                    if (el.percent <= 0 && el.count > 0) {
+                                        return callback(new Error('' + el.name + '题的分数不可小于1分'));
+                                    }
+                                }
+                                callback();
                             }, trigger: 'blur'
                         }
                     ],
@@ -76,9 +113,30 @@ $ready(['../Question/Components/ques_type.js',
                             count: 0,        //题量
                             number: 0,       //分数
                             percent: 0,   //分数占比
+                            ques: []     //题型下的试题
                         }
                     });
-                    //th.getquestotal();
+                     //添加题型录入的验证方法
+                     for (var i = 0; i <  th.qtypeitems.length; i++) {
+                        const item =  th.qtypeitems[i];
+                        //题型分数点比的验证
+                        let rulepercent = [{
+                            validator: function (rule, value, callback) {
+                                let field = rule.field;
+                                let type = Number(field.substring(field.length - 1));   //题型
+                                let item = vapp.qtypeitems.find(i => i.type == type);
+                                if (item.percent < 0) return callback(new Error('请输入大于零的整数'));
+                                //分数占比大于零，试题不得为零
+                                if (item.percent == 0 && item.count > 0) return callback(new Error("不可为零"));
+                                //分数占比大于零，试题不得为零
+                                let total = vapp.qtypeitems.reduce((a, b) => a + b.percent, 0);
+                                if (total != 100) return callback(new Error("分数占比之和必须为100"));
+                                callback();
+
+                            }, trigger: 'blur'
+                        }];
+                        th.$set(th.rules, 'percent' + item.type, rulepercent);
+                     }
                     if (!th.isadd) th.getentity();
                 }).catch(err => console.error(err))
                     .finally(() => th.loadstate.init = false);
@@ -106,6 +164,10 @@ $ready(['../Question/Components/ques_type.js',
                 },
                 //是否为新增
                 isadd: t => t.id == null || t.id == '' || this.id == 0,
+                //各题型占比总和
+                percenttotal: function () {
+                    return this.qtypeitems.reduce((a, b) => a + b.percent, 0);
+                }
             },
             watch: {
 
@@ -147,13 +209,66 @@ $ready(['../Question/Components/ques_type.js',
                     this.entity.Etp_Span = entity.Etp_Span;
                     this.entity.Etp_Remind = entity.Etp_Remind;
                     this.entity.Etp_Intro = entity.Etp_Intro;
-                    this.upfile = upfile;                   
+                    this.upfile = upfile;
                 },
-                btnEnter: function () { 
+                /***************************
+                 * 试题编辑
+                 */
+                //移动题型顺序
+                typemove: function (index, direction) {
+                    const newArr = [...this.qtypeitems];
+                    const element = newArr.splice(index, 1)[0];
+                    newArr.splice(index + direction, 0, element);
+                    this.qtypeitems = newArr;
+                },
+                //当试卷总分更改时
+                chanageTotal: function () {
+                    let tptotal = this.entity.Etp_Total;
+                    let tmscore = 0;
+                    this.qtypeitems.forEach(el => {
+                        el.number = Math.floor(el.percent * tptotal / 100);
+                        tmscore += el.number;
+                    });
+                    //重新计算各题型占比的总和
+                    let percenttotal = this.qtypeitems.reduce((a, b) => a + b.percent, 0);
+                    if (percenttotal == 100) {
+                        if (tmscore - tptotal > 0) {
+                            const maxel = this.qtypeitems.reduce((p, c) => p.number > c.number ? p : c);
+                            this.$set(maxel, 'number', maxel.number - (tmscore - tptotal));
+                        } else {
+                            const minxel = this.qtypeitems.reduce((p, c) => p.number < c.number ? p : c);
+                            this.$set(minxel, 'number', minxel.number - (tmscore - tptotal));
+                        }
+                    }
+                    this.$refs['form2'].validate();
+                    this.$refs['form3'].validate();
+                },
+                //确认操作
+                btnEnter: async function (formName, isclose) {
+                    try {
+                        // 同时验证所有表单
+                        const results = await Promise.all([
+                            this.$refs.form1.validate(),
+                            this.$refs.form2.validate(),
+                            this.$refs.form3.validate()
+                        ]);
+                        this.submitData()
+                    } catch (error) {
+                        console.log('表单验证失败')
+                        return false
+                    }
+                },
+                //提交数据
+                submitData: function () {
+                    console.error('录入验证通过');
                 },
             },
             filters: {
-
+                //汉字序号，例如一、二、
+                chiserial: function (val) {
+                    let arr = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+                    return arr[val + 1] + '、';
+                }
             },
             components: {
 
