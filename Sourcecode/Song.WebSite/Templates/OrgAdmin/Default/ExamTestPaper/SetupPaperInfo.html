@@ -21,7 +21,7 @@
             <el-form ref="form" :model="entity" :rules="rules" v-loading="loading" @submit.native.prevent
                 label-width="100px">
                 <div v-show="activeName=='general'" remark="基本信息" tab="general">
-                    <el-form-item label="试卷标题" prop="Etp_Name">
+                    <el-form-item label="试卷名称" prop="Etp_Name">
                         <el-input v-model="entity.Etp_Name" maxlength="255"></el-input>
                     </el-form-item>
                     <el-form-item label="副标题" prop="Etp_SubName">
