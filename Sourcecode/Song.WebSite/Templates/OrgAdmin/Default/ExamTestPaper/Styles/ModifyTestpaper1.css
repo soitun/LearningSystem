@@ -8,7 +8,9 @@
         "Microsoft YaHei", "微软雅黑", sans-serif;
 }
 
-
+.footer{
+    width: 400px;
+}
 .el-card__header {
     display: flex;
     align-items: center;

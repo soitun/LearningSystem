@@ -741,16 +741,19 @@
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\Index.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\Modify.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\ModifyTestpaper1.js" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\ModifyTestpaper1.xml" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\ModifyTestpaper2.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\ModifyTestpaper2.xml" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\MyTestPaper.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\SelectKnl.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\SelectParts.js" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\SelectQuestions.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\SelectTag.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\SetupPaperInfo.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\SetupScore.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\SelectKnl.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\SelectParts.html" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\SelectQuestions.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\SelectTag.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\SetupPaperInfo.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\SetupScore.html" />
@@ -761,6 +764,7 @@
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\MyTestPaper.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\SelectKnl.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\SelectParts.css" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\SelectQuestions.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\SelectTag.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\SetupPaperInfo.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\SetupScore.css" />
@@ -3342,7 +3346,6 @@
     <Content Include="Utilities\Panel\Skins\Win7\intro.json" />
     <Content Include="Utilities\Datas\manage_userinfo.json" />
     <Content Include="Utilities\Fonts\iconfont.woff" />
-    <Content Include="Templates\config.json" />
     <Content Include="Utilities\Datas\systemmenu.json" />
     <Content Include="Utilities\DataTemplate\判断题.xls" />
     <Content Include="Utilities\DataTemplate\单选题.xls" />

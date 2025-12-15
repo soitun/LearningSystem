@@ -183,10 +183,8 @@ $ready(['../Question/Components/ques_type.js',
                 //打开试卷基础信息的页面
                 openpaperinfo: function (page, title, icon, height) {
                     if (!window.top.$pagebox) return;
-                    //子窗口页面路径
-                    var suburl = $dom.routepath() + page;
-                    //当前窗口
-                    var curbox = window.top.$pagebox.get(window.name);
+                    var suburl = $dom.routepath() + page;    //子窗口页面路径                   
+                    var curbox = window.top.$pagebox.get(window.name);   //当前窗口
                     //创建新窗口中
                     var subbox = window.top.$pagebox.create({
                         height: height, id: page, ico: icon, title: title,
@@ -195,12 +193,12 @@ $ready(['../Question/Components/ques_type.js',
                     curbox.opensub(subbox, 'top');
                 },
                 //向“更多分数设置”的窗体传递数据
-                transmit: function () {
+                transmitInfo: function () {
                     //试卷对象，题型
                     return [this.entity, this.types, this.upfile];
                 },
                 //接子的窗体数据
-                receive: function ([entity, upfile]) {
+                receiveInfo: function ([entity, upfile]) {
                     this.entity.Etp_Name = entity.Etp_Name;
                     this.entity.Etp_SubName = entity.Etp_SubName;
                     this.entity.Etp_Span = entity.Etp_Span;
@@ -209,15 +207,8 @@ $ready(['../Question/Components/ques_type.js',
                     this.upfile = upfile;
                 },
                 /***************************
-                 * 试题编辑
+                 * 试卷分数设置
                  */
-                //移动题型顺序
-                typemove: function (index, direction) {
-                    const newArr = [...this.qtypeitems];
-                    const element = newArr.splice(index, 1)[0];
-                    newArr.splice(index + direction, 0, element);
-                    this.qtypeitems = newArr;
-                },
                 //当试卷总分更改时
                 chanageTotal: function () {
                     let tptotal = this.entity.Etp_Total;
@@ -240,6 +231,39 @@ $ready(['../Question/Components/ques_type.js',
                     this.$refs['form2'].validate();
                     this.$refs['form3'].validate();
                 },
+                /***************************
+                 * 试题编辑
+                 */
+                //移动题型顺序
+                typemove: function (index, direction) {
+                    console.error(index);
+                    const newArr = [...this.qtypeitems];
+                    const element = newArr.splice(index, 1)[0];
+                    newArr.splice(index + direction, 0, element);
+                    this.qtypeitems = newArr;
+                },
+                //打开选择试题的子窗体
+                openselques: function (type) {
+                    if (!window.top.$pagebox) return;
+                    let item = this.qtypeitems.find(el => el.type == type);
+                    let page = 'SelectQuestions';
+                    let suburl = $dom.routepath() + page;    //子窗口页面路径      
+                    suburl = $api.url.set(suburl,
+                        {
+                            'type': item.type, 'typename': item.name,
+                            'ques': item.ques.map(item => item.Qus_ID).join(', '),
+                        });
+                    var curbox = window.top.$pagebox.get(window.name);   //当前窗口
+                    //创建新窗口中
+                    var subbox = window.top.$pagebox.create({
+                        width: 1000, id: page, ico: 'e755', title: '选择 ' + item.name + '题',
+                        url: suburl
+                    });
+                    curbox.opensub(subbox, 'left');
+                },
+                /***************************
+                 * 试卷保存
+                 */
                 //确认操作
                 btnEnter: async function (formName, isclose) {
                     try {

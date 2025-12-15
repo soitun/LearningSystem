@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head resource>
+    <meta charset="UTF-8">
+    <include file="../inc/meta.inc" />
+    <title>选择固定试卷的试题</title>
+</head>
+
+<body>
+    <div id="vapp" v-cloak>
+        <div class="panel">
+            <el-tabs type="border-card" v-model="activeName">
+                <el-tab-pane :name="tab.tab" v-for="(tab,i) in tabs">
+                    <span slot="label">
+                        <icon v-html="'&#x'+tab.icon"></icon> {{tab.name}}
+                    </span>
+                </el-tab-pane>
+            </el-tabs>
+        </div>
+    </div>
+</body>
+
+</html>

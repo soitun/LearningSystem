@@ -78,7 +78,7 @@ $ready(function () {
                     //像主窗体传值，传三个值：选中的分类，选中的试题数，调用函数名
                     var pagebox = window.top.$pagebox;
                     if (pagebox && pagebox.source.top) {
-                        [this.entity, this.types, this.upfile] = pagebox.source.box(window.name, 'vapp.transmit', false);
+                        [this.entity, this.types, this.upfile] = pagebox.source.box(window.name, 'vapp.transmitInfo', false);
                         resolve(this.entity);
                     }
                 });
@@ -91,7 +91,7 @@ $ready(function () {
                         //像主窗体传值，当前实体，图片对象
                         var pagebox = window.top.$pagebox;
                         if (pagebox && pagebox.source.box) {
-                            pagebox.source.box(window.name, 'vapp.receive', false, [th.entity, th.upfile]);
+                            pagebox.source.box(window.name, 'vapp.receiveInfo', false, [th.entity, th.upfile]);
                             let curbox = pagebox.source.self(window.name);
                             curbox.shut();
                         }

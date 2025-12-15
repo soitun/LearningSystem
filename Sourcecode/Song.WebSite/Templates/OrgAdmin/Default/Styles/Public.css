@@ -197,11 +197,11 @@ table.el-table__body tr.disabled img, tr.disabled .el-tag, tr.disabled live {
 
 /*底部栏*/
 .footer {
-	width: calc(100% - 2px);
+	width: 100%;
 	box-sizing: border-box;
 	position: fixed;
 	bottom: 0px;
-	left: 0px;
+	right: 0px;
 	text-align: right;
 	padding: 8px 6px 8px 8px;
 	display: flex;
@@ -319,4 +319,30 @@ a[download]:hover {
 
 .el-input input[type='number'] {
 	padding: 5px 0px 5px 15px;
+}
+/*选项卡 */
+.panel {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #DCDFE6;
+    box-sizing: border-box;
+}
+
+.panel>div:not(:first-child) {
+    border: 1px solid #DCDFE6;
+    border-top: none;
+}
+
+.panel div[tab] {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+.panel .el-tabs--border-card {
+    box-shadow: none;
+    border: none;
+}
+
+.panel .el-tabs__content {
+    display: none;
 }

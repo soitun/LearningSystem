@@ -54,7 +54,7 @@
                                 <el-link icon="el-icon-arrow-down" type="primary" :disabled="idx>=qtypeitems.length-1"
                                     @click="typemove(idx,1)">下移</el-link>
                             </span>
-                            <el-link icon="el-icon-magic-stick" type="primary">选择试题</el-link>
+                            <el-link icon="el-icon-magic-stick" type="primary" @click="openselques(m.type)">选择试题</el-link>
                         </div>
                     </template>
 
