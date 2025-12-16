@@ -731,8 +731,11 @@
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Tags.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\TagsRecy.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Testpaper.html" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Components\diff.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Components\papertype.js" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Components\quesrow.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Components\Styles\papertype.css" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Components\Styles\quesrow.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Index.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Modify.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\ModifyTestpaper1.html" />

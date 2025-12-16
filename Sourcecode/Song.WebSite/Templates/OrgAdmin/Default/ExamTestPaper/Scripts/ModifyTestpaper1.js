@@ -250,7 +250,8 @@ $ready(['../Question/Components/ques_type.js',
                     let suburl = $dom.routepath() + page;    //子窗口页面路径      
                     suburl = $api.url.set(suburl,
                         {
-                            'type': item.type, 'typename': item.name,
+                            'type': item.type, 
+                            'types': this.types.join(','),
                             'ques': item.ques.map(item => item.Qus_ID).join(', '),
                         });
                     var curbox = window.top.$pagebox.get(window.name);   //当前窗口

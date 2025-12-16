@@ -328,10 +328,6 @@ a[download]:hover {
     box-sizing: border-box;
 }
 
-.panel>div:not(:first-child) {
-    border: 1px solid #DCDFE6;
-    border-top: none;
-}
 
 .panel div[tab] {
     width: 100%;

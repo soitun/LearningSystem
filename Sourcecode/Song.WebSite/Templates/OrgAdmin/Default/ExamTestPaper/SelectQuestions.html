@@ -17,6 +17,58 @@
                     </span>
                 </el-tab-pane>
             </el-tabs>
+            <div v-show="activeName=='parts'" remark="按分类选题" tab="parts">
+                <div class="tree-box">
+                    <el-tree ref="tree" :data="parts" node-key="Qp_ID" ref="tree"
+                        :props="{children: 'children',label: 'Qp_Name'}" expand-on-click-node
+                        :expand-on-click-node="false" v-loading="loading">
+                        <div class="custom-tree-node" slot-scope="{ node, data }">
+                            <span class="tree-node">
+                                <span>{{data.serial}}</span> &nbsp;
+                                <span class="large" v-html="showsearch(data.Qp_Name,partsform.search)"></span>
+                                <span class="sbjcount" v-if="data.calcChild>0">({{data.calcChild}})</span>
+                            </span>
+
+                        </div>
+                    </el-tree>
+                </div>
+                <div class="ques-box">
+                    <div class="ques-query">
+                        <query_panel :model="partsform" :width="45" :loading="loading" @search="getpartques(1)">
+                            <el-form-item label="题干">
+                                <el-input v-model.trim="partsform.search" clearable style="width:100px"
+                                    placeholder="搜索题干">
+                                </el-input>
+                            </el-form-item>
+                            <el-form-item label="题干">
+                                <diff @change="d=>partsform.diff=d"></diff>
+                            </el-form-item>
+                        </query_panel>
+                    </div>
+                    <div class="queslist">
+                        <loading v-if="loadstate.parts"></loading>
+                        <el-empty v-else-if="partsques.length<1" description="没有满足条件的数据"></el-empty>                      
+                        <quesrow v-else v-for="(ques,idx) in partsques" :ques="ques" :types="types" :admin="admin"
+                            :search="partsform.search" :serial="(partsform.index - 1) * partsform.size + idx + 1">
+                        </quesrow>
+                    </div>
+                    <div class="pager-box">
+                        <el-pagination v-on:current-change="getpartques" :current-page="partsform.index"
+                            :page-size="partsform.size" :pager-count="8" layout="total, prev, pager, next, jumper"
+                            :total="partstotal">
+                        </el-pagination>
+                    </div>
+                </div>
+            </div>
+            <div v-show="activeName=='tags'" remark="按关键字选题" tab="tags">
+
+            </div>
+            <div v-show="activeName=='knls'" remark="按知识点选题" tab="knls">
+
+            </div>
+            <div v-show="activeName=='collect'" remark="我的收藏" tab="collect">
+
+            </div>
         </div>
     </div>
 </body>
