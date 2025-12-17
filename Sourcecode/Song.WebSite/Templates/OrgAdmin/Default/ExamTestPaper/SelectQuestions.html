@@ -36,9 +36,10 @@
                     <div class="queslist">
                         <loading v-if="loadstate.parts"></loading>
                         <el-empty v-else-if="partsques.length<1" description="没有满足条件的数据"></el-empty>
-                        <quesrow v-else v-for="(ques,idx) in partsques" :ques="ques" :types="types" :admin="admin"
-                            :search="partsform.search" :serial="(partsform.index - 1) * partsform.size + idx + 1">
-                        </quesrow>
+                        <selectques v-else v-for="(ques,idx) in partsques" :ques="ques" :types="types" :admin="admin"
+                            :search="partsform.search" :serial="(partsform.index - 1) * partsform.size + idx + 1"
+                            @checked="changeselect">
+                        </selectques>
                     </div>
                     <div class="pager-box">
                         <el-pagination v-on:current-change="getpartques" :current-page="partsform.index"

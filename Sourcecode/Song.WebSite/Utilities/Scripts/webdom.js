@@ -905,7 +905,22 @@
                 if (jsfile[i].length >= 8 && jsfile[i].substring(0, 8).toLowerCase() == "https://") continue;
                 jsfile[i] = $dom.pagepath() + jsfile[i];
             }
+            //加载组件的css文件
+            let cssfile = [];
+            for (let i = 0; i < jsfile.length; i++) {
+                const element = jsfile[i];
+                if (element.toLowerCase().indexOf('components') > -1) {
+                    let file = element.split('/').pop().replace(/\.[^.]*$/, '');
+                    let path = element.split('/').slice(0, -1).join('/');
+                    let css = path + '/Styles/' + file + '.css';
+                    cssfile.push(css);
+                    //console.error(file);
+                    //console.error(css);
+                }
+
+            }
             window.$dom.load.js(jsfile, func);
+            window.$dom.load.css(cssfile);
         } else if (func != null) func();
     };
     //加载自身相关的js或css  

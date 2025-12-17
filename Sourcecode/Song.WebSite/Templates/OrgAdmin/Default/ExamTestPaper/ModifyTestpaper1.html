@@ -54,10 +54,16 @@
                                 <el-link icon="el-icon-arrow-down" type="primary" :disabled="idx>=qtypeitems.length-1"
                                     @click="typemove(idx,1)">下移</el-link>
                             </span>
-                            <el-link icon="el-icon-magic-stick" type="primary" @click="openselques(m.type)">选择试题</el-link>
+                            <el-link icon="el-icon-magic-stick" type="primary" @click="openselques(m.type)">选择试题
+                            </el-link>
                         </div>
                     </template>
-
+                    <icon null v-if="m.ques.length<1">没有试题</icon>
+                    <div v-else>                       
+                        <div v-for="(q,i) in m.ques">
+                            {{q.Qus_ID}}
+                        </div>
+                    </div>
                 </el-card>
 
             </section>

@@ -197,7 +197,7 @@ $ready(['../Question/Components/ques_type.js',
                     //试卷对象，题型
                     return [this.entity, this.types, this.upfile];
                 },
-                //接子的窗体数据
+                //接收子窗体（基本信息编辑）的数据
                 receiveInfo: function ([entity, upfile]) {
                     this.entity.Etp_Name = entity.Etp_Name;
                     this.entity.Etp_SubName = entity.Etp_SubName;
@@ -250,9 +250,8 @@ $ready(['../Question/Components/ques_type.js',
                     let suburl = $dom.routepath() + page;    //子窗口页面路径      
                     suburl = $api.url.set(suburl,
                         {
-                            'type': item.type, 
-                            'types': this.types.join(','),
-                            'ques': item.ques.map(item => item.Qus_ID).join(', '),
+                            'type': item.type,
+                            'types': this.types.join(',')
                         });
                     var curbox = window.top.$pagebox.get(window.name);   //当前窗口
                     //创建新窗口中
@@ -261,6 +260,21 @@ $ready(['../Question/Components/ques_type.js',
                         url: suburl
                     });
                     curbox.opensub(subbox, 'left');
+                },
+                //向“选择试题”的窗体传递数据
+                transmitques: function (type) {
+                   let item = this.qtypeitems.find(el => Number(el.type) == Number(type));                   
+                    //试卷对象，题型，题型分数分配的数据
+                    return [item.ques];
+                },
+                //接收子窗体（试题选择）的数据
+                //ques:试题列表
+                //type:题型
+                receiveques: function ([ques, type]) {
+                    let item = this.qtypeitems.find(el => Number(el.type) == Number(type));   
+                    item.ques=[];
+                    item.ques = ques;
+                    console.error(this.qtypeitems);
                 },
                 /***************************
                  * 试卷保存

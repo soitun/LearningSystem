@@ -23,9 +23,7 @@ Vue.component('exam_items', {
     },
     computed: {},
     mounted: function () {
-        var css = $dom.pagepath() + 'Components/Styles/exam_items.css';
-        $dom.load.css([css]);
-        //this.exams.push(this.createExam());
+      
     },
     methods: {
         //获取考试场次

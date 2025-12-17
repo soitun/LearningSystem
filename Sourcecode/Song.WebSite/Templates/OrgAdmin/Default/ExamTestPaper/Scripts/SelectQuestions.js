@@ -4,7 +4,7 @@ $ready([
     '../ExamQues/Components/ques_diff.js',      //难度
     '../ExamQues/Components/ques_collect.js',   //收藏
     '../ExamQues/Components/tagselect.js',  //标签
-    'Components/quesrow.js',        //试题行
+    'Components/selectques.js',        //试题行
     'Components/diff.js',      //难度选择
     'Components/selectparts.js',        //试题分类的选择
 ], function () {
@@ -23,7 +23,10 @@ $ready([
                 { name: '我的收藏', tab: 'collect', icon: 'e747' },
             ],
             activeName: 'parts',
-            //查询条件
+            //选中的试题,试题id
+            //selectedarr: $api.querystring('ques', '').split(',').filter(item => item !== ''),
+            selectedques: [],       //选中的试题
+            //按试题分类查询条件
             partsform: {
                 "orgid": -1, "search": "", "isdeleted": false, "qpid": "", "tagid": "", "knlid": "", "type": $api.querystring('type'),
                 "diff": "", "use": true, "error": false, 'wrong': false, "size": 10, "index": 1
@@ -31,8 +34,7 @@ $ready([
             partstotal: 1, //总记录数
             partspages: 1, //总页数
             partsques: [],
-            partsearch: '',
-            parts: [],
+
 
             tags: [],
             knls: [],
@@ -52,6 +54,8 @@ $ready([
             this.partsform.orgid = window.org.Org_ID;
             //当前登录的管理员
             $api.login.current('admin', d => th.admin = d);
+
+            this.receive();
         },
         created: function () {
 
@@ -82,7 +86,8 @@ $ready([
                         var result = d.data.result;
                         for (let i = 0; i < result.length; i++) {
                             result[i] = window.ques.parseAnswer(result[i]);
-                            result[i]["checked"] = false;
+                            //试题是否选中
+                            result[i]["checked"] = th.selectedques.some(m => m.Qus_ID == result[i].Qus_ID);
                             result[i]["showdetail"] = true;
                             //result[i].Qus_Title = result[i].Qus_Title.replace(/(<([^>]+)>)/ig, "");
                         }
@@ -98,9 +103,30 @@ $ready([
                     console.error(err);
                 }).finally(() => th.loadstate.parts = false);
             },
-            selectparts: function (data) {
-                console.error(data);
+            //接收的主窗体数据
+            receive: function () {
+                return new Promise((resolve, reject) => {
+                    //像主窗体传值，传三个值：选中的分类，选中的试题数，调用函数名
+                    var pagebox = window.top.$pagebox;
+                    if (pagebox && pagebox.source.top) {
+                        [this.selectedques] = pagebox.source.box(window.name, 'vapp.transmitques', false, this.type);
+                        resolve(this.entity);
+                    }
+                });
+            },
+            //试题选中内容变更,并向主窗体传值
+            changeselect: function (q, checked) {
+                if (checked) this.selectedques.push(q);
+                else this.selectedques = this.selectedques.filter(item => item.Qus_ID !== q.Qus_ID);
+                //像主窗体传值，当前实体，图片对象
+                var pagebox = window.top.$pagebox;
+                if (pagebox && pagebox.source.box) {
+                    pagebox.source.box(window.name, 'vapp.receiveques', false, [this.selectedques, this.type]);
+                    //let curbox = pagebox.source.self(window.name);
+                    //curbox.shut();
+                }
             }
+
         },
         filters: {
 

@@ -70,10 +70,13 @@ namespace Song.ViewData.Methods
                     {                           
                         foreach (XmlNode q in nodeques)
                         {
-                            JObject joq = new JObject();
-                            foreach (XmlAttribute att in q.Attributes)
-                                joq.Add(att.Name, att.Value);
-                            jarr.Add(joq);
+                            //JObject joq = new JObject();
+                            long qid= Helper.StringTo.Number<long>(q.Attributes["id"].Value);
+                            Song.Entities.Questions ques= Business.Do<IExamQues>().QuesSingle(qid);
+                            if(ques != null)jarr.Add(ques.ToJObject());
+                            //foreach (XmlAttribute att in q.Attributes)
+                            //    joq.Add(att.Name, att.Value);
+                            //jarr.Add(joq);
                         }
                     }
                     joitem.Add("ques", jarr);

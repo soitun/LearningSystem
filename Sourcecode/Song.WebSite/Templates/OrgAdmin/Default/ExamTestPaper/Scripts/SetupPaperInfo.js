@@ -96,7 +96,6 @@ $ready(function () {
                             curbox.shut();
                         }
 
-
                     } else {
                         //如果验证未通过，则显示输入项所在的选项卡
                         th.$nextTick(() => {
