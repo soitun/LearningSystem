@@ -1,5 +1,5 @@
 //试题收藏
-$dom.load.css([$dom.pagepath() + 'Components/Styles/ques_collect.css']);
+
 Vue.component('ques_collect', {
     //ques:试题对象
     //accid:管理员的账户ID    

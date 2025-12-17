@@ -1,6 +1,4 @@
 ﻿//试题编辑中的主要组件
-$dom.load.css([$dom.pagepath() + 'Components/Styles/modify_main.css']);
-
 //事件:
 //load:加载试题完成后
 //init:初始化完成

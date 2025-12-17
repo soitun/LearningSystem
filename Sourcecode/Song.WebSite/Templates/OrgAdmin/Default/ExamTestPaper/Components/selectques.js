@@ -1,5 +1,5 @@
 //固定试卷在选择试题时的试题行
-//$dom.load.css([$dom.pagepath() + 'Components/Styles/selectques.css']);
+
 Vue.component('selectques', {
     // 属性
     // ques:试题

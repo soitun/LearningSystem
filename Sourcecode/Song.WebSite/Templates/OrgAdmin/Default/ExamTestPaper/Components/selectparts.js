@@ -1,5 +1,4 @@
 //试题分类的选择组件
-$dom.load.css([$dom.pagepath() + 'Components/Styles/selectparts.css']);
 Vue.component('selectparts', {
     props: ['orgid'],
     data: function () {

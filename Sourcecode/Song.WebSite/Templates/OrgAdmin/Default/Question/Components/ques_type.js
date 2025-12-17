@@ -1,5 +1,5 @@
 ﻿//试题类型
-$dom.load.css([$dom.path() + 'Question/Components/Styles/ques_type.css']);
+
 Vue.component('ques_type', {
     //showname：是否显示题型名称
     //showicon：是否显示图标

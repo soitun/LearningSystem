@@ -1,5 +1,5 @@
 ﻿//试题数量
-$dom.load.css([$dom.path() + 'TestPaper/Components/Styles/ques_count.css']);
+
 Vue.component('ques_count', {
     //qtype:题型
     props: ['couid', 'qtype', 'olid'],

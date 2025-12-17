@@ -1,5 +1,5 @@
 ﻿//试题编辑中的确定按钮
-$dom.load.css([$dom.path() + 'Question/Components/Styles/enter_button.css']);
+
 Vue.component('enter_button', {
     //question：当前试题
     //verify:验证试题是否满足编辑条件的方法

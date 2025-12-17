@@ -1,5 +1,4 @@
 ﻿//试题项的简单编辑
-$dom.load.css([$dom.pagepath() + 'Components/Styles/ques_ansitem.css']);
 Vue.component('ques_ansitem', {
     //ans:试题选项
     //question:试题

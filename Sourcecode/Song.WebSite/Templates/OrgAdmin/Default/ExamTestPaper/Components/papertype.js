@@ -1,5 +1,4 @@
 //试卷类型
-$dom.load.css([$dom.pagepath() + 'Components/Styles/papertype.css']);
 Vue.component('papertype', {
     props: ['type'],
     data: function () {

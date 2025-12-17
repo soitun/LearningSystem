@@ -1,5 +1,4 @@
 ﻿//栏目下的文章数
-$dom.load.css([$dom.pagepath() + 'Components/Styles/article_count.css']);
 Vue.component('article_count', {
     props: ["column", "orgid"],
     data: function () {

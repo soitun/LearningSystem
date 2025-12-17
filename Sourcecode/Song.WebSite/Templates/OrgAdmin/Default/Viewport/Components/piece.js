@@ -1,6 +1,6 @@
 ﻿
 //数值的展示
-$dom.load.css([$dom.path() + 'Viewport/Components/Styles/piece.css'])
+
 //头部的数据块
 Vue.component('piece', {
     props: ["title",    //标题

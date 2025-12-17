@@ -8,7 +8,7 @@ Vue.component('ques_wrong', {
         }
     },
     mounted: function () {
-        $dom.load.css([$dom.path() + 'Question/Components/Styles/ques_wrong.css']);
+     
     },
     watch: {
         'question': {

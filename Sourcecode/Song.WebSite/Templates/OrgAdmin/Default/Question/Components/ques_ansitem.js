@@ -51,7 +51,7 @@ Vue.component('ques_ansitem', {
         }
     },
     mounted: function () {
-        $dom.load.css([$dom.path() + 'Question/Components/Styles/ques_ansitem.css']);
+      
     },
     methods: {
         //设置试题选项

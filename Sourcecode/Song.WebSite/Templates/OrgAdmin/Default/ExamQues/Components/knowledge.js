@@ -1,5 +1,5 @@
 ﻿//试题编辑中的知识点选择
-$dom.load.css([$dom.pagepath() + 'Components/Styles/knowledge.css']);
+
 Vue.component('knowledge', {
     props: ["question", "org"],
     data: function () {

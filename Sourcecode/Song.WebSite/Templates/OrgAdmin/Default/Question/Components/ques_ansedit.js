@@ -33,7 +33,7 @@ Vue.component('ques_ansedit', {
         }
     },
     mounted: function () {
-        $dom.load.css([$dom.path() + 'Question/Components/Styles/ques_ansedit.css']);
+       
     },
     methods: {
         //设置试题选项

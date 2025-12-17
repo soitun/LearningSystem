@@ -33,8 +33,7 @@ Vue.component('group_select', {
     },
     computed: {},
     mounted: function () {
-        var css = $dom.pagepath() + 'Components/Styles/group_select.css';
-        $dom.load.css([css]);
+
     },
     methods: {
         //获取所有学员组

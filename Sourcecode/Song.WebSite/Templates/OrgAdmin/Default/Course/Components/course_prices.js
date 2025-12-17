@@ -24,7 +24,7 @@ Vue.component('course_prices', {
     },
     computed: {},
     mounted: function () {
-        $dom.load.css([$dom.path() + 'Course/Components/Styles/course_prices.css']);
+
     },
     methods: {
         //初始加载

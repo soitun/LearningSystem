@@ -17,7 +17,7 @@ Vue.component('course_income', {
     },
     computed: {},
     mounted: function () {
-        $dom.load.css([$dom.path() + 'Course/Components/Styles/course_income.css']);
+
     },
     methods: {
         getnumber: function (cou) {

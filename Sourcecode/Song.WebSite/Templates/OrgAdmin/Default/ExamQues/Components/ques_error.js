@@ -7,7 +7,7 @@ Vue.component('ques_error', {
         }
     },
     mounted: function () {
-        $dom.load.css([$dom.path() + 'Question/Components/Styles/ques_error.css']);
+       
     },
     watch: {
         'question': {

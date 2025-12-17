@@ -1,5 +1,5 @@
 //课程视频的学习进度
-$dom.load.css([$dom.pagepath() + 'Components/Styles/video_progress.css']);
+
 Vue.component('video_progress', {
     //config:机构的配置项，其实包括了视频完成度的容差值（VideoTolerance）
     //purchase:购买记录

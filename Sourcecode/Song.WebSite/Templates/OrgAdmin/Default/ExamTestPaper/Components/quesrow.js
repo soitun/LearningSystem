@@ -1,4 +1,4 @@
-$dom.load.css([$dom.pagepath() + 'Components/Styles/quesrow.css']);
+
 Vue.component('quesrow', {
     props: ['value'],
     data: function () {

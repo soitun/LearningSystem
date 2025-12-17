@@ -61,7 +61,7 @@ Vue.component('general', {
         }
     },
     mounted: function () {
-        $dom.load.css([$dom.path() + 'Question/Components/Styles/general.css']);
+        
     },
     methods: {
         //专业更改时

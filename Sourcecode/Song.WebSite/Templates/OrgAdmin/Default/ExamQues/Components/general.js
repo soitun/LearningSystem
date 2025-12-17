@@ -1,5 +1,5 @@
 ﻿//试题编辑中的基本信息
-$dom.load.css([$dom.pagepath() + 'Components/Styles/general.css']);
+
 Vue.component('general', {
     props: ["question", "org"],
     data: function () {

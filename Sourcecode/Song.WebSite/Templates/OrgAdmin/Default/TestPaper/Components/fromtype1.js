@@ -56,7 +56,7 @@ Vue.component('fromtype1', {
 
     },
     mounted: function () {
-        $dom.load.css([$dom.path() + 'TestPaper/Components/Styles/fromtype1.css']);
+
     },
     methods: {
         //获取章节

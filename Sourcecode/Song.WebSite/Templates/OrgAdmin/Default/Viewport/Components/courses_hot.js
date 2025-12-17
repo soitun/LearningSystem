@@ -21,8 +21,7 @@ Vue.component('courses_hot', {
     },
     computed: {},
     mounted: function () {
-        var css = $dom.path() + 'Viewport/Components/Styles/courses_hot.css';
-        $dom.load.css([css]);
+
     },
     methods: {
         //跳转

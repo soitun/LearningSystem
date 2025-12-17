@@ -1,6 +1,6 @@
 ﻿
     //数据项
-    $dom.load.css([$dom.path() + 'Viewport/Components/Styles/dataitem.css'])
+
     Vue.component('dataitem', {
         props: ["title", "ico", "iconsize", "color"],
         data: function () {

@@ -1,5 +1,4 @@
 //批量创建考试成绩
-$dom.load.css([$dom.pagepath() + 'Components/Styles/createbatchscore.css']);
 Vue.component('createbatchscore', {
     //当前考试
     props: ['exam'],
