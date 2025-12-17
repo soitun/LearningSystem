@@ -1,0 +1,28 @@
+.quesrow{
+    margin: 0.75rem 10px;
+
+    padding: 5px 15px 15px 15px;
+    border-radius: 8px;
+    border: 1px solid #f3f3f3;
+}
+.quesrow .queshead{
+    display: flex;
+    padding: 5px;
+    line-height: 30px;
+}
+.quesrow .queshead .serial{
+    margin-right: 5px;
+}
+.quesrow .queshead .btns{
+    display: flex;
+   
+}
+.quesrow .queshead .btns>*{
+    margin-left: 1rem;    
+}
+.quesrow .quescontent .title{
+    margin-bottom: 10px;
+}
+.quesrow .qus_items>*{
+    margin-bottom: 5px;
+}

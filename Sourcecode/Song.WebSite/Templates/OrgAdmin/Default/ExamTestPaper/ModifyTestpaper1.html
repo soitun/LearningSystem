@@ -39,12 +39,11 @@
                 </el-form>
             </el-card>
             <section class="content">
-                <el-card shadow="never" type="info" v-for="(m,idx) in qtypeitems">
+                <loading v-if="loading"></loading>
+                <el-card v-else shadow="never" type="info" v-for="(m,idx) in qtypeitems">
                     <template slot="header">
                         <span>{{idx|chiserial}}
-                            <ques_type :type="m.type" :types="types" :showicon="false" :showname="true">
-
-                            </ques_type>
+                            <ques_type :type="m.type" :types="types" :showicon="false" :showname="true"></ques_type>
                         </span>
                         <div class="qtype_btns" remark="题型按钮区">
                             <el-link icon="el-icon-edit-outline" type="primary">题型别名</el-link>
@@ -60,9 +59,9 @@
                     </template>
                     <icon null v-if="m.ques.length<1">没有试题</icon>
                     <div v-else>                       
-                        <div v-for="(q,i) in m.ques">
-                            {{q.Qus_ID}}
-                        </div>
+                        <quesrow v-for="(q,i) in m.ques" :ques="q" :index="i" :typeidx="idx" :qtypeitems="qtypeitems">
+                          
+                        </quesrow>
                     </div>
                 </el-card>
 
@@ -98,7 +97,7 @@
                     <template slot="header">
                         <span icon="&#xe75e" medium>题卡</span>
                         <warning v-if="percenttotal!=100 && percenttotal!=0">当前各题型分数占比之和：{{percenttotal}} %</warning>
-                        <div> <b>{{ qtypeitems.reduce((a, b) => a +b.count,0)}}</b> 道 |
+                        <div> <b>{{ qtypeitems.reduce((a, b) => a +b.ques.length,0)}}</b> 道 |
                             <span>折叠</span>
                         </div>
                     </template>

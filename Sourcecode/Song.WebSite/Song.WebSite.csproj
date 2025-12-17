@@ -735,9 +735,11 @@
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Components\papertype.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Components\quesrow.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Components\selectparts.js" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Components\selectques.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Components\Styles\papertype.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Components\Styles\quesrow.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Components\Styles\selectparts.css" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Components\Styles\selectques.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Index.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Modify.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\ModifyTestpaper1.html" />
@@ -1960,6 +1962,7 @@
     <Content Include="Utilities\Components\Question\exam.js" />
     <Content Include="Utilities\Components\Question\Styles\exam.css" />
     <Content Include="Utilities\Components\date_range.js" />
+    <Content Include="Utilities\Components\Question\Styles\function.css" />
     <Content Include="Utilities\Components\Sign\login.js" />
     <Content Include="Utilities\Components\Sign\Styles\login.css" />
     <Content Include="Utilities\Components\Question\Styles\exercise.css" />

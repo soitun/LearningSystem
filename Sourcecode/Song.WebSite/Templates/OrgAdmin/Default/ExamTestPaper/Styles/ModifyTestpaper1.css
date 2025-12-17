@@ -8,9 +8,10 @@
         "Microsoft YaHei", "微软雅黑", sans-serif;
 }
 
-.footer{
+.footer {
     width: 400px;
 }
+
 .el-card__header {
     display: flex;
     align-items: center;
@@ -114,6 +115,10 @@ section.right .quescard .el-form-item__error {
 /*试题区域*/
 section.content {
     flex: 1;
+}
+
+section.content>.el-card .el-card__body {
+    padding: 10px;
 }
 
 /*当某个题型没有试题时，不显示空白区域，以及标题的下划线*/
