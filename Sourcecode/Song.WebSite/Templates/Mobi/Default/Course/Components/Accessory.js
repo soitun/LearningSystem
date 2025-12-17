@@ -1,5 +1,3 @@
-//附件
-$dom.load.css([$dom.pagepath() + 'Components/Styles/accessory.css']);
 //附件列表
 Vue.component('accessory', {
     //studied:是否可以学习该章节

@@ -1,4 +1,4 @@
-﻿$dom.load.css([$dom.path() + 'Components/Styles/page_header.css']);
+﻿
 //顶部导航
 //事件：
 //login:当学员登录

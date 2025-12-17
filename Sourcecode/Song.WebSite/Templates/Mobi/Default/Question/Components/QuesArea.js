@@ -1,5 +1,4 @@
 ﻿//试题练习的区域
-$dom.load.css([$dom.pagepath() + 'Components/Styles/QuesArea.css']);
 //事件
 //change:当答题信息变更时触发，返回一些统计数据
 Vue.component('quesarea', {

@@ -1,5 +1,5 @@
 ﻿//成绩得分
-$dom.load.css([$dom.pagepath() + 'Components/Styles/result.css']);
+
 Vue.component('result', {
     props: ['state', 'exam', 'paper'],
     data: function () {

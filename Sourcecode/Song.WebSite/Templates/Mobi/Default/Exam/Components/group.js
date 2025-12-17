@@ -15,7 +15,6 @@ Vue.component('group', {
     },
     computed: {},
     mounted: function () {
-        $dom.load.css([$dom.pagepath() + 'Components/Styles/group.css']);
     },
     methods: {
         //显示分类的信息栏

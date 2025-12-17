@@ -10,8 +10,7 @@ Vue.component('accessory', {
         }
     },
     mounted: function () {
-        var css = $dom.path() + 'course/Components/Styles/accessory.css';
-        $dom.load.css([css]);
+
     },
     watch: {
         'uid': function (val, old) {

@@ -28,9 +28,6 @@ Vue.component('study_chat', {
         'islogin': t => !$api.isnull(t.account)
     },
     mounted: function () {
-        var css = $dom.path() + 'course/Components/Styles/study_chat.css';
-        $dom.load.css([css]);
-
         var th = this;
         //定时刷新（加载）咨询留言        
         window.setInterval(function () {

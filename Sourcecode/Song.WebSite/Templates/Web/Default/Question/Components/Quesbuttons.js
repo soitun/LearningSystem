@@ -1,5 +1,4 @@
 ﻿//试题右侧的按钮组
-$dom.load.css([$dom.pagepath() + 'Components/Styles/quesbuttons.css']);
 Vue.component('quesbuttons', {
     //current:当前显示的试题，即滑动到这个试题
     props: ['question', 'account', 'couid', 'current'],

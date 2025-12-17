@@ -1,5 +1,4 @@
 ﻿//试题练习的入场提示面板
-$dom.load.css([$dom.pagepath() + 'Components/Styles/PromptPanel.css']);
 Vue.component('prompt_panel', {
     props: [],
     data: function () {

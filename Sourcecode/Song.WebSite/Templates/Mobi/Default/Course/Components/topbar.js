@@ -1,4 +1,3 @@
-$dom.load.css([$dom.path() + 'Course/Components/Styles/topbar.css']);
 Vue.component('topbar', {
     //title:标题
     //icon:图标

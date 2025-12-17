@@ -1,6 +1,5 @@
 ﻿
 //视频学习记录
-$dom.load.css([$dom.pagepath() + 'Components/Styles/studylog.css'])
 Vue.component('studylog', {
     props: ["number", "icon", 'title', 'unit', 'show'],
     data: function () {

@@ -1,5 +1,4 @@
-﻿$dom.load.css([$dom.pagepath() + 'Components/Styles/outlinelist.css']);
-//章节列表
+﻿//章节列表
 Vue.component('outlinelist', {
   props: ["outlines", "course", "acid", "isbuy", "showalloutline"],
   data: function () {

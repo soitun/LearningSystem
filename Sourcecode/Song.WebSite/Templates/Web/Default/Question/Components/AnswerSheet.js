@@ -1,5 +1,4 @@
 ﻿//答题卡
-$dom.load.css([$dom.pagepath() + 'Components/Styles/AnswerSheet.css']);
 Vue.component('answersheet', {
     //ansstate:答题的状态
     //data:答题的统计数据

@@ -1,6 +1,5 @@
 ﻿
 //友情链接
-$dom.load.css([$dom.path() + 'Components/Styles/links.css']);
 //友情链接的分类
 Vue.component('linksorts', {
     //友情链接分类，

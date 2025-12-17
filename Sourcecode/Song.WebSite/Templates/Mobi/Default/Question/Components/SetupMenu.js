@@ -1,5 +1,4 @@
 ﻿//右上角的下拉菜单
-$dom.load.css([$dom.pagepath() + 'Components/Styles/setupmenu.css']);
 Vue.component('setupmenu', {
   props: ['account'],
   data: function () {

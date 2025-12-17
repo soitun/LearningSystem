@@ -1,5 +1,4 @@
 ﻿//个人中心的头部
-$dom.load.css([$dom.pagepath() + 'Components/Styles/account_header.css']);
 Vue.component('account_header', {
     props: ['account'],
     data: function () {

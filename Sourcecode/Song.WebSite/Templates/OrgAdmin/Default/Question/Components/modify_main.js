@@ -1,5 +1,4 @@
 ﻿//试题编辑中的主要组件
-$dom.load.css([$dom.pagepath() + 'Components/Styles/modify_main.css']);
 //事件:
 //load,
 Vue.component('modify_main', {
