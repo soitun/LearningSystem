@@ -201,7 +201,7 @@ namespace Song.ServiceImpls
             if (diff != null && diff.Length > 0)
             {
                 WhereClip wcdiff = new WhereClip();
-                foreach (int d in diff) wcdiff |= Questions._.Qus_Diff == d;
+                foreach (int d in diff) if (d > 0 && d <= 5) wcdiff |= Questions._.Qus_Diff == d;
                 wc.And(wcdiff);
             }
             FromSection<Questions> section = Gateway.Default.From<Questions>();
@@ -270,7 +270,7 @@ namespace Song.ServiceImpls
             if (diff != null && diff.Length > 0)
             {
                 WhereClip wcdiff = new WhereClip();
-                foreach (int d in diff) wcdiff |= Questions._.Qus_Diff == d;
+                foreach (int d in diff) if (d > 0 && d <= 5) wcdiff |= Questions._.Qus_Diff == d;
                 wc.And(wcdiff);
             }
             FromSection<Questions> section = Gateway.Default.From<Questions>();
@@ -1005,7 +1005,7 @@ namespace Song.ServiceImpls
             if (diff != null && diff.Length > 0)
             {
                 WhereClip wcdiff = new WhereClip();
-                foreach (int d in diff) wcdiff |= Questions._.Qus_Diff == d;
+                foreach (int d in diff) if (d > 0 && d <= 5) wcdiff |= Questions._.Qus_Diff == d;
                 wc.And(wcdiff);
             }
             FromSection<Questions> section = Gateway.Default.From<Questions>().LeftJoin<QuesCollect>(QuesCollect._.Qus_ID == Questions._.Qus_ID);

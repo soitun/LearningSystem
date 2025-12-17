@@ -18,20 +18,8 @@
                 </el-tab-pane>
             </el-tabs>
             <div v-show="activeName=='parts'" remark="按分类选题" tab="parts">
-                <div class="tree-box">
-                    <el-tree ref="tree" :data="parts" node-key="Qp_ID" ref="tree"
-                        :props="{children: 'children',label: 'Qp_Name'}" expand-on-click-node
-                        :expand-on-click-node="false" v-loading="loading">
-                        <div class="custom-tree-node" slot-scope="{ node, data }">
-                            <span class="tree-node">
-                                <span>{{data.serial}}</span> &nbsp;
-                                <span class="large" v-html="showsearch(data.Qp_Name,partsform.search)"></span>
-                                <span class="sbjcount" v-if="data.calcChild>0">({{data.calcChild}})</span>
-                            </span>
-
-                        </div>
-                    </el-tree>
-                </div>
+                <selectparts :orgid="org.Org_ID" class="tree-box" @load="getpartques()"
+                    @select="p=>getpartques(1,p)"></selectparts>
                 <div class="ques-box">
                     <div class="ques-query">
                         <query_panel :model="partsform" :width="45" :loading="loading" @search="getpartques(1)">
@@ -41,13 +29,13 @@
                                 </el-input>
                             </el-form-item>
                             <el-form-item label="题干">
-                                <diff @change="d=>partsform.diff=d"></diff>
+                                <diff @change="d=>partsform.diff=d" :value="partsform.diff"></diff>
                             </el-form-item>
                         </query_panel>
                     </div>
                     <div class="queslist">
                         <loading v-if="loadstate.parts"></loading>
-                        <el-empty v-else-if="partsques.length<1" description="没有满足条件的数据"></el-empty>                      
+                        <el-empty v-else-if="partsques.length<1" description="没有满足条件的数据"></el-empty>
                         <quesrow v-else v-for="(ques,idx) in partsques" :ques="ques" :types="types" :admin="admin"
                             :search="partsform.search" :serial="(partsform.index - 1) * partsform.size + idx + 1">
                         </quesrow>

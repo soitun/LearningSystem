@@ -6,6 +6,7 @@ $ready([
     '../ExamQues/Components/tagselect.js',  //标签
     'Components/quesrow.js',        //试题行
     'Components/diff.js',      //难度选择
+    'Components/selectparts.js',        //试题分类的选择
 ], function () {
     window.vapp = new Vue({
         el: '#vapp',
@@ -30,6 +31,7 @@ $ready([
             partstotal: 1, //总记录数
             partspages: 1, //总页数
             partsques: [],
+            partsearch: '',
             parts: [],
 
             tags: [],
@@ -50,7 +52,6 @@ $ready([
             this.partsform.orgid = window.org.Org_ID;
             //当前登录的管理员
             $api.login.current('admin', d => th.admin = d);
-            this.getparts().then(t => t.getpartques());
         },
         created: function () {
 
@@ -70,28 +71,12 @@ $ready([
 
         },
         methods: {
-            //所取试题分类的数据，为树形数据
-            getparts: function () {
-                var th = this;
-                return new Promise(function (resolve, reject) {
-                    th.loadstate.parts = true;
-                    $api.get('ExamQues/PartTree', { orgid: window.org.Org_ID, search: '', isuse: true })
-                        .then(function (req) {
-                            if (req.data.success) {
-                                th.parts = req.data.result;
-                                resolve(th);
-                            } else {
-                                throw req.data.message;
-                            }
-                        }).catch(err => console.error(err))
-                        .finally(() => th.loadstate.parts = false);
-                });
-            },
             //试题分类的试题
-            getpartques: function (index) {
+            getpartques: function (index, parts) {
                 var th = this;
                 th.loadstate.parts = true;
                 if (index != null) this.partsform.index = index;
+                if (parts != null) this.partsform.qpid = parts.map(user => user.Qp_ID).join(',');
                 $api.get("ExamQues/QuesPager", th.partsform).then(function (d) {
                     if (d.data.success) {
                         var result = d.data.result;
@@ -112,6 +97,9 @@ $ready([
                     alert(err);
                     console.error(err);
                 }).finally(() => th.loadstate.parts = false);
+            },
+            selectparts: function (data) {
+                console.error(data);
             }
         },
         filters: {

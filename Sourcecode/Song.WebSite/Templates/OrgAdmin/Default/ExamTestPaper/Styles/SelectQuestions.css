@@ -7,7 +7,6 @@
 .panel div[tab="parts"] .tree-box {
     width: 300px;
     border-right: 1px solid #DCDFE6;
-    overflow-y: auto;
 }
 
 /*内容区的右侧，即试题列表区域*/

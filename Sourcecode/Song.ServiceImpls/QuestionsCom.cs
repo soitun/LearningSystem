@@ -444,7 +444,7 @@ namespace Song.ServiceImpls
             if (diff.Length > 0)
             {
                 WhereClip wcdiff = new WhereClip();
-                foreach (int d in diff) wcdiff |= Questions._.Qus_Diff == d;
+                foreach (int d in diff) if (d > 0 && d <= 5) wcdiff |= Questions._.Qus_Diff == d;
                 wc.And(wcdiff);
             }
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);

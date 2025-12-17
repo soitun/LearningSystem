@@ -12,9 +12,9 @@ Vue.component('diff', {
     },
     computed: {
         label: function () {
-            let v = Number(this.value == null ? -1 : this.value);
-            if (v < 0 || v > 4) return '难度';
-            return this.diffs[v];
+            let v = Number(this.value == null || this.value == '' ? -1 : this.value);
+            if (v < 0 || v > 5) return '难度';
+            return this.diffs[v - 1];
         },
     },
     mounted: function () {
@@ -22,8 +22,8 @@ Vue.component('diff', {
     },
     methods: {
         handleCommand: function (command) {
-            this.value = command;
-            this.$emit('change', command + 1);
+            this.value = command + 1;
+            this.$emit('change', this.value);
         }
     },
     template: `<div class="ques_diff">  
