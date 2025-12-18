@@ -1,4 +1,6 @@
-$ready(['../Question/Components/ques_type.js',],
+$ready(['../Question/Components/ques_type.js',
+    'Components/quesscores.js'   //试题的分数
+],
     function () {
         window.vapp = new Vue({
             el: '#vapp',

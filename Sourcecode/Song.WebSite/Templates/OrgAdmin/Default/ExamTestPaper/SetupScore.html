@@ -99,7 +99,8 @@
                             <span :zero="m.number<1"> （<b>{{m.number}}</b> 分）</span>
                         </ques_type>
                     </el-divider>
-                    <scores :count="m.count" :number="m.number"></scores>
+                    <quesscores :item="m" :typeidx="idx" :qtypeitems="qtypeitems"></quesscores>
+                   
                 </div>
                 <el-empty description="未设置任何试题" v-if="scoreitems.reduce((a, b) => a + b.count, 0)<=0"></el-empty>
             </el-card>

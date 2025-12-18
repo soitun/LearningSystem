@@ -2,7 +2,8 @@ $ready([
     '/Utilities/Components/question/function.js',
     '../Question/Components/ques_type.js',
     'Components/papertype.js',  //试卷类型
-    'Components/quesrow.js'     //试题在试卷中的显示
+    'Components/quesrow.js',     //试题在试卷中的显示
+    'Components/quesscores.js'   //试题的分数
 ], function () {
     window.vapp = new Vue({
         el: '#vapp',
@@ -282,7 +283,8 @@ $ready([
                 let item = this.qtypeitems.find(el => Number(el.type) == Number(type));
                 item.ques = [];
                 item.ques = ques;
-                console.error(this.qtypeitems);
+                item.count = ques.length;
+                //console.error(this.qtypeitems);
             },
             /***************************
              * 试卷保存
