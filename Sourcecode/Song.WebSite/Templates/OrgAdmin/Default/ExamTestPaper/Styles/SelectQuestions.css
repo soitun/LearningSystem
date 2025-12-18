@@ -4,7 +4,7 @@
     display: flex;
 }
 
-.panel div[tab="parts"] .tree-box {
+.panel div[tab] .tree-box {
     width: 300px;
     border-right: 1px solid #DCDFE6;
 }

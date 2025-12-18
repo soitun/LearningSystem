@@ -29,6 +29,7 @@ Vue.component('quesscores', {
                         this.list[this.list.length - 1] = Math.floor((last + number - tmtotal) * 100) / 100;
                     }
                 }
+                console.error(this.list);
             }, immediate: true, deep: true
         }
     },

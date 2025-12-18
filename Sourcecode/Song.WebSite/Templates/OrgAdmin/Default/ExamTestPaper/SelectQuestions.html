@@ -18,7 +18,7 @@
                 </el-tab-pane>
             </el-tabs>
             <div v-show="activeName=='parts'" remark="按分类选题" tab="parts">
-                <selectparts :orgid="org.Org_ID" class="tree-box" @load="getpartques()"
+                <selectparts :orgid="org.Org_ID" class="tree-box" @load="getpartques(1)"
                     @select="p=>getpartques(1,p)"></selectparts>
                 <div class="ques-box">
                     <div class="ques-query">
@@ -53,7 +53,36 @@
 
             </div>
             <div v-show="activeName=='knls'" remark="按知识点选题" tab="knls">
-
+                <selectknl :orgid="org.Org_ID" class="tree-box" @load="getknlques(1)"
+                @select="p=>getknlques(1,p)"></selectknl>
+                <div class="ques-box">
+                    <div class="ques-query">
+                        <query_panel :model="knlsform" :width="45" :loading="loadstate.knls" @search="getknlques(1)">
+                            <el-form-item label="题干">
+                                <el-input v-model.trim="knlsform.search" clearable style="width:100px"
+                                    placeholder="搜索题干">
+                                </el-input>
+                            </el-form-item>
+                            <el-form-item label="题干">
+                                <diff @change="d=>knlsform.diff=d" :value="knlsform.diff"></diff>
+                            </el-form-item>
+                        </query_panel>
+                    </div>
+                    <div class="queslist">
+                        <loading v-if="loadstate.knls"></loading>
+                        <el-empty v-else-if="knlsques.length<1" description="没有满足条件的数据"></el-empty>
+                        <selectques v-else v-for="(ques,idx) in knlsques" :ques="ques" :types="types" :admin="admin"
+                            :search="knlsform.search" :serial="(knlsform.index - 1) * knlsform.size + idx + 1"
+                            @checked="changeselect">
+                        </selectques>
+                    </div>
+                    <div class="pager-box">
+                        <el-pagination v-on:current-change="getknlques" :current-page="knlsform.index"
+                            :page-size="knlsform.size" :pager-count="8" layout="total, prev, pager, next, jumper"
+                            :total="knltotal">
+                        </el-pagination>
+                    </div>
+                </div>
             </div>
             <div v-show="activeName=='collect'" remark="我的收藏" tab="collect">
 

@@ -172,7 +172,7 @@ $ready([
                             for (let i = 0; i < questions.length; i++) {
                                 const ques = questions[i];                              
                                 const item = th.qtypeitems.find(el => Number(el.type) == Number(ques.type));
-                                ques.total = Number(item.total);
+                                ques.total = Number(ques.total);
                                 ques.count = Number(ques.count);
                                 ques.number = Number(ques.number);
                                 ques.percent = Number(ques.percent);

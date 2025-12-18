@@ -7,6 +7,7 @@ $ready([
     'Components/selectques.js',        //试题行
     'Components/diff.js',      //难度选择
     'Components/selectparts.js',        //试题分类的选择
+    'Components/selectknl.js',   
 ], function () {
     window.vapp = new Vue({
         el: '#vapp',
@@ -22,7 +23,7 @@ $ready([
                 { name: '按知识点选题', tab: 'knls', icon: 'e6fd' },
                 { name: '我的收藏', tab: 'collect', icon: 'e747' },
             ],
-            activeName: 'parts',
+            activeName: 'knls',
             //选中的试题,试题id
             //selectedarr: $api.querystring('ques', '').split(',').filter(item => item !== ''),
             selectedques: [],       //选中的试题
@@ -37,16 +38,25 @@ $ready([
 
 
             tags: [],
-            knls: [],
+
+            //知识点
+             knlsform: {
+                "orgid": -1, "search": "", "isdeleted": false, "qpid": "", "tagid": "", "knlid": "", "type": $api.querystring('type'),
+                "diff": "", "use": true, "error": false, 'wrong': false, "size": 10, "index": 1
+            },
+            knltotal: 1, //总记录数
+            knlpages: 1, //总页数
+            knlsques: [],
+
             collect: [],
 
 
             loadstate: {
                 init: false,        //初始化
-                parts: false,         //试题分类
-                get: false,         //加载数据
-                update: false,      //更新数据
-                del: false          //删除数据
+                parts: false,         //试题分类的加载
+                knls: false,         //知识点预载
+                tags: false,      //关键字预载
+                collect: false          //我的收藏
             }
         },
         mounted: function () {
@@ -102,6 +112,34 @@ $ready([
                     alert(err);
                     console.error(err);
                 }).finally(() => th.loadstate.parts = false);
+            },
+            //按知识点获取试题
+            getknlques: function (index, knls) {
+                var th = this;
+                th.loadstate.knls = true;
+                if (index != null) this.knlsform.index = index;
+                if (knls != null) this.knlsform.knlid = knls.map(t => t.Qk_ID).join(',');
+                $api.get("ExamQues/QuesPager", th.knlsform).then(function (d) {
+                    if (d.data.success) {
+                        var result = d.data.result;
+                        for (let i = 0; i < result.length; i++) {
+                            result[i] = window.ques.parseAnswer(result[i]);
+                            //试题是否选中
+                            result[i]["checked"] = th.selectedques.some(m => m.Qus_ID == result[i].Qus_ID);
+                            result[i]["showdetail"] = true;
+                            //result[i].Qus_Title = result[i].Qus_Title.replace(/(<([^>]+)>)/ig, "");
+                        }
+
+                        th.knlsques = result;
+                        th.knlpages = Number(d.data.totalpages);
+                        th.knltotal = d.data.total;
+                    } else {
+                        throw d.data.message;
+                    }
+                }).catch(function (err) {
+                    alert(err);
+                    console.error(err);
+                }).finally(() => th.loadstate.knls = false);
             },
             //接收的主窗体数据
             receive: function () {

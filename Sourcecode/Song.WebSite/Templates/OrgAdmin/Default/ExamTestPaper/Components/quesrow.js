@@ -47,6 +47,7 @@ Vue.component('quesrow', {
         quesdelete: function (index) {
             let item = this.qtypeitems[this.typeidx];
             item.ques.splice(index, 1);
+            item.count=item.ques.length;
         }
     },
     template: `<div class="quesrow" :qid="ques.Qus_ID">
