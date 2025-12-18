@@ -3,27 +3,27 @@ Vue.component('selectparts', {
     props: ['orgid'],
     data: function () {
         return {
-            partsearch: '',  //检索字符串    
-            parts: [],      //试题分类数据
+            search: '',  //检索字符串    
+            datas: [],      //试题分类数据
             props: {
                 children: 'children',
                 label: 'Qp_Name'
             },
-            selparts: [],   //所选试题分类
+            selectarr: [],   //所选试题分类
             loading: false
         }
     },
     watch: {
-        'entity': {
+        'orgid': {
             handler: function (nv, ov) {
-                this.getparts().then(function (th,data) {
+                this.getdatas().then(function ([th,data]) {
                     th.$emit('load', data);
                 });
             }, immediate: true, deep: true
         },
         //过滤树形数据
-        partsearch: function (val) {
-            this.$refs.parttree.filter(val);
+        search: function (val) {
+            this.$refs.datatree.filter(val);
         },
     },
     computed: {},
@@ -32,15 +32,15 @@ Vue.component('selectparts', {
     },
     methods: {
         //所取试题分类的数据，为树形数据
-        getparts: function () {
+        getdatas: function () {
             var th = this;
             return new Promise(function (resolve, reject) {
                 th.loading = true;
                 $api.get('ExamQues/PartTree', { orgid: th.orgid, search: '', isuse: true })
                     .then(function (req) {
                         if (req.data.success) {
-                            th.parts = req.data.result;
-                            resolve(th,th.parts);
+                            th.datas = req.data.result;
+                            resolve([th,th.datas]);
                         } else {
                             throw req.data.message;
                         }
@@ -60,12 +60,12 @@ Vue.component('selectparts', {
             //当前选中的数据
             //如果某个节点下的下级节点全部选中了，则只取当前节点；只有是半选，返回选中的子节点，且不包括自身（半选中）的节点。
             let nodes = this.getProcessedCheckedKeys();
-            this.selparts = nodes;
+            this.selectarr = nodes;
             this.$emit('select', nodes);
         },
         // 获取处理后的选中节点ID数组
         getProcessedCheckedKeys: function () {
-            const treeStore = this.$refs.parttree.store;
+            const treeStore = this.$refs.datatree.store;
             const resultNodes = [];
             // 递归遍历函数
             const traverse = (node) => {
@@ -83,12 +83,12 @@ Vue.component('selectparts', {
     },
     template: `<div class="selectparts">
         <div class="searchbar">
-            <el-input placeholder="检索" v-model="partsearch" clearable></el-input>
+            <el-input placeholder="检索" v-model="search" clearable></el-input>
         </div>
-        <el-tree ref="parttree" node-key="Qp_ID" :props="props"  :check-on-click-node="true"
-        :data="parts" show-checkbox @check="handleCheckChange" :filter-node-method="filterNode" empty-text="没有满足条件的数据">
+        <el-tree ref="datatree" node-key="Qp_ID" :props="props"  :check-on-click-node="true"
+        :data="datas" show-checkbox @check="handleCheckChange" :filter-node-method="filterNode" empty-text="没有满足条件的数据">
             <div class="custom-node" slot-scope="{ node, data }">
-                <span class="large" v-html="showsearch(data.Qp_Name,partsearch)"></span>
+                <span class="large" v-html="showsearch(data.Qp_Name,search)"></span>
             </div> 
         </el-tree>
     </div>`
