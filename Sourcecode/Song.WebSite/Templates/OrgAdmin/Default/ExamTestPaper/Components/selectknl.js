@@ -4,12 +4,12 @@ Vue.component('selectknl', {
     data: function () {
         return {
             search: '',  //检索字符串    
-            datas: [],      //试题分类数据
+            datas: [],      //试题知识点数据
             props: {
                 children: 'children',
                 label: 'Qk_Name'
             },
-            selectarr: [],   //所选试题分类
+            selectarr: [],   //所选试题知识点
             loading: false
         }
     },
