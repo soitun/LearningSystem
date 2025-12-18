@@ -13,7 +13,8 @@
             <el-card shadow="never" type="info" class="theme">
                 <template slot="header">
                     <papertype type="1"></papertype>
-                    <el-button type="primary" plain @click="openpaperinfo('SetupPaperInfo','设置试卷信息','e667',600)">设置试卷信息
+                    <el-button type="primary" :disabled="loadstate.update" plain
+                        @click="openpaperinfo('SetupPaperInfo','设置试卷信息','e667',600)">设置试卷信息
                     </el-button>
                 </template>
                 <el-form ref="form1" :model="entity" :rules="rules1" v-loading="loading" @submit.native.prevent
@@ -39,7 +40,7 @@
                 </el-form>
             </el-card>
             <section class="content">
-                <loading v-if="loading"></loading>
+                <loading v-if="loadstate.get"></loading>
                 <el-card v-else shadow="never" type="info" v-for="(m,idx) in qtypeitems">
                     <template slot="header">
                         <span>{{idx|chiserial}}
@@ -58,9 +59,9 @@
                         </div>
                     </template>
                     <icon null v-if="m.ques.length<1">没有试题</icon>
-                    <div v-else>                       
+                    <div v-else>
                         <quesrow v-for="(q,i) in m.ques" :ques="q" :index="i" :typeidx="idx" :qtypeitems="qtypeitems">
-                          
+
                         </quesrow>
                     </div>
                 </el-card>
@@ -68,7 +69,7 @@
             </section>
         </section>
         <section class="right">
-            <el-form ref="form2" :model="entity" :rules="rules2" @submit.native.prevent label-width="100px">
+            <el-form ref="form2" :model="entity" :rules="rules2" @submit.native.prevent :disabled="loadstate.update">
                 <el-card shadow="never" type="success">
                     <template slot="header">
                         <span icon="&#xe829" huge>卷面分数</span>
@@ -100,8 +101,10 @@
                         <div>共 <b>{{ qtypeitems.reduce((a, b) => a +b.ques.length,0)}}</b> 道
                         </div>
                     </template>
-                    <el-form ref="form3" :model="entity" :rules="rules3" @submit.native.prevent label-width="100px">
-                        <div v-for="(m,idx) in qtypeitems" class="scoreitems" :type="m.type">                            
+                    <loading v-if="loadstate.get"></loading>
+                    <el-form v-else ref="form3" :model="entity" :rules="rules3" @submit.native.prevent
+                        label-width="100px" :disabled="loadstate.update">
+                        <div v-for="(m,idx) in qtypeitems" class="scoreitems" :type="m.type">
                             <el-row :gutter="20" class="ques_type">
                                 <el-col :span="16">
                                     {{idx|chiserial}}
