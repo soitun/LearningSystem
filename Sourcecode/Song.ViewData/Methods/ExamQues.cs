@@ -89,15 +89,16 @@ namespace Song.ViewData.Methods
             entity.Qus_Explain = QuestionHandler.CleanText.Content(entity.Qus_Explain);
 
             Song.Entities.Questions old = Business.Do<IQuestions>().QuesSingle(entity.Qus_ID);
-            if (old == null) throw new Exception("Not found entity for Questions！");
-            
-            old.Copy<Song.Entities.Questions>(entity);
+            if (old == null) throw new Exception("Not found entity for Questions！");            
+          
             //处理单选、多选的选项
             if (entity.Qus_Type == 1 || entity.Qus_Type == 2 || entity.Qus_Type == 5)
             {
                 entity.Qus_Items = Business.Do<IQuestions>().AnswerToItems(Helper.Question.AnswerToItems(entity));
             }
             entity.Qus_Purpose = 1;    //考试专用
+
+            old.Copy<Song.Entities.Questions>(entity);
             Business.Do<IExamQues>().QuesSave(old, parts, tags, knls);
             return true;
         }

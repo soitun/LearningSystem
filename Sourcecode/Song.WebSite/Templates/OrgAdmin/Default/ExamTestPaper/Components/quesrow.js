@@ -51,25 +51,24 @@ Vue.component('quesrow', {
     },
     template: `<div class="quesrow" :qid="ques.Qus_ID">
     <div class="queshead">
-        <div class="serial">{{serial}}.</div> 
-        <span class="btns">
-            <el-link icon="el-icon-arrow-up" type="primary" :disabled="index==0"
-                @click="quesmove(index,-1)">上移</el-link>
-            <el-link icon="el-icon-arrow-down" type="primary" :disabled="index>=qtypeitems[typeidx].ques.length-1"
-                @click="quesmove(index,1)">下移</el-link>
-            <el-popconfirm title="是否移除该试题？"  @confirm="quesdelete(index)">
-                <el-link icon="el-icon-delete" slot="reference" type="warning">移除</el-link>
-            </el-popconfirm>            
-        </span>
+        <span class="serial">{{serial}}.</span> 
+        <span v-html="ques.Qus_Title" class="title"></span>
     </div>
-    <div class="quescontent">
-        <div v-html="ques.Qus_Title" class="title"></div>
+    <div class="btns">
+        <el-link icon="el-icon-arrow-up" type="primary" :disabled="index==0"
+            @click="quesmove(index,-1)">上移</el-link>
+        <el-link icon="el-icon-arrow-down" type="primary" :disabled="index>=qtypeitems[typeidx].ques.length-1"
+            @click="quesmove(index,1)">下移</el-link>
+        <el-popconfirm title="是否移除该试题？"  @confirm="quesdelete(index)">
+            <el-link icon="el-icon-delete" slot="reference" type="warning">移除</el-link>
+        </el-popconfirm>            
+    </div>
+    <div class="quescontent">        
         <div v-if="ques.Qus_Type==1 || ques.Qus_Type==2" class="qus_items" remark="单选、多选的选项">
             <div v-for="(item,index) in ques.Qus_Items" :correct="item.Ans_IsCorrect"
                 v-html="String.fromCharCode(65 + index) +'.'+item.Ans_Context">
             </div>
-        </div>
-      
+        </div>      
     </div>
 </div> `
 });
