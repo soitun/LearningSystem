@@ -114,7 +114,34 @@
                 </div>
             </div>
             <div v-show="activeName=='collect'" remark="我的收藏" tab="collect">
-
+                <div class="ques-box">
+                    <div class="ques-query">
+                        <query_panel :model="collectform" :width="45" :loading="loadstate.collect" @search="getcollectques(1)">
+                            <el-form-item label="题干">
+                                <el-input v-model.trim="collectform.search" clearable style="width:100px"
+                                    placeholder="搜索题干">
+                                </el-input>
+                            </el-form-item>
+                            <el-form-item label="题干">
+                                <diff @change="d=>collectform.diff=d" :value="collectform.diff"></diff>
+                            </el-form-item>
+                        </query_panel>
+                    </div>
+                    <div class="queslist">
+                        <loading v-if="loadstate.collect"></loading>
+                        <el-empty v-else-if="collectques.length<1" description="没有满足条件的数据"></el-empty>
+                        <selectques v-else v-for="(ques,idx) in collectques" :ques="ques" :types="types" :admin="admin"
+                            :search="collectform.search" :serial="(collectform.index - 1) * collectform.size + idx + 1"
+                            @checked="changeselect">
+                        </selectques>
+                    </div>
+                    <div class="pager-box">
+                        <el-pagination v-on:current-change="getcollectques" :current-page="collectform.index"
+                            :page-size="collectform.size" :pager-count="8" layout="total, prev, pager, next, jumper"
+                            :total="collecttotal">
+                        </el-pagination>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

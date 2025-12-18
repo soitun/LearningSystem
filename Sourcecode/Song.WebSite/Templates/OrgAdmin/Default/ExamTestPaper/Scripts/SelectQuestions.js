@@ -24,7 +24,7 @@ $ready([
                 { name: '按知识点选题', tab: 'knls', icon: 'e6fd' },
                 { name: '我的收藏', tab: 'collect', icon: 'e747' },
             ],
-            activeName: 'tags',
+            activeName: 'collect',
             //选中的试题,试题id
             //selectedarr: $api.querystring('ques', '').split(',').filter(item => item !== ''),
             selectedques: [],       //选中的试题
@@ -55,7 +55,14 @@ $ready([
             knlpages: 1, //总页数
             knlsques: [],
 
-            collect: [],
+            //收藏试题的查询条件
+            collectform: {
+                "acid": "", "search": "", "qpid": "", "tagid": "", "knlid": "", "type": $api.querystring('type'),
+                "diff": "", "use": "", "error": "", "wrong": "", "size": 10, "index": 1
+            },
+            collectques: [],
+            collecttotal: 1, //总记录数
+            collecttotalpages: 1, //总页数
 
 
             loadstate: {
@@ -69,8 +76,15 @@ $ready([
         mounted: function () {
             var th = this;
             this.partsform.orgid = window.org.Org_ID;
+            this.tagsform.orgid = window.org.Org_ID;
+            this.knlsform.orgid = window.org.Org_ID;
+
             //当前登录的管理员
-            $api.login.current('admin', d => th.admin = d);
+            $api.login.current('admin', d => {
+                th.admin = d;
+                th.collectform.acid = d.Acc_Id;
+                th.getcollectques(1);
+            });
 
             this.receive();
         },
@@ -174,6 +188,32 @@ $ready([
                     alert(err);
                     console.error(err);
                 }).finally(() => th.loadstate.tags = false);
+            },
+            //按关键字获取试题
+            getcollectques: function (index) {
+                var th = this;
+                th.loadstate.collect = true;
+                if (index != null) this.collectform.index = index;
+                $api.get("ExamQues/CollectPager", th.collectform).then(function (d) {
+                    if (d.data.success) {
+                        var result = d.data.result;
+                        for (let i = 0; i < result.length; i++) {
+                            result[i] = window.ques.parseAnswer(result[i]);
+                            //试题是否选中
+                            result[i]["checked"] = th.selectedques.some(m => m.Qus_ID == result[i].Qus_ID);
+                            result[i]["showdetail"] = true;
+                            //result[i].Qus_Title = result[i].Qus_Title.replace(/(<([^>]+)>)/ig, "");
+                        }
+                        th.collectques = result;
+                        th.collecttotalpages = Number(d.data.totalpages);
+                        th.collecttotal = d.data.total;
+                    } else {
+                        throw d.data.message;
+                    }
+                }).catch(function (err) {
+                    alert(err);
+                    console.error(err);
+                }).finally(() => th.loadstate.collect = false);
             },
             //接收的主窗体数据
             receive: function () {
