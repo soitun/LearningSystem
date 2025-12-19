@@ -1015,7 +1015,6 @@
             ctrl.obj.resize = ctrl.win_state.resize;
             window.setTimeout(function () {
                 ctrl.obj.dom.smooth(false);
-
             }, 300);
         }, 10);
         return ctrl.obj;
@@ -1042,8 +1041,9 @@
             ctrl.obj.trigger('restore', {
                 'action': 'from-full'
             });
-            ctrl.obj.level = $dom('.pagebox').level() + 2;
-            ctrl.obj.resize = true;
+            ctrl.obj.level = $dom('.pagebox').level() + 2;         
+            ctrl.obj.resize = ctrl.win_state.resize;
+            ctrl.obj.move = ctrl.win_state.move;
             ctrl.obj._full = false;
         }
         //设置窗体的位置与宽高
@@ -1052,7 +1052,7 @@
         ctrl.obj.left = left <= 0 ? 0 : left;
         ctrl.obj.top = top <= 0 ? 0 : top;
         ctrl.obj.width = width;
-        ctrl.obj.height = height;
+        ctrl.obj.height = height;        
 
         window.setTimeout(function () {
             ctrl.obj.dom.smooth(false);
