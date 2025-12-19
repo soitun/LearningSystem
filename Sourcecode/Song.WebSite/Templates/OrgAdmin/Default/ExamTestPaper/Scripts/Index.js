@@ -83,8 +83,8 @@ $ready(['Components/papertype.js'],
                 changeState: function (row) {
                     var th = this;
                     if (th.loadingid > 0) return;
-                    th.loadingid = row.Tp_Id;
-                    $api.post('TestPaper/ModifyState', { 'id': row.Tp_Id, 'use': row.Tp_IsUse, 'rec': row.Tp_IsRec }).then(function (req) {
+                    th.loadingid = row.Etp_Id;
+                    $api.post('ExamTestPaper/ModifyState', { 'id': row.Etp_Id, 'use': row.Etp_IsUse, 'rec': row.Etp_IsRec }).then(function (req) {
                         if (req.data.success) {
                             th.$notify({
                                 type: 'success',
@@ -109,11 +109,11 @@ $ready(['Components/papertype.js'],
                     }).then(() => {
                         var ids = '';
                         for (var i = 0; i < th.datas.length; i++) {
-                            ids += th.datas[i].Tp_Id;
+                            ids += th.datas[i].Etp_Id;
                             if (i < th.datas.length - 1) ids += ',';
                         }
                         var loading = this.$fulloading();
-                        $api.post('TestPaper/ModifyState', { 'id': ids, 'use': use, 'rec': null }).then(function (req) {
+                        $api.post('ExamTestPaper/ModifyState', { 'id': ids, 'use': use, 'rec': null }).then(function (req) {
                             if (req.data.success) {
                                 th.$notify({
                                     type: 'success',
@@ -134,6 +134,28 @@ $ready(['Components/papertype.js'],
 
                     });
                 },
+                //删除
+                deleteData: function (datas) {
+                    var th = this;
+                    th.loading = true;
+                    $api.delete('ExamTestPaper/Delete', { 'id': datas }).then(function (req) {
+                        if (req.data.success) {
+                            var result = req.data.result;
+                            vapp.$notify({
+                                type: 'success',
+                                message: '成功删除' + result + '条数据',
+                                center: true
+                            });
+                            th.handleCurrentChange();
+                        } else {
+                            console.error(req.data.exception);
+                            throw req.data.message;
+                        }
+                    }).catch(function (err) {
+                        alert(err);
+                        console.error(err);
+                    }).finally(() => th.loading = false);
+                },
                 btnadd: function (btn, ctr) {
                     let couid = $api.querystring('id');
                     var url = $api.url.set(ctr.path, 'couid', couid);
@@ -142,8 +164,8 @@ $ready(['Components/papertype.js'],
                 },
                 //查看成绩
                 viewResults: function (row) {
-                    var url = $api.url.set('../TestPaper/Results', 'tpid', row.Tp_Id);
-                    this.$refs.btngroup.pagebox(url, '《' + row.Tp_Name + '》的成绩', null, 1000, 800, { 'ico': 'e696' });
+                    var url = $api.url.set('../TestPaper/Results', 'tpid', row.Etp_Id);
+                    this.$refs.btngroup.pagebox(url, '《' + row.Etp_Name + '》的成绩', null, 1000, 800, { 'ico': 'e696' });
                 },
                 //刷新数据行
                 fresh_row: function (tpid) {
