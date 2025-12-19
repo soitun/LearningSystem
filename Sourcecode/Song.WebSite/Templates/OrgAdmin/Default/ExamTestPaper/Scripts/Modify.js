@@ -1,4 +1,4 @@
-$ready(['Components/papertype.js',],function () {
+$ready(['Components/papertype.js',], function () {
     window.vapp = new Vue({
         el: '#vapp',
         data: {
@@ -62,10 +62,10 @@ $ready(['Components/papertype.js',],function () {
                 let $pagebox = window.top.$pagebox;
                 if ($pagebox) {
                     let pbox = $pagebox.get(window.name);
-                    pbox.toSize(typepurl[type - 1].width, typepurl[type - 1].height);
+                    if (!pbox.full) pbox.toSize(typepurl[type - 1].width, typepurl[type - 1].height);
                 }
                 //跳转到指定页面
-                let url = $api.url.set(typepurl[type - 1].page, { 'id':  this.id });
+                let url = $api.url.set(typepurl[type - 1].page, { 'id': this.id });
                 window.location.href = url;
             },
             //获取试卷

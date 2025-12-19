@@ -21,19 +21,14 @@
                     </el-form-item>
                 </template>
                 <template slot="more">
-                    <el-form-item label="状态">
-                        <!--是否试题有错误-->
-                        <el-radio-group v-model="form.error">
+                    <el-form-item label="难度">
+                        <el-radio-group v-model="form.diff">
                             <el-radio-button label="">所有</el-radio-button>
-                            <el-radio-button label="false">
-                                <icon>&#xe634</icon>正常
-                            </el-radio-button>
-                            <el-radio-button label="true">
-                                <icon>&#xe70e</icon>存在错误
+                            <el-radio-button v-for="(n,i) in ['很简单', '简单', '有难度', '比较难', '很难']" :label="i+1">
+                                {{n}}
                             </el-radio-button>
                         </el-radio-group>
                     </el-form-item>
-
                 </template>
             </query_panel>
         </div>

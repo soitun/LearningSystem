@@ -79,6 +79,7 @@ $ready(function () {
                     var pagebox = window.top.$pagebox;
                     if (pagebox && pagebox.source.top) {
                         [this.entity, this.types, this.upfile] = pagebox.source.box(window.name, 'vapp.transmitInfo', false);
+                        this.Etp_Diff = [this.entity.Etp_Diff, this.entity.Etp_Diff2];
                         resolve(this.entity);
                     }
                 });

@@ -12,8 +12,9 @@
     display: flex;
     padding: 5px;
     line-height: 30px;
-    margin: 0px 0px 10px 0px;
+    margin: 10px 0px 10px 0px;
 }
+
 .quesrow .queshead .serial{
     margin-right: 5px;
 }
@@ -25,10 +26,11 @@
    top: -15px;
    width: 150px;
    background-color: #fff;
-   border-radius: 5px;
+   border-radius: 15px;
    padding: 5px 15px;
    line-height: 20px;
    height: 20px;
+   border: 1px solid #f3f3f3;
 }
 .quesrow .queshead .title>*{
     margin: 0px;

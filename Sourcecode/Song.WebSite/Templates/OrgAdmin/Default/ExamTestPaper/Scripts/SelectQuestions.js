@@ -24,7 +24,7 @@ $ready([
                 { name: '按知识点选题', tab: 'knls', icon: 'e6fd' },
                 { name: '我的收藏', tab: 'collect', icon: 'e747' },
             ],
-            activeName: 'collect',
+            activeName: 'parts',
             //选中的试题,试题id
             //selectedarr: $api.querystring('ques', '').split(',').filter(item => item !== ''),
             selectedques: [],       //选中的试题
@@ -207,6 +207,10 @@ $ready([
                         th.collectques = result;
                         th.collecttotalpages = Number(d.data.totalpages);
                         th.collecttotal = d.data.total;
+                        //如果有收藏的试题，则优先显示收藏的试题
+                        if (th.collectques.length > 0) {
+                            th.activeName = 'collect';
+                        }
                     } else {
                         throw d.data.message;
                     }

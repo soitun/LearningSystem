@@ -234,11 +234,11 @@ namespace Song.ViewData.Methods
             return i;           
         }
         /// <summary>
-        /// 还原逻辑删除试题
+        /// 还原逻辑删除的试卷
         /// </summary>
         [Admin]
         [HttpPost, HttpGet(Ignore = true)]
-        public int QuesRecycle(string id)
+        public int Recycle(string id)
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
@@ -249,13 +249,13 @@ namespace Song.ViewData.Methods
         }
 
         /// <summary>
-        /// 删除试题分
+        /// 彻底删除试卷
         /// </summary>
-        /// <param name="id">试题id，可以是多个，用逗号分隔</param>
+        /// <param name="id">试卷id，可以是多个，用逗号分隔</param>
         /// <returns></returns>
         [Admin]
         [HttpDelete, HttpGet(Ignore = true)]
-        public int QuesRemove(string id)
+        public int Remove(string id)
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
@@ -342,7 +342,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="orgid"></param>
         /// <param name="accid">管理员id</param>
-        /// <param name="seach">按名称检索</param>
+        /// <param name="search">按名称检索</param>
         /// <param name="isdeleted">是否删除</param>
         /// <param name="use"></param>
         /// <param name="diff">难度等级</param>
@@ -350,7 +350,7 @@ namespace Song.ViewData.Methods
         /// <param name="index">第几页</param>
         /// <returns></returns>
         [HttpGet]
-        public ListResult Pager(int orgid, int accid, string seach, bool? isdeleted, int diff, bool? use, int size, int index)
+        public ListResult Pager(int orgid, int accid, string search, bool? isdeleted, int diff, bool? use, int size, int index)
         {
             if (orgid <= 0)
             {
@@ -359,7 +359,7 @@ namespace Song.ViewData.Methods
             }
             int count;
             List<Song.Entities.ExamTestPaper> tps = Business.Do<IExamTestPaper>()
-                .PaperPager(orgid, accid, seach, isdeleted, diff, use, size, index, out count);
+                .PaperPager(orgid, accid, search, isdeleted, diff, use, size, index, out count);
             for (int i = 0; i < tps.Count; i++)
                 tps[i] = _tran(tps[i]);
             ListResult result = new ListResult(tps);

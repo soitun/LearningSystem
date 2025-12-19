@@ -214,6 +214,8 @@ $ready([
                 this.entity.Etp_Span = entity.Etp_Span;
                 this.entity.Etp_Remind = entity.Etp_Remind;
                 this.entity.Etp_Intro = entity.Etp_Intro;
+                this.entity.Etp_Diff = entity.Etp_Diff;
+                this.entity.Etp_Diff2 = entity.Etp_Diff2;
                 this.upfile = upfile;
             },
             /***************************

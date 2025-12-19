@@ -150,7 +150,7 @@ namespace Song.ServiceImpls
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc &= ExamTestPaper._.Org_ID == orgid;
             if (accid > 0) wc &= ExamTestPaper._.Acc_Id == accid;
-            if (diff > 0) wc &= ExamTestPaper._.Etp_Diff >= diff && ExamTestPaper._.Etp_Diff2 <= diff;
+            if (diff > 0) wc &= (ExamTestPaper._.Etp_Diff <= diff && ExamTestPaper._.Etp_Diff2 >= diff);
             if (isdeleted != null) wc &= ExamTestPaper._.Etp_IsDeleted == (bool)isdeleted;
             if (isUse != null) wc &= ExamTestPaper._.Etp_IsUse == (bool)isUse;          
             return Gateway.Default.From<ExamTestPaper>().Where(wc).OrderBy(ExamTestPaper._.Etp_Id.Desc).ToList<ExamTestPaper>(count);
@@ -171,7 +171,7 @@ namespace Song.ServiceImpls
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc &= ExamTestPaper._.Org_ID == orgid;
             if (accid > 0) wc &= ExamTestPaper._.Acc_Id == accid;
-            if (diff > 0) wc &= ExamTestPaper._.Etp_Diff >= diff && ExamTestPaper._.Etp_Diff2 <= diff;
+            if (diff > 0) wc &= (ExamTestPaper._.Etp_Diff <= diff && ExamTestPaper._.Etp_Diff2 >= diff);
             if (isdeleted != null) wc &= ExamTestPaper._.Etp_IsDeleted == (bool)isdeleted;
             if (isUse != null) wc &= ExamTestPaper._.Etp_IsUse == (bool)isUse;
             if (!string.IsNullOrWhiteSpace(search)) wc &= ExamTestPaper._.Etp_Name.Contains(search);
@@ -188,7 +188,7 @@ namespace Song.ServiceImpls
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc &= ExamTestPaper._.Org_ID == orgid;
-            if (diff > 0) wc &= ExamTestPaper._.Etp_Diff >= diff && ExamTestPaper._.Etp_Diff2 <= diff;
+            if (diff > 0) wc &= (ExamTestPaper._.Etp_Diff <= diff && ExamTestPaper._.Etp_Diff2 >= diff);
             if (isdeleted != null) wc &= ExamTestPaper._.Etp_IsDeleted == (bool)isdeleted;
             if (isUse != null) wc &= ExamTestPaper._.Etp_IsUse == (bool)isUse;
             return Gateway.Default.Count<ExamTestPaper>(wc);
@@ -211,7 +211,7 @@ namespace Song.ServiceImpls
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc &= ExamTestPaper._.Org_ID == orgid;
             if (accid > 0) wc &= ExamTestPaper._.Acc_Id == accid;
-            if (diff > 0) wc &= ExamTestPaper._.Etp_Diff >= diff && ExamTestPaper._.Etp_Diff2 <= diff;
+            if (diff > 0) wc &= (ExamTestPaper._.Etp_Diff <= diff && ExamTestPaper._.Etp_Diff2 >= diff);
             if (isdeleted != null) wc &= ExamTestPaper._.Etp_IsDeleted == (bool)isdeleted;
             if (isUse != null) wc &= ExamTestPaper._.Etp_IsUse == (bool)isUse;
             if (!string.IsNullOrWhiteSpace(sear)) wc &= ExamTestPaper._.Etp_Name.Contains(sear);

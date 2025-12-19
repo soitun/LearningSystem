@@ -7,7 +7,7 @@ $ready(['Components/papertype.js'],
                 types: [],        //试题类型，来自web.config中配置项
                 admin: {},          //当前登录用户
                 //试题的查询条件
-                form: { "orgid": "", "accid": "", "seach": "", "isdeleted": false, "diff": "", "use": "", "size": 10, "index": 1 },
+                form: { "orgid": "", "accid": "", "search": "", "isdeleted": false, "diff": "", "use": "", "size": 10, "index": 1 },
                 datas: [],
                 total: 1, //总记录数
                 totalpages: 1, //总页数
@@ -57,9 +57,6 @@ $ready(['Components/papertype.js'],
                         if (d.data.success) {
                             var result = d.data.result;
                             th.datas = result;
-                            th.$nextTick(function () {
-                                loading.close();
-                            });
                             th.totalpages = Number(d.data.totalpages);
                             th.total = d.data.total;
                         } else {
@@ -68,7 +65,12 @@ $ready(['Components/papertype.js'],
                     }).catch(function (err) {
                         alert(err);
                         console.error(err);
-                    }).finally(() => th.loading = false);
+                    }).finally(() => {
+                        th.loading = false;
+                        th.$nextTick(function () {
+                            loading.close();
+                        });
+                    });
                 },
                 //双击事件
                 rowdblclick: function (row, column, event) {
