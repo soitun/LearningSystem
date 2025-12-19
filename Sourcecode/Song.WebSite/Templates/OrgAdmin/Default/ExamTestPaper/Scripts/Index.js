@@ -74,7 +74,6 @@ $ready(['Components/papertype.js'],
                 },
                 //双击事件
                 rowdblclick: function (row, column, event) {
-                    //console.log(row);
                     this.$refs.btngroup.modify(row[this.$refs.btngroup.idkey], null, {
                         'ico': 'e810'
                     });
@@ -121,9 +120,7 @@ $ready(['Components/papertype.js'],
                                     center: true
                                 });
                                 th.handleCurrentChange();
-                                th.$nextTick(function () {
-                                    loading.close();
-                                });
+
                             } else {
                                 throw req.data.message;
                             }
@@ -131,7 +128,9 @@ $ready(['Components/papertype.js'],
                             alert(err);
                         }).finally(() => { });
                     }).catch(() => {
-
+                        th.$nextTick(function () {
+                            loading.close();
+                        });
                     });
                 },
                 //删除
@@ -155,17 +154,6 @@ $ready(['Components/papertype.js'],
                         alert(err);
                         console.error(err);
                     }).finally(() => th.loading = false);
-                },
-                btnadd: function (btn, ctr) {
-                    let couid = $api.querystring('id');
-                    var url = $api.url.set(ctr.path, 'couid', couid);
-                    //console.error(url);
-                    ctr.add(url, { 'ico': 'e810' });
-                },
-                //查看成绩
-                viewResults: function (row) {
-                    var url = $api.url.set('../TestPaper/Results', 'tpid', row.Etp_Id);
-                    this.$refs.btngroup.pagebox(url, '《' + row.Etp_Name + '》的成绩', null, 1000, 800, { 'ico': 'e696' });
                 },
                 //刷新数据行
                 fresh_row: function (tpid) {
