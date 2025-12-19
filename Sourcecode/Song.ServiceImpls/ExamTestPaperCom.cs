@@ -44,6 +44,7 @@ namespace Song.ServiceImpls
             }
             entity.Etp_CrtTime = DateTime.Now;
             //判断是否有简答题，还没有编写
+            entity.Etp_IsManual = this.PaperIsManual(entity);
             //
             Gateway.Default.Save<ExamTestPaper>(entity);
             return entity.Etp_Id;
@@ -56,6 +57,7 @@ namespace Song.ServiceImpls
         {
             entity.Etp_Lasttime = DateTime.Now;
             //判断是否有简答题
+            entity.Etp_IsManual = this.PaperIsManual(entity);
 
             Gateway.Default.Save<ExamTestPaper>(entity);
         }
@@ -134,6 +136,36 @@ namespace Song.ServiceImpls
         public ExamTestPaper PaperSingle(string name)
         {
             return Gateway.Default.From<ExamTestPaper>().Where(ExamTestPaper._.Etp_Name == name).ToFirst<ExamTestPaper>();
+        }
+        /// <summary>
+        /// 判断是否有简答题
+        /// </summary>
+        public bool PaperIsManual(long id)
+        {
+            ExamTestPaper tp=this.PaperSingle(id);
+            if (tp == null) return false;
+            return PaperIsManual(tp);
+        }
+        /// <summary>
+        /// 判断是否有简答题
+        /// </summary>
+        public bool PaperIsManual(ExamTestPaper entity)
+        {
+            XmlDocument xmldoc = new XmlDocument();
+            xmldoc.LoadXml(entity.Etp_FromConfig);
+            //各题型的占比
+            XmlNodeList nodeitems = xmldoc.SelectNodes("/testpaper/questions/ques");
+            if (nodeitems != null && nodeitems.Count > 0)
+            {
+                foreach (XmlNode item in nodeitems)
+                {
+                    if (item.Attributes["type"]?.Value == "4")
+                    {
+                        if(Convert.ToInt32(item.Attributes["count"]?.Value) > 0) return true;
+                    }
+                }
+            }
+            return false;
         }
         /// <summary>
         /// 获取指定数据的试卷

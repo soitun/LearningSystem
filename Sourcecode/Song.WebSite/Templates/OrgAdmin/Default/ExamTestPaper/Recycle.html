@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head resource>
     <meta charset="UTF-8">
-    <include file="../inc/meta.inc" />
-    <title>考试试卷</title>
+    <include file="../inc/meta.inc" /> 
+    <title>试卷的回收站</title>
 </head>
-
 <body>
     <div id="vapp" v-cloak>
         <div class="toolsbar">
-            <btngroup show="新增,修改,删除" ref='btngroup' :disabled="loading" :selects='selects' idkey='Etp_Id'
-                @delete="deleteData" table="datatables" path="Modify" width="900" height="500">
+            <btngroup show="删除,还原" ref='btngroup' :disabled="loading" :selects='selects' idkey='Etp_Id'
+                @delete="deleteData"  @recycle="recycle"  table="datatables" path="Modify" width="900" height="500">
             </btngroup>
             <query_panel :model="form" :width="45" :loading="loading" @search="handleCurrentChange(1)">
                 <template>
@@ -34,7 +32,7 @@
         </div>
         <!-- 数据列表-->
         <el-table ref="datatables" border resizable :data="datas" tooltip-effect="dark" style="width: 100%" stripe
-            @selection-change="val=>selects=val" @row-dblclick="rowdblclick" row-key="Etp_Id">
+            @selection-change="val=>selects=val" row-key="Etp_Id">
             <div slot="empty">
                 <span v-if="!loading">未查询到数据</span>
             </div>
@@ -58,7 +56,7 @@
             </el-table-column>
             <el-table-column label="副标题">
                 <template slot-scope="scope">
-                    <span v-html="showsearch(scope.row.Etp_SubName,form.search)"></span>                   
+                    <span v-html="showsearch(scope.row.Etp_SubName,form.search)"></span>
                 </template>
             </el-table-column>
             <el-table-column label="分数" align="center" width="120">
@@ -83,60 +81,34 @@
                     {{scope.row.Etp_Diff}} - {{scope.row.Etp_Diff2}}
                 </template>
             </el-table-column>
-            <el-table-column label="启用" width="100" align="center">
-                <template slot="header" slot-scope="scope">
-                    <el-dropdown @command="batchState">
-                        <span class="el-dropdown-link">
-                            启用<i class="el-icon-arrow-down el-icon--right"></i>
-                        </span>
-                        <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item :command="1">
-                                <icon>&#xa030</icon>批量启用
-                            </el-dropdown-item>
-                            <el-dropdown-item :command="0">
-                                <icon>&#xe7ad</icon>批量禁用
-                            </el-dropdown-item>
-                        </el-dropdown-menu>
-                    </el-dropdown>
-                </template>
+            <el-table-column label="启用" width="100" align="center">   
                 <template slot-scope="scope">
-                    <el-switch v-model="scope.row.Etp_IsUse" @change="changeState(scope.row)" active-color="#13ce66"
+                    <el-switch v-model="scope.row.Etp_IsUse" @change="changeState(scope.row)" :disabled="true" active-color="#13ce66"
                         inactive-color="#ff4949" v-show="loadingid!=scope.row.Etp_Id"
                         :active-text="scope.row.Etp_IsUse ? '启用' : '禁用'">
 
                     </el-switch>
                 </template>
             </el-table-column>
-            <el-table-column label="操作" width="100">
+            <el-table-column label="操作" width="120">
                 <template slot-scope="scope">
-
-                    <el-dropdown>
-                        <span class="el-dropdown-link">
-                            <icon>&#xa030</icon><span style="font-size: 12px">管理</span><i
-                                class="el-icon-arrow-down el-icon--right"></i>
-                        </span>
-                        <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item>
-
-                            </el-dropdown-item>
-                            <el-dropdown-item divided>
-                                <el-link type="primary" plain icon="el-icon-edit" @click='rowdblclick(scope.row)'>
-                                    修改
-                                </el-link>
-                            </el-dropdown-item>
-                            <el-dropdown-item>
-                                <el-popconfirm confirm-button-text='是的' cancel-button-text='不用' icon="el-icon-info"
-                                    icon-color="red" title="确定删除吗？" @confirm="$refs.btngroup.delete(scope.row.Etp_Id)">
-                                    <el-link type="danger" plain icon="el-icon-delete" slot="reference">删除
-                                    </el-link>
-                                </el-popconfirm>
-                            </el-dropdown-item>
-                        </el-dropdown-menu>
-                    </el-dropdown>
+                    <el-button-group>
+                        <el-popconfirm confirm-button-text='是的' cancel-button-text='不用' icon="el-icon-info"
+                            icon-color="red" title="确定还原吗？"
+                            @confirm="$refs.btngroup.events('recycle',scope.row.Etp_Id)">
+                            <el-link type="warning" plain slot="reference">
+                                <icon>&#xa014</icon>还原
+                            </el-link>
+                        </el-popconfirm>
+                        <el-popconfirm confirm-button-text='是的' cancel-button-text='不用' icon="el-icon-info"
+                            icon-color="red" title="将永久删除该数据，确定吗？" @confirm="$refs.btngroup.delete(scope.row.Etp_Id)">
+                            <el-link type="danger" plain icon="el-icon-delete" slot="reference">删除
+                            </el-link>
+                        </el-popconfirm>
+                    </el-button-group>
                 </template>
             </el-table-column>
         </el-table>
-
 
         <div id="pager-box">
             <el-pagination v-on:current-change="handleCurrentChange" :current-page="form.index" :page-size="form.size"
@@ -145,5 +117,4 @@
         </div>
     </div>
 </body>
-
 </html>
