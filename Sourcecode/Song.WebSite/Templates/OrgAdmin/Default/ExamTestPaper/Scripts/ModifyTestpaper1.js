@@ -1,6 +1,7 @@
 $ready([
     '/Utilities/Components/question/function.js',
     '../Question/Components/ques_type.js',
+    'Components/editbyname.js',     //修改试题类型的别名
     'Components/papertype.js',  //试卷类型
     'Components/quesrow.js',     //试题在试卷中的显示
     'Components/quesscores.js'   //试题的分数

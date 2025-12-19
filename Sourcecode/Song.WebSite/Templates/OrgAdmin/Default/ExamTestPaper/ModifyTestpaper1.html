@@ -44,10 +44,14 @@
                 <el-card v-else shadow="never" type="info" v-for="(m,idx) in qtypeitems">
                     <template slot="header">
                         <span>{{idx|chiserial}}
-                            <ques_type :type="m.type" :types="types" :showicon="false" :showname="true"></ques_type>
+                            <span v-if="m.byname!='' && m.byname!='undefined'">{{m.byname}} -
+                                <span class="truename">{{types[m.type-1]}}题</span></span>
+                            <span v-else>{{types[m.type-1]}}题</span>
+                            </span>                           
                         </span>
                         <div class="qtype_btns" remark="题型按钮区">
-                            <el-link icon="el-icon-edit-outline" type="primary">题型别名</el-link>
+                            <el-link icon="el-icon-edit-outline" type="primary" @click="$refs['editbyname'].show(m)">
+                                题型别名</el-link>
                             <span>
                                 <el-link icon="el-icon-arrow-up" type="primary" :disabled="idx==0"
                                     @click="typemove(idx,-1)">上移</el-link>
@@ -65,8 +69,9 @@
                         </quesrow>
                     </div>
                 </el-card>
-
             </section>
+            <!--编辑试题分类的别名-->
+            <editbyname ref="editbyname"></editbyname>
         </section>
         <section class="right">
             <el-form ref="form2" :model="entity" :rules="rules2" @submit.native.prevent :disabled="loadstate.update">
@@ -108,8 +113,8 @@
                             <el-row :gutter="20" class="ques_type">
                                 <el-col :span="16">
                                     {{idx|chiserial}}
-                                    <span v-if="m.byname!='' && m.byname!='undefined'">{{m.byname}} - <span
-                                            class="truename">{{types[m.type-1]}}题</span></span>
+                                    <span v-if="m.byname!='' && m.byname!='undefined'">{{m.byname}} -
+                                        <span class="truename">{{types[m.type-1]}}题</span></span>
                                     <span v-else>{{types[m.type-1]}}题</span>
                                     </span>
                                     <span :zero="m.number<1"> （{{m.ques.length}} 道，<b>{{m.number}}</b> 分）</span>
