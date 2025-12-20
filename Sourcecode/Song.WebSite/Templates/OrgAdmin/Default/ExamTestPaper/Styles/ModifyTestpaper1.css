@@ -42,7 +42,7 @@ section.left .el-card {
 
 /*右侧区间*/
 section.right {
-    width: 500px;
+    width: 400px;
     display: flex;
     flex-direction: column;
 }
@@ -74,6 +74,7 @@ section.right .quescard {
 }
 section.right .quescard .el-form-item__error {
     left: -10px !important;
+    white-space: nowrap;
 }
 section.right .quescard .el-card__body{
     overflow-y: auto;
