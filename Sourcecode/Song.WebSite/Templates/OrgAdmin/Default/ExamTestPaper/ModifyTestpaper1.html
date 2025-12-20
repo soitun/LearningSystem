@@ -128,7 +128,7 @@
                                     </el-form-item>
                                 </el-col>
                             </el-row>
-                            <quesscores :item="m" :typeidx="idx" :qtypeitems="qtypeitems"></quesscores>
+                            <quesscores :item="m" :typeidx="idx" :qtypeitems="qtypeitems" :rowcount="4"></quesscores>
                             <el-divider content-position="left"></el-divider>
                         </div>
                         <el-empty description="未设置任何试题" v-if="qtypeitems.reduce((a, b) => a + b.ques.length, 0)<0">

@@ -19,10 +19,7 @@
     white-space: nowrap;
     overflow: hidden;
 }
-/* 第4n个元素没有右边距 */
-.quesscores>div:nth-child(4n) {
-    margin-right: 0;
-  }
+
 .quesscores>div>span {
     padding: 5px 5px;
     line-height: 20px;
