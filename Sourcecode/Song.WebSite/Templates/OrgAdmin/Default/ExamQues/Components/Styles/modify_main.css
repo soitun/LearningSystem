@@ -5,33 +5,20 @@
 	height: calc(100% - 65px);
 }
 
-.panel>div[remark]:not(:first-child) {
-	border: 1px solid #DCDFE6;
-	border-top: none;
-}
-
-.el-tabs--border-card {
-	box-shadow: none;
-	border-bottom: none;
-}
-
-.el-tabs__content {
-	display: none;
-}
-
 /*编辑区域*/
 .panel>div[remark] {
 	height: calc(100% - 30px);
 	overflow: auto;
 	position: relative;
 }
-
 .panel>div[remark='解析'] .tox-tinymce {
 	border: none !important;
+	border-bottom: 1px solid #ccc !important;
 }
 .panel>div[remark='解析'] .tox-statusbar{
 	border: none !important;
 }
+
 /*试题解析的编辑器*/
 #explain.editor {
 	margin: 15px;

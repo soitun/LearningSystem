@@ -177,10 +177,12 @@ div[tab="range"] .rangeright .el-card__body {
     color: #444;
 }
 
-.qtype_card .option_count b {
+.qtype_card b[total] {
+    color: #409eff;
+}
+.qtype_card b[count] {
     color: rgb(153, 0, 0);
 }
-
 .qtypeitems .ques_type>*:first-child {
     margin-right: auto;
 }

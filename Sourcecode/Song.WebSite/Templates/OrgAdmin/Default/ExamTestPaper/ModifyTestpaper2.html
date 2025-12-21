@@ -62,9 +62,9 @@
                     <section class="range">
                         <el-card shadow="never">
                             <template slot="header">
-                                <span icon="&#xa015" large>试题分类</span>
+                                <span icon="&#xa015" large>按“试题分类”出题</span>
                                 <el-tag type="warning" v-if="parts?.length>0">
-                                    选中 {{parts.length}} 分类，共 {{quescount.part}}道试题
+                                     {{parts.length}} 分类，共 {{quescount.part}}道
                                 </el-tag>
                                 <el-button type="primary" plain @click="opensubwin('SelectParts','按 “试题分类” 出题','a015',600)">选择
                                 </el-button>
@@ -75,9 +75,9 @@
                         </el-card>
                         <el-card shadow="never">
                             <template slot="header">
-                                <span icon="&#xe841" large>关键字</span>
+                                <span icon="&#xe841" large>按“关键字”出题</span>
                                 <el-tag type="warning" v-if="tags?.length>0">
-                                    选中 {{tags.length}} 个关键字，共 {{quescount.tag}} 道试题
+                                     {{tags.length}} 个关键字，共 {{quescount.tag}} 道
                                 </el-tag>
                                 <el-button type="primary" plain @click="opensubwin('SelectTag','按 “关键字” 出题','e841',500)">选择
                                 </el-button>
@@ -88,9 +88,9 @@
                         </el-card>
                         <el-card shadow="never">
                             <template slot="header">
-                                <span icon="&#xe6fd" large>关联知识点</span>
+                                <span icon="&#xe6fd" large>按“关联知识点”出题</span>
                                 <el-tag type="warning" v-if="knls?.length>0">
-                                    选中 {{knls.length}} 个知识点，共 {{quescount.knl}} 道试题
+                                    {{knls.length}} 个知识点，共 {{quescount.knl}} 道
                                 </el-tag>
                                 <el-button type="primary" plain @click="opensubwin('SelectKnl','按 “关联知识点” 出题','e6fd',600)">选择
                                 </el-button>
@@ -130,13 +130,13 @@
                                 </el-form-item>
                                 <loading v-if="loadstate.total" bubble>loading...</loading>
                                     <span v-else class="small option_count">
-                                        已选 <b>{{ qtypeitems.reduce((a, b) => a +b.count,0)}}</b> 道 /
-                                        可选 <b>{{ quescount.total}}</b> 道</span>
+                                        已选 <b count>{{ qtypeitems.reduce((a, b) => a +b.count,0)}}</b> 道 /
+                                        可选 <b total>{{ quescount.total}}</b> 道</span>
                             </template>
                             <div v-for="(m,idx) in qtypeitems" class="qtypeitems">                              
                                     <ques_type :type="m.type" :types="types" :showicon="true" :showname="true">
-                                        <span class="small option_count">已选<b>{{m.count}}</b>道</span>
-                                        <span :zero="m.total<1" class="small option_count"> / 可选 <b>{{m.total}}</b>
+                                        <span class="small option_count">已选<b count>{{m.count}}</b>道</span>
+                                        <span :zero="m.total<1" class="small option_count"> / 可选 <b total>{{m.total}}</b>
                                             道</span>
                                             <span class="small option_score">(计<b>{{m.number}}</b>分)</span>
                                     </ques_type>                               

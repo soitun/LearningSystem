@@ -334,6 +334,8 @@ a[download]:hover {
     height: 100%;
     box-sizing: border-box;
 }
+
+
 .panel .el-tabs--border-card {
     box-shadow: none;
     border: none;

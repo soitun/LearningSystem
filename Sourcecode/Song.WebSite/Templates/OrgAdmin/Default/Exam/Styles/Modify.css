@@ -1,54 +1,77 @@
 ﻿@charset "utf-8";
 
-#vapp {
-    overflow: hidden;
-}
-
-.el-tabs {
-    margin: 10px 10px 0px 10px;
-}
-
-.el-tabs__nav-scroll {
-    padding-left: 8px;
-}
-
-.el-tabs icon {
-    font-size: 18px;
-}
-
-.el-tabs .el-tabs__header {
-    margin-bottom: 0px;
-}
-
-.el-tabs .el-tabs__content {
-    display: none;
-}
-
-.context {
-    margin: 0px 0px 0px 10px;
-    height: calc(100% - 105px);
-    width: calc(100% - 20px);
-    overflow: auto;
-    border: 1px solid #E4E7ED;
-    border-top: none;
-    box-sizing: border-box;
-
+.panel {
+    height: calc(100% - 55px);
 }
 
 .el-form {
-    box-sizing: border-box;
+    height: calc(100% - 40px);
+    width: 100%;
+    padding: 0px;
     margin: 0px;
-    padding: 20px 20px 0px 0px;
-    overflow: auto;
-    height: 100%;
     box-sizing: border-box;
+}
+
+.el-form>div[tab] {
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+
+    box-sizing: border-box;
+}
+
+.el-form>div[tab="general"] {
+    display: flex;
+}
+
+.el-form>div[tab="general"]>section.left {
+    width: 500px;
+    overflow: auto;
+    padding-right: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+section.left .el-form-item:last-child {
+    flex: 1;
+}
+
+.el-form-item__content {
+    height: 100%;
+}
+
+section.left .el-form-item:last-child .el-textarea {
+    height: 100%;
+    display: flex;
+}
+
+.el-textarea>* {
+    flex: 1;
+}
+
+/*右侧*/
+.el-form>div[tab="general"]>section.right {
+    flex: 1;
+    margin-left: 5px;
+}
+
+section.right .el-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+section.right .el-card .el-card__body {
+    flex: 1;
+    overflow-y: auto;
 }
 
 /*参加考试的学员数量*/
 .grouptype>div.el-form-item__content icon[student] {
     float: right;
 }
-.stscount{
+
+.stscount {
     margin-left: 10px;
     color: #909399;
 }

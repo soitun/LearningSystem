@@ -7,7 +7,7 @@ $ready(function () {
             organ: {},
             tabs: [
                 { title: '基本信息', name: 'general', icon: 'e6b0' },
-                { title: '考试场次', name: 'exams', icon: 'e834' },
+                //{ title: '考试场次', name: 'exams', icon: 'e834' },
                 { title: '参考人员', name: 'range', icon: 'e67d' }],
             activeName: 'general',     //选项卡
 
