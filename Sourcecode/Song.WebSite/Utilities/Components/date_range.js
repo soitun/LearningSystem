@@ -5,7 +5,8 @@ Vue.component('date_range', {
     //start:开始时间
     //end：结束时间
     //forward:时间向前选择，默认为false，即当前时间向前推
-    props: ['start', 'end', 'forward'],
+    //type:显示类型，year/month/date/week/ datetime/datetimerange/daterange,默认daterange
+    props: ['start', 'end', 'forward', 'type', 'width'],
     data: function () {
         //设置时间间隔，返回两个时间值
         //subtract:相减的时间
@@ -127,6 +128,16 @@ Vue.component('date_range', {
             if (this.forward == null) return false;
             if (this.forward == 'true' || this.forward == true) return true;
             else return false;
+        },
+        //显示的样式,如 year/month/date/week/ datetime/datetimerange/daterange
+        'typestyle': function () {
+            if (this.type == null) return 'daterange';
+            return this.type;
+        },
+        'widthval': function () {
+            let width = "width: {0}px;"
+            if (this.width == null) return width.replace('{0}', '220');
+            return width.replace('{0}', this.width);
         }
     },
     watch: {
@@ -176,10 +187,9 @@ Vue.component('date_range', {
             return new Date(year + '/' + month + '/' + day);
         }
     },
-    template: ` <el-date-picker class="date_range" v-model="selectDate" type="daterange" unlink-panels
-        @change="evt_change" @clear="evt_clear" style="width: 220px;" range-separator="至"
+    template: ` <el-date-picker class="date_range" v-model="selectDate" :type="typestyle" unlink-panels
+        @change="evt_change" @clear="evt_clear" :style="widthval" range-separator="至"
         start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
         :default-time="['00:00:00', '23:59:59']">
     </el-date-picker>`
 });
-$dom.load.css(['/Utilities/Components/Styles/date_range.css']);

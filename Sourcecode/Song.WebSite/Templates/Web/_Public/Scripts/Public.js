@@ -28,7 +28,7 @@
         arr2.push('/Utilities/MathJax/globalVariable.js');
         //未登录的样式
         arr2.push(webpath + 'Components/nologin.js');
-        window.$dom.load.js(arr2, f);
+        window.$dom.componentjs(arr2, f);
     };
     //加载组件所需的javascript文件
     $dom.ctrljs = function (f) {

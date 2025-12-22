@@ -20,7 +20,7 @@
         //arr2.push($dom.path() + 'Components/aside_menu.js');
         //通用组件，用于获取学员登录，机构信息等
         //arr2.push($dom.path() + 'Components/generic.js');
-        window.$dom.load.js(arr2, f);
+        window.$dom.componentjs(arr2, f);
     };
     //加载必要的资源完成
     //f:加载完成要执行的方法

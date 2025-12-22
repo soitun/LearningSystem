@@ -19,6 +19,8 @@ $ready(function () {
                 Exam_IsRightClick: true,
                 Exam_IsUse: true,
                 Exam_GroupType: 1,
+                Exam_Date: new Date(),
+                Exam_DateOver: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000),
                 Exam_UID: new Date().getTime()
             },
             rules: {
@@ -35,9 +37,7 @@ $ready(function () {
                         }, trigger: 'blur'
                     }
                 ]
-            },
-            //考试时间区间（当设置为“设定时间区间”时)
-            dateRange: [],
+            },          
             //参考的学员数量
             studenttotal: 0,
 
@@ -57,8 +57,8 @@ $ready(function () {
                         date = new Date();
                     if (over.getFullYear() - 100 > new Date().getFullYear() || over.getFullYear() + 100 < new Date().getFullYear())
                         over = date.setMonth(date.getMonth() + 1);
-                    this.dateRange[0] = this.entity.Exam_Date = date;
-                    this.dateRange[1] = this.entity.Exam_DateOver = over;
+                    this.entity.Exam_Date = date;
+                    this.entity.Exam_DateOver = over;
                 }
                 //console.log(nv);
             },
@@ -109,10 +109,7 @@ $ready(function () {
                 $api.get('Exam/ForID', { 'id': th.id }).then(function (req) {
                     if (req.data.success) {
                         var result = req.data.result;
-                        th.entity = result;
-                        //时间区间
-                        th.dateRange[0] = th.entity.Exam_Date;
-                        th.dateRange[1] = th.entity.Exam_DateOver;
+                        th.entity = result;                      
                     } else {
                         throw '未查询到数据';
                     }

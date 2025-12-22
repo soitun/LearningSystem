@@ -30,7 +30,7 @@
         arr2.push('/Utilities/Components/panel.js');
         //日期区间选择器
         arr2.push('/Utilities/Components/date_range.js');
-        $dom.load.js(arr2, f);
+        window.$dom.componentjs(arr2, f);
     };
     //加载必要的资源完成
     //f:加载完成要执行的方法

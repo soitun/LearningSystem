@@ -24,7 +24,7 @@
         //编辑器
         arr2.push('/Utilities/TinyMCE/tinymce.js');
         arr2.push('/Utilities/TinyMCE/tinymce.vue.js');
-        window.$dom.load.js(arr2, f);
+        window.$dom.componentjs(arr2, f);
     };
 
     //加载必要的资源完成
