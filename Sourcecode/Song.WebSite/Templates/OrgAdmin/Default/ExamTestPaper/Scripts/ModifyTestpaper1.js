@@ -107,15 +107,18 @@ $ready([
                     //题型分数点比的验证
                     let rulepercent = [{
                         validator: function (rule, value, callback) {
-                            let field = rule.field;
+                            let field = rule.field;  
                             let type = Number(field.substring(field.length - 1));   //题型
                             let item = vapp.qtypeitems.find(i => i.type == type);
                             if (item.percent < 0) return callback(new Error('请输入大于零的整数'));
                             //分数占比大于零，试题不得为零
-                            if (item.percent == 0 && item.count > 0) return callback(new Error("不可为零"));
+                            if (item.percent == 0 && item.ques.length > 0) return callback(new Error("不可为零"));                           
                             //分数占比大于零，试题不得为零
+                            if (item.percent > 0 && item.ques.length <= 0) return callback(new Error("不可大于零"));
+                            //
                             let total = vapp.qtypeitems.reduce((a, b) => a + b.percent, 0);
                             if (total != 100) return callback(new Error("分数占比之和必须为100"));
+
                             callback();
 
                         }, trigger: 'blur'
@@ -241,7 +244,7 @@ $ready([
                     }
                 }
                 this.$refs['form2'].validate();
-                this.$refs['form3'].validate();
+                this.$refs['form3'].validate();              
             },
             /***************************
              * 试题编辑
@@ -303,7 +306,9 @@ $ready([
                     ]);
                     this.submitData(isclose)
                 } catch (error) {
-                    console.log('表单验证失败')
+                    console.log('表单验证失败');
+       
+                    this.$message.error('表单验证失败');
                     return false
                 }
             },

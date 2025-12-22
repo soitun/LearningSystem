@@ -102,7 +102,7 @@
                 <el-card shadow="never" type="primary" class="quescard">
                     <template slot="header">
                         <span icon="&#xe75e" medium>题卡</span>
-                        <warning v-if="percenttotal!=100 && percenttotal!=0">当前各题型分数占比之和：{{percenttotal}} %</warning>
+                        <warning v-if="percenttotal!=100 && percenttotal!=0">各题型分数占比之和：{{percenttotal}} %</warning>
                         <div>共 <b>{{ qtypeitems.reduce((a, b) => a +b.ques.length,0)}}</b> 道
                         </div>
                     </template>
