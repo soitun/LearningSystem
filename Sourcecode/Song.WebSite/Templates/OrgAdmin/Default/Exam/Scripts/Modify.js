@@ -4,10 +4,9 @@ $ready(function () {
         el: '#vapp',
         data: {
             id: $api.querystring('id', 0),
-            organ: {},
+            org: {},
             tabs: [
                 { title: '基本信息', name: 'general', icon: 'e6b0' },
-                //{ title: '考试场次', name: 'exams', icon: 'e834' },
                 { title: '参考人员', name: 'range', icon: 'e67d' }],
             activeName: 'general',     //选项卡
 
@@ -23,6 +22,8 @@ $ready(function () {
                 Exam_DateOver: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000),
                 Exam_UID: new Date().getTime()
             },
+            exams: [],          //考试场次
+            //考试表单验证
             rules: {
                 Exam_Title: [
                     { required: true, message: '标题不得为空', trigger: 'blur' },
@@ -37,7 +38,7 @@ $ready(function () {
                         }, trigger: 'blur'
                     }
                 ]
-            },          
+            },
             //参考的学员数量
             studenttotal: 0,
 
@@ -70,18 +71,9 @@ $ready(function () {
         },
         created: function () {
             var th = this;
-            th.loadstate.init = true;
-            $api.get('Organization/Current').then(function (req) {
-                if (req.data.success) {
-                    th.organ = req.data.result;
-                    th.getTheme();
-                } else {
-                    console.error(req.data.exception);
-                    throw req.data.message;
-                }
+            th.org = window.org;
+            th.getTheme();
 
-            }).catch(err => console.error(err))
-                .finally(() => th.loadstate.init = false);
         },
         mounted: function () {
 
@@ -109,15 +101,44 @@ $ready(function () {
                 $api.get('Exam/ForID', { 'id': th.id }).then(function (req) {
                     if (req.data.success) {
                         var result = req.data.result;
-                        th.entity = result;                      
+                        th.entity = result;
+                        $api.get('Exam/exams', { 'uid': th.entity.Exam_UID }).then(function (req) {
+                            if (req.data.success) {
+                                th.exams = req.data.result;
+                            } else {
+                                console.error(req.data.exception);
+                                throw req.config.way + ' ' + req.data.message;
+                            }
+                        }).catch(function (err) {
+                            alert(err);
+                            console.error(err);
+                        });
                     } else {
                         throw '未查询到数据';
                     }
                 }).catch(err => alert(err)).finally(() => th.loadstate.get = false);
             },
-            //当前增加场次时
-            addexam: function (exam, exams) {
-                this.$forceUpdate();
+            //打开选择试题的子窗体
+            openitems: function (examid) {
+                if (!window.top.$pagebox) return;
+                //let item = this.qtypeitems.find(el => el.type == type);
+                let page = '_ExamItems';
+                let suburl = $dom.routepath() + page;    //子窗口页面路径      
+                suburl = $api.url.set(suburl, { 'examid': examid });
+                var curbox = window.top.$pagebox.get(window.name);   //当前窗口
+                //创建新窗口中
+                var subbox = window.top.$pagebox.create({
+                    width: 600, id: page, ico: 'e834', title: '考试场次',
+                    url: suburl
+                });
+                curbox.opensub(subbox, 'right');
+            },
+            //向“考试场次”的窗体传递数据
+            transmit: function (examid) {
+                if(examid == null) return [null];
+                let exam = this.exams.find(el => Number(el.Exam_ID) == Number(examid));
+                //考试场次
+                return [exam];
             },
             //参考人员的学员组变更时
             groupselected: function (stsid, sorts) {
@@ -148,7 +169,7 @@ $ready(function () {
                 if (th.loadstate.update) return;
                 th.loadstate.update = true;
                 //考试场次
-                var exams = th.$refs['exam_items'].getexams();
+                var exams = th.items;
                 //关联的学员组
                 var groups = th.$refs['group_select'].examGroup;
 
@@ -199,5 +220,4 @@ $ready(function () {
         },
     });
 
-}, ["Components/group_select.js",
-    "Components/exam_items.js"]);
+}, ["Components/group_select.js"]);

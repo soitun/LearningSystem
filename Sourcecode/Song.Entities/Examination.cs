@@ -10,6 +10,8 @@ namespace Song.Entities {
     		
     		protected Int32 _Exam_ID;
     		
+    		protected Int32 _Acc_Id;
+    		
     		protected Int64 _Etp_Id;
     		
     		protected DateTime _Exam_CrtTime;
@@ -77,6 +79,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Exam_ID, _Exam_ID, value);
     				this._Exam_ID = value;
+    			}
+    		}
+    		
+    		public Int32 Acc_Id {
+    			get {
+    				return this._Acc_Id;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Acc_Id, _Acc_Id, value);
+    				this._Acc_Id = value;
     			}
     		}
     		
@@ -408,6 +420,7 @@ namespace Song.Entities {
     		protected override WeiSha.Data.Field[] GetFields() {
     			return new WeiSha.Data.Field[] {
     					_.Exam_ID,
+    					_.Acc_Id,
     					_.Etp_Id,
     					_.Exam_CrtTime,
     					_.Exam_Date,
@@ -446,6 +459,7 @@ namespace Song.Entities {
     		protected override object[] GetValues() {
     			return new object[] {
     					this._Exam_ID,
+    					this._Acc_Id,
     					this._Etp_Id,
     					this._Exam_CrtTime,
     					this._Exam_Date,
@@ -484,6 +498,9 @@ namespace Song.Entities {
     		protected override void SetValues(WeiSha.Data.IRowReader reader) {
     			if ((false == reader.IsDBNull(_.Exam_ID))) {
     				this._Exam_ID = reader.GetInt32(_.Exam_ID);
+    			}
+    			if ((false == reader.IsDBNull(_.Acc_Id))) {
+    				this._Acc_Id = reader.GetInt32(_.Acc_Id);
     			}
     			if ((false == reader.IsDBNull(_.Etp_Id))) {
     				this._Etp_Id = reader.GetInt64(_.Etp_Id);
@@ -605,6 +622,11 @@ namespace Song.Entities {
     			/// 字段名：Exam_ID - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Exam_ID = new WeiSha.Data.Field<Examination>("Exam_ID");
+    			
+    			/// <summary>
+    			/// 字段名：Acc_Id - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Acc_Id = new WeiSha.Data.Field<Examination>("Acc_Id");
     			
     			/// <summary>
     			/// 字段名：Etp_Id - 数据类型：Int64

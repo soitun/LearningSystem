@@ -39,9 +39,10 @@
                                 <help>每场考试单独设置考试时间</help>
                             </div>
                             <div v-if="entity.Exam_DateType==2">
-                                <date_range @change="(s,e)=>{entity.Exam_Date=s;entity.Exam_DateOver=e;}" :start="entity.Exam_Date" :end="entity.Exam_DateOver"
-                                    type="datetimerange" width="400"></date_range>
-                              
+                                <date_range @change="(s,e)=>{entity.Exam_Date=s;entity.Exam_DateOver=e;}"
+                                    :start="entity.Exam_Date" :end="entity.Exam_DateOver" type="datetimerange"
+                                    width="400"></date_range>
+
                                 <help>上述时间之间可以随时考试，各场次所设置的时间将不再起作用。</help>
                             </div>
                         </el-form-item>
@@ -67,25 +68,56 @@
                             </el-input>
                         </el-form-item>
                     </section>
+                    <!--考试场次-->                    
                     <section class="right">
                         <el-card shadow="never">
                             <template slot="header">
                                 <span icon="&#xe834" large>考试场次</span>
                                 <span class="itembtn">
                                     <el-tag type="info">
-                                        <icon>&#xe84d</icon>共 0 场考试
+                                        <icon>&#xe84d</icon>共 {{exams.length}} 场考试
                                     </el-tag>
                                     <el-divider direction="vertical"></el-divider>
-                                    <el-link type="primary" class="el-icon-plus">添加场次</el-link>
+                                    <el-link type="primary" class="el-icon-plus" @click="openitems">添加场次</el-link>
                                 </span>
                             </template>
-
+                            <el-empty v-if="exams.length<1" description="未设置考试场次"></el-empty>
+                            <section v-else v-for="(item,i) in exams" class="items">
+                                <div class="exam_name">
+                                    <span>{{i+1}}.</span>
+                                    <span v-if="item.Exam_Name!=''">{{item.Exam_Name}}</span>
+                                    <span v-else class="null">(没有设置名称)</span>
+                                    <div class="btns">
+                                        <el-link type="primary" plain icon="el-icon-edit" @click="openitems(item.Exam_ID)">
+                                            修改
+                                        </el-link>
+                                        <el-popconfirm confirm-button-text='是的' cancel-button-text='不用' icon="el-icon-info" icon-color="red"
+                                            title="确定删除吗？" @confirm="exams.splice(i, 1)">
+                                            <el-link type="danger" plain icon="el-icon-delete" slot="reference" @click.native.stop>移除
+                                            </el-link>
+                                        </el-popconfirm>
+                                    </div>            
+                                </div>
+                                <div>
+                                    <el-tag>总分：{{item.Exam_Total}} 分</el-tag>
+                                    <el-tag type="success">及格分：{{item.Exam_PassScore}} 分</el-tag>  
+                                    <el-tag type="warning">限时：{{item.Exam_Span}}分钟</el-tag>                 
+                                </div>
+                                <div class="row">时间：
+                                    <span v-if="entity.Exam_DateType==1">
+                                        <!--准时开始-->
+                                        {{item.Exam_Date|date("yyyy-M-dd HH:mm")}} （准时开始）
+                                        </span>
+                                    <span v-else>
+                                        <!--区间时间-->
+                                        {{entity.Exam_Date|date("yyyy-M-dd HH:mm")}} 至
+                                        {{entity.Exam_DateOver|date("yyyy-M-dd HH:mm")}} 之间
+                                    </span>
+                                </div>
+                            </section>
                         </el-card>
                     </section>
-                </div>
-                <div v-show="activeName=='exams'">
-                    <exam_items ref="exam_items" :theme="entity" :organ="organ" @addexam="addexam"></exam_items>
-                </div>
+                </div>             
                 <div v-show="activeName=='range'" class="range" remark="成员范围" tab="range">
                     <el-form-item label="" prop="Exam_GroupType" label-width="10px" class="grouptype">
                         <el-radio-group v-model="entity.Exam_GroupType">
@@ -100,7 +132,7 @@
                     </el-form-item>
 
                     <group_select ref="group_select" @selected="groupselected" :type="entity.Exam_GroupType"
-                        :theme="entity" :organ="organ">
+                        :theme="entity" :organ="org">
                     </group_select>
                 </div>
             </el-form>

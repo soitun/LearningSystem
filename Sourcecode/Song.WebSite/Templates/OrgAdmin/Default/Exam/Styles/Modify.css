@@ -61,15 +61,33 @@ section.right .el-card {
     display: flex;
     flex-direction: column;
 }
-section.right .el-card .el-card__header{
+
+section.right .el-card .el-card__header {
     display: flex;
     justify-content: space-between;
 }
+
 section.right .el-card .el-card__body {
     flex: 1;
     overflow-y: auto;
 }
 
+/*场次*/
+.items .exam_name {
+    display: flex;
+    justify-content: space-between;
+    line-height: 30px;
+    font-size: 1rem;
+}
+.items .exam_name>span:first-child{
+    margin-right: 10px;
+}
+.items .exam_name .btns {
+    margin-left: auto;
+}
+.items .row{
+    line-height: 30px;
+}
 /*参加考试的学员数量*/
 .grouptype>div.el-form-item__content icon[student] {
     float: right;

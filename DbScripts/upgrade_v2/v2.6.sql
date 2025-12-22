@@ -383,8 +383,12 @@ CREATE INDEX "Examination_IX_IsDeleted" ON "Examination"("Exam_IsDeleted");
 ALTER TABLE "Examination" ADD COLUMN "Etp_Id" bigint NOT NULL DEFAULT 0;
 CREATE INDEX "Examination_IX_Etp_Id" ON "Examination"("Etp_Id");
 
+ALTER TABLE "Examination" ADD COLUMN "Acc_Id" integer NOT NULL DEFAULT 0;
+CREATE INDEX "Examination_IX_Acc_Id" ON "Examination"("Acc_Id");
+
 ALTER TABLE "Examination" ADD COLUMN "Exam_Purpose" bigint NOT NULL DEFAULT 0;
 CREATE INDEX "Examination_IX_Purpose" ON "Examination"("Exam_Purpose");
+
 
 /*考试成绩中的试卷id*/
 ALTER TABLE "ExamResults" ADD COLUMN "Etp_Id" bigint NOT NULL DEFAULT 0;
