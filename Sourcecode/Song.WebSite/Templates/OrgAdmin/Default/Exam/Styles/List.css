@@ -11,7 +11,10 @@
 .row_title {
     font-weight: bold;
 }
-
+.row_title>*:first-child{
+    text-align: left;
+    padding-left: 50px !important;
+}
 .groups {
     max-height: 40px;
     line-height: 20px;

@@ -39,7 +39,7 @@
             </el-form-item>
             <el-divider content-position="left">采用的试卷</el-divider>
             <el-form-item label="">
-                <el-radio-group v-model="papertype">
+                <el-radio-group v-model="papertype" :disabled="exam.Exam_ID!=''">
                     <el-radio-button :label="1">考试专用试卷</el-radio-button>
                     <el-radio-button :label="0">课程模拟测试的试卷</el-radio-button>
                 </el-radio-group>
@@ -78,12 +78,12 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="试卷" prop="paper">
-                    <el-select v-model="paperid" style="width: 100%;" filterable clearable @change="paperChange"
+                    <el-select v-model="exam.Tp_Id" style="width: 100%;" filterable clearable
                         placeholder="-- 试卷 --">
-                        <el-option v-for="(item,i) in papers" :key="item.Tp_Id" :label="item.Tp_Name"
-                            :value="item.Tp_Id">
-                            <span>{{i+1}} . </span>
-                            <span>{{item.Tp_Name}}</span>
+                        <el-option v-for="(p,i) in courpapers" :key="p.Tp_Id" :label="p.Tp_Name"
+                            :value="p.Tp_Id">
+                            <span>{{i+1}} . {{p.Tp_Name}}</span>
+                            <span class="quescount">题量 {{p.Tp_Count}} </span>
                         </el-option>
                     </el-select>
                 </el-form-item>

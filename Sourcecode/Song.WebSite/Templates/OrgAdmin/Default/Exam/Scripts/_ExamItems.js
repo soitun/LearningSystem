@@ -26,9 +26,9 @@ $ready(function () {
             course: {},
             couid: '',
 
-            paper: {},
-            papers: [],
-            paperid: '',
+            //paper: {},      //课程试卷
+            courpapers: [],
+
 
             rules: {
                 Exam_Name: [
@@ -69,19 +69,33 @@ $ready(function () {
             loadstate: {
                 init: false,        //初始化
                 exampaper: false,         //考试试卷加载
-                get: false,         //加载数据
+                subject: false,         //加载专业
                 update: false,      //更新数据
                 del: false          //删除数据
             }
         },
         mounted: function () {
             this.org = window.org;
-
+            var th = this;
             this.receive().then((d) => {
-                console.error(d);
+                //课程试卷相关
+                if (d.Tp_Id != '' && d.Tp_Id != '0') {
+                    th.getSubjects().then(sbjs => {
+                        th.getcourpaper(d.Tp_Id).then(paper => {
+                            th.sbjids = [];
+                            th.clac_sbjids(sbjs, paper.Sbj_ID);
+                        });
+                    });
+                }
             });
-            //
+
+            //考试专用试卷相关
             this.getexampapers();
+            //课程试卷相关
+            //this.getSubjects();
+            if (this.exam.Tp_Id != '' && this.exam.Tp_Id != '0') {
+
+            }
         },
         created: function () {
 
@@ -100,10 +114,18 @@ $ready(function () {
             ishavepaper: function () {
                 return (this.exam.Tp_Id != '' && this.exam.Tp_Id != '0')
                     || (this.exam.Etp_Id != '' && this.exam.Etp_Id != '0');
-            }
+            },
+            //是否是考试专用试卷
+            isexampaper: function () {
+                return this.exam.Etp_Id != '' && this.exam.Etp_Id != '0';
+            },
+            //是否是课程试卷
+            iscoursepaper: function () {
+                return this.exam.Tp_Id != '' && this.exam.Tp_Id != '0';
+            },
         },
         watch: {
-            //监听考试专用试卷的修改
+            //选择考试专用试卷时
             'exam.Etp_Id': function (val) {
                 let paper = this.exampapers.find(x => x.Etp_Id == val);
                 if (paper == null) return;
@@ -111,7 +133,19 @@ $ready(function () {
                 this.exam.Exam_Total = paper.Etp_Total;
                 this.exam.Exam_PassScore = paper.Etp_PassScore;
                 this.exam.Exam_Span = paper.Etp_Span;
-                console.error(paper);
+                this.Tp_Id = '';
+            },
+            //选择课程试卷时
+            'exam.Tp_Id': function (val) {
+                let paper = this.courpapers.find(x => x.Tp_Id == val);
+                if (paper == null) return;
+                this.currpaper = paper;
+                this.exam.Exam_Total = paper.Tp_Total;
+                this.exam.Exam_PassScore = paper.Tp_PassScore;
+                this.exam.Exam_Span = paper.Tp_Span;
+                this.exam.Sbj_ID = paper.Sbj_ID;
+                this.exam.Sbj_Name = paper.Sbj_Name;
+                this.Etp_Id = '';
             }
         },
         methods: {
@@ -126,7 +160,7 @@ $ready(function () {
                         if (exam == null) {
                             //新增时，创建场次
                             this.exam = {
-                                Exam_ID: 0,
+                                Exam_ID: '',
                                 Exam_Name: '',
                                 Tp_Id: '', Etp_Id: '',        //试卷id
                                 Cou_ID: '',      //临时字段，数据实体中并不存在
@@ -151,7 +185,6 @@ $ready(function () {
                     "orgid": this.org.Org_ID, "accid": "", "search": search,
                     "isdeleted": false, "diff": "", "use": true, "size": 999, "index": 1
                 };
-                console.error(search);
                 var th = this;
                 th.loadstate.exampaper = true;
                 $api.get("ExamTestPaper/Pager", form).then(function (d) {
@@ -160,9 +193,7 @@ $ready(function () {
                         th.exampapers = result;
                         //th.totalpages = Number(d.data.totalpages);
                         //th.total = d.data.total;
-                    } else {
-                        throw d.data.message;
-                    }
+                    } else throw d.data.message;
                 }).catch(err => alert(err))
                     .finally(() => th.loadstate.exampaper = false);
             },
@@ -170,11 +201,36 @@ $ready(function () {
             /**
              * 选择课程试卷相关
              */
+            //获取专业
+            getSubjects: function () {
+                var th = this;
+                var form = { orgid: th.org.Org_ID, search: '', isuse: null };
+                var buildtree = function (data, pid) {
+                    var list = data.filter(item => item.Sbj_PID == pid);
+                    list.forEach(item => {
+                        item['children'] = buildtree(data, item.Sbj_ID);
+                    });
+                    return list.length ? list : null;
+                };
+                th.loadstate.subject = true;
+                return new Promise(function (resolve, reject) {
+                    $api.get('Subject/list', form).then(function (req) {
+                        if (req.data.success) {
+                            let result = req.data.result;
+                            th.sbjTree = buildtree(result, 0);
+                            resolve(result);
+                        } else {
+                            throw req.data.message;
+                        }
+                    }).catch(err => console.error(err))
+                        .finally(() => th.loadstate.subject = false);
+                });
+            },
+
             //专业选择变更时
             sbjChange: function (val) {
                 //关闭级联菜单的浮动层
-                if (this.$refs["subjects"])
-                    this.$refs["subjects"].dropDownVisible = false;
+                if (this.$refs["subjects"]) this.$refs["subjects"].dropDownVisible = false;
                 var currid = -1;
                 if (val.length > 0) currid = val[val.length - 1];
                 var th = this;
@@ -184,54 +240,64 @@ $ready(function () {
                         if (req.data.success) {
                             th.courses = req.data.result;
                             if (th.courses.length > 0) {
-                                th.couid = th.courses[0].Cou_ID;
+                                let course = th.courses.find(item => item.Cou_ID == th.currpaper.Cou_ID);
+                                if (course) th.couid = course.Cou_ID;
+                                else th.couid = th.courses[0].Cou_ID;
                                 th.courChange(th.couid);
                             }
                         } else {
                             console.error(req.data.exception);
                             throw req.data.message;
                         }
-                    }).catch(function (err) {
-                        //alert(err);
-                        Vue.prototype.$alert(err);
-                        console.error(err);
-                    });
+                    }).catch(err => console.error(err));
             },
             //课程选择变更时
             courChange: function (val) {
                 var th = this;
                 $api.get('TestPaper/ShowPager', { 'couid': val, 'search': '', 'diff': '', 'size': 99999, 'index': 1 }).then(function (req) {
                     if (req.data.success) {
-                        th.papers = req.data.result;
-                        if (th.paperid <= 0 || th.paperid == '') {
-                            if (th.papers.length > 0) {
-                                th.paperid = th.papers[0].Tp_Id;
-                                th.paperChange(th.paperid);
+                        th.courpapers = req.data.result;
+                        if (th.exam.Tp_Id <= 0 || th.exam.Tp_Id == '' || th.exam.Tp_Id == '0') {
+                            if (th.courpapers.length > 0) {
+                                th.exam.Tp_Id = th.courpapers[0].Tp_Id;
                             }
                         }
                     } else {
                         console.error(req.data.exception);
                         throw req.config.way + ' ' + req.data.message;
                     }
-                }).catch(function (err) {
-                    alert(err);
-                    console.error(err);
-                });
+                }).catch(err => console.error(err));
             },
-            //试卷选择变更时
-            paperChange: function (val) {
-                this.exam.Tp_Id = val;
-                var paper = this.papers.find(function (item) {
-                    return item.Tp_Id == val;
-                })
-                if (paper != null) {
-                    this.exam.Sbj_ID = paper.Sbj_ID;
-                    this.exam.Sbj_Name = paper.Sbj_Name;
-                    this.exam.Exam_Total = paper.Tp_Total;
-                    this.exam.Exam_PassScore = paper.Tp_PassScore;
-                    this.exam.Exam_Span = paper.Tp_Span;
+            //计算当前选中的专业
+            clac_sbjids: function (list, sbjid) {
+                var subject = list.find(function (item) {
+                    return item.Sbj_ID == sbjid;
+                });
+                if (subject != null) {
+                    this.sbjids.splice(0, 0, sbjid);
+                    this.clac_sbjids(list, subject.Sbj_PID);
                 }
-                console.log(val);
+            },
+            //获取课程试卷
+            getcourpaper: function (tpid) {
+                var th = this;
+                return new Promise((resolve, reject) => {
+                    $api.get("TestPaper/ForID", { "id": tpid })
+                        .then(req => {
+                            if (req.data.success) {
+                                th.currpaper = req.data.result;
+                                if (th.currpaper == null) return;
+                                resolve(th.currpaper);
+                                //
+                                th.couid = th.currpaper.Cou_ID;
+                                th.sbjChange([th.currpaper.Sbj_ID]);
+                            } else {
+                                console.error(req.data.exception);
+                                throw req.config.way + ' ' + req.data.message;
+                            }
+                        }).catch(err => console.error(err))
+                        .finally(() => { });
+                });
             },
 
             //确定           
@@ -242,9 +308,9 @@ $ready(function () {
                         //像主窗体传值，当前实体，图片对象
                         var pagebox = window.top.$pagebox;
                         if (pagebox && pagebox.source.box) {
-                            pagebox.source.box(window.name, 'vapp.receive', false, [this.exam]);     
+                            pagebox.source.box(window.name, 'vapp.receive', false, [this.exam]);
                             let curbox = pagebox.source.self(window.name);
-                            curbox.shut();                      
+                            curbox.shut();
                         }
                     } else {
                         console.error('error submit!!');

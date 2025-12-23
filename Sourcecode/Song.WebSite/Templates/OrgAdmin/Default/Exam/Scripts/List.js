@@ -86,8 +86,8 @@ $ready(function () {
             changeState: function (row) {
                 var th = this;
                 this.loadingid = row.Exam_ID;
-                $api.post('Exam/ModifyState', { 'id': row.Exam_ID, 'use': row.Exam_IsUse }).then(function (req) {
-
+                $api.post('Exam/ModifyState', { 'id': row.Exam_ID, 'use': row.Exam_IsUse })
+                .then(function (req) {
                     if (req.data.success) {
                         th.$message({
                             type: 'success',
@@ -251,17 +251,15 @@ $ready(function () {
                 },
                 template: `<div>
                 <el-row :gutter="20" class="row_title">
-                    <el-col :span="10">考试场次</el-col>
-                    <el-col :span="4">专业</el-col>
-                    <el-col :span="4">及格/满分</el-col>    
-                    <el-col :span="4">考试时间</el-col>          
+                    <el-col :span="10">考试场次</el-col>                  
+                    <el-col :span="6">及格/满分</el-col>    
+                    <el-col :span="6">考试时间</el-col>          
                     <el-col :span="2">限时</el-col>                            
                 </el-row>
               <el-row :gutter="20" v-for="(item,index) in examlist"  :key="index">
-                <el-col :span="10" remark="场次" class='exam_name'>（{{index+1}}）{{item.Exam_Name}}</el-col>
-                <el-col :span="4" remark="专业">{{item.Sbj_Name}}</el-col>
-                <el-col :span="4" remark="分数">{{item.Exam_PassScore}}/{{item.Exam_Total}}</el-col>             
-                <el-col :span="4" remark="时间">
+                <el-col :span="10" remark="场次" class='exam_name'>（{{index+1}}）{{item.Exam_Name}}</el-col>              
+                <el-col :span="6" remark="分数">{{item.Exam_PassScore}}/{{item.Exam_Total}}</el-col>             
+                <el-col :span="6" remark="时间">
                     <span v-if="theme.Exam_DateType==1"> {{item.Exam_Date|date('yyyy-MM-dd HH:mm')}}</span>
                     <span v-if="theme.Exam_DateType==2">
                         {{theme.Exam_Date|date('yyyy-MM-dd HH:mm')}} 至
