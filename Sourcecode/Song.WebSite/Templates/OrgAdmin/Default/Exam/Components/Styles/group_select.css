@@ -9,7 +9,7 @@
     display: flex;
 }
 .el-transfer__buttons{
-    margin-top: calc(50% - 50px);
+    align-content: center;
 }
 .el-transfer-panel{
     height: 100%;

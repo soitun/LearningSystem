@@ -135,10 +135,10 @@ $ready(function () {
             },
             //向“考试场次”的窗体传递数据
             transmit: function (examid) {
-                if(examid == null) return [null];
+                if(examid == null) return [null,this.entity];
                 let exam = this.exams.find(el => Number(el.Exam_ID) == Number(examid));
                 //考试场次
-                return [exam];
+                return [exam,this.entity];
             },
             //参考人员的学员组变更时
             groupselected: function (stsid, sorts) {

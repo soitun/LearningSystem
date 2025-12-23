@@ -6,7 +6,7 @@ $ready(['Components/papertype.js'],
                 org: window.org,    //当前机构
                 types: [],        //试题类型，来自web.config中配置项
                 admin: {},          //当前登录用户
-                //试题的查询条件
+                //试卷的查询条件
                 form: { "orgid": "", "accid": "", "search": "", "isdeleted": false, "diff": "", "use": "", "size": 10, "index": 1 },
                 datas: [],
                 total: 1, //总记录数
