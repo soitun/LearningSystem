@@ -146,7 +146,15 @@ $ready(function () {
                 this.exam.Sbj_ID = paper.Sbj_ID;
                 this.exam.Sbj_Name = paper.Sbj_Name;
                 this.Etp_Id = '';
-            }
+            },
+            //当选择试卷是课程试卷时，加载专业等信息
+            'papertype': {
+                handler: function (val) {
+                    if (val == 0 && (this.sbjTree == null || this.sbjTree.length == 0)) {
+                        this.getSubjects();
+                    }
+                }
+            }, immediate: true,
         },
         methods: {
             //接收的主窗体数据

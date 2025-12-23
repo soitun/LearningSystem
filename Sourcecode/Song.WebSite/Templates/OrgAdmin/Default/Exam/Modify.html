@@ -70,7 +70,7 @@
                     </section>
                     <!--考试场次-->                    
                     <section class="right">
-                        <el-card shadow="never">
+                        <el-card shadow="never" class="examscard">
                             <template slot="header">
                                 <span icon="&#xe834" large>考试场次</span>
                                 <span class="itembtn">
@@ -82,9 +82,9 @@
                                 </span>
                             </template>
                             <el-empty v-if="exams.length<1" description="未设置考试场次"></el-empty>
-                            <section v-else v-for="(item,i) in exams" class="items">
-                                <div class="exam_name">
-                                    <span>{{i+1}}.</span>
+                            <section v-else v-for="(item,i) in exams" class="exams" :examid="item.Exam_ID" :index="i">
+                                <div class="exam_name draghandle">
+                                    <span class="order"></span>
                                     <span v-if="item.Exam_Name!=''">{{item.Exam_Name}}</span>
                                     <span v-else class="null">(没有设置名称)</span>
                                     <div class="btns">

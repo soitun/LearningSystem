@@ -389,7 +389,7 @@ CREATE INDEX "Examination_IX_Acc_Id" ON "Examination"("Acc_Id");
 ALTER TABLE "Examination" ADD COLUMN "Exam_Purpose" bigint NOT NULL DEFAULT 0;
 CREATE INDEX "Examination_IX_Purpose" ON "Examination"("Exam_Purpose");
 
-
+CREATE INDEX "Examination_IX_Order" ON "Examination"("Exam_Order");
 /*考试成绩中的试卷id*/
 ALTER TABLE "ExamResults" ADD COLUMN "Etp_Id" bigint NOT NULL DEFAULT 0;
 CREATE INDEX "ExamResults_IX_Etp_Id" ON "ExamResults"("Etp_Id");

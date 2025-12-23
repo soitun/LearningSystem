@@ -73,28 +73,36 @@ section.right .el-card .el-card__body {
 }
 
 /*场次*/
-section.items {
-    margin-bottom: 10px;
+.examscard{
+    counter-reset: section;
 }
-
-.items .exam_name {
+.examscard section.exams .order::before{
+    counter-increment: section;
+    content: counter(section) ". ";
+    margin-right: 10px;
+}
+section.exams {
+    margin-bottom: 10px;
+    font-size: .8rem;  
+}
+section.exams>* {
+    margin-bottom: 5px;
+}
+.exams .exam_name {
     display: flex;
     justify-content: space-between;
     line-height: 30px;
     font-size: 1rem;
 }
 
-.items .exam_name>span:first-child {
+.exams .exam_name>span:first-child {
     margin-right: 10px;
 }
 
-.items .exam_name .btns {
+.exams .exam_name .btns {
     margin-left: auto;
 }
 
-.items .row {
-    line-height: 30px;
-}
 
 /*参加考试的学员数量*/
 .grouptype>div.el-form-item__content icon[student] {

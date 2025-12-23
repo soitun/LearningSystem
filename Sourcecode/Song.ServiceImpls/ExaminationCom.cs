@@ -152,7 +152,7 @@ namespace Song.ServiceImpls
                         //获取原来的场次
                         Examination[] exams = Gateway.Default.From<Examination>()
                             .Where(Examination._.Exam_UID == theme.Exam_UID && Examination._.Exam_IsTheme == false)
-                            .OrderBy(Examination._.Exam_CrtTime.Asc).ToArray<Examination>();
+                            .OrderBy(Examination._.Exam_Order.Asc).ToArray<Examination>();
                         foreach (Examination old in exams)
                         {
                             bool isexist = false;
@@ -337,7 +337,7 @@ namespace Song.ServiceImpls
         {
             return Gateway.Default.From<Examination>()
                 .Where(Examination._.Exam_UID == uid && Examination._.Exam_IsTheme == false)
-                .OrderBy(Examination._.Exam_ID.Asc).ToList<Examination>();
+                .OrderBy(Examination._.Exam_Order.Asc).ToList<Examination>();
         }
 
         public List<Examination> ExamItem(int id)

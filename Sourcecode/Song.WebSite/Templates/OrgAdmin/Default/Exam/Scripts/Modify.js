@@ -105,6 +105,8 @@ $ready(function () {
                         $api.get('Exam/exams', { 'uid': th.entity.Exam_UID }).then(function (req) {
                             if (req.data.success) {
                                 th.exams = req.data.result;
+                                //场次拖拽
+                                th.$nextTick(() => th.rowdrop());
                             } else {
                                 console.error(req.data.exception);
                                 throw req.config.way + ' ' + req.data.message;
@@ -117,6 +119,31 @@ $ready(function () {
                         throw '未查询到数据';
                     }
                 }).catch(err => alert(err)).finally(() => th.loadstate.get = false);
+            },
+            /** 
+             * 考试场次的管理
+             * */
+            //场次的拖动
+            rowdrop: function () {
+                // 首先获取需要拖拽的dom节点            
+                const el1 = document.querySelectorAll('div.examscard .el-card__body')[0];
+                if (el1 == null) return;
+                Sortable.create(el1, {
+                    disabled: false, // 是否开启拖拽
+                    ghostClass: 'sortable-ghost', //拖拽样式
+                    handle: '.draghandle',     //拖拽的操作元素
+                    animation: 150, // 拖拽延时，效果更好看
+                    group: { pull: false, put: false },
+                    onEnd: (e) => { 
+                        let examdom = $dom("section.exams");
+                        var th = this;                      
+                        examdom.each(function (index, element) {                          
+                            let examid = $dom(this).attr('examid');
+                            let exam = th.exams.find(el => String(el.Exam_ID) == examid);                         
+                            th.$set(exam, 'Exam_Order', index + 1);                          
+                        }); 
+                    }
+                });
             },
             //打开选择试题的子窗体
             openitems: function (examid) {
@@ -145,8 +172,13 @@ $ready(function () {
                 let index = this.exams.findIndex(el => el.Exam_ID == exam.Exam_ID);
                 if (index < 0) this.exams.push(exam);
                 else this.$set(this.exams, index, exam);
+                for (var i = 0; i < this.exams.length; i++) {
+                    this.exams[i].Exam_Order = i + 1;
+                }
             },
-
+            /** 
+            * 参考人员的管理
+            * */
             //参考人员的学员组变更时
             groupselected: function (stsid, sorts) {
                 var api = null;
@@ -177,6 +209,8 @@ $ready(function () {
                 th.loadstate.update = true;
                 //考试场次
                 var exams = th.exams;
+                for (var i = 0; i < exams.length; i++)
+                    if (exams[i].Exam_Order <= 0) exams[i].Exam_Order = i + 1;
                 //关联的学员组
                 var groups = th.$refs['group_select'].examGroup;
 
@@ -211,7 +245,8 @@ $ready(function () {
             operateSuccess: function (isclose) {
                 //当处理教师管理状态时
                 var pagebox = window.top.$pagebox;
-                var box = pagebox.get(window.name);
+                var box = pagebox?.get(window.name);
+                if (!box) return;
                 var pid = box.pid;
                 if (window.top.vapp && window.top.vapp.fresh) {
                     window.top.vapp.fresh(pid, 'vapp.handleCurrentChange');
