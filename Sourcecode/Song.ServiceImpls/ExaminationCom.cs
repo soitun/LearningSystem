@@ -182,12 +182,12 @@ namespace Song.ServiceImpls
                                 it.Exam_Date = theme.Exam_Date;
                                 it.Exam_DateOver = theme.Exam_DateOver;
                             }
-                            if (it.Sbj_ID < 1)
-                            {
-                                Gateway.Default.Delete<Examination>(it);
-                            }
-                            else
-                            {
+                            //if (it.Sbj_ID < 1)
+                            //{
+                            //    Gateway.Default.Delete<Examination>(it);
+                            //}
+                            //else
+                            //{
                                 it.Org_ID= theme.Org_ID;
                                 it.Exam_Title = theme.Exam_Title;
                                 it.Exam_GroupType = theme.Exam_GroupType;
@@ -202,7 +202,7 @@ namespace Song.ServiceImpls
                                     tran.Update<ExamResults>(new Field[] { ExamResults._.Exam_Name },
                                   new object[] { it.Exam_Name }, ExamResults._.Exam_ID == it.Exam_ID);
                                 tran.Save<Examination>(it);
-                            }
+                            //}
                         }
                         if (theme.Exam_DateType == 1)
                         {

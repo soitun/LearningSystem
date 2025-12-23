@@ -135,11 +135,18 @@ $ready(function () {
             },
             //向“考试场次”的窗体传递数据
             transmit: function (examid) {
-                if(examid == null) return [null,this.entity];
+                if (examid == null) return [null, this.entity];
                 let exam = this.exams.find(el => Number(el.Exam_ID) == Number(examid));
                 //考试场次
-                return [exam,this.entity];
+                return [exam, this.entity];
             },
+            //接收子窗体（考试场次）的数据
+            receive: function ([exam]) {
+                let index = this.exams.findIndex(el => el.Exam_ID == exam.Exam_ID);
+                if (index < 0) this.exams.push(exam);
+                else this.$set(this.exams, index, exam);
+            },
+
             //参考人员的学员组变更时
             groupselected: function (stsid, sorts) {
                 var api = null;
@@ -169,7 +176,7 @@ $ready(function () {
                 if (th.loadstate.update) return;
                 th.loadstate.update = true;
                 //考试场次
-                var exams = th.items;
+                var exams = th.exams;
                 //关联的学员组
                 var groups = th.$refs['group_select'].examGroup;
 
