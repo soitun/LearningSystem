@@ -50,7 +50,9 @@
                         :remote-method="getexampapers" placeholder="-- 考试专用试卷 --">
                         <el-option v-for="(p,i) in exampapers" :key="p.Etp_Id" :label="p.Etp_Name" :value="p.Etp_Id">
                             <span>{{i+1}} . {{p.Etp_Name}}</span>
-                            <span class="quescount">题量 {{p.Etp_Count}} </span>
+                            <papertype :type="p.Etp_Type" :showname="false">
+                                题量 {{p.Etp_Count}}
+                            </papertype>
                     </el-select>
                 </el-form-item>
             </div>

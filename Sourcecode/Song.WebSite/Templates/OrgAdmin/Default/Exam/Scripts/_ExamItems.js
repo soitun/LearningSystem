@@ -1,4 +1,6 @@
-$ready(function () {
+$ready([
+    "../ExamTestPaper/Components/papertype.js"  //试卷类型
+],function () {
     window.vapp = new Vue({
         el: '#vapp',
         data: {
