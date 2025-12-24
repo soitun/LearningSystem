@@ -388,7 +388,6 @@ CREATE INDEX "Examination_IX_Acc_Id" ON "Examination"("Acc_Id");
 
 ALTER TABLE "Examination" ADD COLUMN "Exam_Purpose" bigint NOT NULL DEFAULT 0;
 CREATE INDEX "Examination_IX_Purpose" ON "Examination"("Exam_Purpose");
-
 CREATE INDEX "Examination_IX_Order" ON "Examination"("Exam_Order");
 /*考试成绩中的试卷id*/
 ALTER TABLE "ExamResults" ADD COLUMN "Etp_Id" bigint NOT NULL DEFAULT 0;
@@ -401,5 +400,30 @@ CREATE INDEX "Course_IX_IsDeleted" ON "Course"("Cou_IsDeleted");
 ALTER TABLE "Subject" ADD COLUMN "Sbj_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
 CREATE INDEX "Subject_IX_IsDeleted" ON "Subject"("Sbj_IsDeleted");
 
+/*增加考试与学员组关联的索引*/
+DROP INDEX IF EXISTS "ExamGroup_aaaaaExamGroup_PK";
+CREATE INDEX "ExamGroup_IX_Sts_ID" ON "ExamGroup"("Sts_ID");
+CREATE INDEX "ExamGroup_IX_Exam_UID" ON "ExamGroup"("Exam_UID");
+ALTER TABLE "ExamGroup" DROP COLUMN IF EXISTS "Org_Name" CASCADE;
 
+-- ----------------------------
+-- 创建学员与考试的关联关系
+-- ----------------------------
+DROP TABLE IF EXISTS "Exam_Accounts";
+CREATE TABLE "public"."Exam_Accounts" (
+  "Ea_ID" int4 NOT NULL DEFAULT 0,
+  "Exam_UID" varchar(255) COLLATE "pg_catalog"."default",
+  "Ac_ID" int4 NOT NULL,
+   CONSTRAINT key_Exam_Accountsr PRIMARY KEY ("Ea_ID")
+);
+
+CREATE INDEX "Exam_Accounts_IX_Exam_UID" ON "public"."Exam_Accounts" USING btree (
+  "Exam_UID" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+);
+CREATE INDEX "Exam_Accounts_IX_Ac_ID" ON "public"."Exam_Accounts" USING btree (
+  "Ac_ID" "pg_catalog"."int4_ops" ASC NULLS LAST
+);
+CREATE INDEX "aaaaaExam_Accounts_PK" ON "public"."Exam_Accounts" USING btree (
+  "Ea_ID" "pg_catalog"."int4_ops" ASC NULLS LAST
+);
 

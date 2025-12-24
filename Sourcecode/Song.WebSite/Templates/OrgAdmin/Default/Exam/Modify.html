@@ -68,7 +68,7 @@
                             </el-input>
                         </el-form-item>
                     </section>
-                    <!--考试场次-->                    
+                    <!--考试场次-->
                     <section class="right">
                         <el-card shadow="never" class="examscard">
                             <template slot="header">
@@ -88,44 +88,53 @@
                                     <span v-if="item.Exam_Name!=''">{{item.Exam_Name}}</span>
                                     <span v-else class="null">(没有设置名称)</span>
                                     <div class="btns">
-                                        <el-link type="primary" plain icon="el-icon-edit" @click="openitems(item.Exam_ID)">
+                                        <el-link type="primary" plain icon="el-icon-edit"
+                                            @click="openitems(item.Exam_ID)">
                                             修改
                                         </el-link>
-                                        <el-popconfirm confirm-button-text='是的' cancel-button-text='不用' icon="el-icon-info" icon-color="red"
-                                            title="确定删除吗？" @confirm="exams.splice(i, 1)">
-                                            <el-link type="danger" plain icon="el-icon-delete" slot="reference" @click.native.stop>移除
+                                        <el-popconfirm confirm-button-text='是的' cancel-button-text='不用'
+                                            icon="el-icon-info" icon-color="red" title="确定删除吗？"
+                                            @confirm="exams.splice(i, 1)">
+                                            <el-link type="danger" plain icon="el-icon-delete" slot="reference"
+                                                @click.native.stop>移除
                                             </el-link>
                                         </el-popconfirm>
-                                    </div>            
+                                    </div>
                                 </div>
                                 <div>
                                     <el-tag>总分：{{item.Exam_Total}} 分</el-tag>
-                                    <el-tag type="success">及格分：{{item.Exam_PassScore}} 分</el-tag>  
-                                    <el-tag type="warning">限时：{{item.Exam_Span}}分钟</el-tag>                 
+                                    <el-tag type="success">及格分：{{item.Exam_PassScore}} 分</el-tag>
+                                    <el-tag type="warning">限时：{{item.Exam_Span}}分钟</el-tag>
                                 </div>
                                 <div class="row" v-if="entity.Exam_DateType==1">时间：
                                     <span>
                                         <!--准时开始-->
                                         {{item.Exam_Date|date("yyyy-M-dd HH:mm")}} （准时开始）
-                                        </span>                                   
+                                    </span>
                                 </div>
                             </section>
                         </el-card>
                     </section>
-                </div>             
+                </div>
                 <div v-show="activeName=='range'" class="range" remark="成员范围" tab="range">
                     <el-form-item label="" prop="Exam_GroupType" label-width="10px" class="grouptype">
                         <el-radio-group v-model="entity.Exam_GroupType">
                             <el-radio-button :label="1">
-                                <icon>&#xe67d</icon>全体学生
+                                <icon medium>&#xe812</icon>全部学员
                             </el-radio-button>
                             <el-radio-button :label="2">
-                                <icon>&#xe812</icon>限定分组
+                                <icon medium>&#xe67d</icon>限定分组
+                            </el-radio-button>
+                            <el-radio-button :label="3">
+                                <icon medium>&#xe804</icon>指定学员
                             </el-radio-button>
                         </el-radio-group>
                         <icon student size="large">{{studenttotal}}</icon>
                     </el-form-item>
-
+                    <help multi>
+                        全部学员参考<br />
+                        所有学员都可以参加当前考试。
+                    </help>
                     <group_select ref="group_select" @selected="groupselected" :type="entity.Exam_GroupType"
                         :theme="entity" :organ="org">
                     </group_select>
