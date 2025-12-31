@@ -103,8 +103,16 @@ section.exams>* {
     margin-left: auto;
 }
 
-
+.el-form>div[tab="range"] {
+    display: flex;
+    flex-direction: column;
+}
 /*参加考试的学员数量*/
+div.grouptype{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
 .grouptype>div.el-form-item__content icon[student] {
     float: right;
 }
@@ -113,3 +121,4 @@ section.exams>* {
     margin-left: 10px;
     color: #909399;
 }
+

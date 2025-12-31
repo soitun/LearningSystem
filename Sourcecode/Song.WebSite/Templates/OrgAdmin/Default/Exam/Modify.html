@@ -117,7 +117,7 @@
                     </section>
                 </div>
                 <div v-show="activeName=='range'" class="range" remark="成员范围" tab="range">
-                    <el-form-item label="" prop="Exam_GroupType" label-width="10px" class="grouptype">
+                    <div class="grouptype">
                         <el-radio-group v-model="entity.Exam_GroupType">
                             <el-radio-button :label="1">
                                 <icon medium>&#xe812</icon>全部学员
@@ -130,14 +130,18 @@
                             </el-radio-button>
                         </el-radio-group>
                         <icon student size="large">{{studenttotal}}</icon>
-                    </el-form-item>
-                    <help multi>
+                    </div>
+                    <help multi v-show="entity.Exam_GroupType==1">
                         全部学员参考<br />
                         所有学员都可以参加当前考试。
                     </help>
-                    <group_select ref="group_select" @selected="groupselected" :type="entity.Exam_GroupType"
+                    <group_select  v-show="entity.Exam_GroupType==2" ref="group_select" @selected="groupselected" :type="entity.Exam_GroupType"
                         :theme="entity" :organ="org">
                     </group_select>
+                    <accountselect v-show="entity.Exam_GroupType==3" :orgid="org.Org_ID"
+>
+                        ddd
+                    </accountselect>
                 </div>
             </el-form>
         </div>

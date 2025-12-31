@@ -99,8 +99,7 @@ namespace Song.ServiceImpls
                     {
                         foreach (Song.Entities.ExamGroup g in groups)
                         {
-                            g.Org_ID = org.Org_ID;
-                            g.Org_Name = org.Org_Name;
+                            g.Org_ID = org.Org_ID;                         
                             tran.Save<ExamGroup>(g);
                         }
                     }

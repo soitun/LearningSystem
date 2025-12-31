@@ -1,0 +1,83 @@
+.accountselect {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+}
+
+.student_add {
+    padding: 0px 0px 0px 10px;
+    box-sizing: border-box;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    width: 350px;
+}
+
+.student_add header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.student_add header>*:last-child {
+    margin-right: 0px;
+}
+
+.student_add header>*:not(:last-child) {
+
+    margin-right: 10px;
+}
+
+.student_add .el-pagination {
+
+    margin-top: auto;
+}
+
+.student_add dl.list {
+    padding: 10px 0px 0px 0px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.student_add icon[null] {
+    margin-top: 20px;
+}
+.student_add dl dd {
+
+    display: flex;
+    justify-content: space-between;
+}
+
+.student_add dl dd::before {
+    content: attr(index);
+    margin-right: 10px;
+    display: inline-block;
+    min-width: 20px;
+    text-align: center;
+}
+
+.student_add dl dd, .student_add dl dd * {
+    line-height: 30px;
+}
+
+.student_add dl dd .idcard, .student_add dl dd .phone {
+    margin-left: auto;
+    margin-right: 10px;
+    font-size: 14px;
+}
+
+/*批量添加*/
+.student_batadd{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: cadetblue;
+}
+.student_batadd>*:last-child{
+    flex: 1;
+}
+.student_batadd>*:last-child textarea{ 
+    height: 100%;
+}
