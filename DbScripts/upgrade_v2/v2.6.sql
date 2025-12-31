@@ -16,7 +16,7 @@ UPDATE "Organization" set "Org_IsRoot"=false WHERE "Org_ID"!=(SELECT "Org_ID" FR
 /*修订TestPaperItem表,删除一些冗余，添加试卷ID */
 ALTER TABLE IF EXISTS "TestPaperItem" DROP COLUMN IF EXISTS "Org_Name" CASCADE;
 ALTER TABLE IF EXISTS "TestPaperItem" DROP COLUMN IF EXISTS "Tp_UID" CASCADE;
-ALTER TABLE  IF EXISTS "TestPaperItem" ADD COLUMN "Tp_Id" int8 NOT NULL  DEFAULT 0;
+ALTER TABLE IF EXISTS "TestPaperItem" ADD COLUMN "Tp_Id" int8 NOT NULL  DEFAULT 0;
 
 /*修订，增加人工批阅的字段*/
 ALTER TABLE IF EXISTS  "Examination" ADD COLUMN "Exam_IsManual" BOOLEAN  NOT NULL DEFAULT FALSE;
@@ -98,7 +98,8 @@ ALTER TABLE "TestResults" RENAME COLUMN "St_Sex" TO "Ac_Gender";
 
 /*在线考试中的试题相关*/
 -- 创建试题分类表
-CREATE TABLE "QuesPart" (
+DROP TABLE IF EXISTS "QuesPart" CASCADE;
+CREATE TABLE IF NOT EXISTS "QuesPart" (
     "Qp_ID" BIGINT PRIMARY KEY,           -- 主键，雪花ID
     "Qp_PID" BIGINT NOT NULL,             -- 父级ID，雪花ID
     "Qp_Name" VARCHAR(1000) NOT NULL,     -- 分类名称
@@ -107,34 +108,36 @@ CREATE TABLE "QuesPart" (
     "Qp_Order" INT NOT null DEFAULT 0,             -- 排序号
     "Qp_Intro" TEXT,                      -- 说明或介绍
     "Qp_IsUse" BOOLEAN NOT null  DEFAULT TRUE,      -- 是否启用
+    "Qp_IsDeleted" BOOLEAN NOT null  DEFAULT FALSE,      -- 是否删除
     "Qp_CrtTime" TIMESTAMP NOT null  DEFAULT CURRENT_TIMESTAMP, -- 创建时间
-    "Qp_UpdateTime" TIMESTAMP NOT null  DEFAULT CURRENT_TIMESTAMP, -- 修改时间    
-    -- 索引定义
-    CONSTRAINT fk_parent FOREIGN KEY (Qk_PID) REFERENCES QuesKnowledge(Qk_ID) ON DELETE CASCADE
+    "Qp_UpdateTime" TIMESTAMP NOT null  DEFAULT CURRENT_TIMESTAMP -- 修改时间 
 );
 
 -- 创建索引
-CREATE INDEX "QuesPart_IX_Qp_PID" ON "QuesPart"("Qp_PID");
-CREATE INDEX "QuesPart_IX_Qp_Name" ON "QuesPart"("Qp_Name");
-CREATE INDEX "QuesPart_IX_Qp_Order" ON "QuesPart"("Qp_Order");
-CREATE INDEX "QuesPart_IX_Qp_IsUse" ON "QuesPart"("Qp_IsUse");
-CREATE INDEX "QuesPart_IX_Org_ID" ON "QuesPart"("Org_ID");
+CREATE INDEX IF NOT EXISTS "QuesPart_IX_Qp_PID" ON "QuesPart"("Qp_PID");
+CREATE INDEX IF NOT EXISTS "QuesPart_IX_Qp_Name" ON "QuesPart"("Qp_Name");
+CREATE INDEX IF NOT EXISTS "QuesPart_IX_Qp_Order" ON "QuesPart"("Qp_Order");
+CREATE INDEX IF NOT EXISTS "QuesPart_IX_Qp_IsUse" ON "QuesPart"("Qp_IsUse");
+CREATE INDEX IF NOT EXISTS "QuesPart_IX_Org_ID" ON "QuesPart"("Org_ID");
+CREATE INDEX  IF NOT EXISTS "QuesPart_IX_Qp_IsDeleted" ON "QuesPart"("Qp_IsDeleted");
 
 -- 创建试题与分类关联表
-CREATE TABLE "Questions_QPart" (
+DROP TABLE IF EXISTS "Questions_QPart" CASCADE;
+CREATE TABLE IF NOT EXISTS "Questions_QPart" (
     "Qqp_ID" BIGINT PRIMARY KEY,          -- 主键，雪花ID
     "Qus_ID" BIGINT NOT NULL,            -- 试题ID
     "Qp_ID" BIGINT NOT NULL               -- 分类ID
 );
 
 -- 创建关联表索引
-CREATE INDEX "Questions_QPart_IX_Qus_ID" ON "Questions_QPart"("Qus_ID");
-CREATE INDEX "Questions_QPart_IX_Qp_ID" ON "Questions_QPart"("Qp_ID");
-CREATE INDEX "Questions_QPart_IX_QuesQp" ON "Questions_QPart"("Qus_ID", "Qp_ID");
+CREATE INDEX IF NOT EXISTS "Questions_QPart_IX_Qus_ID" ON "Questions_QPart"("Qus_ID");
+CREATE INDEX IF NOT EXISTS "Questions_QPart_IX_Qp_ID" ON "Questions_QPart"("Qp_ID");
+CREATE INDEX IF NOT EXISTS "Questions_QPart_IX_QuesQp" ON "Questions_QPart"("Qus_ID", "Qp_ID");
 
 
 /*创建试题知识点*/
-CREATE TABLE "QuesKnowledge" (
+DROP TABLE IF EXISTS "QuesKnowledge" CASCADE;
+CREATE TABLE IF NOT EXISTS  "QuesKnowledge" (
     "Qk_ID" BIGINT PRIMARY KEY DEFAULT 0,     -- 主键，雪花ID
     "Qk_PID" BIGINT NOT NULL DEFAULT 0,   -- 父级ID，雪花ID
     "Qk_Name" VARCHAR(1000) NOT NULL,
@@ -151,33 +154,35 @@ CREATE TABLE "QuesKnowledge" (
 /*是否删除的字段*/
 ALTER TABLE "QuesKnowledge" ADD COLUMN "Qk_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
 -- 创建索引
-CREATE INDEX "QuesKnowledge_IX_PID" ON "QuesKnowledge"("Qk_PID");
-CREATE INDEX "QuesKnowledge_IX_Name" ON "QuesKnowledge"("Qk_Name");
-CREATE INDEX "QuesKnowledge_IX_Order" ON "QuesKnowledge"("Qk_Order");
-CREATE INDEX "QuesKnowledge_IX_IsUse" ON "QuesKnowledge"("Qk_IsUse");
-CREATE INDEX "QuesKnowledge_IX_OrgID" ON "QuesKnowledge"("Org_ID");
-CREATE INDEX "QuesKnowledge_IX_PID_Order" ON "QuesKnowledge"("Qk_PID", "Qk_Order");
-CREATE INDEX "QuesKnowledge_IX_Org_ID" ON "QuesKnowledge"("Org_ID");
-CREATE INDEX "QuesKnowledge_IX_Qk_Count" ON "QuesKnowledge"("Qk_Count");
-CREATE INDEX "QuesKnowledge_IX_Qk_IsDeleted" ON "QuesKnowledge"("Qk_IsDeleted");
+CREATE INDEX  IF NOT EXISTS "QuesKnowledge_IX_PID" ON "QuesKnowledge"("Qk_PID");
+CREATE INDEX  IF NOT EXISTS "QuesKnowledge_IX_Name" ON "QuesKnowledge"("Qk_Name");
+CREATE INDEX  IF NOT EXISTS "QuesKnowledge_IX_Order" ON "QuesKnowledge"("Qk_Order");
+CREATE INDEX  IF NOT EXISTS "QuesKnowledge_IX_IsUse" ON "QuesKnowledge"("Qk_IsUse");
+CREATE INDEX  IF NOT EXISTS "QuesKnowledge_IX_OrgID" ON "QuesKnowledge"("Org_ID");
+CREATE INDEX  IF NOT EXISTS "QuesKnowledge_IX_PID_Order" ON "QuesKnowledge"("Qk_PID", "Qk_Order");
+CREATE INDEX  IF NOT EXISTS "QuesKnowledge_IX_Org_ID" ON "QuesKnowledge"("Org_ID");
+CREATE INDEX  IF NOT EXISTS "QuesKnowledge_IX_Qk_Count" ON "QuesKnowledge"("Qk_Count");
+CREATE INDEX  IF NOT EXISTS "QuesKnowledge_IX_Qk_IsDeleted" ON "QuesKnowledge"("Qk_IsDeleted");
 
 /*试题与知识点的关联表*/
-CREATE TABLE "Questions_QKnl" (
+DROP TABLE IF EXISTS "Questions_QKnl" CASCADE;
+CREATE TABLE IF NOT EXISTS  "Questions_QKnl" (
     "Qqk_ID" BIGINT PRIMARY KEY DEFAULT 0,
     "Qus_ID" BIGINT NOT NULL,
     "Qk_ID" BIGINT NOT NULL
 );
 -- 创建所有字段的索引
-CREATE INDEX "Questions_QKnl_IX_ID" ON "Questions_QKnl"("Qqk_ID");
-CREATE INDEX "Questions_QKnl_IX_QuesID" ON "Questions_QKnl"("Qus_ID");
-CREATE INDEX "Questions_QKnl_Qk_ID" ON "Questions_QKnl"("Qk_ID");
+CREATE INDEX  IF NOT EXISTS "Questions_QKnl_IX_ID" ON "Questions_QKnl"("Qqk_ID");
+CREATE INDEX  IF NOT EXISTS "Questions_QKnl_IX_QuesID" ON "Questions_QKnl"("Qus_ID");
+CREATE INDEX  IF NOT EXISTS "Questions_QKnl_Qk_ID" ON "Questions_QKnl"("Qk_ID");
 -- 复合索引
-CREATE INDEX "Questions_QKnl_IX_QuesID_QkID" ON "Questions_QKnl"("Qus_ID", "Qk_ID");
-CREATE INDEX "Questions_QKnl_IX_QkID_QuesID" ON "Questions_QKnl"("Qk_ID", "Qus_ID");
+CREATE INDEX  IF NOT EXISTS "Questions_QKnl_IX_QuesID_QkID" ON "Questions_QKnl"("Qus_ID", "Qk_ID");
+CREATE INDEX  IF NOT EXISTS "Questions_QKnl_IX_QkID_QuesID" ON "Questions_QKnl"("Qk_ID", "Qus_ID");
 
 
 --创建试题标签
-CREATE TABLE "QuesTags" (
+DROP TABLE IF EXISTS "QuesTags" CASCADE;
+CREATE TABLE  IF NOT EXISTS "QuesTags" (
     "Qtag_ID" BIGINT PRIMARY KEY DEFAULT 0,
     "Qtag_PID" BIGINT NOT NULL DEFAULT 0,
     "Org_ID" INT NOT NULL,
@@ -190,16 +195,16 @@ CREATE TABLE "QuesTags" (
     "Qtag_UpdateTime" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP -- 修改时间
 );
 -- 创建索引
-CREATE INDEX "QuesTags_IX_PID" ON "QuesTags"("Qtag_PID");
-CREATE INDEX "QuesTags_IX_OrgID" ON "QuesTags"("Org_ID");
-CREATE INDEX "QuesTags_IX_Name" ON "QuesTags"("Qtag_Name");
-CREATE INDEX "QuesTags_IX_CouID" ON "QuesTags"("Cou_ID");
-CREATE INDEX "QuesTags_IX_Count" ON "QuesTags"("Qtag_Count");
-CREATE INDEX "QuesTags_IX_Order" ON "QuesTags"("Qtag_Order");
-CREATE INDEX "QuesTags_IX_Weight" ON "QuesTags"("Qtag_Weight");
+CREATE INDEX  IF NOT EXISTS "QuesTags_IX_PID" ON "QuesTags"("Qtag_PID");
+CREATE INDEX  IF NOT EXISTS "QuesTags_IX_OrgID" ON "QuesTags"("Org_ID");
+CREATE INDEX  IF NOT EXISTS "QuesTags_IX_Name" ON "QuesTags"("Qtag_Name");
+CREATE INDEX  IF NOT EXISTS "QuesTags_IX_CouID" ON "QuesTags"("Cou_ID");
+CREATE INDEX  IF NOT EXISTS "QuesTags_IX_Count" ON "QuesTags"("Qtag_Count");
+CREATE INDEX  IF NOT EXISTS "QuesTags_IX_Order" ON "QuesTags"("Qtag_Order");
+CREATE INDEX  IF NOT EXISTS "QuesTags_IX_Weight" ON "QuesTags"("Qtag_Weight");
 /*是否删除的字段*/
 ALTER TABLE "QuesTags" ADD COLUMN "Qtag_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
-CREATE INDEX "QuesTags_IX_IsDeleted" ON "QuesTags"("Qtag_IsDeleted");
+CREATE INDEX  IF NOT EXISTS "QuesTags_IX_IsDeleted" ON "QuesTags"("Qtag_IsDeleted");
 
 
 --创建试题与标签的关联表
@@ -209,19 +214,19 @@ CREATE TABLE "Questions_QTags" (
     "Qtag_ID" BIGINT NOT NULL
 );
 -- 创建所有字段的索引
-CREATE INDEX "Questions_QTags_IX_QuesID" ON "Questions_QTags"("Qus_ID");
-CREATE INDEX "Questions_QTags_IX_TagID" ON "Questions_QTags"("Qtag_ID");
+CREATE INDEX  IF NOT EXISTS "Questions_QTags_IX_QuesID" ON "Questions_QTags"("Qus_ID");
+CREATE INDEX  IF NOT EXISTS "Questions_QTags_IX_TagID" ON "Questions_QTags"("Qtag_ID");
 -- 复合索引
-CREATE INDEX "Questions_QTags_IX_QuesID_TagID" ON "Questions_QTags"("Qus_ID", "Qtag_ID");
-CREATE INDEX "Questions_QTags_IX_TagID_QuesID" ON "Questions_QTags"("Qtag_ID", "Qus_ID");
+CREATE INDEX  IF NOT EXISTS "Questions_QTags_IX_QuesID_TagID" ON "Questions_QTags"("Qus_ID", "Qtag_ID");
+CREATE INDEX  IF NOT EXISTS "Questions_QTags_IX_TagID_QuesID" ON "Questions_QTags"("Qtag_ID", "Qus_ID");
 
 
 /*为试题添用途的字段，默认为0，即课程使用；考试用为1*/
 ALTER TABLE "Questions" ADD COLUMN "Qus_Purpose" int NOT NULL  DEFAULT 0;
-CREATE INDEX "Questions_IX_Purpose" ON "Questions"("Qus_Purpose");
+CREATE INDEX  IF NOT EXISTS "Questions_IX_Purpose" ON "Questions"("Qus_Purpose");
 /*为试题添加是否删除的字段*/
 ALTER TABLE "Questions" ADD COLUMN "Qus_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
-CREATE INDEX "Questions_IX_IsDeleted" ON "Questions"("Qus_IsDeleted");
+CREATE INDEX  IF NOT EXISTS "Questions_IX_IsDeleted" ON "Questions"("Qus_IsDeleted");
 
 --创建操作日志的记录表
 CREATE TABLE "DataOperateLog" (
@@ -257,19 +262,19 @@ CREATE TABLE "DataOperateLog" (
 );
 
 -- 创建索引
-CREATE INDEX "DataOperateLog_IX_ID" ON "DataOperateLog"("Dlog_ID");
-CREATE INDEX "DataOperateLog_IX_Entity" ON "DataOperateLog"("Dlog_Entity");
-CREATE INDEX "DataOperateLog_IX_KeyID" ON "DataOperateLog"("Dlog_KeyID");
-CREATE INDEX "DataOperateLog_IX_Type" ON "DataOperateLog"("Dlog_Type");
-CREATE INDEX "DataOperateLog_IX_CrtTime" ON "DataOperateLog"("Dlog_CrtTime");
-CREATE INDEX "DataOperateLog_IX_IP" ON "DataOperateLog"("Dlog_IP");
-CREATE INDEX "DataOperateLog_IX_AccID" ON "DataOperateLog"("Acc_ID");
-CREATE INDEX "DataOperateLog_IX_ThID" ON "DataOperateLog"("Th_ID");
-CREATE INDEX "DataOperateLog_IX_AcID" ON "DataOperateLog"("Ac_ID");
-CREATE INDEX "DataOperateLog_IX_OrgID" ON "DataOperateLog"("Org_ID");
-CREATE INDEX "DataOperateLog_IX_Module" ON "DataOperateLog"("Dlog_Module");
-CREATE INDEX "DataOperateLog_IX_MMUID" ON "DataOperateLog"("MM_UID");
-CREATE INDEX "DataOperateLog_IX_API" ON "DataOperateLog"("Dlog_API");
+CREATE INDEX  IF NOT EXISTS "DataOperateLog_IX_ID" ON "DataOperateLog"("Dlog_ID");
+CREATE INDEX  IF NOT EXISTS "DataOperateLog_IX_Entity" ON "DataOperateLog"("Dlog_Entity");
+CREATE INDEX  IF NOT EXISTS "DataOperateLog_IX_KeyID" ON "DataOperateLog"("Dlog_KeyID");
+CREATE INDEX  IF NOT EXISTS "DataOperateLog_IX_Type" ON "DataOperateLog"("Dlog_Type");
+CREATE INDEX  IF NOT EXISTS "DataOperateLog_IX_CrtTime" ON "DataOperateLog"("Dlog_CrtTime");
+CREATE INDEX  IF NOT EXISTS "DataOperateLog_IX_IP" ON "DataOperateLog"("Dlog_IP");
+CREATE INDEX  IF NOT EXISTS "DataOperateLog_IX_AccID" ON "DataOperateLog"("Acc_ID");
+CREATE INDEX  IF NOT EXISTS "DataOperateLog_IX_ThID" ON "DataOperateLog"("Th_ID");
+CREATE INDEX  IF NOT EXISTS "DataOperateLog_IX_AcID" ON "DataOperateLog"("Ac_ID");
+CREATE INDEX  IF NOT EXISTS "DataOperateLog_IX_OrgID" ON "DataOperateLog"("Org_ID");
+CREATE INDEX  IF NOT EXISTS "DataOperateLog_IX_Module" ON "DataOperateLog"("Dlog_Module");
+CREATE INDEX  IF NOT EXISTS "DataOperateLog_IX_MMUID" ON "DataOperateLog"("MM_UID");
+CREATE INDEX  IF NOT EXISTS "DataOperateLog_IX_API" ON "DataOperateLog"("Dlog_API");
 
 
 --创建操作日志的档案表
@@ -306,19 +311,19 @@ CREATE TABLE "DataOperateLogArchive" (
 );
 
 -- 创建索引
-CREATE INDEX "DataOperateLogArchive_IX_ID" ON "DataOperateLogArchive"("Dlog_ID");
-CREATE INDEX "DataOperateLogArchive_IX_Entity" ON "DataOperateLogArchive"("Dlog_Entity");
-CREATE INDEX "DataOperateLogArchive_IX_KeyID" ON "DataOperateLogArchive"("Dlog_KeyID");
-CREATE INDEX "DataOperateLogArchive_IX_Type" ON "DataOperateLogArchive"("Dlog_Type");
-CREATE INDEX "DataOperateLogArchive_IX_CrtTime" ON "DataOperateLogArchive"("Dlog_CrtTime");
-CREATE INDEX "DataOperateLogArchive_IX_IP" ON "DataOperateLogArchive"("Dlog_IP");
-CREATE INDEX "DataOperateLogArchive_IX_AccID" ON "DataOperateLogArchive"("Acc_ID");
-CREATE INDEX "DataOperateLogArchive_IX_ThID" ON "DataOperateLogArchive"("Th_ID");
-CREATE INDEX "DataOperateLogArchive_IX_AcID" ON "DataOperateLogArchive"("Ac_ID");
-CREATE INDEX "DataOperateLogArchive_IX_OrgID" ON "DataOperateLogArchive"("Org_ID");
-CREATE INDEX "DataOperateLogArchive_IX_Module" ON "DataOperateLogArchive"("Dlog_Module");
-CREATE INDEX "DataOperateLogArchive_IX_MMUID" ON "DataOperateLogArchive"("MM_UID");
-CREATE INDEX "DataOperateLogArchive_IX_API" ON "DataOperateLogArchive"("Dlog_API");
+CREATE INDEX  IF NOT EXISTS "DataOperateLogArchive_IX_ID" ON "DataOperateLogArchive"("Dlog_ID");
+CREATE INDEX  IF NOT EXISTS "DataOperateLogArchive_IX_Entity" ON "DataOperateLogArchive"("Dlog_Entity");
+CREATE INDEX  IF NOT EXISTS "DataOperateLogArchive_IX_KeyID" ON "DataOperateLogArchive"("Dlog_KeyID");
+CREATE INDEX  IF NOT EXISTS "DataOperateLogArchive_IX_Type" ON "DataOperateLogArchive"("Dlog_Type");
+CREATE INDEX  IF NOT EXISTS "DataOperateLogArchive_IX_CrtTime" ON "DataOperateLogArchive"("Dlog_CrtTime");
+CREATE INDEX  IF NOT EXISTS "DataOperateLogArchive_IX_IP" ON "DataOperateLogArchive"("Dlog_IP");
+CREATE INDEX  IF NOT EXISTS "DataOperateLogArchive_IX_AccID" ON "DataOperateLogArchive"("Acc_ID");
+CREATE INDEX  IF NOT EXISTS "DataOperateLogArchive_IX_ThID" ON "DataOperateLogArchive"("Th_ID");
+CREATE INDEX  IF NOT EXISTS "DataOperateLogArchive_IX_AcID" ON "DataOperateLogArchive"("Ac_ID");
+CREATE INDEX  IF NOT EXISTS "DataOperateLogArchive_IX_OrgID" ON "DataOperateLogArchive"("Org_ID");
+CREATE INDEX  IF NOT EXISTS "DataOperateLogArchive_IX_Module" ON "DataOperateLogArchive"("Dlog_Module");
+CREATE INDEX  IF NOT EXISTS "DataOperateLogArchive_IX_MMUID" ON "DataOperateLogArchive"("MM_UID");
+CREATE INDEX  IF NOT EXISTS "DataOperateLogArchive_IX_API" ON "DataOperateLogArchive"("Dlog_API");
 
 --创建题库收藏的表，这里是收藏管理员的试题
 CREATE TABLE "QuesCollect" (
@@ -328,9 +333,9 @@ CREATE TABLE "QuesCollect" (
     "Qcl_CrtTime" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 -- 创建索引
-CREATE INDEX "QuesCollect_IX_AccID" ON "QuesCollect"("Acc_ID");
-CREATE INDEX "QuesCollect_IX_QuesID" ON "QuesCollect"("Qus_ID");
-CREATE INDEX "QuesCollect_IX_CrtTime" ON "QuesCollect"("Qcl_CrtTime");
+CREATE INDEX  IF NOT EXISTS "QuesCollect_IX_AccID" ON "QuesCollect"("Acc_ID");
+CREATE INDEX  IF NOT EXISTS "QuesCollect_IX_QuesID" ON "QuesCollect"("Qus_ID");
+CREATE INDEX  IF NOT EXISTS "QuesCollect_IX_CrtTime" ON "QuesCollect"("Qcl_CrtTime");
 
 
 -- 创建考试专用的试卷表 ExamTestPaper --
@@ -378,32 +383,32 @@ CREATE INDEX IF NOT EXISTS "ExamTestPaper_IX_Etp_Name" ON "ExamTestPaper" ("Etp_
 
 /*添加考试是否删除、关联试卷ID、试卷来源的字段*/
 ALTER TABLE "Examination" ADD COLUMN "Exam_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
-CREATE INDEX "Examination_IX_IsDeleted" ON "Examination"("Exam_IsDeleted");
+CREATE INDEX  IF NOT EXISTS "Examination_IX_IsDeleted" ON "Examination"("Exam_IsDeleted");
 
 ALTER TABLE "Examination" ADD COLUMN "Etp_Id" bigint NOT NULL DEFAULT 0;
-CREATE INDEX "Examination_IX_Etp_Id" ON "Examination"("Etp_Id");
+CREATE INDEX  IF NOT EXISTS "Examination_IX_Etp_Id" ON "Examination"("Etp_Id");
 
 ALTER TABLE "Examination" ADD COLUMN "Acc_Id" integer NOT NULL DEFAULT 0;
-CREATE INDEX "Examination_IX_Acc_Id" ON "Examination"("Acc_Id");
+CREATE INDEX  IF NOT EXISTS "Examination_IX_Acc_Id" ON "Examination"("Acc_Id");
 
 ALTER TABLE "Examination" ADD COLUMN "Exam_Purpose" bigint NOT NULL DEFAULT 0;
-CREATE INDEX "Examination_IX_Purpose" ON "Examination"("Exam_Purpose");
-CREATE INDEX "Examination_IX_Order" ON "Examination"("Exam_Order");
+CREATE INDEX  IF NOT EXISTS "Examination_IX_Purpose" ON "Examination"("Exam_Purpose");
+CREATE INDEX  IF NOT EXISTS "Examination_IX_Order" ON "Examination"("Exam_Order");
 /*考试成绩中的试卷id*/
 ALTER TABLE "ExamResults" ADD COLUMN "Etp_Id" bigint NOT NULL DEFAULT 0;
-CREATE INDEX "ExamResults_IX_Etp_Id" ON "ExamResults"("Etp_Id");
+CREATE INDEX  IF NOT EXISTS "ExamResults_IX_Etp_Id" ON "ExamResults"("Etp_Id");
 
 
 /*课程，专业，增加是否删除的字段*/
 ALTER TABLE "Course" ADD COLUMN "Cou_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
-CREATE INDEX "Course_IX_IsDeleted" ON "Course"("Cou_IsDeleted");
+CREATE INDEX  IF NOT EXISTS "Course_IX_IsDeleted" ON "Course"("Cou_IsDeleted");
 ALTER TABLE "Subject" ADD COLUMN "Sbj_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
-CREATE INDEX "Subject_IX_IsDeleted" ON "Subject"("Sbj_IsDeleted");
+CREATE INDEX  IF NOT EXISTS "Subject_IX_IsDeleted" ON "Subject"("Sbj_IsDeleted");
 
 /*增加考试与学员组关联的索引*/
 DROP INDEX IF EXISTS "ExamGroup_aaaaaExamGroup_PK";
-CREATE INDEX "ExamGroup_IX_Sts_ID" ON "ExamGroup"("Sts_ID");
-CREATE INDEX "ExamGroup_IX_Exam_UID" ON "ExamGroup"("Exam_UID");
+CREATE INDEX  IF NOT EXISTS "ExamGroup_IX_Sts_ID" ON "ExamGroup"("Sts_ID");
+CREATE INDEX  IF NOT EXISTS "ExamGroup_IX_Exam_UID" ON "ExamGroup"("Exam_UID");
 ALTER TABLE "ExamGroup" DROP COLUMN IF EXISTS "Org_Name" CASCADE;
 
 -- ----------------------------
