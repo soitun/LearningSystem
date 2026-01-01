@@ -111,7 +111,7 @@ Vue.component('student_add', {
         },
         //增加学员
         add: function (item) {
-           this.$emit('add', [item]);
+            this.$emit('add', [item]);
         }
     },
     //
@@ -140,8 +140,7 @@ Vue.component('student_add', {
 Vue.component('student_batadd', {
     props: ['stsid', 'orgid'],
     data: function () {
-        return {           
-
+        return {
             datas: [],
             search_type: 'card',    //检索类型，账号acc,身份证card，手机mobi
 
@@ -152,29 +151,29 @@ Vue.component('student_batadd', {
         }
     },
     watch: {
-        'orgid': {
+        //当检索类型改变时，也标识为输入变化，否则无法再次解析
+        'search_type': {
             handler: function (nv, ov) {
-
-            }, immediate: true
-        },
-        'inputText': function (nv, ov) {
-            this.inputIsChange = true;
-        },
-        //操作状态，默认1录入数据，2为解析数据
-        'operstatus': {
-            handler: function (nv, ov) {
-                if (nv == 2)
-                    this.parseInput();
-            }, immediate: true
+                if (nv != ov) {
+                    this.inputIsChange = true;
+                }
+            },
         }
-
     },
-    computed: {},
+    computed: {
+        //查询的完成数
+        'query_completed': t => t.datas.filter(i => i.state != -1).length,
+        //查询的有效记录数
+        'query_successful': t => t.datas.filter(i => i.state == 1).length,
+    },
     mounted: function () { },
-    methods: {       
-        //解析录入的学员账号信息
-        parseInput: function () {
-            if (!this.inputIsChange) return;
+    methods: {
+        //解析按钮的事件 
+        btnParse: function () {
+            if (!this.inputIsChange) {
+                this.operstatus = 2;
+                return;
+            }
             var str = $api.trim(this.inputText);
             this.datas = [];
             if (str == '') return;
@@ -203,83 +202,19 @@ Vue.component('student_batadd', {
                 //state：状态,初始为-1，账号不存在为0，存在为1，处理完成为2
                 this.datas.push({ 'text': arr[i], 'account': {}, 'state': -1 });
             }
-            console.log(arr);
+            this.operstatus = 2;
+            this.inputIsChange = false;
         },
-        //查询的完成数
-        'query_complete': function () {
-            var c = 0;
-            for (var i = 0; i < this.datas.length; i++) {
-                if (this.datas[i].state != -1) {
-                    c++;
-                }
-            }
-            return c;
-        },
-        //有效的记录数
-        'query_valid': function () {
-            var c = 0;
-            for (var i = 0; i < this.datas.length; i++) {
-                if (this.datas[i].state == 1) {
-                    c++;
-                }
-            }
-            return c;
-        },
-        //增加学员
+        //增加学员的事件
         add: function () {
-            var num = this.query_valid();
-            if (num <= 0) {
-                this.$alert('请提供有效的学员信息', '没有数据', {
-                    confirmButtonText: '确定'
-                });
-                return;
-            }
-            this.$confirm('是否将当前 ' + num + '个学员添加到当前组, 是否继续?', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(() => {
-                var arr = [];
-                for (let i = 0; i < this.datas.length; i++) {
-                    if (this.datas[i].state == 1) {
-                        arr.push(this.datas[i].account.Ac_ID);
-                    }
-                }
-                if (arr.length > 0) this.add_func(arr.join(','));
-            }).catch(() => { });
-            return;
-
+            const arr = this.datas.filter(item => item.state == 1).map(item => item.account);
+            if (arr.length > 0) this.$emit('add', arr);
         },
-        //添加学员到学员组的具体方法
-        add_func: function (ids) {
-            console.log(ids);
-            var th = this;
-            var loading = th.$fulloading();
-            $api.post('Account/SortAddStudent', { 'stsid': th.stsid, 'id': ids }).then(function (req) {
-                if (req.data.success) {
-                    var result = req.data.result;
-                    th.$emit('addfinish', th.stsid, ids);
-                    th.$nextTick(function () {
-                        loading.close();
-                        th.datas = [];
-                        th.inputText = '';
-                        th.inputIsChange = false;        //是否有输入变化
-                        th.operstatus = 1;        //操作状态，默认1录入数据，2为解析数据
-                    });
-                } else {
-                    console.error(req.data.exception);
-                    throw req.config.way + ' ' + req.data.message;
-                }
-            }).catch(function (err) {
-                alert(err);
-                loading.close();
-                console.error(err);
-            });
-        }
     },
     //
     template: `<div class="student_batadd">  
-            <header>
+    {{inputIsChange}}
+            <header small info>
                 请在下面输入框录入学员信息，换行分隔<br />并明确录入的是：
                 <el-radio-group v-model="search_type" :disabled="operstatus==2">
                     <el-radio label="acc">账号</el-radio>
@@ -288,22 +223,21 @@ Vue.component('student_batadd', {
                 </el-radio-group>
             </header>
             <div class="btns">
-                <el-button type="primary" plain v-if="operstatus==1" @click="operstatus=2">
+                <el-button type="primary" plain v-if="operstatus==1" @click="btnParse">
                     <icon>&#xe83c</icon>解析录入的信息
                 </el-button>
                 <template v-else>
                     <el-button type="success" plain  @click="operstatus=1">
                         <icon>&#xe63d</icon>继续编辑内容
                     </el-button>
-                    <el-button type="primary" plain @click="add">
-                        <icon>&#xe6ea</icon>全部添加<span>（{{query_valid()}}条）</span>
+                    <el-button type="primary" plain @click="add" :disabled="query_successful<1">
+                        <icon>&#xe6ea</icon>全部添加<span>（{{query_successful}}条）</span>
                     </el-button>         
                 </template>       
             </div>
-            <el-input type="textarea" class="inputText" :rows="2" placeholder="请输入内容" v-if="operstatus==1"  v-model="inputText">
+            <el-input type="textarea" @input="inputIsChange = true" :rows="10" placeholder="请输入内容" v-if="operstatus==1"  v-model="inputText">
             </el-input>          
-            <el-table ref="datatables"  border resizable  class="table_datas" :stripe="true" :data="datas" tooltip-effect="dark" v-if="operstatus==2" 
-                    style="width: 100%">
+            <el-table ref="datatables"  border resizable  class="table_datas" :stripe="true" :data="datas" tooltip-effect="dark" v-if="operstatus==2">
                     <el-table-column type="index" label="#" align="center">
                         <template slot-scope="scope">
                             <span>{{scope.$index + 1}}</span>
@@ -311,10 +245,10 @@ Vue.component('student_batadd', {
                     </el-table-column>
                     <el-table-column label="录入的信息">
                         <template slot="header" slot-scope="scope">
-                            <span v-if="search_type=='acc'">学员账号</span>
-                            <span v-if="search_type=='card'">身份证号</span>
+                            <span v-if="search_type=='acc'">账号</span>
+                            <span v-if="search_type=='card'">身份证</span>
                             <span v-if="search_type=='mobi'">手机号</span>
-                            <span title="总数">：{{datas.length}} 条</span>
+                            <span title="总数"> {{datas.length}} 条</span>
                         </template>
                         <template slot-scope="scope">
                             {{scope.row.text}}
@@ -322,17 +256,19 @@ Vue.component('student_batadd', {
                     </el-table-column>
                     <el-table-column label="账号查询">
                         <template slot="header" slot-scope="scope">
-                            查询完成{{query_complete()}}条，有效{{query_valid()}}条
+                            <el-tooltip effect="dark" :content="'查询完成 '+ query_completed+' 条，有效 '+query_successful+' 条'" placement="bottom">
+                               <span> 完成 <b :primary="query_successful>0">{{query_successful}}</b> / {{query_completed}}</span>
+                            </el-tooltip>                            
                         </template>
                         <template slot-scope="scope">
-                            <account :item="scope.row" :text="scope.row.text" :type="search_type"></account>
+                            <accountselect_queryaccount :item="scope.row" :text="scope.row.text" :type="search_type"></accountselect_queryaccount>
                         </template>
                     </el-table-column>
                 </el-table>
         </div>`
 });
 //账号信息的获取
-Vue.component('account', {
+Vue.component('accountselect_queryaccount', {
     //item:录入项,
     //text:录入的内容，可能是账号或身份证号
     //type:搜索类型
@@ -355,6 +291,7 @@ Vue.component('account', {
     computed: {},
     mounted: function () { },
     methods: {
+        //获取账号信息
         getaccount: function () {
             var th = this;
             th.loading = true;
@@ -373,7 +310,6 @@ Vue.component('account', {
                 para = { "phone": this.text };
             }
             $api.cache(apiurl, para).then(function (req) {
-                th.loading = false;
                 if (req.data.success) {
                     th.data = req.data.result;
                     th.item.account = req.data.result;
@@ -385,17 +321,15 @@ Vue.component('account', {
                     console.error(req.data.exception);
                     throw req.data.message;
                 }
-            }).catch(function (err) {
-                console.error(err);
-            });
+            }).catch(err => console.error(err)).finally(() => th.loading = false);
         }
     },
     template: `<span title="学员信息">
             <span v-if="state==-1" class="el-icon-loading"></span>
             <span v-if="state==0"><el-tag type="info">不存在</el-tag></span>
-            <span v-if="state==1"  :class="{'woman': data.Ac_Gender==2,'disable':!data.Ac_IsUse}">
-                <icon v-if="data.Ac_Gender==2" woman>{{data.Ac_Name}}</icon>
-                <icon v-if="data.Ac_Gender==1" man>{{data.Ac_Name}}</icon>  
+            <span v-if="state==1">
+                <icon size="medium" v-if="data.Ac_Gender==2" woman>{{data.Ac_Name}}</icon>
+                <icon size="medium"  v-if="data.Ac_Gender==1" man>{{data.Ac_Name}}</icon>  
                 <span v-if="!data.Ac_IsUse">（已经禁用）</span>
             </span>
         </span> `

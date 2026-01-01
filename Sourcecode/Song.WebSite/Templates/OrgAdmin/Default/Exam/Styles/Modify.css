@@ -82,8 +82,11 @@ section.right .el-card .el-card__body {
     margin-right: 10px;
 }
 section.exams {
-    margin-bottom: 10px;
+  
     font-size: .8rem;  
+}
+section.exams:not(:last-child){
+    margin-bottom: 30px;
 }
 section.exams>* {
     margin-bottom: 5px;
