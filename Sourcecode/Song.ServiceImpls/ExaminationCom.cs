@@ -351,12 +351,11 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="uid"></param>
         /// <returns></returns>
-        public StudentSort[] GroupForStudentSort(string uid)
+        public List<StudentSort> GroupForStudentSort(string uid)
         {
             //所在班组的考试
-            Song.Entities.StudentSort[] sts = Gateway.Default.From<StudentSort>().InnerJoin<ExamGroup>(ExamGroup._.Sts_ID == StudentSort._.Sts_ID)
-                .Where(ExamGroup._.Exam_UID == uid && ExamGroup._.Eg_Type == 2).ToArray<StudentSort>();
-            return sts;            
+            return  Gateway.Default.From<StudentSort>().InnerJoin<ExamGroup>(ExamGroup._.Sts_ID == StudentSort._.Sts_ID)
+                .Where(ExamGroup._.Exam_UID == uid && ExamGroup._.Eg_Type == 2).ToList<StudentSort>();         
         }
 
         public List<Examination> ExamCount(int orgid, bool? isUse, int count)
@@ -943,7 +942,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public StudentSort[] StudentSort4Theme(int id)
+        public List<StudentSort> StudentSort4Theme(int id)
         {
             //下述Sql语句，兼容Sqlserver,postgresql,sqlite
             string sql = @"select  sts.""Sts_ID"", ""Sts_Name"",exr.count as Sts_Count from ""StudentSort"" as sts  inner join 
@@ -963,7 +962,7 @@ namespace Song.ServiceImpls
             sql = string.Format(sql, id.ToString());
             if (Gateway.Default.DbType != DbProviderType.PostgreSQL)
                 sql = sql.Replace("true", "1").Replace("false", "0");
-            return Gateway.Default.FromSql(sql).ToArray<StudentSort>();
+            return Gateway.Default.FromSql(sql).ToList<StudentSort>();
         }
         /// <summary>
         /// 考试场次下学员成绩的学员组
@@ -1543,7 +1542,7 @@ namespace Song.ServiceImpls
             //如果参考人员为按学员组
             if (exam.Exam_GroupType == 2)
             {
-                StudentSort[] sts = this.GroupForStudentSort(exam.Exam_UID);
+                List<StudentSort> sts = this.GroupForStudentSort(exam.Exam_UID);
                 foreach (StudentSort ss in sts) wc.Or(Accounts._.Sts_ID == ss.Sts_ID);
             }
             if (!string.IsNullOrWhiteSpace(name)) wc.And(Accounts._.Ac_Name.Contains(name));
@@ -1939,9 +1938,9 @@ namespace Song.ServiceImpls
             //如果没有指定学员组，则取所有学员组
             if (sorts == null || sorts.Length < 1)
             {
-                StudentSort[] list = this.StudentSort4Theme(examid);
-                sorts = new long[list.Length];
-                for (int i = 0; i < list.Length; i++)              
+                List<StudentSort> list = this.StudentSort4Theme(examid);
+                sorts = new long[list.Count];
+                for (int i = 0; i < list.Count; i++)              
                     sorts[i] = list[i].Sts_ID;
             }
             HSSFWorkbook hssfworkbook = new HSSFWorkbook();
@@ -2092,7 +2091,7 @@ namespace Song.ServiceImpls
             //按学员组计算
             if (exam.Exam_GroupType == 2)
             {
-                StudentSort[] sts = this.GroupForStudentSort(exam.Exam_UID);
+                List<StudentSort> sts = this.GroupForStudentSort(exam.Exam_UID);
                 WhereClip wc = new WhereClip();
                 foreach (StudentSort ss in sts) wc.Or(Accounts._.Sts_ID == ss.Sts_ID);
                 total = Gateway.Default.Count<Accounts>(wc);
@@ -2132,7 +2131,7 @@ namespace Song.ServiceImpls
             //如果参考人员为按学员组
             if (exam.Exam_GroupType == 2)
             {
-                StudentSort[] sts = this.GroupForStudentSort(exam.Exam_UID);
+                List<StudentSort> sts = this.GroupForStudentSort(exam.Exam_UID);
                 foreach (StudentSort ss in sts) wc.Or(Accounts._.Sts_ID == ss.Sts_ID);
             }
             //子查询条件

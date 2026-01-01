@@ -754,16 +754,20 @@ namespace Song.ViewData.Methods
             if (type == "1") return "全体学员";
             if (type == "2")
             {
-                Song.Entities.StudentSort[] sts = Business.Do<IExamination>().GroupForStudentSort(uid);
+                List<StudentSort> sts = Business.Do<IExamination>().GroupForStudentSort(uid);
                 string strDep = "";
-                for (int i = 0; i < sts.Length; i++)
+                for (int i = 0; i < sts.Count && i < 6; i++)
                 {
                     strDep += sts[i].Sts_Name;
-                    if (i < sts.Length - 1) strDep += ",";
+                    if (i < sts.Count - 1) strDep += ",";
                 }
-                if(string.IsNullOrWhiteSpace(strDep))
+                if (string.IsNullOrWhiteSpace(strDep))
                     strDep = "(没有学员组)";
                 return strDep;
+            }
+            if (type == "3")
+            {
+                return "学员数";
             }
             return "";
         }
@@ -772,12 +776,13 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="uid">考试主题的uid</param>
         /// <returns>学员组</returns>
-        public Song.Entities.StudentSort[] Groups(string uid)
+        public List<StudentSort> Groups(string uid)
         {
             return Business.Do<IExamination>().GroupForStudentSort(uid);
         }
+
         /// <summary>
-        /// 某场考试的参考人数
+        /// 某场考试实际参考的人数
         /// </summary>
         /// <param name="examid">考试id</param>
         /// <returns>id:考试id,number:参考人数</returns>
@@ -969,7 +974,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="examid">考试主题的id</param>
         /// <returns>Sts_Count列为学员组下的参考人员数量</returns>
-        public StudentSort[] Sort4Theme(int examid)
+        public List<StudentSort> Sort4Theme(int examid)
         {
             return Business.Do<IExamination>().StudentSort4Theme(examid);
         }
@@ -1008,9 +1013,9 @@ namespace Song.ViewData.Methods
                 //所有学员
                 case 0:
                     //当前考试限定的学生分组
-                    Song.Entities.StudentSort[] sts = Business.Do<IExamination>().GroupForStudentSort(theme.Exam_UID);
+                    List<StudentSort> sts = Business.Do<IExamination>().GroupForStudentSort(theme.Exam_UID);
                     //如果没有设定分组，则取当前参加考试的学员的分组
-                    if (sts == null || sts.Length < 1) sts = Business.Do<IExamination>().StudentSort4Theme(examid);
+                    if (sts == null || sts.Count < 1) sts = Business.Do<IExamination>().StudentSort4Theme(examid);
                     foreach (Song.Entities.StudentSort ss in sts)
                         stsid += ss.Sts_ID + ",";
                     stsid += "-1";

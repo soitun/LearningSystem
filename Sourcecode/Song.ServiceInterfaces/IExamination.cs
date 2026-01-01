@@ -76,7 +76,7 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="uid"></param>
         /// <returns></returns>
-        StudentSort[] GroupForStudentSort(string uid);  
+        List<StudentSort> GroupForStudentSort(string uid);  
         /// <summary>
         /// 获取考试，不分页
         /// </summary>
@@ -343,7 +343,7 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        StudentSort[] StudentSort4Theme(int id);
+        List<StudentSort> StudentSort4Theme(int id);
         /// <summary>
         /// 考试场次下，参加考试的学员的学员组,仅统计参加考试的学员
         /// </summary>
