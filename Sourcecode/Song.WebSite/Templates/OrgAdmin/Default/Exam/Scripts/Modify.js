@@ -26,6 +26,7 @@ $ready(["Components/group_select.js",
                 Exam_UID: new Date().getTime()
             },
             exams: [],          //考试场次
+            examgroups: [],     //考试分组
             //考试表单验证
             rules: {
                 Exam_Title: [
@@ -68,18 +69,18 @@ $ready(["Components/group_select.js",
             },
             //当学员范围变化时
             'entity.Exam_GroupType': function (nv, ov) {
-                this.groupselected();
+                this.getaccounttotal();
             }
         },
         created: function () {
             var th = this;
             th.org = window.org;
             th.getTheme();
-            th.groupselected();
+          
 
         },
         mounted: function () {
-
+           
         },
         computed: {
             //是否新增账号
@@ -114,10 +115,8 @@ $ready(["Components/group_select.js",
                                 console.error(req.data.exception);
                                 throw req.config.way + ' ' + req.data.message;
                             }
-                        }).catch(function (err) {
-                            alert(err);
-                            console.error(err);
-                        });
+                        }).catch(err=>console.error(err));
+                        th.getaccounttotal();
                     } else {
                         throw '未查询到数据';
                     }
@@ -183,17 +182,26 @@ $ready(["Components/group_select.js",
             * 参考人员的管理
             * */
             //参考人员的学员组变更时
-            groupselected: function (stsid, sorts) {
+            //参数说明
+            //stsid: 学员组ID的数组
+            //sorts: 学员组对象数组
+            //relationships: 学员组与考试的关系对象数组，ExamGroup对象
+            groupselected: function (stsid, sorts, relationships) {
+                if (stsid == null) stsid = [];
+                this.examgroups = relationships;
+                this.getaccounttotal();
+            },
+            //获取参考学员的总数
+            getaccounttotal: function () {
                 var api = null;
-                if (stsid == null) {
-                    stsid = [];
-                    let groups = this.$refs['group_select']?.examGroup;
-                    for (var i = 0; groups != null && i < groups.length; i++) {
-                        stsid.push(groups[i].Sts_ID);
-                    }
+                var stsid = [];
+                let groups = this.examgroups;
+                for (var i = 0; groups != null && i < groups.length; i++) {
+                    stsid.push(groups[i].Sts_ID);
                 }
                 if (this.entity.Exam_GroupType == 1) api = $api.get('Account/Total', { "orgid": this.org.Org_ID });
-                else api = $api.get('Account/TotalOfSort', { "sts": stsid.join(',') });
+                else if (this.entity.Exam_GroupType == 2) api = $api.get('Account/TotalOfSort', { "sts": stsid.join(',') });
+                else if (this.entity.Exam_GroupType == 3) api = $api.get('Account/TotalOfSort', { "sts": stsid.join(',') });
                 var th = this;
                 api.then(req => {
                     if (req.data.success) {
@@ -202,26 +210,24 @@ $ready(["Components/group_select.js",
                         console.error(req.data.exception);
                         throw req.config.way + ' ' + req.data.message;
                     }
-                }).catch(err => console.error(err))
-                    .finally(() => { });
+                }).catch(err => console.error(err)).finally(() => { });
             },
             //保存
             btnEnter: function (formName, isclose) {
                 var th = this;
                 if (th.loadstate.update) return;
-                th.loadstate.update = true;
                 //考试场次
                 var exams = th.exams;
                 for (var i = 0; i < exams.length; i++)
                     if (exams[i].Exam_Order <= 0) exams[i].Exam_Order = i + 1;
                 //关联的学员组
-                var groups = th.$refs['group_select'].examGroup;
+                //var groups = th.examgroups;
 
-                this.$refs[formName].validate((valid) => {
+                this.$refs[formName].validate((valid, fields) => {
                     if (valid) {
-                        console.log(th.entity);
+                        th.loadstate.update = true;
                         var apipath = th.id == 0 ? 'Exam/add' : 'Exam/Modify';
-                        $api.post(apipath, { 'theme': th.entity, 'items': exams, 'groups': groups }).then(function (req) {
+                        $api.post(apipath, { 'theme': th.entity, 'items': exams, 'groups': th.examgroups }).then(function (req) {
                             if (req.data.success) {
                                 var result = req.data.result;
                                 th.$notify({
@@ -239,7 +245,14 @@ $ready(["Components/group_select.js",
                             console.error(err);
                         }).finally(() => th.loadstate.update = false);
                     } else {
-                        console.log('error submit!!');
+                        th.$nextTick(() => {
+                            console.error('录入验证失败');
+                            let err = $dom('.el-form-item.is-error').first();
+                            if (err && err.length > 0) {
+                                while (err.attr('tab') == null) err = err.parent();
+                                this.activeName = err.attr('tab');
+                            }
+                        });
                         return false;
                     }
                 });

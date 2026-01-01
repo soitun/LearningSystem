@@ -136,12 +136,9 @@
                         所有学员都可以参加当前考试。
                     </help>
                     <group_select  v-show="entity.Exam_GroupType==2" ref="group_select" @selected="groupselected" :type="entity.Exam_GroupType"
-                        :theme="entity" :organ="org">
+                        :theme="entity" :org="org">
                     </group_select>
-                    <accountselect v-show="entity.Exam_GroupType==3" :orgid="org.Org_ID"
->
-                        ddd
-                    </accountselect>
+                    <accountselect v-show="entity.Exam_GroupType==3" :orgid="org.Org_ID"></accountselect>
                 </div>
             </el-form>
         </div>

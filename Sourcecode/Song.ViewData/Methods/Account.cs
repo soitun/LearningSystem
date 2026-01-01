@@ -1756,13 +1756,9 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public int TotalOfSort(string sts)
         {
-            List<long> list = new List<long>();
-            foreach(string t in sts.Split(','))
-            {
-                long tm = t.Convert<long>();
-                list.Add(tm);
-            }
-            return Business.Do<IStudent>().TotalOfSort(list.ToArray());
+            long[] list = Helper.StringTo.Array<long>(sts);
+            if (list.Length == 0) return 0;
+            return Business.Do<IStudent>().TotalOfSort(list);
         }
         /// <summary>
         /// 统计各个年龄段的学员

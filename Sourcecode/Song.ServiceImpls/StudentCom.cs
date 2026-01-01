@@ -216,6 +216,7 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public int TotalOfSort(long[] sts)
         {
+            if (sts.Length == 0) return 0;
             WhereClip wc = new WhereClip();
             foreach (long l in sts) if (l > 0) wc.Or(Accounts._.Sts_ID == l);
             return Gateway.Default.Count<Accounts>(wc);

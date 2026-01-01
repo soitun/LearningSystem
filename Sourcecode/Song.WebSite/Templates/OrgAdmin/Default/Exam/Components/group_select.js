@@ -1,11 +1,11 @@
 // 考试编辑中的学员组选择
 Vue.component('group_select', {
-    props: ['type', 'theme', 'organ'],
+    props: ['type', 'theme', 'org'],
     data: function () {
         return {
             //按分组选择参考人员
-            studentSorts: [],    //所有学员组
-            selectedSorts: [],       //选中的学员组,记录的是id，不是对象
+            allsorts: [],    //所有学员组
+            selectedsortid: [],       //选中的学员组,记录的是id，不是对象
 
             examGroup: [],       //考试主题与学员组的关联对象
 
@@ -15,7 +15,7 @@ Vue.component('group_select', {
         }
     },
     watch: {
-        'organ': {
+        'org': {
             handler: function (nv, ov) {
                 this.getStudentSort();
             }, immediate: true
@@ -27,7 +27,7 @@ Vue.component('group_select', {
         },
         //每加载一个条件完成，减一，等于0时为完成
         'completed': function (nv, ov) {
-            this.selectedObj(this.selectedSorts);
+            if (nv == 0) this.selectedObj(this.selectedsortid);
         }
 
     },
@@ -39,18 +39,14 @@ Vue.component('group_select', {
         //获取所有学员组
         getStudentSort: function () {
             var th = this;
-            $api.get('Account/SortAll', { 'orgid': th.organ.Org_ID, 'use': true }).then(function (req) {
+            $api.get('Account/SortAll', { 'orgid': th.org.Org_ID, 'use': true }).then(function (req) {
                 if (req.data.success) {
-                    th.studentSorts = req.data.result;
-                    th.completed--;
+                    th.allsorts = req.data.result;
                 } else {
                     console.error(req.data.exception);
                     throw req.config.way + ' ' + req.data.message;
                 }
-            }).catch(function (err) {
-                alert(err);
-                console.error(err);
-            });
+            }).catch(err => console.error(err)).finally(() => th.completed--);
         },
         //获取当前选中的学员组
         getSelectedSort: function () {
@@ -60,25 +56,26 @@ Vue.component('group_select', {
                 if (req.data.success) {
                     var result = req.data.result;
                     for (var i = 0; i < result.length; i++)
-                        th.selectedSorts.push(result[i].Sts_ID);                 
-                    th.completed--;
+                        th.selectedsortid.push(result[i].Sts_ID);
                 } else {
                     console.error(req.data.exception);
                     throw req.config.way + ' ' + req.data.message;
                 }
-            }).catch(err => console.error(err));
+            }).catch(err => console.error(err)).finally(() => th.completed--);
         },
         //选中的对象
-        selectedObj: function (val) {
+        selectedObj: function (sortsid) {
             var arr = [];
-            if (val.length <= 0) {
+            //如果没有学员组，或没有选中的学员组，则清空
+            if (this.allsorts.length <= 0 || sortsid.length <= 0) {
                 this.examGroup = [];
+                this.$emit('selected', [], [], []);
                 return arr;
             }
-            if (this.studentSorts.length <= 0) return arr;
-            for (let i = 0; i < val.length; i++) {
-                const id = val[i];
-                var sort = this.studentSorts.find(function (item) {
+            //如果有选中的学员组
+            for (let i = 0; i < sortsid.length; i++) {
+                const id = sortsid[i];
+                var sort = this.allsorts.find(function (item) {
                     return item.Sts_ID == id;
                 });
                 if (sort == null) continue;
@@ -96,16 +93,15 @@ Vue.component('group_select', {
                 });
             }
             this.examGroup = groups;
-            console.log(arr);
-            this.$emit('selected', val, arr);
+            this.$emit('selected', sortsid, arr, groups);
             return arr;
         },
 
     },
     //
     template: `<div class="SortSelected" v-show="type==2">
-        <el-transfer v-model="selectedSorts" :props="{key: 'Sts_ID',label: 'Sts_Name'}" filterable
-        :titles="['学员组', '已选择的学员组']" :data="studentSorts" @change="selectedObj">
+        <el-transfer v-model="selectedsortid" :props="{key: 'Sts_ID',label: 'Sts_Name'}" filterable
+        :titles="['学员组', '已选择的学员组']" :data="allsorts" @change="selectedObj">
             <span slot-scope="{ option }">
                 {{ option.Sts_Name }} <span class="stscount">({{ option.Sts_Count }})</span>
             </span>
