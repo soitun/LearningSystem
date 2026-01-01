@@ -13,7 +13,7 @@
     flex-direction: column;
     justify-content: space-between;
     position: relative;
-   
+
 }
 
 .student_add header {
@@ -41,9 +41,11 @@
     flex-direction: column;
     flex: 1;
 }
+
 .student_add icon[null] {
     margin-top: 20px;
 }
+
 .student_add dl dd {
 
     display: flex;
@@ -69,18 +71,61 @@
 }
 
 /*批量添加*/
-.student_batadd{
+.student_batadd {
     display: flex;
     flex-direction: column;
     height: calc(100% - 54px);
 }
 
-.student_batadd .btns{
+.student_batadd .btns {
     margin: 10px 0px;
 }
-.student_batadd>*:last-child{
+
+.student_batadd>*:last-child textarea {
+    height: 100%;
+}
+
+.student_batadd>*:last-child {
     flex: 1;
 }
-.student_batadd>*:last-child textarea{ 
-    height: 100%;
+
+.student_batadd>section.accounts {
+    box-sizing: border-box;
+    overflow-y: hidden;
+}
+
+.student_batadd>section.accounts header {
+    display: flex;
+    justify-content: space-between;
+    line-height: 30px;
+    height: 30px; 
+    background-color: #eee;
+    padding: 0px 10px;
+}
+.student_batadd>section.accounts header>*:first-child{
+    min-width: 30px;
+    text-align: center;
+} 
+.student_batadd>section.accounts dl {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: calc(100% - 30px);
+}
+
+.student_batadd>section.accounts dd {
+    display: flex;
+    justify-content: space-between;
+    padding: 0px 10px;
+}
+
+.student_batadd>section.accounts dd {
+    line-height: 30px;
+}
+.student_batadd>section.accounts dd .order{
+    min-width: 30px;
+    text-align: center;
+}
+.student_batadd>section.accounts dd .result{
+    min-width: 80px;
+    text-align: left;
 }

@@ -170,14 +170,14 @@ Vue.component('student_batadd', {
     methods: {
         //解析按钮的事件 
         btnParse: function () {
+            var str = $api.trim(this.inputText);
+            if (str == '') return;
             if (!this.inputIsChange) {
                 this.operstatus = 2;
                 return;
             }
-            var str = $api.trim(this.inputText);
-            this.datas = [];
-            if (str == '') return;
 
+            this.datas = [];
             //解析录入的信息
             var arr = str.split("\n");
             //校验证手机号，简单校验
@@ -213,7 +213,6 @@ Vue.component('student_batadd', {
     },
     //
     template: `<div class="student_batadd">  
-    {{inputIsChange}}
             <header small info>
                 请在下面输入框录入学员信息，换行分隔<br />并明确录入的是：
                 <el-radio-group v-model="search_type" :disabled="operstatus==2">
@@ -236,35 +235,32 @@ Vue.component('student_batadd', {
                 </template>       
             </div>
             <el-input type="textarea" @input="inputIsChange = true" :rows="10" placeholder="请输入内容" v-if="operstatus==1"  v-model="inputText">
-            </el-input>          
-            <el-table ref="datatables"  border resizable  class="table_datas" :stripe="true" :data="datas" tooltip-effect="dark" v-if="operstatus==2">
-                    <el-table-column type="index" label="#" align="center">
-                        <template slot-scope="scope">
-                            <span>{{scope.$index + 1}}</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="录入的信息">
-                        <template slot="header" slot-scope="scope">
-                            <span v-if="search_type=='acc'">账号</span>
-                            <span v-if="search_type=='card'">身份证</span>
-                            <span v-if="search_type=='mobi'">手机号</span>
-                            <span title="总数"> {{datas.length}} 条</span>
-                        </template>
-                        <template slot-scope="scope">
-                            {{scope.row.text}}
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="账号查询">
-                        <template slot="header" slot-scope="scope">
-                            <el-tooltip effect="dark" :content="'查询完成 '+ query_completed+' 条，有效 '+query_successful+' 条'" placement="bottom">
-                               <span> 完成 <b :primary="query_successful>0">{{query_successful}}</b> / {{query_completed}}</span>
-                            </el-tooltip>                            
-                        </template>
-                        <template slot-scope="scope">
-                            <accountselect_queryaccount :item="scope.row" :text="scope.row.text" :type="search_type"></accountselect_queryaccount>
-                        </template>
-                    </el-table-column>
-                </el-table>
+            </el-input>      
+            <section v-if="operstatus==2" class="accounts">
+                <header small>
+                    <div>#</div>
+                    <div> 
+                        <span v-if="search_type=='acc'">账号</span>
+                        <span v-if="search_type=='card'">身份证</span>
+                        <span v-if="search_type=='mobi'">手机号</span>
+                        <span title="总数"> {{datas.length}} 条</span>
+                    </div>
+                    <div>
+                        <el-tooltip effect="dark" :content="'查询完成 '+ query_completed+' 条，有效 '+query_successful+' 条'" placement="bottom">
+                            <span> 完成 <b :primary="query_successful>0">{{query_successful}}</b> / {{query_completed}}</span>
+                        </el-tooltip>   
+                    </div>
+                </header>
+                <dl>                
+                    <dd v-for="(item,index) in datas" :index="index" small> 
+                        <div class="order">{{index+1}}</div>
+                        <div class="text">{{item.text}}</div>
+                        <div class="result"> 
+                            <accountselect_queryaccount :item="item" :text="item.text" :type="search_type"></accountselect_queryaccount>
+                        </div>
+                    </dd>
+                </dl> 
+            </section>           
         </div>`
 });
 //账号信息的获取
@@ -275,7 +271,7 @@ Vue.component('accountselect_queryaccount', {
     props: ["item", "text", "type"],
     data: function () {
         return {
-            data: null,
+            data: {},
             state: -1,
             loading: true
         }
@@ -326,11 +322,11 @@ Vue.component('accountselect_queryaccount', {
     },
     template: `<span title="学员信息">
             <span v-if="state==-1" class="el-icon-loading"></span>
-            <span v-if="state==0"><el-tag type="info">不存在</el-tag></span>
-            <span v-if="state==1">
+            <span v-else-if="state==0"><el-tag type="info">不存在</el-tag></span>
+            <span v-else-if="state==1">
                 <icon size="medium" v-if="data.Ac_Gender==2" woman>{{data.Ac_Name}}</icon>
                 <icon size="medium"  v-if="data.Ac_Gender==1" man>{{data.Ac_Name}}</icon>  
-                <span v-if="!data.Ac_IsUse">（已经禁用）</span>
+                <span v-if="!data.Ac_IsUse" info>（已经禁用）</span>
             </span>
         </span> `
 });
