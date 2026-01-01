@@ -136,7 +136,7 @@
                 },
                 created: function () {
                     var th = this;
-                    $api.cache('Exam/GroupType', { 'type': this.exam.Exam_GroupType, 'uid': this.exam.Exam_UID }).then(function (req) {
+                    $api.cache('Exam/ScopeInfo', { 'type': this.exam.Exam_GroupType, 'uid': this.exam.Exam_UID }).then(function (req) {
                         if (req.data.success) {
                             th.msg = req.data.result;
                         } else {

@@ -22,7 +22,7 @@ $ready(function () {
             loading: false,
             loadingid: false,
             loading_init: true,
-          
+
         },
         mounted: function () {
             var th = this;
@@ -45,8 +45,8 @@ $ready(function () {
         watch: {
         },
         methods: {
-             //选择时间区间
-             selectDate: function (start, end) {
+            //选择时间区间
+            selectDate: function (start, end) {
                 this.form.start = start;
                 this.form.end = end;
                 this.handleCurrentChange(1);
@@ -87,20 +87,20 @@ $ready(function () {
                 var th = this;
                 this.loadingid = row.Exam_ID;
                 $api.post('Exam/ModifyState', { 'id': row.Exam_ID, 'use': row.Exam_IsUse })
-                .then(function (req) {
-                    if (req.data.success) {
-                        th.$message({
-                            type: 'success',
-                            message: '修改状态成功!',
-                            center: true
-                        });
-                    } else {
-                        throw req.data.message;
-                    }
-                }).catch(function (err) {
-                    alert(err, '错误');
-                    console.error(err);
-                }).finally(() => th.loadingid = -1);
+                    .then(function (req) {
+                        if (req.data.success) {
+                            th.$message({
+                                type: 'success',
+                                message: '修改状态成功!',
+                                center: true
+                            });
+                        } else {
+                            throw req.data.message;
+                        }
+                    }).catch(function (err) {
+                        alert(err, '错误');
+                        console.error(err);
+                    }).finally(() => th.loadingid = -1);
             },
             //删除考试主题
             deleteExam: function (row) {
@@ -149,7 +149,7 @@ $ready(function () {
                 template: '<span><span class="el-icon-loading" v-if="num==-1"></span><span v-else>{{num}}</span></span>'
             },
             //考试主题的参考人员
-            'group': {
+            'scopeinfo': {
                 props: ['exam'],
                 data: function () {
                     return {
@@ -165,6 +165,7 @@ $ready(function () {
                     }
                 },
                 methods: {
+                    //获取关联的学员组
                     getgroups: function () {
                         var th = this;
                         if (th.exam.Exam_GroupType == 1) return;
@@ -182,15 +183,15 @@ $ready(function () {
                 created: function () {
                 },
                 template: `<div class="groups">
-                        <span v-if="exam.Exam_GroupType == 1">全体学员</span>
-                        <template v-else>
-                            <span v-if="groups.length==0">(没有学员组)</span>
-                            <template v-else>
-                                <span v-for="(item, i) in groups">
-                                    {{item.Sts_Name}},
-                                </span>
-                            </template>
+                        <span v-if="exam.Exam_GroupType == 1" info>全体学员</span>
+                        <template v-else-if="exam.Exam_GroupType == 2">
+                            学员组：  
+                            <span v-if="groups.length==0">(无)</span>                                                     
+                            <span  v-else v-for="(item, i) in groups">
+                                {{item.Sts_Name}},
+                            </span>                            
                         </template>
+                        <span v-else>学员：</span>
                     </div>`
             },
             //考试主题的场次

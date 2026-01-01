@@ -211,7 +211,7 @@ $ready(function () {
                     th.group = '全体学员';
                     return;
                 }
-                $api.cache('Exam/GroupType', { 'type': this.theme.Exam_GroupType, 'uid': this.theme.Exam_UID })
+                $api.cache('Exam/ScopeInfo', { 'type': this.theme.Exam_GroupType, 'uid': this.theme.Exam_UID })
                     .then(function (req) {
                         if (req.data.success) {
                             th.group = req.data.result;

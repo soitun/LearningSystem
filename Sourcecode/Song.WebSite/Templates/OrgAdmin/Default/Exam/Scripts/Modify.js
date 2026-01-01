@@ -76,11 +76,11 @@ $ready(["Components/group_select.js",
             var th = this;
             th.org = window.org;
             th.getTheme();
-          
+
 
         },
         mounted: function () {
-           
+
         },
         computed: {
             //是否新增账号
@@ -115,7 +115,7 @@ $ready(["Components/group_select.js",
                                 console.error(req.data.exception);
                                 throw req.config.way + ' ' + req.data.message;
                             }
-                        }).catch(err=>console.error(err));
+                        }).catch(err => console.error(err));
                         th.getaccounttotal();
                     } else {
                         throw '未查询到数据';
@@ -220,9 +220,7 @@ $ready(["Components/group_select.js",
                 var exams = th.exams;
                 for (var i = 0; i < exams.length; i++)
                     if (exams[i].Exam_Order <= 0) exams[i].Exam_Order = i + 1;
-                //关联的学员组
-                //var groups = th.examgroups;
-
+                //
                 this.$refs[formName].validate((valid, fields) => {
                     if (valid) {
                         th.loadstate.update = true;
