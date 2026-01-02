@@ -282,18 +282,8 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            foreach (int tm in ViewData.Helper.StringTo.List<int>(id))
-            {
-                try
-                {
-                    Business.Do<IAccessory>().Delete(tm);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            foreach (int tm in id.ToArray<int>())
+                i += Business.Do<IAccessory>().Delete(tm);
             return i;
         }
         /// <summary>
@@ -303,11 +293,11 @@ namespace Song.ViewData.Methods
         /// <param name="type"></param>
         /// <returns></returns>
         [HttpDelete]
-        [Admin,Teacher]
-        public bool DeleteForUID(string uid,string type)
+        [Admin, Teacher]
+        public bool DeleteForUID(string uid, string type)
         {
-            Business.Do<IAccessory>().Delete(uid, type);
-            return true;
+            int i = Business.Do<IAccessory>().Delete(uid, type);
+            return i > 0;
         }
         #region 文件列表
         /// <summary>

@@ -37,17 +37,17 @@ namespace Song.ServiceInterfaces
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void LinkDelete(Links entity);
+        int LinkDelete(Links entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void LinkDelete(int identify);
+        int LinkDelete(int identify);
         /// <summary>
         /// 删除，按链接项名称
         /// </summary>
         /// <param name="name">链接项名称</param>
-        void LinkDelete(int orgid, string name);
+        int LinkDelete(int orgid, string name);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>
@@ -134,22 +134,22 @@ namespace Song.ServiceInterfaces
         /// <param name="id"></param>
         /// <param name="fiels"></param>
         /// <param name="objs"></param>
-        void SortUpdate(int id, Field[] fiels, object[] objs);
+        int SortUpdate(int id, Field[] fiels, object[] objs);
         /// <summary>
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void SortDelete(LinksSort entity);
+        int SortDelete(LinksSort entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void SortDelete(int identify);
+        int SortDelete(int identify);
         /// <summary>
         /// 删除，按分类名称
         /// </summary>
         /// <param name="name">分类名称</param>
-        void SortDelete(string name);
+        int SortDelete(string name);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>

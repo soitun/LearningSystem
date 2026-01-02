@@ -329,7 +329,7 @@ namespace Song.ServiceInterfaces
         /// 删除学员在线记录
         /// </summary>
         /// <param name="identify"></param>
-        void StudentOnlineDelete(int identify);
+        int StudentOnlineDelete(int identify);
         /// <summary>
         /// 账号的登录记录
         /// </summary>   

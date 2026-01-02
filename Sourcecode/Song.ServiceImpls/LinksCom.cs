@@ -81,19 +81,19 @@ namespace Song.ServiceImpls
             Gateway.Default.Save<Links>(entity);
         }
 
-        public void LinkDelete(Links entity)
+        public int LinkDelete(Links entity)
         {
-            _LinksDelete(entity);
+            return _LinksDelete(entity);
         }
 
-        public void LinkDelete(int identify)
+        public int LinkDelete(int identify)
         {
-            _LinksDelete(this.LinkSingle(identify));
+            return _LinksDelete(this.LinkSingle(identify));
         }
 
-        public void LinkDelete(int orgid, string name)
+        public int LinkDelete(int orgid, string name)
         {
-            _LinksDelete(this.LinkSingle(orgid, name));
+            return _LinksDelete(this.LinkSingle(orgid, name));
         }
 
         public Links LinkSingle(int identify)
@@ -200,19 +200,16 @@ namespace Song.ServiceImpls
         /// 私有对象，用于删除对象的子级，以及相关信息
         /// </summary>
         /// <param name="entity"></param>
-        private void _LinksDelete(Links entity)
+        private int _LinksDelete(Links entity)
         {
-            if (entity == null)
-            {
-                return;
-            }
+            if (entity == null)return 0;            
             if (!string.IsNullOrWhiteSpace(entity.Lk_Logo))
             {
                 //删除图片
                 WeiSha.Core.Upload.Get["Links"].DeleteFile(entity.Lk_Logo);
             }
             //删除自身            
-            Gateway.Default.Delete<Links>(entity);
+            return Gateway.Default.Delete<Links>(entity);
         }
         #endregion
 
@@ -275,30 +272,31 @@ namespace Song.ServiceImpls
         /// <param name="id"></param>
         /// <param name="fiels"></param>
         /// <param name="objs"></param>
-        public void SortUpdate(int id, Field[] fiels, object[] objs)
+        public int SortUpdate(int id, Field[] fiels, object[] objs)
         {
-            Gateway.Default.Update<LinksSort>(fiels, objs, LinksSort._.Ls_Id == id);
+            return Gateway.Default.Update<LinksSort>(fiels, objs, LinksSort._.Ls_Id == id);
         }
         /// <suPsary>
         /// 删除
         /// </suPsary>
         /// <param name="entity">业务实体</param>
-        public void SortDelete(LinksSort entity)
+        public int SortDelete(LinksSort entity)
         {
-            this.SortDelete(entity.Ls_Id);
+            return this.SortDelete(entity.Ls_Id);
         }
         /// <suPsary>
         /// 删除，按主键ID；
         /// </suPsary>
         /// <param name="identify">实体的主键</param>
-        public void SortDelete(int identify)
+        public int SortDelete(int identify)
         {
-            if (identify <= 0) return;
+            if (identify <= 0) return 0;
+            int i = 0;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
                 {
-                    tran.Delete<LinksSort>(LinksSort._.Ls_Id == identify);
+                    i = tran.Delete<LinksSort>(LinksSort._.Ls_Id == identify);
                     tran.Delete<Links>(Links._.Ls_Id == identify);
                     tran.Commit();
                 }
@@ -308,16 +306,17 @@ namespace Song.ServiceImpls
                     throw ex;
                 }
             }
+            return i;
         }
         /// <suPsary>
         /// 删除，按栏目名称
         /// </suPsary>
         /// <param name="name">栏目名称</param>
-        public void SortDelete(string name)
+        public int SortDelete(string name)
         {
             LinksSort entity = Gateway.Default.From<LinksSort>().Where(LinksSort._.Ls_Name == name).ToFirst<LinksSort>();
-            if (entity == null) return;
-            this.SortDelete(entity);            
+            if (entity == null) return 0;
+            return this.SortDelete(entity);            
         }
         /// <suPsary>
         /// 获取单一实体对象，按主键ID；

@@ -113,7 +113,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            List<long> list = id.ToList<long>();
             foreach (long s in list)
                 i += Business.Do<IExamQues>().QuesDelete(s);
             return i;
@@ -127,7 +127,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            List<long> list = id.ToList<long>();
             foreach (long s in list)
                 i += Business.Do<IExamQues>().QuesRecycle(s);
             return i;
@@ -144,7 +144,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            List<long> list = id.ToList<long>();
             foreach (long s in list)
                 i += Business.Do<IExamQues>().QuesRemove(s);
             return i;
@@ -172,13 +172,12 @@ namespace Song.ViewData.Methods
         {
             int sum;
             List<Questions> list = Business.Do<IExamQues>().QuesPager(orgid, search, isdeleted,
-                Help.StringTo.Array<long>(qpid),
-                Help.StringTo.Array<long>(tagid),
-                Help.StringTo.Array<long>(knlid),
-                Help.StringTo.Array<int>(type),
-                Help.StringTo.Array<int>(diff),
-                use, error, wrong,
-                size, index, out sum);
+                qpid.ToArray<long>(),
+                tagid.ToArray<long>(),
+                knlid.ToArray<long>(),
+                type.ToArray<int>(),
+                diff.ToArray<int>(),
+                use, error, wrong, size, index, out sum);
 
             Song.ViewData.ListResult result = new ListResult(list);
             result.Index = index;
@@ -202,11 +201,11 @@ namespace Song.ViewData.Methods
         public JArray QuesTotal(int orgid, string qpid, string tagid, string knlid, bool? isdeleted, string diff,bool? use, bool? error, bool? wrong)
         {
             Dictionary<int, int> dic = Business.Do<IExamQues>().QuesTotal(orgid,
-                Help.StringTo.Array<long>(qpid),
-                Help.StringTo.Array<long>(tagid),
-                Help.StringTo.Array<long>(knlid),
+                qpid.ToArray<long>(),
+                tagid.ToArray<long>(),
+                knlid.ToArray<long>(),
                 isdeleted,
-                Help.StringTo.Array<int>(diff),
+                diff.ToArray<int>(),
                 use, error, wrong);
             string[] types = Business.Do<IQuestions>().QuestionTypes();
             JArray arr = new JArray();
@@ -255,7 +254,7 @@ namespace Song.ViewData.Methods
         [HttpDelete, HttpGet(Ignore = true)]
         public int CollectRemove(int accid, string qusid)
         {
-            return Business.Do<IExamQues>().CollectRemove(accid, Song.ViewData.Helper.StringTo.Array<long>(qusid));
+            return Business.Do<IExamQues>().CollectRemove(accid, qusid.ToArray<long>());
         }
 
         /// <summary>
@@ -288,18 +287,17 @@ namespace Song.ViewData.Methods
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public ListResult CollectPager(int acid,string search, string qpid, string tagid, string knlid, 
+        public ListResult CollectPager(int acid, string search, string qpid, string tagid, string knlid,
             string type, string diff, bool? use, bool? error, bool? wrong, int size, int index)
         {
             int sum;
-            List<Questions> list = Business.Do<IExamQues>().CollectPager(acid,search,
-                Help.StringTo.Array<long>(qpid),
-                Help.StringTo.Array<long>(tagid),
-                Help.StringTo.Array<long>(knlid),
-                Help.StringTo.Array<int>(type),
-                Help.StringTo.Array<int>(diff),
-                use, error, wrong,
-                size, index, out sum);
+            List<Questions> list = Business.Do<IExamQues>().CollectPager(acid, search,
+                qpid.ToArray<long>(),
+                tagid.ToArray<long>(),
+                knlid.ToArray<long>(),
+                type.ToArray<int>(),
+                diff.ToArray<int>(),
+                use, error, wrong, size, index, out sum);
 
             Song.ViewData.ListResult result = new ListResult(list);
             result.Index = index;
@@ -373,7 +371,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            List<long> list = id.ToList<long>();
             foreach (long s in list)
                 i += Business.Do<IExamQues>().PartDelete(s);
             return i;
@@ -387,7 +385,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            List<long> list = id.ToList<long>();
             foreach (long s in list)
                 i += Business.Do<IExamQues>().PartRecycle(s);
             return i;
@@ -404,7 +402,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            List<long> list = id.ToList<long>();
             foreach (long s in list)
                 i += Business.Do<IExamQues>().PartRemove(s);
             return i;
@@ -536,7 +534,7 @@ namespace Song.ViewData.Methods
         /// <param name="use">是否启用的试题</param>
         /// <param name="children">是否包括下级，如果false，则取当前分类的试题</param>
         public int PartQusTotal(int orgid, string qpid, int qtype, bool? use, bool children)
-          => Business.Do<IExamQues>().PartQusTotal(orgid, Helper.StringTo.Array<long>(qpid), qtype, use, children);
+          => Business.Do<IExamQues>().PartQusTotal(orgid, qpid.ToArray<long>(), qtype, use, children);
 
         /// <summary>
         /// 试题所属的分类
@@ -612,7 +610,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            List<long> list = id.ToList<long>();
             foreach (long s in list)
                 i += Business.Do<IExamQues>().KnlDelete(s);
             return i;
@@ -626,7 +624,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            List<long> list = id.ToList<long>();
             foreach (long s in list)
                 i += Business.Do<IExamQues>().KnlRecycle(s);
             return i;
@@ -643,7 +641,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            List<long> list = id.ToList<long>();
             foreach (long s in list)
                 i += Business.Do<IExamQues>().KnlRemove(s);
             return i;
@@ -757,7 +755,7 @@ namespace Song.ViewData.Methods
         /// <param name="children">是否包括下级，如果false，则取当前分类的试题</param>
         /// <returns></returns>
         public int KnlQusTotal(int orgid, string qkid, int qtype, bool? use, bool children)
-            => Business.Do<IExamQues>().KnlQusTotal(orgid, Helper.StringTo.Array<long>(qkid), qtype, use, children);
+            => Business.Do<IExamQues>().KnlQusTotal(orgid, qkid.ToArray<long>(), qtype, use, children);
         #endregion
 
         #region 试题关键字
@@ -856,7 +854,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            List<long> list = id.ToList<long>();
             foreach (long s in list)
                 i += Business.Do<IExamQues>().TagDelete(s);
             return i;
@@ -870,7 +868,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            List<long> list = id.ToList<long>();
             foreach (long s in list)
                 i += Business.Do<IExamQues>().TagRecycle(s);
             return i;
@@ -887,7 +885,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            List<long> list = id.ToList<long>();
             foreach (long s in list)
                 i += Business.Do<IExamQues>().TagRemove(s);
             return i;
@@ -936,7 +934,7 @@ namespace Song.ViewData.Methods
         /// <param name="use">是否启用</param>
         /// <returns></returns>
         public int TagQusTotal(string qtagid, long couid, int qtype, bool? use)
-            => Business.Do<IExamQues>().TagQusTotal(Helper.StringTo.Array<long>(qtagid), couid, qtype, use);
+            => Business.Do<IExamQues>().TagQusTotal(qtagid.ToArray<long>(), couid, qtype, use);
         #endregion
     }
 }

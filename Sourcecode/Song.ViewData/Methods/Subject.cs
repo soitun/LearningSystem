@@ -159,12 +159,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            List<long> list = id.ToList<long>();
             foreach (long s in list)
-            {
-                Business.Do<ISubject>().SubjectDelete(s);
-                i++;
-            }
+                i += Business.Do<ISubject>().SubjectDelete(s);
             return i;
         }
         /// <summary>

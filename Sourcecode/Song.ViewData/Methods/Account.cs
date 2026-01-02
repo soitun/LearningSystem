@@ -340,18 +340,8 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            foreach (int tm in ViewData.Helper.StringTo.List<int>(id))
-            {
-                try
-                {
-                    Business.Do<IStudent>().StudentOnlineDelete(tm);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }           
+            foreach (int tm in id.ToList<int>())
+                i += Business.Do<IStudent>().StudentOnlineDelete(tm);
             return i;
         }
         /// <summary>
@@ -869,12 +859,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(ids)) return i;
-            List<int> list = ViewData.Helper.StringTo.List<int>(ids);
+            List<int> list = ids.ToList<int>();
             foreach (int s in list)
-            {
-                Business.Do<IAccounts>().AccountsDelete(s);
-                i++;
-            }
+                i += Business.Do<IAccounts>().AccountsDelete(s);           
             return i;
         }
         /// <summary>
@@ -1020,12 +1007,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            List<long> list = id.ToList<long>();
             foreach (long s in list)
-            {
-                Business.Do<IStudent>().SortDelete(s);
-                i++;
-            }
+                i += Business.Do<IStudent>().SortDelete(s);
             return i;
         }
         /// <summary>
@@ -1099,7 +1083,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<int> list = ViewData.Helper.StringTo.List<int>(id);
+            List<int> list = id.ToList<int>();
             foreach (int s in list)
                 i += Business.Do<IAccounts>().AccountsUpdate(s,
                         new WeiSha.Data.Field[] { Song.Entities.Accounts._.Sts_ID, Song.Entities.Accounts._.Sts_Name },
@@ -1121,7 +1105,7 @@ namespace Song.ViewData.Methods
             if (sort == null) throw new Exception("Not found entity for StudentSort！");
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<int> list = ViewData.Helper.StringTo.List<int>(id);
+            List<int> list = id.ToList<int>();
             foreach (int s in list)
                 i += Business.Do<IAccounts>().AccountsUpdate(s,
                         new WeiSha.Data.Field[] { Song.Entities.Accounts._.Sts_ID, Song.Entities.Accounts._.Sts_Name },
@@ -1724,7 +1708,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public int TotalOfSort(string sts)
         {
-            long[] list = Helper.StringTo.Array<long>(sts);
+            long[] list = sts.ToArray<long>();
             if (list.Length == 0) return 0;
             return Business.Do<IStudent>().TotalOfSort(list);
         }

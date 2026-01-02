@@ -144,10 +144,9 @@ namespace Song.ServiceImpls
         /// <param name="fields">字段</param>
         /// <param name="objs"></param>
         /// <returns></returns>
-        public bool SubjectUpdate(long sbjid, Field[] fields, object[] objs)
+        public int SubjectUpdate(long sbjid, Field[] fields, object[] objs)
         {
-            Gateway.Default.Update<Subject>(fields, objs,Subject._.Sbj_ID == sbjid);
-            return true;
+            return Gateway.Default.Update<Subject>(fields, objs,Subject._.Sbj_ID == sbjid);
         }
         /// <summary>
         /// 修改专业的某些项
@@ -156,13 +155,13 @@ namespace Song.ServiceImpls
         /// <param name="field">字段</param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public bool SubjectUpdate(long sbjid, Field field, object obj)
+        public int SubjectUpdate(long sbjid, Field field, object obj)
         {
-            Gateway.Default.Update<Subject>(field, obj, Subject._.Sbj_ID == sbjid);
-            return true;
+            return Gateway.Default.Update<Subject>(field, obj, Subject._.Sbj_ID == sbjid);
         }
-        public void SubjectDelete(long identify)
+        public int SubjectDelete(long identify)
         {
+            int i = 0;
             //是否存在试题
             int count = Gateway.Default.Count<Questions>(Questions._.Sbj_ID == identify);
             if (count > 0) throw new WeiSha.Core.ExceptionForPrompt("当前专业下包括" + count + "道试题，请清空后再删除！");
@@ -177,10 +176,11 @@ namespace Song.ServiceImpls
                 this.SubjectClear(identify);
                 Subject subject = Gateway.Default.From<Subject>().Where(Subject._.Sbj_ID == identify).ToFirst<Subject>();
                 WeiSha.Core.Upload.Get["Subject"].DeleteFile(subject.Sbj_Logo);
-              
-                Gateway.Default.Delete<Subject>(Subject._.Sbj_ID == identify);
+
+                i = Gateway.Default.Delete<Subject>(Subject._.Sbj_ID == identify);
                 WeiSha.Core.Upload.Get["Subject"].DeleteDirectory(identify.ToString());
             }
+            return i;
         }
 
         public void SubjectClear(long identify)

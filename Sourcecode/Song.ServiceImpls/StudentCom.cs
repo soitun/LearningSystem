@@ -1064,9 +1064,9 @@ namespace Song.ServiceImpls
         /// 删除学员在线记录
         /// </summary>
         /// <param name="identify"></param>
-        public void StudentOnlineDelete(int identify)
+        public int StudentOnlineDelete(int identify)
         {
-            Gateway.Default.Delete<LogForStudentOnline>(LogForStudentOnline._.Lso_ID == identify);
+            return Gateway.Default.Delete<LogForStudentOnline>(LogForStudentOnline._.Lso_ID == identify);
         }
         /// <summary>
         /// 分页获取

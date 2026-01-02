@@ -110,7 +110,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<int> list = ViewData.Helper.StringTo.List<int>(id);
+            List<int> list = id.ToList<int>();
             foreach (int s in list)
                 i += Business.Do<IExamination>().ExamDelete(s);
             return i;
@@ -127,7 +127,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<int> list = ViewData.Helper.StringTo.List<int>(id);
+            List<int> list = id.ToList<int>();
             foreach (int s in list)
                 i += Business.Do<IExamination>().ExamUpdate(s,
                     new WeiSha.Data.Field[] { Song.Entities.Examination._.Exam_IsUse },

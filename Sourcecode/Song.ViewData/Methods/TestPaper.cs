@@ -119,7 +119,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            List<long> list = id.ToList<long>();
             foreach (long s in list)
                 i += Business.Do<ITestPaper>().PaperDelete(s);
             return i;           
@@ -138,7 +138,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            List<long> list = id.ToList<long>();
             foreach (long s in list)
             {
                 if (rec != null)

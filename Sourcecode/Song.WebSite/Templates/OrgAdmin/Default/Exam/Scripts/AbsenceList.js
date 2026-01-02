@@ -73,7 +73,7 @@ $ready(['Components/createscore.js',
                 //获取学员分组，未参加考试（即缺考）学员的学员组
                 getsorts: function () {
                     var th = this;
-                    $api.get('Exam/Groups', { 'uid': th.entity.Exam_UID }).then(function (req) {
+                    $api.get('Exam/ScopeGroups', { 'uid': th.entity.Exam_UID }).then(function (req) {
                         if (req.data.success) {
                             th.sorts = req.data.result;
                         } else {

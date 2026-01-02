@@ -104,15 +104,15 @@ namespace Song.ViewData.Methods
             xmldoc.LoadXml(tp.Etp_FromConfig);
             //试题分类
             XmlNode nodeparts = xmldoc.SelectSingleNode("/testpaper/range/parts");
-            List<QuesPart> parts = Business.Do<IExamQues>().PartSingle(Helper.StringTo.Array<long>(nodeparts.InnerText));
+            List<QuesPart> parts = Business.Do<IExamQues>().PartSingle(nodeparts.InnerText.ToArray<long>());
             jo.Add("parts", parts?.ToJArray());
             //关联的知识点
             XmlNode nodeknls = xmldoc.SelectSingleNode("/testpaper/range/knls");
-            List<QuesKnowledge> knls = Business.Do<IExamQues>().KnlSingle(Helper.StringTo.Array<long>(nodeknls.InnerText));
+            List<QuesKnowledge> knls = Business.Do<IExamQues>().KnlSingle(nodeknls.InnerText.ToArray<long>());
             jo.Add("knls", knls?.ToJArray());
             //关联的标签
             XmlNode nodetags = xmldoc.SelectSingleNode("/testpaper/range/tags");
-            List<QuesTags> tags = Business.Do<IExamQues>().TagSingle(Helper.StringTo.Array<long>(nodetags.InnerText));
+            List<QuesTags> tags = Business.Do<IExamQues>().TagSingle(nodetags.InnerText.ToArray<long>());
             jo.Add("tags", tags?.ToJArray());
             //选择范围的试题数量
             JObject joquescount = new JObject();
@@ -229,7 +229,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            List<long> list = id.ToList<long>();
             foreach (long s in list)
                 i += Business.Do<IExamTestPaper>().PaperDelete(s);
             return i;           
@@ -243,7 +243,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            List<long> list = id.ToList<long>();
             foreach (long s in list)
                 i += Business.Do<IExamTestPaper>().PaperRecycle(s);
             return i;
@@ -260,7 +260,7 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<long> list = ViewData.Helper.StringTo.List<long>(id);
+            List<long> list = id.ToList<long>();
             foreach (long s in list)
                 i += Business.Do<IExamTestPaper>().PaperRemove(s);
             return i;

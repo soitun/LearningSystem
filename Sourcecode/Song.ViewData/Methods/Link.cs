@@ -80,19 +80,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<int> list = ViewData.Helper.StringTo.List<int>(id);
+            List<long> list = id.ToList<long>();
             foreach (int s in list)
-            {
-                try
-                {
-                    Business.Do<ILinks>().SortDelete(s);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+                i += Business.Do<ILinks>().SortDelete(s);
             return i;
         }
         /// <summary>
@@ -300,19 +290,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<int> list = ViewData.Helper.StringTo.List<int>(id);
+            List<int> list = id.ToList<int>();
             foreach (int s in list)
-            {
-                try
-                {
-                    Business.Do<ILinks>().LinkDelete(s);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+                i += Business.Do<ILinks>().LinkDelete(s);
             return i;
         }
         /// <summary>

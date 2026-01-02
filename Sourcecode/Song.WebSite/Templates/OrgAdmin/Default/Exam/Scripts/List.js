@@ -169,7 +169,7 @@ $ready(function () {
                     getgroups: function () {
                         var th = this;
                         if (th.exam.Exam_GroupType == 1) return;
-                        $api.get('Exam/Groups', { 'uid': this.exam.Exam_UID }).then(function (req) {
+                        $api.get('Exam/ScopeGroups', { 'uid': this.exam.Exam_UID }).then(function (req) {
                             if (req.data.success) {
                                 var result = req.data.result;
                                 th.groups = result;
