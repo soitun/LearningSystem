@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Song.Entities;
 using System.Data;
+using WeiSha.Data;
 
 namespace Song.ServiceInterfaces
 {
@@ -13,10 +14,6 @@ namespace Song.ServiceInterfaces
     {
 
         #region 考试管理
-        /// 添加
-        /// </summary>
-        /// <param name="entity">业务实体</param>
-        int ExamAdd(Teacher teacher,Examination entity);
         /// <summary>
         /// 整体添加
         /// </summary>
@@ -38,10 +35,17 @@ namespace Song.ServiceInterfaces
         /// <param name="groups">参考人员的范围</param>
         void ExamSave(Examination theme, Examination[] items, ExamGroup[] groups);
         /// <summary>
+        /// 修改考试主题，按条件修改
+        /// </summary>
+        /// <param name="examid">考试主题的ID</param>
+        /// <param name="fiels">要修改的字段</param>
+        /// <param name="objs">fiels对应的值</param>
+        int ExamUpdate(int examid, Field[] fiels, object[] objs);
+        /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void ExamDelete(int identify);
+        int ExamDelete(int identify);
         /// <summary>
         /// 获取单一实体对象，按主键ID；此处获取的是考试主题或场次
         /// </summary>
@@ -74,12 +78,19 @@ namespace Song.ServiceInterfaces
         /// <summary>
         /// 当前考试主题关联的学员组
         /// </summary>
-        /// <param name="uid"></param>
+        /// <param name="uid">考试主题的uid</param>
         /// <returns></returns>
-        List<StudentSort> GroupForStudentSort(string uid);  
+        List<StudentSort> ScopeForStudentSort(string uid);
+        /// <summary>
+        /// 当前考试主题关联的学员账号
+        /// </summary>
+        /// <param name="uid">考试主题的uid</param>
+        /// <returns></returns>
+        List<Accounts> ScopeForAccounts(string uid);
         /// <summary>
         /// 获取考试，不分页
         /// </summary>
+        /// <param name="orgid"></param>
         /// <param name="isUse"></param>
         /// <param name="count"></param>
         /// <returns></returns>
@@ -101,6 +112,17 @@ namespace Song.ServiceInterfaces
         /// <param name="search">考试主题检索</param>
         /// <returns></returns>
         List<Examination> GetSelfExam(int stid, DateTime? start, DateTime? end, string search);
+        /// <summary>
+        /// 分页获取当前学生要参加的考试
+        /// </summary>
+        /// <param name="stid"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="search"></param>
+        /// <param name="size"></param>
+        /// <param name="index"></param>
+        /// <param name="countSum"></param>
+        /// <returns></returns>
         List<Examination> GetSelfExam(int stid, DateTime? start, DateTime? end, string search, int size, int index, out int countSum);
         /// <summary>
         /// 判断某个考试是否允许某个学生参加

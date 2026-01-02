@@ -42,14 +42,14 @@ namespace Song.ServiceInterfaces
         /// <param name="entity">账号对象的实体</param>
         /// <param name="fiels">要修改的字段</param>
         /// <param name="objs">fiels对应的值</param>
-        void AccountsUpdate(Accounts entity, Field[] fiels, object[] objs);
+        int AccountsUpdate(Accounts entity, Field[] fiels, object[] objs);
         /// <summary>
         /// 修改账户，按条件修改
         /// </summary>
         /// <param name="acid">账号ID</param>
         /// <param name="fiels">要修改的字段</param>
         /// <param name="objs">fiels对应的值</param>
-        void AccountsUpdate(int acid, Field[] fiels, object[] objs);
+        int AccountsUpdate(int acid, Field[] fiels, object[] objs);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>

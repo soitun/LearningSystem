@@ -702,22 +702,16 @@ namespace Song.ViewData.Methods
         /// <param name="pass">审核状态</param>
         /// <returns>学员id</returns>
         [HttpPost]
-        [Admin,SuperAdmin]
+        [Admin, SuperAdmin]
         public int ModifyState(int acid, bool use, bool pass)
         {
-            try
-            {
-                Business.Do<IAccounts>().AccountsUpdate(acid,
-                    new WeiSha.Data.Field[] {
+
+            Business.Do<IAccounts>().AccountsUpdate(acid,
+                new WeiSha.Data.Field[] {
                         Song.Entities.Accounts._.Ac_IsUse,
                         Song.Entities.Accounts._.Ac_IsPass },
-                    new object[] { use, pass });
-                return acid;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+                new object[] { use, pass });
+            return acid;
         }
         /// <summary>
         /// 修改学员的照片
@@ -1105,24 +1099,11 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IAccounts>().AccountsUpdate(idval,
+            List<int> list = ViewData.Helper.StringTo.List<int>(id);
+            foreach (int s in list)
+                i += Business.Do<IAccounts>().AccountsUpdate(s,
                         new WeiSha.Data.Field[] { Song.Entities.Accounts._.Sts_ID, Song.Entities.Accounts._.Sts_Name },
-                        new object[] { 0, "" });                    
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+                        new object[] { 0, "" }); ;
             Business.Do<IStudent>().SortUpdateCount(stsid);
             return i;
         }
@@ -1140,24 +1121,11 @@ namespace Song.ViewData.Methods
             if (sort == null) throw new Exception("Not found entity for StudentSort！");
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IAccounts>().AccountsUpdate(idval,
+            List<int> list = ViewData.Helper.StringTo.List<int>(id);
+            foreach (int s in list)
+                i += Business.Do<IAccounts>().AccountsUpdate(s,
                         new WeiSha.Data.Field[] { Song.Entities.Accounts._.Sts_ID, Song.Entities.Accounts._.Sts_Name },
-                        new object[] { sort.Sts_ID, sort.Sts_Name });
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+                        new object[] { sort.Sts_ID, sort.Sts_Name });         
             Business.Do<IStudent>().SortUpdateCount();
             return i;
         }

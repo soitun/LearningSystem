@@ -303,13 +303,13 @@ namespace Song.ServiceImpls
         /// <param name="entity"></param>
         /// <param name="fiels"></param>
         /// <param name="objs"></param>
-        public void AccountsUpdate(Accounts entity, Field[] fiels, object[] objs)
+        public int AccountsUpdate(Accounts entity, Field[] fiels, object[] objs)
         {
-            Gateway.Default.Update<Accounts>(fiels, objs, Accounts._.Ac_ID == entity.Ac_ID);         
+            return Gateway.Default.Update<Accounts>(fiels, objs, Accounts._.Ac_ID == entity.Ac_ID);         
         }
-        public void AccountsUpdate(int acid, Field[] fiels, object[] objs)
+        public int AccountsUpdate(int acid, Field[] fiels, object[] objs)
         {
-            Gateway.Default.Update<Accounts>(fiels, objs, Accounts._.Ac_ID == acid);
+            return Gateway.Default.Update<Accounts>(fiels, objs, Accounts._.Ac_ID == acid);
         }
         /// <summary>
         /// 删除，按主键ID；

@@ -56,9 +56,10 @@ namespace Song.ViewData.Methods
         /// <param name="theme">考试主题的对象</param>
         /// <param name="items">考试场次的对象数组</param>
         /// <param name="groups">关联的学员组，即可以参加考试的学员组</param>
+        /// <param name="accounts"></param>
         [HttpPost]
         [Admin, Teacher]
-        public bool Add(Examination theme, Examination[] items, ExamGroup[] groups)
+        public bool Add(Examination theme, Examination[] items, ExamGroup[] groups, Exam_Accounts[] accounts)
         {
             Song.Entities.Teacher teacher = this.Teacher;
             Business.Do<IExamination>().ExamAdd(teacher, theme, items, groups);
@@ -109,22 +110,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IExamination>().ExamDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = ViewData.Helper.StringTo.List<int>(id);
+            foreach (int s in list)
+                i += Business.Do<IExamination>().ExamDelete(s);
             return i;
         }
         /// <summary>
@@ -139,25 +127,11 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Song.Entities.Examination old = Business.Do<IExamination>().ExamSingle(idval);
-                    if (old == null) continue;
-                    old.Exam_IsUse = use;
-                    Business.Do<IExamination>().ExamSave(old);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = ViewData.Helper.StringTo.List<int>(id);
+            foreach (int s in list)
+                i += Business.Do<IExamination>().ExamUpdate(s,
+                    new WeiSha.Data.Field[] { Song.Entities.Examination._.Exam_IsUse },
+                    new object[] { use });
             return i;
         }
        
@@ -286,7 +260,7 @@ namespace Song.ViewData.Methods
             if (type == "1") return "全体学员";
             if (type == "2")
             {
-                List<StudentSort> sts = Business.Do<IExamination>().GroupForStudentSort(uid);
+                List<StudentSort> sts = Business.Do<IExamination>().ScopeForStudentSort(uid);
                 int maxCount = 6;
                 string strDep = "";
                 for (int i = 0; i < sts.Count && i < maxCount; i++)
@@ -306,13 +280,22 @@ namespace Song.ViewData.Methods
             return "";
         }
         /// <summary>
-        /// 获取参考学员组的信息
+        /// 允许参考的学员组的信息
         /// </summary>
         /// <param name="uid">考试主题的uid</param>
         /// <returns>学员组</returns>
-        public List<StudentSort> Groups(string uid)
+        public List<StudentSort> ScopeGroups(string uid)
         {
-            return Business.Do<IExamination>().GroupForStudentSort(uid);
+            return Business.Do<IExamination>().ScopeForStudentSort(uid);
+        }
+        /// <summary>
+        /// 允许参考的学员信息
+        /// </summary>
+        /// <param name="uid">考试主题的uid</param>
+        /// <returns></returns>
+        public List<Accounts> ScopeAccounts(string uid)
+        {
+            return Business.Do<IExamination>().ScopeForAccounts(uid);
         }
         #endregion
 
@@ -1001,7 +984,7 @@ namespace Song.ViewData.Methods
                 //所有学员
                 case 0:
                     //当前考试限定的学生分组
-                    List<StudentSort> sts = Business.Do<IExamination>().GroupForStudentSort(theme.Exam_UID);
+                    List<StudentSort> sts = Business.Do<IExamination>().ScopeForStudentSort(theme.Exam_UID);
                     //如果没有设定分组，则取当前参加考试的学员的分组
                     if (sts == null || sts.Count < 1) sts = Business.Do<IExamination>().StudentSort4Theme(examid);
                     foreach (Song.Entities.StudentSort ss in sts)
