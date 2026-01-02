@@ -71,7 +71,8 @@ namespace Song.ViewData.Methods
                         foreach (XmlNode q in nodeques)
                         {
                             //JObject joq = new JObject();
-                            long qid= Helper.StringTo.Number<long>(q.Attributes["id"].Value);
+                            string qidstr = q.Attributes["id"]?.Value;                           
+                            long qid = qidstr.Convert<long>();
                             Song.Entities.Questions ques= Business.Do<IExamQues>().QuesSingle(qid);
                             if(ques != null)jarr.Add(ques.ToJObject());
                             //foreach (XmlAttribute att in q.Attributes)

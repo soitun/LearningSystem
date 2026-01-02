@@ -140,5 +140,11 @@ namespace Song.ViewData.Methods
             }
             return list;
         }
+
+        public List<int> StringToArray(string str)
+        {        
+            List<int> list = str.ToList<int>();
+            return list;
+        }
     }
 }

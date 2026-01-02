@@ -41,10 +41,6 @@ namespace Song.ViewData.Helper
             }
             return list;
         }
-        public static T Number<T>(object obj)
-        {
-            T t = (T)System.Convert.ChangeType(obj, typeof(T));
-            return t;
-        }
+      
     }
 }
