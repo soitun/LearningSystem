@@ -111,7 +111,7 @@
                         label-width="100px" :disabled="loadstate.update">
                         <div v-for="(m,idx) in qtypeitems" class="scoreitems" :type="m.type">
                             <el-row :gutter="20" class="ques_type">
-                                <el-col :span="16">
+                                <el-col :span="16" :info="m.ques.length<1">
                                     {{idx|chiserial}}
                                     <span v-if="m.byname!='' && m.byname!='undefined'">{{m.byname}} -
                                         <span class="truename">{{types[m.type-1]}}题</span></span>

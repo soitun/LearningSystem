@@ -65,8 +65,8 @@ $ready(function () {
                 var th = this;
                 th.loadstate.get = true;
                 //每页多少条，通过界面高度自动计算
-                var area = document.documentElement.clientHeight - 100;
-                th.form.size = Math.floor(area / 49);
+                var area = document.documentElement.clientHeight - 108;
+                th.form.size = Math.round(area / 41);
                 $api.get('Exam/ExamAdminPager', this.form).then(function (req) {
                     if (req.data.success) {
                         th.datas = req.data.result;

@@ -379,6 +379,7 @@ namespace Song.ViewData.Methods
         /// <summary>
         /// 还原逻辑删除试题分类
         /// </summary>
+        /// <param name="id">试题分类id，可以是多个，用逗号分隔</param>
         [Admin]
         [HttpPost, HttpGet(Ignore = true)]
         public int PartRecycle(string id)
