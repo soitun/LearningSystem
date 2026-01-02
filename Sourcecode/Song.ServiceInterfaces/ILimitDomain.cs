@@ -24,7 +24,7 @@ namespace Song.ServiceInterfaces
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void DomainDelete(int identify);       
+        int DomainDelete(int identify);       
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>

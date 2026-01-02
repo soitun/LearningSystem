@@ -25,12 +25,12 @@ namespace Song.ServiceInterfaces
         /// 删除充值码设置项
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void RechargeSetDelete(RechargeSet entity);
+        int RechargeSetDelete(RechargeSet entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void RechargeSetDelete(int identify);
+        int RechargeSetDelete(int identify);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>

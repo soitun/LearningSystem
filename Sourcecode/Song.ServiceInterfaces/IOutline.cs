@@ -50,7 +50,7 @@ namespace Song.ServiceInterfaces
         /// <param name="fiels"></param>
         /// <param name="objs"></param>
         /// <returns></returns>
-        bool UpdateField(long couid, long olid, Field[] fiels, object[] objs);
+        int UpdateField(long couid, long olid, Field[] fiels, object[] objs);
         /// <summary>
         /// 更新章节的试题数
         /// </summary>
@@ -69,12 +69,12 @@ namespace Song.ServiceInterfaces
         /// 删除章节
         /// </summary>
         /// <param name="entity">章节对象</param>
-        void OutlineDelete(Outline entity);
+        int OutlineDelete(Outline entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="olid">实体的主键</param>
-        void OutlineDelete(long olid);
+        int OutlineDelete(long olid);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>

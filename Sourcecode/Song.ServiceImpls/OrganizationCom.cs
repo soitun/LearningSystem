@@ -287,15 +287,16 @@ namespace Song.ServiceImpls
         /// 删除机构，按id
         /// </summary>
         /// <param name="identify"></param>
-        public void OrganDelete(int identify)
+        public int OrganDelete(int identify)
         {
             Organization org = this.OrganSingle(identify);
-            if (org.Org_IsRoot) return;
+            if (org.Org_IsRoot) return 0;
+            int i = 0;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
                 {
-                    tran.Delete<Organization>(Organization._.Org_ID == identify);
+                    i = tran.Delete<Organization>(Organization._.Org_ID == identify);
                     //删除机构下属组织
                     tran.Delete<Depart>(Depart._.Org_ID == identify);               
                     tran.Delete<Position>(Position._.Org_ID == identify);
@@ -331,6 +332,7 @@ namespace Song.ServiceImpls
                 catch (Exception ex) { tran.Rollback(); throw ex; }
             }
             this.OrganBuildCache();  //重新构建缓存
+            return i;
         }       
         public List<Organization> OrganAll(bool? isUse, int level, string search)
         {
@@ -567,12 +569,12 @@ namespace Song.ServiceImpls
         /// 根据主键删除机构等级。
         /// </summary>
         /// <param name="identify">主键id</param>
-        public bool LevelDelete(int identify)
+        public int LevelDelete(int identify)
         {
             int count = this.LevelOrganCount(identify);
             if (count > 0) throw new Exception("请删除等级下的机构");
-          
-            Gateway.Default.Delete<OrganLevel>(OrganLevel._.Olv_ID == identify);
+
+            int i = Gateway.Default.Delete<OrganLevel>(OrganLevel._.Olv_ID == identify);
             //设置默认机构等级
             int defcount = Gateway.Default.Count<OrganLevel>(OrganLevel._.Olv_IsDefault == true);
             if (defcount < 1)
@@ -584,7 +586,7 @@ namespace Song.ServiceImpls
                         OrganLevel._.Olv_ID == def.Olv_ID);                    
                 }
             }
-            return true;
+            return i;
         }
         /// <summary>
         /// 当前对象名称是否重名

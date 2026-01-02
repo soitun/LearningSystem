@@ -81,15 +81,16 @@ namespace Song.ServiceImpls
         /// 删除充值码设置项
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void RechargeSetDelete(RechargeSet entity)
+        public int RechargeSetDelete(RechargeSet entity)
         {
             int used = RechargeCodeOfCount(entity.Org_ID, entity.Rs_ID, true, true);
             if (used > 0) throw new Exception("当前设置项中涉及的充值码已经存在消费记录，不能删除！可以选择禁用。");
+            int i = 0;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
                 {
-                    tran.Delete<RechargeSet>(entity);
+                    i = tran.Delete<RechargeSet>(entity);
                     tran.Delete<RechargeCode>(RechargeCode._.Rs_ID == entity.Rs_ID);
 
                     tran.Commit();
@@ -100,15 +101,16 @@ namespace Song.ServiceImpls
                     throw ex;
                 }
             }
+            return i;
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void RechargeSetDelete(int identify)
+        public int RechargeSetDelete(int identify)
         {
             RechargeSet set = RechargeSetSingle(identify);
-            RechargeSetDelete(set);
+            return RechargeSetDelete(set);
         }
         /// <summary>
         /// 获取单一实体对象，按主键ID；

@@ -236,7 +236,7 @@ namespace Song.ServiceInterfaces
         /// 删除测试成绩，按主键ID；
         /// </summary>
         /// <param name="identify">成绩id</param>
-        void ResultsDelete(int identify);
+        int ResultsDelete(int identify);
         /// <summary>
         /// 清空某个试卷的某个学员的所有测试成绩
         /// </summary>

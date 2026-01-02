@@ -205,13 +205,13 @@ namespace Song.ServiceInterfaces
         /// 删除考试成绩
         /// </summary>
         /// <param name="id">成绩记录的id</param>
-        void ResultDelete(int id);
+        int ResultDelete(int id);
         /// <summary>
         /// 删除某个学生的某个考试的成绩
         /// </summary>
         /// <param name="stid">学员账号id</param>
         /// <param name="examid">考试id</param>
-        void ResultDelete(int stid, int examid);
+        int ResultDelete(int stid, int examid);
         /// <summary>
         /// 删除考试下的所有成绩
         /// </summary>

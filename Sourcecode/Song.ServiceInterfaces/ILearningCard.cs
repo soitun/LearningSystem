@@ -27,12 +27,12 @@ namespace Song.ServiceInterfaces
         /// 删除学习卡设置项
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void SetDelete(LearningCardSet entity);
+        int SetDelete(LearningCardSet entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void SetDelete(int identify);
+        int SetDelete(int identify);
         /// <summary>
         /// 判断学习卡名称是否重复
         /// </summary>

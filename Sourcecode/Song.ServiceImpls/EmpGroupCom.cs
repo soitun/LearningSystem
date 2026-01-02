@@ -67,37 +67,38 @@ namespace Song.ServiceImpls
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void Delete(EmpGroup entity)
+        public int Delete(EmpGroup entity)
         {
-            if (entity == null) return;
+            int i = 0;
+            if (entity == null) return i;
             //如果是系统组，则不允许删除
-            if (entity.EGrp_IsSystem) return;
+            if (entity.EGrp_IsSystem) return i;
 
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
                 {
-                    tran.Delete<EmpAcc_Group>(EmpAcc_Group._.EGrp_Id == entity.EGrp_Id);
+                    i = tran.Delete<EmpAcc_Group>(EmpAcc_Group._.EGrp_Id == entity.EGrp_Id);
                     tran.Delete<Purview>(Purview._.EGrp_Id == entity.EGrp_Id);
                     tran.Delete<EmpGroup>(entity);
                     tran.Commit();
+                    return i;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     tran.Rollback();
                     throw ex;
                 }
-
             }
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void Delete(int identify)
+        public int Delete(int identify)
         {
             EmpGroup entity = this.GetSingle(identify);
-            this.Delete(entity);                  
+            return this.Delete(entity);                  
         }        
         /// <summary>
         /// 获取单一实体对象，按主键ID；

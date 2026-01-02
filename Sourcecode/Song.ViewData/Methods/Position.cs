@@ -89,27 +89,14 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="id">岗位id，可以是多个，用逗号分隔</param>
         /// <returns>返回删除的个数</returns>
-        [HttpPost(Ignore =true),HttpDelete,Admin]
+        [HttpPost(Ignore = true), HttpDelete, Admin]
         public int Delete(string id)
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach(string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IPosition>().Delete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<IPosition>().Delete(s);            
             return i;
         }
         /// <summary>

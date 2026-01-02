@@ -275,31 +275,22 @@ namespace Song.ViewData.Methods
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
             bool issuper = this.IsSuper();    //是否超管登录
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
+            List<int> arr = id.ToList<int>();
+
+            foreach (int s in arr)
             {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
+                if (acc != null && acc.Acc_Id == s) throw new Exception("不可删除自身账号");
+                Song.Entities.EmpAccount emp = Business.Do<IEmployee>().GetSingle(s);
+                if (emp == null) continue;
+                //如果用户属于超管角色，则不允许删除
+                Song.Entities.Position posi = Business.Do<IPosition>().GetSingle(emp.Posi_Id);
+                if (posi != null)
                 {
-                    if (acc != null && acc.Acc_Id == idval) throw new Exception("不可删除自身账号");
-                    Song.Entities.EmpAccount emp = Business.Do<IEmployee>().GetSingle(idval);
-                    if (emp == null) continue;
-                    //如果用户属于超管角色，则不允许删除
-                    Song.Entities.Position posi = Business.Do<IPosition>().GetSingle(emp.Posi_Id);
-                    if (posi != null)
-                    {
-                        if (posi.Posi_IsAdmin == true && !issuper) throw new Exception("管理员不可以删除！");
-                    }
-                    Business.Do<IEmployee>().Delete(emp);
-                    LoginAdmin.Cache.Remove<EmpAccount>(emp.Acc_Id); //清理登录状态
-                    i++;
+                    if (posi.Posi_IsAdmin == true && !issuper) throw new Exception("管理员不可以删除！");
                 }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                Business.Do<IEmployee>().Delete(emp);
+                LoginAdmin.Cache.Remove<EmpAccount>(emp.Acc_Id); //清理登录状态
+                i++;
             }
             return i;
         }
@@ -592,22 +583,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IEmployee>().TitleDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> arr = id.ToList<int>();
+            foreach (int s in arr)
+                i += Business.Do<IEmployee>().TitleDelete(s);
             return i;
         }
         /// <summary>
@@ -743,22 +721,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IEmpGroup>().Delete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<IEmpGroup>().Delete(s);           
             return i;
         }
         /// <summary>

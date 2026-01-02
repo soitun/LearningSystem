@@ -220,22 +220,11 @@ namespace Song.ViewData.Methods
             Ett.Organization org = Business.Do<IOrganization>().OrganCurrent();
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
             {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    if (org != null && org.Org_ID == idval) throw new Exception("不可删除自身所有机构");
-                    Business.Do<IOrganization>().OrganDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                if (org != null && org.Org_ID == s) throw new Exception("不可删除自身所有机构");
+                i += Business.Do<IOrganization>().OrganDelete(s);
             }
             return i;
         }
@@ -485,43 +474,24 @@ namespace Song.ViewData.Methods
         /// <summary>
         /// 批量删除机构等级
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">机构等级的id</param>
         /// <returns></returns>
         [HttpDelete]
         public int LevelDelete(string id)
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            int[] idarr = new int[arr.Length];
-            for(int j = 0; j < arr.Length; j++)
+            List<int> list = id.ToList<int>();
+            for (int j = 0; j < list.Count; j++)
             {
-                int idval = 0;
-                int.TryParse(arr[j], out idval);
-                idarr[j] = idval;
-                if (idval > 0)
-                {
-                    int count = Business.Do<IOrganization>().LevelOrganCount(idval);
-                    if (count > 0)
-                    {
-                        throw new Exception("机构等级下有机构，不可以删除");
-                    }
-                }
+                if (list[j] <= 0) continue;
+                int count = Business.Do<IOrganization>().LevelOrganCount(list[j]);
+                if (count > 0) throw new Exception("机构等级下有机构，不可以删除");
             }
-            for (int j = 0; j < idarr.Length; j++)
+            for (int j = 0; j < list.Count; j++)
             {
-                if (idarr[j] > 0)
-                {
-                    try
-                    {
-                        Business.Do<IOrganization>().LevelDelete(idarr[j]);
-                        i++;
-                    }
-                    catch (Exception ex)
-                    {
-                        throw ex;
-                    }
-                }
+                if (list[j] <= 0) continue;
+                i += Business.Do<IOrganization>().LevelDelete(list[j]);
             }
             return i;
         }

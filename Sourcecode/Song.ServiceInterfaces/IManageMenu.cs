@@ -71,12 +71,12 @@ namespace Song.ServiceInterfaces
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void Delete(ManageMenu entity);
+        int Delete(ManageMenu entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void Delete(int identify);
+        int Delete(int identify);
         /// <summary>
         /// 删除，按栏目名称
         /// </summary>

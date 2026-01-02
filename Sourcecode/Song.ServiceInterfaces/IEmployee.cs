@@ -188,12 +188,12 @@ namespace Song.ServiceInterfaces
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void TitleDelete(EmpTitle entity);
+        int TitleDelete(EmpTitle entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void TitleDelete(int identify);
+        int TitleDelete(int identify);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>

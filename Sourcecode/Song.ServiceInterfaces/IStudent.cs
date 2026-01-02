@@ -251,7 +251,7 @@ namespace Song.ServiceInterfaces
         /// <param name="stsid"></param>
         /// <param name="couid"></param>
         /// <returns></returns>
-        bool SortCourseDelete(long stsid, long couid);
+        int SortCourseDelete(long stsid, long couid);
         /// <summary>
         /// 判断某个课程是否存在于学员组
         /// </summary>

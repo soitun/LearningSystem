@@ -201,15 +201,16 @@ namespace Song.ServiceImpls
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void Delete(ManageMenu entity)
+        public int Delete(ManageMenu entity)
         {
             ManageMenu dep = Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_Id == entity.MM_Id).ToFirst<ManageMenu>();
-            if (dep == null) return;
+            if (dep == null) return 0;
+            int i = 0;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
                 {
-                    this._Delete(dep.MM_UID, tran);
+                    i = this._Delete(dep.MM_UID, tran);
                     tran.Commit();
                     //执行事件
                     OnChanged?.Invoke(this, EventArgs.Empty);
@@ -220,27 +221,28 @@ namespace Song.ServiceImpls
                     throw ex;
                 }
             }
-
+            return i;
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void Delete(int identify)
+        public int Delete(int identify)
         {
 
             ManageMenu dep = Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_Id == identify).ToFirst<ManageMenu>();
-            if (dep == null) return;
+            if (dep == null) return 0;
             if (dep.MM_IsFixed)
             {
                 string msg = string.Format("菜单项：{0}，不允许被删除", dep.MM_Name);
                 throw new Exception(msg);
             }
+            int i = 0;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
                 {
-                    this._Delete(dep.MM_UID, tran);
+                    i = this._Delete(dep.MM_UID, tran);
                     tran.Commit();
                     //执行事件
                     OnChanged?.Invoke(this, EventArgs.Empty);
@@ -251,6 +253,7 @@ namespace Song.ServiceImpls
                     throw ex;
                 }
             }
+            return i;
         }
         /// <summary>
         /// 删除，按栏目名称
@@ -577,22 +580,24 @@ namespace Song.ServiceImpls
         /// 私有对象，用于删除对象的子级，以及相关信息
         /// </summary>
         /// <param name="uid"></param>
-        private void _Delete(string uid)
+        private int _Delete(string uid)
         {
-            _Delete(uid, null);
+            return _Delete(uid, null);
         }
-        private void _Delete(string uid, DbTrans tran)
+        private int _Delete(string uid, DbTrans tran)
         {
+            int i = 0;
             ManageMenu[] ws = tran.From<ManageMenu>().Where(ManageMenu._.MM_PatId == uid).ToArray<ManageMenu>();
             //删除子级
             foreach (ManageMenu w in ws)
             {
-                _Delete(w.MM_UID, tran);
+                i += _Delete(w.MM_UID, tran);
             }
             //删除菜单与权限的关联
             tran.Delete<Purview>(Purview._.MM_UID == uid);
             //删除自身
             tran.Delete<ManageMenu>(ManageMenu._.MM_UID == uid);
+            return i;
         }
         private void _Save(ManageMenu entity, int rootid)
         {

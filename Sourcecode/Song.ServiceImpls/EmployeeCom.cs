@@ -480,17 +480,17 @@ namespace Song.ServiceImpls
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void TitleDelete(EmpTitle entity)
+        public int TitleDelete(EmpTitle entity)
         {
-            this.TitleDelete(entity.Title_Id);
+            return this.TitleDelete(entity.Title_Id);
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void TitleDelete(int identify)
+        public int TitleDelete(int identify)
         {
-            Gateway.Default.Delete<EmpTitle>(EmpTitle._.Title_Id == identify);
+            return Gateway.Default.Delete<EmpTitle>(EmpTitle._.Title_Id == identify);
         }
         /// <summary>
         /// 获取单一实体对象，按主键ID；

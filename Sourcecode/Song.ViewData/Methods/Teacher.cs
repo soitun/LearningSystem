@@ -116,22 +116,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<ITeacher>().SortDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<ITeacher>().SortDelete(s);
             return i;
         }
         /// <summary>
@@ -143,15 +130,7 @@ namespace Song.ViewData.Methods
         [Admin]
         public bool TitleUpdateTaxis(Song.Entities.TeacherSort[] items)
         {
-            try
-            {
-                Business.Do<ITeacher>().SortUpdateTaxis(items);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return Business.Do<ITeacher>().SortUpdateTaxis(items);                
         }
         /// <summary>
         /// 教师职称的课程数
@@ -329,22 +308,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<ITeacher>().TeacherDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<ITeacher>().TeacherDelete(s);
             return i;
         }
         /// <summary>
@@ -358,18 +324,11 @@ namespace Song.ViewData.Methods
         [Admin, SuperAdmin]
         public int ModifyState(int id, bool use, bool pass)
         {
-            try
-            {
-                return Business.Do<ITeacher>().TeacherUpdate(id,
-                    new WeiSha.Data.Field[] {
+            return Business.Do<ITeacher>().TeacherUpdate(id,
+                new WeiSha.Data.Field[] {
                         Song.Entities.Teacher._.Th_IsUse,
                         Song.Entities.Teacher._.Th_IsPass },
-                    new object[] { use, pass });
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+                new object[] { use, pass });
         }
         /// <summary>
         /// 修改教师的照片

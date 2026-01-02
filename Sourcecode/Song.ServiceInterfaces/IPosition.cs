@@ -24,23 +24,23 @@ namespace Song.ServiceInterfaces
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void Delete(Position entity);
+        int Delete(Position entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void Delete(int identify);
+        int Delete(int identify);
         /// <summary>
         /// 删除，按职位名称
         /// </summary>
         /// <param name="orgid"></param>
         /// <param name="name">职位名称</param>
-        void Delete(int orgid, string name);
+        int Delete(int orgid, string name);
         /// <summary>
         /// 删除与员工之间的关联
         /// </summary>
         /// <param name="identify"></param>
-        void DeleteRelation4Emp(int identify);
+        int DeleteRelation4Emp(int identify);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>

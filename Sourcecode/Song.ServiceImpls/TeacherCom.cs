@@ -151,18 +151,18 @@ namespace Song.ServiceImpls
         {
             return Gateway.Default.Update<Teacher>(fiels, objs, Teacher._.Th_ID == id);
         }
-        public void TeacherDelete(int identify)
+        public int TeacherDelete(int identify)
         {
             Song.Entities.Teacher th = this.TeacherSingle(identify);
-            if (th == null) return;
-            this.TeacherDelete(th);   
+            if (th == null) return 0;
+            return this.TeacherDelete(th);   
         }
 
-        public void TeacherDelete(Teacher entity)
+        public int TeacherDelete(Teacher entity)
         {
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
-                TeacherDelete(entity, tran, true);
+                return TeacherDelete(entity, tran, true);
             }
         }
         /// <summary>
@@ -171,12 +171,13 @@ namespace Song.ServiceImpls
         /// <param name="entity">教师数据实体</param>
         /// <param name="tran">事务</param>
         /// <param name="updateAccount">是否更新账号accounts表中的状态，true为更新，当教师删除后账号不具有教师角色</param>
-        public void TeacherDelete(Teacher entity, DbTrans tran, bool updateAccount)
+        public int TeacherDelete(Teacher entity, DbTrans tran, bool updateAccount)
         {
             if (tran == null) tran = Gateway.Default.BeginTrans();
+            int i = 0;
             try
             {
-                tran.Delete<Teacher>(Teacher._.Th_ID == entity.Th_ID);
+                i = tran.Delete<Teacher>(Teacher._.Th_ID == entity.Th_ID);
                 tran.Delete<TeacherHistory>(TeacherHistory._.Th_ID == entity.Th_ID);
                 if (updateAccount)
                 {
@@ -192,6 +193,7 @@ namespace Song.ServiceImpls
                 tran.Rollback();
                 throw ex;
             }
+            return i;
         }
         public Teacher TeacherSingle(int identify)
         {

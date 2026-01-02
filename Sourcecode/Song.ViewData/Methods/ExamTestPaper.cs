@@ -278,17 +278,15 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
+            List<long> arr = id.ToList<long>();
+            foreach (long s in arr)
             {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
+                if (s == 0) continue;
                 try
                 {
                     if (rec != null)
                     {
-                        Business.Do<IExamTestPaper>().PaperUpdate(idval,
+                        Business.Do<IExamTestPaper>().PaperUpdate(s,
                         new WeiSha.Data.Field[] {
                         Song.Entities.ExamTestPaper._.Etp_IsUse,
                         Song.Entities.ExamTestPaper._.Etp_IsRec },
@@ -296,7 +294,7 @@ namespace Song.ViewData.Methods
                     }
                     else
                     {
-                        Business.Do<IExamTestPaper>().PaperUpdate(idval, new WeiSha.Data.Field[] { Song.Entities.ExamTestPaper._.Etp_IsUse },
+                        Business.Do<IExamTestPaper>().PaperUpdate(s, new WeiSha.Data.Field[] { Song.Entities.ExamTestPaper._.Etp_IsUse },
                             new object[] { use });
                     }
                     i++;

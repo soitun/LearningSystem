@@ -54,9 +54,10 @@ namespace Song.ServiceImpls
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void Delete(Position entity)
+        public int Delete(Position entity)
         {
-            if (entity.Posi_IsAdmin) return;
+            if (entity.Posi_IsAdmin) return 0;
+            int i = 0;
             //删除权限关联
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
@@ -65,7 +66,7 @@ namespace Song.ServiceImpls
                     tran.Delete<Purview>(Purview._.Posi_Id == entity.Posi_Id);
                     //修改员工信息中的岗位名称
                     tran.Update<EmpAccount>(new Field[] { EmpAccount._.Posi_Name }, new object[] { "" }, EmpAccount._.Posi_Id == entity.Posi_Id);
-                    tran.Delete<Position>(entity);
+                    i += tran.Delete<Position>(entity);
                     tran.Commit();
                 }
                 catch(Exception ex)
@@ -74,32 +75,33 @@ namespace Song.ServiceImpls
                     throw ex;
                 }               
             }
+            return i;
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void Delete(int identify)
+        public int Delete(int identify)
         {
             Song.Entities.Position entity = this.GetSingle(identify);
-            this.Delete(entity);            
+            return this.Delete(entity);            
         }
         /// <summary>
         /// 删除，按职位名称
         /// </summary>
         /// <param name="name">职位名称</param>
-        public void Delete(int orgid, string name)
+        public int Delete(int orgid, string name)
         {
             Song.Entities.Position entity = this.GetSingle(orgid,name);
-            this.Delete(entity); 
+            return this.Delete(entity); 
         }
         /// <summary>
         /// 删除与员工之间的关联
         /// </summary>
         /// <param name="identify"></param>
-        public void DeleteRelation4Emp(int identify)
+        public int DeleteRelation4Emp(int identify)
         {
-            Gateway.Default.Update<EmpAccount>(new Field[] { EmpAccount._.Posi_Id,EmpAccount._.Posi_Name}, new object[] { -1,"" }, EmpAccount._.Posi_Id == identify);
+            return Gateway.Default.Update<EmpAccount>(new Field[] { EmpAccount._.Posi_Id,EmpAccount._.Posi_Name}, new object[] { -1,"" }, EmpAccount._.Posi_Id == identify);
         }
         /// <summary>
         /// 获取单一实体对象，按主键ID；

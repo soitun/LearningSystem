@@ -451,22 +451,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IContents>().ArticleDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<long> list = id.ToList<long>();
+            foreach (long s in list)
+                i += Business.Do<IContents>().ArticleDelete(s);
             return i;
         }
         /// <summary>

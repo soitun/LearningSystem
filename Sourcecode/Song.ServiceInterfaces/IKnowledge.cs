@@ -26,7 +26,7 @@ namespace Song.ServiceInterfaces
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void KnowledgeDelete(long identify);
+        int KnowledgeDelete(long identify);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>

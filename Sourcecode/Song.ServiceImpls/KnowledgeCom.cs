@@ -52,10 +52,11 @@ namespace Song.ServiceImpls
             Gateway.Default.Save<Knowledge>(entity);
         }
 
-        public void KnowledgeDelete(long identify)
+        public int KnowledgeDelete(long identify)
         {
-            Gateway.Default.Delete<Knowledge>(Knowledge._.Kn_ID == identify);
+            int i = Gateway.Default.Delete<Knowledge>(Knowledge._.Kn_ID == identify);
             WeiSha.Core.Upload.Get["Knowledge"].DeleteDirectory(identify.ToString());
+            return i;
         }
 
         public Knowledge KnowledgeSingle(long identify)

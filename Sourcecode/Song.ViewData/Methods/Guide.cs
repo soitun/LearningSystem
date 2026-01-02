@@ -70,28 +70,15 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="id">账户id，可以是多个，用逗号分隔</param>
         /// <returns></returns>
-        [Admin,Teacher]
+        [Admin, Teacher]
         [HttpDelete]
         public int ColumnsDelete(string id)
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IGuide>().ColumnsDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<IGuide>().ColumnsDelete(s);
             return i;
         }
         /// <summary>
@@ -212,26 +199,13 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(guid)) return i;
-            string[] arr = guid.Split(',');
-            foreach (string s in arr)
-            {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IGuide>().GuideUpdate(idval,
-                    new WeiSha.Data.Field[] {
+            List<long> list = guid.ToList<long>();
+            foreach (long s in list)
+                i += Business.Do<IGuide>().GuideUpdate(s,
+                                    new WeiSha.Data.Field[] {
                         Song.Entities.Guide._.Gu_IsShow,
                         Song.Entities.Guide._.Gu_IsUse },
-                    new object[] { show, use });
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+                                    new object[] { show, use });
             return i;
         }
         /// <summary>
@@ -245,22 +219,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IGuide>().GuideDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<long> list = id.ToList<long>();
+            foreach (long s in list)
+                i += Business.Do<IGuide>().GuideDelete(s);
             return i;
         }
         /// <summary>

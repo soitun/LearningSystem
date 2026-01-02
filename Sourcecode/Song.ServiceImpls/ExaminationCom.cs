@@ -624,24 +624,24 @@ namespace Song.ServiceImpls
         /// 删除考试成绩
         /// </summary>
         /// <param name="id"></param>
-        public void ResultDelete(int id)
+        public int ResultDelete(int id)
         {
             ExamResults exr = Gateway.Default.From<ExamResults>().Where(ExamResults._.Exr_ID == id).ToFirst<ExamResults>();
-            if (exr == null) return;
+            if (exr == null) return 0;
 
             List<ExamResults> results = Gateway.Default.From<ExamResults>()
                 .Where(ExamResults._.Exam_ID == exr.Exam_ID && ExamResults._.Ac_ID == exr.Ac_ID)
                 .ToList<ExamResults>();
-            if (results.Count <= 1) ResultDelete(exr.Ac_ID, exr.Exam_ID);
+            if (results.Count <= 1)return ResultDelete(exr.Ac_ID, exr.Exam_ID);
             else
-                Gateway.Default.Delete<ExamResults>(ExamResults._.Exr_ID == id);
+                return Gateway.Default.Delete<ExamResults>(ExamResults._.Exr_ID == id);
         }
         /// <summary>
         /// 删除某个员工的某个考试的成绩
         /// </summary>
         /// <param name="stid"></param>
         /// <param name="examid"></param>
-        public void ResultDelete(int stid, int examid)
+        public int ResultDelete(int stid, int examid)
         {
             Examination exam = Gateway.Default.From<Examination>().Where(Examination._.Exam_ID == examid).ToFirst<Examination>();
             if (exam != null)
@@ -654,7 +654,7 @@ namespace Song.ServiceImpls
             WhereClip wc = new WhereClip();
             if (stid > -1) wc.And(ExamResults._.Ac_ID == stid);
             if (examid > -1) wc.And(ExamResults._.Exam_ID == examid);
-            Gateway.Default.Delete<ExamResults>(wc);
+            return Gateway.Default.Delete<ExamResults>(wc);
         }
         /// <summary>
         /// 删除考试下的所有成绩

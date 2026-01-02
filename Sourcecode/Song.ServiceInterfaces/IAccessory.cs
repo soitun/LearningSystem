@@ -26,23 +26,23 @@ namespace Song.ServiceInterfaces
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void Delete(int identify);
+        int Delete(int identify);
         /// <summary>
         /// 删除，按系统唯一id
         /// </summary>
         /// <param name="uid">系统唯一id</param>
-        void Delete(string uid, string type);
+        int Delete(string uid, string type);
         /// <summary>
         /// 删除
         /// </summary>
         /// <param name="entity"></param>
-        void Delete(Accessory entity);
+        int Delete(Accessory entity);
         /// <summary>
         /// 删除
         /// </summary>
         /// <param name="uid"></param>
         /// <param name="tran">事务</param>
-        void Delete(string uid, WeiSha.Data.DbTrans tran);
+        int Delete(string uid, WeiSha.Data.DbTrans tran);
         //void DeleteBatch(string uid);
         /// <summary>
         /// 获取单一实体对象，按主键ID；

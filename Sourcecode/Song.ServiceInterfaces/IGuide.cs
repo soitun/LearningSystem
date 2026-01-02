@@ -29,17 +29,17 @@ namespace Song.ServiceInterfaces
         /// <param name="guid">公告id</param>
         /// <param name="fiels"></param>
         /// <param name="objs"></param>
-        void GuideUpdate(long guid, Field[] fiels, object[] objs);
+        int GuideUpdate(long guid, Field[] fiels, object[] objs);
         /// <summary>
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void GuideDelete(Guide entity);
+        int GuideDelete(Guide entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void GuideDelete(long identify);
+        int GuideDelete(long identify);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>
@@ -108,12 +108,12 @@ namespace Song.ServiceInterfaces
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void ColumnsDelete(GuideColumns entity);
+        int ColumnsDelete(GuideColumns entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void ColumnsDelete(int identify);
+        int ColumnsDelete(int identify);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>

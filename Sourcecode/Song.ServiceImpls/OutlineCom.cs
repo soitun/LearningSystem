@@ -236,17 +236,10 @@ namespace Song.ServiceImpls
         /// <param name="fiels"></param>
         /// <param name="objs"></param>
         /// <returns></returns>
-        public bool UpdateField(long couid,long olid, Field[] fiels, object[] objs)
+        public int UpdateField(long couid,long olid, Field[] fiels, object[] objs)
         {
-            try
-            {
-                Gateway.Default.Update<Outline>(fiels, objs, Outline._.Ol_ID == olid);               
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return Gateway.Default.Update<Outline>(fiels, objs, Outline._.Ol_ID == olid);             
+
         }
         /// <summary>
         /// 更新章节的试题数
@@ -368,9 +361,10 @@ namespace Song.ServiceImpls
         /// 删除章节
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void OutlineDelete(Outline entity)
+        public int OutlineDelete(Outline entity)
         {
-            if (entity == null) return;
+            if (entity == null) return 0;
+            int i = 0;
             List<Song.Entities.Accessory> acs = Business.Do<IAccessory>().GetAll(entity.Ol_UID);
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
@@ -384,7 +378,7 @@ namespace Song.ServiceImpls
                     tran.Delete<LogForStudentStudy>(LogForStudentStudy._.Ol_ID == entity.Ol_ID);
                     tran.Delete<LogForStudentQuestions>(LogForStudentQuestions._.Ol_ID == entity.Ol_ID);
                     //删除章节
-                    tran.Delete<Outline>(Outline._.Ol_ID == entity.Ol_ID);
+                    i = tran.Delete<Outline>(Outline._.Ol_ID == entity.Ol_ID);
                     tran.Commit();
                     //删除直播流
                     if (!string.IsNullOrWhiteSpace(entity.Ol_LiveID))
@@ -414,15 +408,16 @@ namespace Song.ServiceImpls
                     throw ex;
                 }              
             }
+            return i;
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void OutlineDelete(long identify)
+        public int OutlineDelete(long identify)
         {
             Song.Entities.Outline ol = this.OutlineSingle(identify);
-            this.OutlineDelete(ol);        
+            return this.OutlineDelete(ol);        
         }
         /// <summary>
         /// 获取单一实体对象，按主键ID；

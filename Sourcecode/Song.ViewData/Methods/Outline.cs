@@ -76,33 +76,21 @@ namespace Song.ViewData.Methods
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
             List<long> coulist = new List<long>();      //章节所属课程的id集体
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
             {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-
-                    Business.Do<IOutline>().UpdateField(0, idval,
-                    new WeiSha.Data.Field[] {
+                if (s == 0) continue;
+                i += Business.Do<IOutline>().UpdateField(0, s,
+                new WeiSha.Data.Field[] {
                         Song.Entities.Outline._.Ol_IsUse,Song.Entities.Outline._.Ol_IsFinish,Song.Entities.Outline._.Ol_IsFree },
-                    new object[] { (bool)use, (bool)finish, (bool)free });
-                    if (couid <= 0)
-                    {
-                        Song.Entities.Outline ol = Business.Do<IOutline>().OutlineSingle(idval);
-                        if (ol != null && !coulist.Contains(ol.Cou_ID)) coulist.Add(ol.Cou_ID);
-                    }
-                    i++;
-                }
-                catch (Exception ex)
+                new object[] { (bool)use, (bool)finish, (bool)free });
+                if (couid <= 0)
                 {
-                    throw ex;
+                    Song.Entities.Outline ol = Business.Do<IOutline>().OutlineSingle(s);
+                    if (ol != null && !coulist.Contains(ol.Cou_ID)) coulist.Add(ol.Cou_ID);
                 }
-            }           
+            }
             return i;
-
         }
         /// <summary>
         /// 更改章节的排序
@@ -113,43 +101,22 @@ namespace Song.ViewData.Methods
         [Admin, Teacher]
         public bool ModifyTaxis(Song.Entities.Outline[] list)
         {
-            try
-            {
-                Business.Do<IOutline>().UpdateTaxis(list);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return Business.Do<IOutline>().UpdateTaxis(list);
         }
         /// <summary>
         /// 删除课程章节
         /// </summary>
         /// <param name="id">账户id，可以是多个，用逗号分隔</param>
         /// <returns></returns>
-        [Admin,Teacher]
+        [Admin, Teacher]
         [HttpDelete]
         public int Delete(string id)
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IOutline>().OutlineDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<long> list = id.ToList<long>();
+            foreach (long s in list)
+                i += Business.Do<IOutline>().OutlineDelete(s);
             return i;
         }
         /// <summary>

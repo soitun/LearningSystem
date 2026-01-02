@@ -79,32 +79,34 @@ namespace Song.ServiceImpls
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void Delete(int identify)
+        public int Delete(int identify)
         {
             Accessory ac = this.GetSingle(identify);
-            if (ac == null) return;
-            this.Delete(ac);
+            if (ac == null) return 0;
+            return this.Delete(ac);
         }
         /// <summary>
         /// 删除，按系统唯一id
         /// </summary>
         /// <param name="uid">系统唯一id</param>
         /// <param name="type"></param>
-        public void Delete(string uid, string type)
+        public int Delete(string uid, string type)
         {
             WhereClip wc = Accessory._.As_Uid == uid;
             if (!string.IsNullOrWhiteSpace(type))
                 wc.And(Accessory._.As_Type == type);
             List<Accessory> list = Gateway.Default.From<Accessory>().Where(wc).ToList<Accessory>();
-            foreach (Accessory ac in list)
-                this.Delete(ac);
+            int i = 0;
+            foreach (Accessory ac in list) i += this.Delete(ac);
+            return i;
         }
         /// <summary>
         /// 删除
         /// </summary>
         /// <param name="ac"></param>
-        public void Delete(Accessory ac)
+        public int Delete(Accessory ac)
         {
+            int i = 0;
             //判断当前附件的文件是否存在其它的引用
             int count = Gateway.Default.Count<Accessory>(Accessory._.As_Id != ac.As_Id && Accessory._.As_Type == ac.As_Type && Accessory._.As_FileName == ac.As_FileName);
             if (count < 1)
@@ -117,20 +119,21 @@ namespace Song.ServiceImpls
                     WeiSha.Core.Upload.Get[ac.As_Type].DeleteFile(name + ".mp4");
                 }
             }
-            Gateway.Default.Delete<Accessory>(Accessory._.As_Id == ac.As_Id);
+            i = Gateway.Default.Delete<Accessory>(Accessory._.As_Id == ac.As_Id);
             //如果是视频,设置该视频所在的章节是否有视频
             if (ac.As_Type == "CourseVideo" || ac.As_Type == "Course")
             {
                 Song.Entities.Outline outline = Gateway.Default.From<Outline>().Where(Outline._.Ol_UID == ac.As_Uid).ToFirst<Outline>();
                 if (outline != null) Business.Do<IOutline>().OutlineSave(outline);
             }
+            return i;
         }
 
-        public void Delete(string uid, WeiSha.Data.DbTrans tran)
+        public int Delete(string uid, WeiSha.Data.DbTrans tran)
         {
             List<Accessory> acs = this.GetAll(uid);
-            if (acs == null) return;
-            tran.Delete<Accessory>(Accessory._.As_Uid == uid);
+            if (acs == null) return 0;
+            int i = tran.Delete<Accessory>(Accessory._.As_Uid == uid);
             foreach (Accessory ac in acs)
             {
                 try
@@ -152,7 +155,7 @@ namespace Song.ServiceImpls
                 {
                 }
             }
-            
+            return i;
         }
         /// <summary>
         /// 获取单一实体对象，按主键ID；

@@ -268,19 +268,20 @@ namespace Song.ServiceImpls
         /// 删除课程
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void CourseDelete(Course entity)
+        public int CourseDelete(Course entity)
         {
-            if (entity == null) return;
+            if (entity == null) return 0;
+            int i = 0;
             //是否有下级
             bool isExist = CourseIsChildren(entity.Org_ID, entity.Cou_ID, null);
             if (isExist) throw new Exception("当前课程下还有子课程，请先删除子课程。");
-          
+
             //Song.Entities.GuideColumns[] gcs = Business.Do<IGuide>().GetColumnsAll(entity.Cou_ID,string.Empty, null);
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
-                {                   
-                    tran.Delete<CoursePrice>(CoursePrice._.Cou_UID == entity.Cou_UID);
+                {
+                    i = tran.Delete<CoursePrice>(CoursePrice._.Cou_UID == entity.Cou_UID);
                     //删除购买记录
                     tran.Delete<Student_Course>(Student_Course._.Cou_ID == entity.Cou_ID && Student_Course._.Stc_Type != 2);
                     //删除学员组与课程的关联
@@ -303,15 +304,16 @@ namespace Song.ServiceImpls
                     throw ex;
                 }
             }
+            return i;
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void CourseDelete(long identify)
+        public int CourseDelete(long identify)
         {
             Song.Entities.Course course = this.CourseSingle(identify);
-            this.CourseDelete(course);
+            return this.CourseDelete(course);
         }
         /// <summary>
         /// 获取单一实体对象，按主键ID；
@@ -1845,28 +1847,31 @@ namespace Song.ServiceImpls
         /// 删除价格记录
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void PriceDelete(CoursePrice entity)
+        public int PriceDelete(CoursePrice entity)
         {
-            Gateway.Default.Delete<CoursePrice>(entity);
+            int i = Gateway.Default.Delete<CoursePrice>(entity);
             PriceSetCourse(entity.Cou_UID);
+            return i;
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void PriceDelete(int identify)
+        public int PriceDelete(int identify)
         {
             CoursePrice p = Gateway.Default.From<CoursePrice>().Where(CoursePrice._.CP_ID == identify).ToFirst<CoursePrice>();
-            if (p != null) PriceDelete(p);
+            if (p != null) return PriceDelete(p);
+            return 0;
         }
         /// <summary>
         /// 删除，按全局唯一标识
         /// </summary>
         /// <param name="uid"></param>
-        public void PriceDelete(string uid)
+        public int PriceDelete(string uid)
         {
-            Gateway.Default.Delete<CoursePrice>(CoursePrice._.Cou_UID == uid);
+            int i = Gateway.Default.Delete<CoursePrice>(CoursePrice._.Cou_UID == uid);
             PriceSetCourse(uid);
+            return i;
         }
         /// <summary>
         /// 获取单一实体对象，按主键ID；

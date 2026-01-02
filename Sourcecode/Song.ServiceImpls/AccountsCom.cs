@@ -315,18 +315,19 @@ namespace Song.ServiceImpls
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void AccountsDelete(int identify)
+        public int AccountsDelete(int identify)
         {
             Song.Entities.Accounts ac = this.AccountsSingle(identify);
-            if (ac == null) return;
-            this.AccountsDelete(ac);
+            if (ac == null) return 0;
+            return this.AccountsDelete(ac);
         }
         /// <summary>
         /// 删除账户
         /// </summary>
         /// <param name="entity"></param>
-        public void AccountsDelete(Song.Entities.Accounts entity)
+        public int AccountsDelete(Song.Entities.Accounts entity)
         {
+            int i = 0;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
@@ -359,7 +360,7 @@ namespace Song.ServiceImpls
                     //下级学员全部提升一级                    
                     tran.Update<Accounts>(new Field[] { Accounts._.Ac_PID }, new object[] { entity.Ac_PID }, Accounts._.Ac_PID == entity.Ac_ID);
 
-                    tran.Delete<Accounts>(Accounts._.Ac_ID == entity.Ac_ID);                  
+                    i = tran.Delete<Accounts>(Accounts._.Ac_ID == entity.Ac_ID);         
                     //删除教师
                     Song.Entities.Teacher th = tran.From<Teacher>().Where(Teacher._.Ac_ID == entity.Ac_ID).ToFirst<Teacher>();
                     if (th != null) Business.Do<ITeacher>().TeacherDelete(th, tran, false);
@@ -377,6 +378,7 @@ namespace Song.ServiceImpls
                     throw ex;
                 }   
             }
+            return i;
         }
         /// <summary>
         /// 获取单一实体对象，按主键ID；
@@ -1918,17 +1920,17 @@ namespace Song.ServiceImpls
         /// 删除流水
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void MoneyDelete(MoneyAccount entity)
+        public int MoneyDelete(MoneyAccount entity)
         {
-            Gateway.Default.Delete<MoneyAccount>(MoneyAccount._.Ma_ID == entity.Ma_ID);
+            return Gateway.Default.Delete<MoneyAccount>(MoneyAccount._.Ma_ID == entity.Ma_ID);
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void MoneyDelete(int identify)
+        public int MoneyDelete(int identify)
         {
-            Gateway.Default.Delete<MoneyAccount>(MoneyAccount._.Ma_ID == identify);
+            return Gateway.Default.Delete<MoneyAccount>(MoneyAccount._.Ma_ID == identify);
         }
         /// <summary>
         /// 获取单一实体对象，按主键ID；

@@ -1182,27 +1182,14 @@ namespace Song.ViewData.Methods
         /// <param name="examid">考试id</param>
         /// <returns></returns>
         [HttpDelete]
-        public int ResultDelete4Acc(string acid,int examid)
+        public int ResultDelete4Acc(string acid, int examid)
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(acid)) return i;
-            string[] arr = acid.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IExamination>().ResultDelete(idval, examid);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-            return i; 
+            List<int> list = acid.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<IExamination>().ResultDelete(s, examid);
+            return i;
         }
         /// <summary>
         /// 删除考试成绩，按成绩记录的id
@@ -1214,22 +1201,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(exrid)) return i;
-            string[] arr = exrid.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IExamination>().ResultDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = exrid.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<IExamination>().ResultDelete(s);
             return i;
         }
         /// <summary>
@@ -1358,12 +1332,7 @@ namespace Song.ViewData.Methods
         [HttpPost]
         public JObject ResultsExport4Eaxm(int examid,string sorts)
         {           
-            List<long> sortsid = new List<long>();
-            foreach (string sts in sorts.Split(','))
-            {
-                long tm = sts.Convert<long>();
-                if (tm > 0) sortsid.Add(tm);
-            }
+            List<long> sortsid = sorts.ToList<long>();
             //导出文件的位置
             string rootpath = WeiSha.Core.Upload.Get["Temp"].Physics + outputPath + "\\" + examid + "\\";
             if (!System.IO.Directory.Exists(rootpath))
@@ -1388,12 +1357,7 @@ namespace Song.ViewData.Methods
         [HttpPost]
         public JObject ResultsExport4Theme(int examid, string sorts)
         {
-            List<long> sortsid = new List<long>();
-            foreach (string sts in sorts.Split(','))
-            {
-                long tm = sts.Convert<long>();
-                if (tm > 0) sortsid.Add(tm);
-            }
+            List<long> sortsid = sorts.ToList<long>();
             //导出文件的位置
             string rootpath = WeiSha.Core.Upload.Get["Temp"].Physics + outputPath + "\\" + examid + "\\";
             if (!System.IO.Directory.Exists(rootpath))

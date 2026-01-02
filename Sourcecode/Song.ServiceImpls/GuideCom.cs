@@ -74,16 +74,17 @@ namespace Song.ServiceImpls
         /// <param name="guid">公告id</param>
         /// <param name="fiels"></param>
         /// <param name="objs"></param>
-        public void GuideUpdate(long guid, Field[] fiels, object[] objs)
+        public int GuideUpdate(long guid, Field[] fiels, object[] objs)
         {
-            Gateway.Default.Update<Guide>(fiels, objs, Guide._.Gu_ID == guid);
+            return Gateway.Default.Update<Guide>(fiels, objs, Guide._.Gu_ID == guid);
         }
         /// <summary>
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void GuideDelete(Guide entity)
+        public int GuideDelete(Guide entity)
         {
+            int i = 0;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
@@ -97,7 +98,7 @@ namespace Song.ServiceImpls
                         if (System.IO.File.Exists(img))
                             System.IO.File.Delete(img);
                     }
-                    tran.Delete<Guide>(Guide._.Gu_ID == entity.Gu_ID);
+                    i = tran.Delete<Guide>(Guide._.Gu_ID == entity.Gu_ID);
                     WeiSha.Core.Upload.Get["Guide"].DeleteDirectory(entity.Gu_ID.ToString());
                     tran.Commit();
                 }
@@ -106,16 +107,17 @@ namespace Song.ServiceImpls
                     tran.Rollback();
                     throw ex;
                 }
-            }       
+            }  
+            return i;
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void GuideDelete(long identify)
+        public int GuideDelete(long identify)
         {
             Song.Entities.Guide guide = this.GuideSingle(identify);
-            GuideDelete(guide);
+            return GuideDelete(guide);
         }
         /// <summary>
         /// 当前新闻的上一条新闻
@@ -315,22 +317,24 @@ namespace Song.ServiceImpls
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void ColumnsDelete(GuideColumns entity)
+        public int ColumnsDelete(GuideColumns entity)
         {
+            int i = 0;
             Song.Entities.GuideColumns[] cols = GetColumnsChild(entity.Cou_ID, entity.Gc_UID, null);
             foreach (Song.Entities.GuideColumns cl in cols)
-                ColumnsDelete(cl);
+                i += ColumnsDelete(cl);
             Gateway.Default.Delete<Guide>(Guide._.Gc_UID == entity.Gc_UID);
-            Gateway.Default.Delete<GuideColumns>(GuideColumns._.Gc_ID == entity.Gc_ID);
+            i += Gateway.Default.Delete<GuideColumns>(GuideColumns._.Gc_ID == entity.Gc_ID);
+            return i;
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void ColumnsDelete(int identify)
+        public int ColumnsDelete(int identify)
         {
             Song.Entities.GuideColumns col = ColumnsSingle(identify);
-            ColumnsDelete(col);
+            return ColumnsDelete(col);
         }        
         /// <summary>
         /// 获取单一实体对象，按主键ID；

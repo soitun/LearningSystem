@@ -768,13 +768,14 @@ namespace Song.ServiceImpls
         /// <param name="stsid"></param>
         /// <param name="couid"></param>
         /// <returns></returns>
-        public bool SortCourseDelete(long stsid, long couid)
+        public int SortCourseDelete(long stsid, long couid)
         {
+            int i = 0;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
                 {
-                    tran.Delete<StudentSort_Course>(StudentSort_Course._.Sts_ID == stsid && StudentSort_Course._.Cou_ID == couid);
+                    i = tran.Delete<StudentSort_Course>(StudentSort_Course._.Sts_ID == stsid && StudentSort_Course._.Cou_ID == couid);
                     //在学员与课程的记录中，相关课程禁用
                     tran.Update<Student_Course>(
                        new Field[] { Student_Course._.Stc_IsEnable },
@@ -784,13 +785,13 @@ namespace Song.ServiceImpls
                     tran.Commit();
                     this._update_cache(stsid);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     tran.Rollback();
                     throw ex;
                 }
             }
-            return true;
+            return i;
         }
         /// <summary>
         /// 判断某个课程是否存在于学员组

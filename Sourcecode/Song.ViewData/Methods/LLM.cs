@@ -128,23 +128,10 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(ids)) return i;
-            string[] arr = ids.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<ILargeLanguage>().RecordsDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-            return i;         
+            List<int> list = ids.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<ILargeLanguage>().RecordsDelete(s);
+            return i;
         }
         /// <summary>
         /// 删除学员所有交流信息

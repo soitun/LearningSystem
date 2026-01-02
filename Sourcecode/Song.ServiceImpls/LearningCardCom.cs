@@ -208,15 +208,16 @@ namespace Song.ServiceImpls
         /// 删除学习卡设置项
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void SetDelete(LearningCardSet entity)
+        public int SetDelete(LearningCardSet entity)
         {
             int used = CardOfCount(entity.Org_ID, entity.Lcs_ID, true, true, null);
             if (used > 0) throw new Exception("当前设置项中涉及的学习卡已经存在使用记录，不能删除！可以选择禁用。");
+            int i;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
                 {
-                    tran.Delete<LearningCardSet>(entity);
+                   i= tran.Delete<LearningCardSet>(entity);
                     tran.Delete<LearningCard>(LearningCard._.Lcs_ID == entity.Lcs_ID);
 
                     tran.Commit();
@@ -227,15 +228,16 @@ namespace Song.ServiceImpls
                     throw ex;
                 }
             }
+            return i;
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void SetDelete(int identify)
+        public int SetDelete(int identify)
         {
             LearningCardSet set = SetSingle(identify);
-            SetDelete(set);
+            return SetDelete(set);
         }
         /// <summary>
         /// 判断学习卡名称是否重复

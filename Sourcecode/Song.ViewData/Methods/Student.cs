@@ -116,27 +116,17 @@ namespace Song.ViewData.Methods
         /// <param name="couid">课程id,多个id用逗号分隔</param>
         /// <returns></returns>
         [HttpPost]
-        [Admin,Teacher]
+        [Admin, Teacher]
         public int SortCourseAdd(long sortid, string couid)
         {
             int i = 0;
-            if (string.IsNullOrWhiteSpace(couid)) return i;
-            string[] arr = couid.Split(',');
-            foreach (string s in arr)
+            if (string.IsNullOrWhiteSpace(couid)) return i; 
+            List<long> list = couid.ToList<long>();
+            foreach (long s in list)
             {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    int n= Business.Do<IStudent>().SortCourseAdd(sortid, idval);
-                    if (n > 0) i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }            
+                int n = Business.Do<IStudent>().SortCourseAdd(sortid, s);
+                if (n > 0) i++;
+            }
             return i;
         }
         /// <summary>
@@ -151,22 +141,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(couid)) return i;
-            string[] arr = couid.Split(',');
-            foreach (string s in arr)
-            {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IStudent>().SortCourseDelete(sortid, idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<long> list = couid.ToList<long>();
+            foreach (long s in list)
+                i += Business.Do<IStudent>().SortCourseDelete(sortid, s);
             return i;
         }
         #endregion

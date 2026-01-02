@@ -45,17 +45,17 @@ namespace Song.ServiceImpls
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void PayDelete(PayInterface entity)
+        public int PayDelete(PayInterface entity)
         {
-            Gateway.Default.Delete<PayInterface>(entity);
+            return Gateway.Default.Delete<PayInterface>(entity);
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void PayDelete(int identify)
+        public int PayDelete(int identify)
         {
-            Gateway.Default.Delete<PayInterface>(PayInterface._.Pai_ID == identify);
+            return Gateway.Default.Delete<PayInterface>(PayInterface._.Pai_ID == identify);
         }
         /// <summary>
         /// 获取单一实体对象，按主键ID；

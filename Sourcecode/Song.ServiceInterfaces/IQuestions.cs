@@ -60,7 +60,7 @@ namespace Song.ServiceInterfaces
         /// <param name="fields"></param>
         /// <param name="objs"></param>
         /// <returns></returns>
-        bool QuesUpdate(long qusid, Field[] fields, object[] objs);
+        int QuesUpdate(long qusid, Field[] fields, object[] objs);
         /// <summary>
         /// 修改试题的某些项
         /// </summary>
@@ -68,7 +68,7 @@ namespace Song.ServiceInterfaces
         /// <param name="field"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        bool QuesUpdate(long qusid, Field field, object obj);
+        int QuesUpdate(long qusid, Field field, object obj);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>

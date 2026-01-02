@@ -230,11 +230,9 @@ namespace Song.ServiceImpls
         /// <param name="fiels"></param>
         /// <param name="objs"></param>
         /// <returns></returns>
-        public bool QuesUpdate(long qusid, Field[] fiels, object[] objs)
+        public int QuesUpdate(long qusid, Field[] fiels, object[] objs)
         {
-
-            Gateway.Default.Update<Questions>(fiels, objs, Questions._.Qus_ID == qusid);
-            return true;
+            return Gateway.Default.Update<Questions>(fiels, objs, Questions._.Qus_ID == qusid);
         }
         /// <summary>
         /// 修改试题的某些项
@@ -243,10 +241,9 @@ namespace Song.ServiceImpls
         /// <param name="field"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public bool QuesUpdate(long qusid, Field field, object obj)
+        public int QuesUpdate(long qusid, Field field, object obj)
         {
-            Gateway.Default.Update<Questions>(field, obj, Questions._.Qus_ID == qusid);
-            return true;
+            return Gateway.Default.Update<Questions>(field, obj, Questions._.Qus_ID == qusid);
         }
         public Questions QuesSingle(long identify)
         {

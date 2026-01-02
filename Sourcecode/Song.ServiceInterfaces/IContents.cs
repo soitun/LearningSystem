@@ -30,7 +30,7 @@ namespace Song.ServiceInterfaces
         /// <param name="fiels"></param>
         /// <param name="objs"></param>
         /// <returns></returns>
-        bool ArticleUpdate(long artid, Field[] fiels, object[] objs);
+        int ArticleUpdate(long artid, Field[] fiels, object[] objs);
         /// <summary>
         /// 使当前文章浏览计数加一，仅传入id，返回浏览数，效率更高
         /// </summary>
@@ -42,34 +42,34 @@ namespace Song.ServiceInterfaces
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void ArticleDelete(Article entity);
+        int ArticleDelete(Article entity);
         /// <summary>
         /// 删除
         /// </summary>
         /// <param name="entity">文章实体</param>
         /// <param name="tran">事务对象</param>
-        void ArticleDelete(Article entity, DbTrans tran);
+        int ArticleDelete(Article entity, DbTrans tran);
         /// <summary>
         /// 彻底删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void ArticleDelete(long identify);
+        int ArticleDelete(long identify);
         /// <summary>
         /// 删除所有新闻文章
         /// </summary>
         /// <param name="orgid">机构id</param>
         /// <param name="coluid">栏目uid</param>
-        void ArticleDeleteAll(int orgid, string coluid);
+        int ArticleDeleteAll(int orgid, string coluid);
         /// <summary>
         /// 标准文章是否处于删除状态，即进入回收站
         /// </summary>
         /// <param name="identify"></param>
-        void ArticleIsDelete(long identify);
+        int ArticleIsDelete(long identify);
         /// <summary>
         /// 文章还原，从回收站回到文章列表
         /// </summary>
         /// <param name="identify"></param>
-        void ArticleRecover(long identify);
+        int ArticleRecover(long identify);
         /// <summary>
         /// 通过审核
         /// </summary>

@@ -54,12 +54,12 @@ namespace Song.ServiceInterfaces
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void AccountsDelete(int identify);
+        int AccountsDelete(int identify);
         /// <summary>
         /// 删除账户
         /// </summary>
         /// <param name="entity">账号对象的实体</param>
-        void AccountsDelete(Accounts entity);
+        int AccountsDelete(Accounts entity);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>
@@ -596,17 +596,17 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="ma"></param>
         /// <returns></returns>
-        MoneyAccount MoneyConfirm(MoneyAccount ma);        
+        MoneyAccount MoneyConfirm(MoneyAccount ma);
         /// <summary>
         /// 删除流水
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void MoneyDelete(MoneyAccount entity);
+        int MoneyDelete(MoneyAccount entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void MoneyDelete(int identify);
+        int MoneyDelete(int identify);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>
