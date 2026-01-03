@@ -134,17 +134,29 @@ $ready(function () {
                         num: -1
                     }
                 },
+                watch: {
+                    'exam': {
+                        handler: function (nv, ov) {
+                            this.gettotal();                          
+                        }, immediate: true, deep: true
+                    }
+                },
+                methods: {
+                    gettotal: function () { 
+                        var th = this;
+                        $api.cache('Exam/StudentTotalTheme', { 'examid': this.exam.Exam_ID }).then(function (req) {
+                            if (req.data.success) {
+                                th.num = req.data.result.number;
+                            } else {
+                                console.error(req.data.exception);
+                                throw req.data.message;
+                            }
+                        }).catch(err => console.error(err))
+                            .finally(() => { });
+                    },
+                },
                 created: function () {
-                    var th = this;
-                    $api.cache('Exam/StudentTotalTheme', { 'examid': this.exam.Exam_ID }).then(function (req) {
-                        if (req.data.success) {
-                            th.num = req.data.result.number;
-                        } else {
-                            console.error(req.data.exception);
-                            throw req.data.message;
-                        }
-                    }).catch(err => console.error(err))
-                        .finally(() => { });
+                   
                 },
                 template: '<span><span class="el-icon-loading" v-if="num==-1"></span><span v-else>{{num}}</span></span>'
             },
@@ -154,6 +166,7 @@ $ready(function () {
                 data: function () {
                     return {
                         groups: [],      //关联的学员组
+                        accountsTotal: 0,    //考试关联的学员数
                         loading: false
                     }
                 },
@@ -161,6 +174,7 @@ $ready(function () {
                     'exam': {
                         handler: function (nv, ov) {
                             this.getgroups();
+                            this.getScopeAccountsTotal();
                         }, immediate: true, deep: true
                     }
                 },
@@ -169,6 +183,7 @@ $ready(function () {
                     getgroups: function () {
                         var th = this;
                         if (th.exam.Exam_GroupType == 1) return;
+                        th.loading = false;
                         $api.get('Exam/ScopeGroups', { 'uid': this.exam.Exam_UID }).then(function (req) {
                             if (req.data.success) {
                                 var result = req.data.result;
@@ -177,21 +192,36 @@ $ready(function () {
                                 console.error(req.data.exception);
                                 throw req.data.message;
                             }
-                        }).catch(err => console.error(err));
+                        }).catch(err => console.error(err)).finally(() => { });
+                    },
+                    //获取范围下的学员数
+                    getScopeAccountsTotal: function () {
+                        var th = this;
+                        if (th.exam.Exam_GroupType != 3) return;
+                        th.loading = false;
+                        $api.get("Exam/ScopeForAccountTotal", { "uid": th.exam.Exam_UID })
+                            .then(req => {
+                                if (req.data.success) {
+                                    th.accountsTotal = req.data.result;
+                                } else {
+                                    console.error(req.data.exception);
+                                    throw req.config.way + ' ' + req.data
+                                }
+                            }).finally(() => th.loading = false);
                     }
                 },
                 created: function () {
                 },
-                template: `<div class="groups">
+                template: `<div class="groups">                       
                         <span v-if="exam.Exam_GroupType == 1" info>全体学员</span>
-                        <template v-else-if="exam.Exam_GroupType == 2">
+                        <span v-else-if="exam.Exam_GroupType == 2" success>
                             学员组：  
-                            <span v-if="groups.length==0">(无)</span>                                                     
+                            <span v-if="groups.length==0" info>(无)</span>                                                     
                             <span  v-else v-for="(item, i) in groups">
                                 {{item.Sts_Name}},
                             </span>                            
-                        </template>
-                        <span v-else>学员：</span>
+                        </span>
+                        <icon v-else student size="medium" primary>学员：{{accountsTotal}} 名</icon>                        
                     </div>`
             },
             //考试主题的场次

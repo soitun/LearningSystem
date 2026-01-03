@@ -293,7 +293,8 @@ namespace Song.ViewData.Methods
             }
             if (type == "3")
             {
-                return "学员数";
+                int count = Business.Do<IExamination>().ScopeForAccountTotal(uid);
+                return count + "名"; 
             }
             return "";
         }

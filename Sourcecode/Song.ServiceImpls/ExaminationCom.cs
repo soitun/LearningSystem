@@ -2110,6 +2110,11 @@ namespace Song.ServiceImpls
                 foreach (StudentSort ss in sts) wc.Or(Accounts._.Sts_ID == ss.Sts_ID);
                 total = Gateway.Default.Count<Accounts>(wc);
             }
+            //按学员计算
+            if (exam.Exam_GroupType == 3)
+            {
+                total = this.ScopeForAccountTotal(exam.Exam_UID);
+            }
             return total;
         }
         /// <summary>

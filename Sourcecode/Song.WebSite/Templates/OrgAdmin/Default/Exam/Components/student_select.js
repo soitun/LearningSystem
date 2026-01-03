@@ -97,7 +97,7 @@ Vue.component('student_select', {
                     <el-link class="btn" type="warning" @click="remove(item)" title="移除">移除</el-link>
                 </dd>
             </dl>
-            <icon v-else null>没有满足条件的数据</icon>
+            <el-empty v-else description="没有指定参加考试的学员"></el-empty>            
         </div>
     </div>`
 });
