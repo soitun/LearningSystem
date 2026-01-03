@@ -414,9 +414,9 @@ ALTER TABLE "ExamGroup" DROP COLUMN IF EXISTS "Org_Name" CASCADE;
 -- ----------------------------
 -- 创建学员与考试的关联关系
 -- ----------------------------
-DROP TABLE IF EXISTS "Exam_Accounts";
+DROP TABLE IF EXISTS "Exam_Accounts" CASCADE;
 CREATE TABLE "public"."Exam_Accounts" (
-  "Ea_ID" int4 NOT NULL DEFAULT 0,
+  "Ea_ID" bigint NOT NULL DEFAULT 0,
   "Exam_UID" varchar(255) COLLATE "pg_catalog"."default",
   "Ac_ID" int4 NOT NULL,
    CONSTRAINT key_Exam_Accountsr PRIMARY KEY ("Ea_ID")

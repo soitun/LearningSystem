@@ -8,13 +8,13 @@ namespace Song.Entities {
     	[SerializableAttribute()]
     	public partial class Exam_Accounts : WeiSha.Data.Entity {
     		
-    		protected Int32 _Ea_ID;
+    		protected Int64 _Ea_ID;
     		
     		protected Int32 _Ac_ID;
     		
     		protected String _Exam_UID;
     		
-    		public Int32 Ea_ID {
+    		public Int64 Ea_ID {
     			get {
     				return this._Ea_ID;
     			}
@@ -84,7 +84,7 @@ namespace Song.Entities {
     		/// </summary>
     		protected override void SetValues(WeiSha.Data.IRowReader reader) {
     			if ((false == reader.IsDBNull(_.Ea_ID))) {
-    				this._Ea_ID = reader.GetInt32(_.Ea_ID);
+    				this._Ea_ID = reader.GetInt64(_.Ea_ID);
     			}
     			if ((false == reader.IsDBNull(_.Ac_ID))) {
     				this._Ac_ID = reader.GetInt32(_.Ac_ID);
@@ -119,7 +119,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.AllField All = new WeiSha.Data.AllField<Exam_Accounts>();
     			
     			/// <summary>
-    			/// 字段名：Ea_ID - 数据类型：Int32
+    			/// 字段名：Ea_ID - 数据类型：Int64
     			/// </summary>
     			public static WeiSha.Data.Field Ea_ID = new WeiSha.Data.Field<Exam_Accounts>("Ea_ID");
     			
@@ -135,4 +135,3 @@ namespace Song.Entities {
     		}
     	}
     }
-    

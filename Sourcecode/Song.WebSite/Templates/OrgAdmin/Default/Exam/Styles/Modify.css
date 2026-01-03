@@ -133,6 +133,6 @@ div.grouptype {
 }
 
 /*选择学员*/
-.accountselect {
+.student_select {
     height: calc(100% - 48px) !important;
 }

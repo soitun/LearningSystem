@@ -1,6 +1,7 @@
 // 考试编辑中的学员组选择
 Vue.component('group_select', {
-    props: ['type', 'theme', 'org'],
+    //theme:考试主题
+    props: ['theme', 'org'],
     data: function () {
         return {
             //按分组选择参考人员
@@ -95,7 +96,7 @@ Vue.component('group_select', {
 
     },
     //
-    template: `<div class="SortSelected" v-show="type==2">
+    template: `<div class="SortSelected">
         <el-transfer v-model="selectedsortid" :props="{key: 'Sts_ID',label: 'Sts_Name'}" filterable
         :titles="['学员组', '已选择的学员组']" :data="allsorts" @change="selectedObj">
             <span slot-scope="{ option }">

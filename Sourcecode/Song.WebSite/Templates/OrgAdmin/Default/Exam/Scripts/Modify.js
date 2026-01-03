@@ -1,6 +1,7 @@
 ﻿
 $ready(["Components/group_select.js",
     "Components/accountselect.js",
+    "Components/student_select.js",
     "../ExamTestPaper/Components/papertype.js"  //试卷类型
 ], function () {
     window.vapp = new Vue({
@@ -96,7 +97,14 @@ $ready(["Components/group_select.js",
                         return true;
                 }
                 return false;
-            }
+            },
+            //考试指定参加考试的学员的数量
+            'scopeTotal': function () {
+                if (this.entity.Exam_GroupType == 3) {
+                    if (this.examaccounts.length > 0) return this.examaccounts.length;
+                    else return this.studenttotal;
+                } else return this.studenttotal;
+            },
         },
         methods: {
             //获取考试主题
@@ -193,17 +201,27 @@ $ready(["Components/group_select.js",
                 this.examgroups = relationships;
                 this.getaccounttotal();
             },
+            //参考人员学员变更时
+            //参数说明
+            //accid: 学员ID的数组
+            //accounts: 学员账号的对象数组
+            //relationships: 学员组与考试的关系对象数组，Exam_Accounts对象
+            studentselected: function (accid, accounts, relationships) {
+                if (accid == null) accid = [];
+                this.examaccounts = relationships;              
+                this.getaccounttotal();
+            },
             //获取参考学员的总数
             getaccounttotal: function () {
                 var api = null;
                 var stsid = [];
                 let groups = this.examgroups;
-                for (var i = 0; groups != null && i < groups.length; i++) {
+                for (let i = 0; groups != null && i < groups.length; i++)
                     stsid.push(groups[i].Sts_ID);
-                }
-                if (this.entity.Exam_GroupType == 1) api = $api.get('Account/Total', { "orgid": this.org.Org_ID });
+
+                if (this.entity.Exam_GroupType == 1) api = $api.get('Account/Total', { "orgid": this.org.Org_ID, 'use': true, 'pass': true });
                 else if (this.entity.Exam_GroupType == 2) api = $api.get('Account/TotalOfSort', { "sts": stsid.join(',') });
-                else if (this.entity.Exam_GroupType == 3) api = $api.get('Account/TotalOfSort', { "sts": stsid.join(',') });
+                else if (this.entity.Exam_GroupType == 3) api = $api.get('Exam/ScopeForAccountTotal', { "uid": this.entity.Exam_UID });
                 var th = this;
                 api.then(req => {
                     if (req.data.success) {

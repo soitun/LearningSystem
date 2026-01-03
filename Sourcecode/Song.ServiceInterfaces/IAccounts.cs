@@ -753,8 +753,10 @@ namespace Song.ServiceInterfaces
         /// 账号总数
         /// </summary>
         /// <param name="orgid">机构id，小于或等0取所有</param>
+        /// <param name="isuse"></param>
+        /// <param name="ispass"></param>
         /// <returns></returns>
-        int Total(int orgid);        
+        int Total(int orgid, bool? isuse, bool? ispass);      
         /// <summary>
         /// 统计各个年龄段的学员
         /// </summary>

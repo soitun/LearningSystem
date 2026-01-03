@@ -1696,10 +1696,12 @@ namespace Song.ViewData.Methods
         /// 学员数量
         /// </summary>
         /// <param name="orgid">机构id，小于或等0取所有</param>
+        /// <param name="use"></param>
+        /// <param name="pass"></param>
         /// <returns></returns>
-        public int Total(int orgid)
+        public int Total(int orgid, bool? use, bool? pass)
         {
-            return Business.Do<IAccounts>().Total(orgid);
+            return Business.Do<IAccounts>().Total(orgid, use, pass);
         }
         /// <summary>
         /// 指定学员组的账号数

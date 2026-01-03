@@ -63,7 +63,9 @@
 .student_add dl dd, .student_add dl dd * {
     line-height: 30px;
 }
-
+.student_add dl dd[info] *, .student_batadd dl dd[info] *{
+    color: #909399 !important;
+}
 .student_add dl dd .idcard, .student_add dl dd .phone {
     margin-left: auto;
     margin-right: 10px;

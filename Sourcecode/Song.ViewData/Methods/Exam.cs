@@ -39,7 +39,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>    
         public Song.Entities.Examination ThemeForUID(string uid)
         {
-            return Business.Do<IExamination>().ExamSingle(uid);
+            return Business.Do<IExamination>().ExamTheme(uid);
         }
         /// <summary>
         /// 根据ID查询考试
@@ -109,9 +109,6 @@ namespace Song.ViewData.Methods
                     }
                 }
             }
-            //与学员组的关联
-            List<ExamGroup> sorts = null;
-            if (groups != null) sorts = groups.ToList<ExamGroup>();
 
             Business.Do<IExamination>().ExamSave(old, items, groups, accounts);
 
@@ -267,6 +264,9 @@ namespace Song.ViewData.Methods
             }
             return exams;
         }
+        #endregion
+
+        #region 参考人员
         /// <summary>
         /// 获取参考人员信息
         /// </summary>
@@ -298,6 +298,41 @@ namespace Song.ViewData.Methods
             return "";
         }
         /// <summary>
+        /// 获取允许参加考试的人员数量
+        /// </summary>
+        /// <param name="uid">考试主题的uid/param>
+        /// <returns>如果考试不存在，则返回-1</returns>
+        public int ScopeTotal(string uid)
+        {
+            Entities.Examination theme= Business.Do<IExamination>().ExamTheme(uid);
+            if (theme == null) return -1;
+            //全部学员
+            if (theme.Exam_GroupType == 1) return Business.Do<IAccounts>().Total(theme.Org_ID, true, true);
+            //指定学员组
+            if (theme.Exam_GroupType == 2)
+            {
+                List<StudentSort> sts = Business.Do<IExamination>().ScopeForStudentSort(uid);
+                long[] list = sts.Select(s => s.Sts_ID).ToArray();
+                if (list.Length == 0) return 0;
+                return Business.Do<IStudent>().TotalOfSort(list);
+            }
+            //指定的学员
+            if (theme.Exam_GroupType == 3)
+            {
+                return Business.Do<IExamination>().ScopeForAccountTotal(uid);
+            }
+            return 0;
+        }
+        /// <summary>
+        /// 当考试的参考范围限定为指定学员时，这时是限定的学员数
+        /// </summary>
+        /// <param name="uid">考试主题的uid</param>
+        /// <returns></returns>
+        public int ScopeForAccountTotal(string uid)
+        {
+            return Business.Do<IExamination>().ScopeForAccountTotal(uid);
+        }
+        /// <summary>
         /// 允许参考的学员组的信息
         /// </summary>
         /// <param name="uid">考试主题的uid</param>
@@ -314,6 +349,23 @@ namespace Song.ViewData.Methods
         public List<Accounts> ScopeAccounts(string uid)
         {
             return Business.Do<IExamination>().ScopeForAccounts(uid);
+        }
+        /// <summary>
+        /// 分页获取允许参考的学员信息
+        /// </summary>
+        /// <param name="uid">考试主题的uid</param>
+        /// <param name="index"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        public ListResult ScopeAccountsPager(string uid, int index, int size)
+        {
+            int sum;
+            List<Accounts> list = Business.Do<IExamination>().ScopeForAccounts(uid, index, size, out sum);
+            Song.ViewData.ListResult result = new ListResult(list);
+            result.Index = index;
+            result.Size = size;
+            result.Total = sum;
+            return result;
         }
         #endregion
 

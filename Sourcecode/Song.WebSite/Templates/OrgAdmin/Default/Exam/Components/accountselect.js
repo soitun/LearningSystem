@@ -23,8 +23,15 @@ Vue.component('accountselect', {
     },
     methods: {
         //添加学员
-        studentadd_event: function (accounts) {
-            console.error(accounts);
+        //values:该参数为学员账号的数组
+        studentadd_event: function (values) {
+            var tmarr = [];
+            for (let j = 0; j < values.length; j++) {
+                const exists = this.accounts.some(user => user.Ac_ID === values[j].Ac_ID);
+                if (!exists) tmarr.push(values[j]);
+            }
+            this.accounts = this.accounts.concat(tmarr);
+            this.$emit('select', this.accounts);
         },
     },
     template: `<div class="accountselect">
@@ -37,11 +44,11 @@ Vue.component('accountselect', {
         </el-tabs>
        
         <!-- 新增学员到学员组（单个新增）-->
-        <student_add  v-show="activeName=='add'" :orgid="orgid" ref="studentadd" @add="studentadd_event">
+        <student_add  v-show="activeName=='add'" :orgid="orgid" :accounts="accounts" @add="studentadd_event">
         </student_add>       
         
         <!-- 批量添加学员到学员组-->
-        <student_batadd  v-show="activeName=='bat'" :orgid="orgid" ref="studentbatadd" @add="studentadd_event">
+        <student_batadd  v-show="activeName=='bat'" :orgid="orgid" :accounts="accounts" @add="studentadd_event">
         </student_batadd>
        
     </div> `
@@ -49,10 +56,10 @@ Vue.component('accountselect', {
 
 // 新增学员到学员组（单个新增）
 Vue.component('student_add', {
-    props: ['stsid', 'orgid'],
+    props: ['stsid', 'orgid', 'accounts'],
     data: function () {
         return {
-            accounts: [],
+            datas: [],
             form: {
                 'orgid': '', 'sortid': '', 'use': null, 'acc': '', 'name': '', 'phone': '', 'idcard': '',
                 'gender': '-1', 'orderby': '', 'orderpattr': '',
@@ -98,7 +105,7 @@ Vue.component('student_add', {
             th.loading = true;
             $api.get("Account/Pager", th.form).then(function (d) {
                 if (d.data.success) {
-                    th.accounts = d.data.result;
+                    th.datas = d.data.result;
                     th.totalpages = Number(d.data.totalpages);
                     th.total = d.data.total;
                 } else {
@@ -108,6 +115,10 @@ Vue.component('student_add', {
             }).catch(function (err) {
                 alert(err);
             }).finally(() => th.loading = false);
+        },
+        //是否已经被选择
+        isselected: function (item) {
+            return this.accounts.some(user => user.Ac_ID === item.Ac_ID);
         },
         //增加学员
         add: function (item) {
@@ -122,12 +133,13 @@ Vue.component('student_add', {
                 <el-input v-model="form.phone" placeholder="电话" clearable @input="getdatas(1)"></el-input> 
             </header>
             <loading v-if="loading">加载中...</loading>
-            <dl class="list" v-else-if="accounts.length>0">
-                <dd v-for="(item,i) in accounts" :index="(form.index-1) * form.size+i+1"> 
+            <dl class="list" v-else-if="datas.length>0">
+                <dd v-for="(item,i) in datas" :index="(form.index-1) * form.size+i+1" :info="isselected(item)"> 
                     <icon class="name" size="large" :woman="item.Ac_Gender==2" :man="item.Ac_Gender==1" v-html='showsearch(item.Ac_Name,form.name)'></icon>                      
                     <span v-if="form.phone!=''" class="phone"  v-html='showsearch(item.Ac_MobiTel1,form.phone)'></span>   
                     <span v-else class="idcard"  v-html='showsearch(item.Ac_IDCardNumber,form.idcard)'></span>                  
-                    <el-link  class="btn" type="primary" @click="add(item)" title="添加">添加</el-link>
+                    <el-link class="btn" type="primary" @click="add(item)" v-if="!isselected(item)" title="添加">添加</el-link>
+                    <span v-else mini>已选</span>
                 </dd>
             </dl>
             <icon v-else null>没有满足条件的数据</icon>
@@ -138,7 +150,7 @@ Vue.component('student_add', {
 });
 //批量添加学员到学员组
 Vue.component('student_batadd', {
-    props: ['stsid', 'orgid'],
+    props: ['stsid', 'orgid', 'accounts'],
     data: function () {
         return {
             datas: [],
@@ -165,6 +177,28 @@ Vue.component('student_batadd', {
         'query_completed': t => t.datas.filter(i => i.state != -1).length,
         //查询的有效记录数
         'query_successful': t => t.datas.filter(i => i.state == 1).length,
+        //允许添加的数量
+        'allow_add': function () {
+            return this.datas.length - this.exists_count;
+        },
+        //已经存在的学员数量
+        'exists_count': function () {
+            let count = 0;
+            for (let i = 0; i < this.datas.length; i++) {
+                if (this.accounts.some(user => user.Ac_ID === this.datas[i].account.Ac_ID)) count++;
+            }
+            return count;
+        },
+        //解析中
+        'parseloading': function () {
+            if (this.operstatus == 1) return false;
+            else {
+                for (let i = 0; i < this.datas.length; i++) {
+                    if (this.datas[i].state == -1) return true;
+                }
+                return false;
+            }
+        },
     },
     mounted: function () { },
     methods: {
@@ -205,6 +239,11 @@ Vue.component('student_batadd', {
             this.operstatus = 2;
             this.inputIsChange = false;
         },
+        //是否已经被选择
+        isselected: function (item) {
+            //console.error(item);
+            return this.accounts.some(user => user.Ac_ID === item.account.Ac_ID);
+        },
         //增加学员的事件
         add: function () {
             const arr = this.datas.filter(item => item.state == 1).map(item => item.account);
@@ -222,16 +261,25 @@ Vue.component('student_batadd', {
                 </el-radio-group>
             </header>
             <div class="btns">
-                <el-button type="primary" plain v-if="operstatus==1" @click="btnParse">
+                <el-button type="primary" plain v-if="operstatus==1" @click="btnParse" :disabled="parseloading">
                     <icon>&#xe83c</icon>解析录入的信息
                 </el-button>
                 <template v-else>
                     <el-button type="success" plain  @click="operstatus=1">
                         <icon>&#xe63d</icon>继续编辑内容
                     </el-button>
-                    <el-button type="primary" plain @click="add" :disabled="query_successful<1">
-                        <icon>&#xe6ea</icon>全部添加<span>（{{query_successful}}条）</span>
-                    </el-button>         
+                    <el-tooltip class="item" effect="dark" placement="bottom">
+                        <div slot="content">录入{{query_completed}}条信息，解析成功{{query_successful}}条<br/>
+                            已经选择的账号信息有 {{exists_count}} 条<br/>
+                            可供添加的账号信息有 {{allow_add}} 条
+                        </div>
+                        <el-button type="primary" plain @click="add" :disabled="allow_add<1" :loading="parseloading">
+                            <span v-if="parseloading">正在处理...</span>
+                            <template v-else>
+                                <icon>&#xe6ea</icon>全部添加<span>（{{allow_add}}条）</span>
+                            </template>
+                        </el-button>     
+                    </el-tooltip>    
                 </template>       
             </div>
             <el-input type="textarea" @input="inputIsChange = true" :rows="10" placeholder="请输入内容" v-if="operstatus==1"  v-model="inputText">
@@ -252,10 +300,10 @@ Vue.component('student_batadd', {
                     </div>
                 </header>
                 <dl>                
-                    <dd v-for="(item,index) in datas" :index="index" small> 
+                    <dd v-for="(item,index) in datas" :index="index" small :info="isselected(item)"> 
                         <div class="order">{{index+1}}</div>
                         <div class="text">{{item.text}}</div>
-                        <div class="result"> 
+                        <div class="result">
                             <accountselect_queryaccount :item="item" :text="item.text" :type="search_type"></accountselect_queryaccount>
                         </div>
                     </dd>
@@ -317,7 +365,10 @@ Vue.component('accountselect_queryaccount', {
                     console.error(req.data.exception);
                     throw req.data.message;
                 }
-            }).catch(err => console.error(err)).finally(() => th.loading = false);
+            }).catch(err => console.error(err)).finally(() => {
+                th.loading = false;
+                th.$emit('loaded', true);
+            });
         }
     },
     template: `<span title="学员信息">

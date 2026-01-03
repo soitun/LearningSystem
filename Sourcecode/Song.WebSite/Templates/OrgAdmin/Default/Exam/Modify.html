@@ -129,16 +129,17 @@
                                 <icon medium>&#xe804</icon>指定学员
                             </el-radio-button>
                         </el-radio-group>
-                        <icon student size="large">{{studenttotal}}</icon>
+                        <icon student size="large">{{scopeTotal}}</icon>
                     </div>
                     <help multi v-show="entity.Exam_GroupType==1">
                         全部学员参考<br />
                         所有学员都可以参加当前考试。
                     </help>
-                    <group_select  v-show="entity.Exam_GroupType==2" ref="group_select" @selected="groupselected" :type="entity.Exam_GroupType"
-                        :theme="entity" :org="org">
+                    <group_select v-show="entity.Exam_GroupType==2" @selected="groupselected" :theme="entity"
+                        :org="org">
                     </group_select>
-                    <accountselect v-show="entity.Exam_GroupType==3" :orgid="org.Org_ID"></accountselect>
+                    <student_select v-show="entity.Exam_GroupType==3" @selected="studentselected" :theme="entity"
+                        :orgid="org.Org_ID"></student_select>
                 </div>
             </el-form>
         </div>

@@ -2258,10 +2258,12 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="orgid">机构id，小于或等0取所有</param>
         /// <returns></returns>
-        public int Total(int orgid)
+        public int Total(int orgid, bool? isuse, bool? ispass)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc &= Accounts._.Org_ID == orgid;
+            if (isuse != null) wc.And(Accounts._.Ac_IsUse == (bool)isuse);
+            if (ispass != null) wc.And(Accounts._.Ac_IsPass == (bool)ispass);
             return Gateway.Default.Count<Accounts>(wc);
         }
         /// <summary>

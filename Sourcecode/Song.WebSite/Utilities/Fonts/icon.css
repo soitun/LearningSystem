@@ -30,22 +30,18 @@ icon:not([icon]) {
 
 icon[huge]:not(:empty, [size]) {
     font-size: var(--icon-size-huge);
-    line-height: 23px;
 }
 
 icon[large]:not(:empty) {
     font-size: var(--icon-size-large);
-    line-height: 20px;
 }
 
 icon[medium]:not(:empty) {
     font-size: var(--icon-size-medium);
-    line-height: 18px;
 }
 
 icon[small]:not(:empty) {
     font-size: var(--icon-size-small);
-    line-height: 16px;
 }
 
 icon[mini]:not(:empty) {
@@ -256,8 +252,7 @@ icon[man] {
 }
 
 icon[man]::before {
-    content: '\e645';
-    color: rgb(73 128 210);
+    content: '\e645';  
 }
 
 /*女性*/

@@ -53,7 +53,7 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="uid"></param>
         /// <returns></returns>
-        Examination ExamSingle(string uid);
+        Examination ExamTheme(string uid);
         /// <summary>
         /// 获取单一实体对象，取最近一次考试；此处获取的是考试主题或场次
         /// </summary>
@@ -83,6 +83,21 @@ namespace Song.ServiceInterfaces
         /// <param name="uid">考试主题的uid</param>
         /// <returns></returns>
         List<Accounts> ScopeForAccounts(string uid);
+        /// <summary>
+        /// 当前考试主题关联的学员账号
+        /// </summary>
+        /// <param name="uid">考试主题的uid</param>
+        /// <param name="index"></param>
+        /// <param name="size"></param>
+        /// <param name="countSum"></param>
+        /// <returns></returns>
+        List<Accounts> ScopeForAccounts(string uid, int index, int size, out int countSum);
+        /// <summary>
+        /// 当前考试主题关联的学员账号总数
+        /// </summary>
+        /// <param name="uid">考试主题的uid</param>
+        /// <returns></returns>
+        int ScopeForAccountTotal(string uid);
         /// <summary>
         /// 获取考试，不分页
         /// </summary>

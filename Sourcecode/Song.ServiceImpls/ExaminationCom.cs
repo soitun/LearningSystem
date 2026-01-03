@@ -237,7 +237,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="uid"></param>
         /// <returns></returns>
-        public Examination ExamSingle(string uid)
+        public Examination ExamTheme(string uid)
         {
             return Gateway.Default.From<Examination>().Where(Examination._.Exam_UID == uid && Examination._.Exam_IsTheme == true).ToFirst<Examination>();
         }
@@ -333,8 +333,45 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public List<Accounts> ScopeForAccounts(string uid)
         {
+            WhereClip wc=new WhereClip();
+            wc &= Accounts._.Ac_IsUse == true;
+            wc &= Accounts._.Ac_IsPass == true;
+
             return Gateway.Default.From<Accounts>().InnerJoin<Exam_Accounts>(Exam_Accounts._.Ac_ID == Accounts._.Ac_ID)
-                 .Where(Exam_Accounts._.Exam_UID == uid).ToList<Accounts>();
+                 .Where(Exam_Accounts._.Exam_UID == uid && wc).ToList<Accounts>();
+        }
+        /// <summary>
+        /// 当前考试主题关联的学员账号
+        /// </summary>
+        /// <param name="uid">考试主题的uid</param>
+        /// <param name="index"></param>
+        /// <param name="size"></param>
+        /// <param name="countSum"></param>
+        /// <returns></returns>
+        public List<Accounts> ScopeForAccounts(string uid, int index, int size, out int countSum)
+        {
+            WhereClip wc = new WhereClip();
+            wc &= Accounts._.Ac_IsUse == true;
+            wc &= Accounts._.Ac_IsPass == true;
+
+            QuerySection<Accounts> query = Gateway.Default.From<Accounts>().InnerJoin<Exam_Accounts>(Exam_Accounts._.Ac_ID == Accounts._.Ac_ID)
+                 .Where(Exam_Accounts._.Exam_UID == uid && wc);
+            countSum = query.Count();   //记录总数
+            return query.ToList<Accounts>(size, (index - 1) * size);
+        }
+        /// <summary>
+        /// 当前考试主题关联的学员账号总数
+        /// </summary>
+        /// <param name="uid">考试主题的uid</param>
+        /// <returns></returns>
+        public int ScopeForAccountTotal(string uid)
+        {
+            WhereClip wc = new WhereClip();
+            wc &= Accounts._.Ac_IsUse == true;
+            wc &= Accounts._.Ac_IsPass == true;
+
+            return Gateway.Default.From<Accounts>().InnerJoin<Exam_Accounts>(Exam_Accounts._.Ac_ID == Accounts._.Ac_ID)
+                 .Where(Exam_Accounts._.Exam_UID == uid && wc).Count();
         }
         public List<Examination> ExamCount(int orgid, bool? isUse, int count)
         {
@@ -1514,7 +1551,7 @@ namespace Song.ServiceImpls
         public List<Accounts> AbsenceExamAccounts(int examid, string name, string idcard, string phone, long stsid, int size, int index, out int countSum)
         {
             Examination exam = this.ExamSingle(examid);
-            if (!exam.Exam_IsTheme) exam= this.ExamSingle(exam.Exam_UID);
+            if (!exam.Exam_IsTheme) exam= this.ExamTheme(exam.Exam_UID);
             //查询条件
             WhereClip wc = new WhereClip();
             //如果参考人员为按学员组
@@ -2102,7 +2139,7 @@ namespace Song.ServiceImpls
         public int NumberAbsence4Exam(int examid)
         {
             Examination exam = this.ExamSingle(examid);
-            if (!exam.Exam_IsTheme) exam = this.ExamSingle(exam.Exam_UID);
+            if (!exam.Exam_IsTheme) exam = this.ExamTheme(exam.Exam_UID);
             //查询条件
             WhereClip wc = new WhereClip();
             //如果参考人员为按学员组
