@@ -15,25 +15,21 @@ namespace Song.ServiceInterfaces
 
         #region 考试管理
         /// <summary>
-        /// 整体添加
-        /// </summary>
-        /// <param name="teacher"></param>
-        /// <param name="theme">考试主题</param>
-        /// <param name="items">考试的场次</param>
-        /// <param name="groups">参考人员的范围</param>
-        void ExamAdd(Teacher teacher, Examination theme, Examination[] items, ExamGroup[] groups);
-        /// <summary>
-        /// 修改
-        /// </summary>
-        /// <param name="entity">业务实体</param>
-        void ExamSave(Examination entity);
-        /// <summary>
-        /// 整体修改
+        /// 考试项目的整体添加，包括考试主题和场次，参考人员范围
         /// </summary>
         /// <param name="theme">考试主题</param>
         /// <param name="items">考试的场次</param>
         /// <param name="groups">参考人员的范围</param>
-        void ExamSave(Examination theme, Examination[] items, ExamGroup[] groups);
+        /// <param name="accounts">限定参考的学员关联对象（Exam_Accounts）</param>
+        void ExamAdd(Examination theme, Examination[] items, ExamGroup[] groups, Exam_Accounts[] accounts);
+        /// <summary>
+        /// 考试项目的整体修改，包括考试主题和场次，参考人员范围
+        /// </summary>
+        /// <param name="theme">考试主题</param>
+        /// <param name="items">考试的场次</param>
+        /// <param name="groups">参考人员的范围</param>
+        /// <param name="accounts">限定参考的学员关联对象（Exam_Accounts）</param>
+        void ExamSave(Examination theme, Examination[] items, ExamGroup[] groups, Exam_Accounts[] accounts);
         /// <summary>
         /// 修改考试主题，按条件修改
         /// </summary>

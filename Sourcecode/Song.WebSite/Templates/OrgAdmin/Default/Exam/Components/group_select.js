@@ -5,9 +5,7 @@ Vue.component('group_select', {
         return {
             //按分组选择参考人员
             allsorts: [],    //所有学员组
-            selectedsortid: [],       //选中的学员组,记录的是id，不是对象
-
-            examGroup: [],       //考试主题与学员组的关联对象
+            selectedsortid: [],       //选中的学员组,记录的是id，不是对象        
 
             completed: 2,        //是否加载完成，每加载一个条件完成，减一，等于0时为完成
 
@@ -68,7 +66,6 @@ Vue.component('group_select', {
             var arr = [];
             //如果没有学员组，或没有选中的学员组，则清空
             if (this.allsorts.length <= 0 || sortsid.length <= 0) {
-                this.examGroup = [];
                 this.$emit('selected', [], [], []);
                 return arr;
             }
@@ -92,7 +89,6 @@ Vue.component('group_select', {
                     Sts_ID: item.Sts_ID
                 });
             }
-            this.examGroup = groups;
             this.$emit('selected', sortsid, arr, groups);
             return arr;
         },

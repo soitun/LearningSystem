@@ -26,7 +26,9 @@ $ready(["Components/group_select.js",
                 Exam_UID: new Date().getTime()
             },
             exams: [],          //考试场次
-            examgroups: [],     //考试分组
+            examgroups: [],     //参考人员的范围：学员组与考试的关联对象
+            examaccounts: [],   //参考人员的范围：学员与考试的关联对象
+
             //考试表单验证
             rules: {
                 Exam_Title: [
@@ -225,7 +227,7 @@ $ready(["Components/group_select.js",
                     if (valid) {
                         th.loadstate.update = true;
                         var apipath = th.id == 0 ? 'Exam/add' : 'Exam/Modify';
-                        $api.post(apipath, { 'theme': th.entity, 'items': exams, 'groups': th.examgroups }).then(function (req) {
+                        $api.post(apipath, { 'theme': th.entity, 'items': exams, 'groups': th.examgroups, 'accounts': th.examaccounts }).then(function (req) {
                             if (req.data.success) {
                                 var result = req.data.result;
                                 th.$notify({

@@ -13,6 +13,7 @@ using System.Xml;
 using NPOI.HSSF.UserModel;
 using System.IO;
 using NPOI.SS.UserModel;
+using System.Linq;
 
 namespace Song.ServiceImpls
 {
@@ -25,25 +26,23 @@ namespace Song.ServiceImpls
         private static TestPaperCom tpCom = new TestPaperCom();
         private static SubjectCom sbjCom = new SubjectCom();
 
-        public void ExamAdd(Teacher teacher, Examination theme, Examination[] items, ExamGroup[] groups)
+        public void ExamAdd(Examination theme, Examination[] items, ExamGroup[] groups, Exam_Accounts[] accounts)
         {
-            Song.Entities.Organization org = orgCom.OrganCurrent();
-            if (org != null)
+            if (theme.Org_ID <= 0)
             {
-                theme.Org_ID = org.Org_ID;
-                theme.Org_Name = org.Org_Name;
+                Song.Entities.Organization org = orgCom.OrganCurrent();
+                if (org != null)
+                {
+                    theme.Org_ID = org.Org_ID;
+                    theme.Org_Name = org.Org_Name;
+                }
             }
+            //创建时间
             theme.Exam_CrtTime = DateTime.Now;
-            //当前考试的创建人
-            if (teacher != null)
-            {
-                theme.Th_ID = teacher.Th_ID;
-                theme.Th_Name = teacher.Th_Name;
-            }
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
-                {                   
+                {
                     if (items != null)
                     {
                         //考试主题时间
@@ -51,18 +50,18 @@ namespace Song.ServiceImpls
                         foreach (Song.Entities.Examination it in items)
                         {
                             it.Exam_DateType = theme.Exam_DateType;
-                            if (theme.Exam_DateType == 1)
+                            if (theme.Exam_DateType == 1)   //	1为固定时间，即准点考试
                             {
                                 if (it.Exam_Date.AddYears(30) > DateTime.Now)
-                                    examDate = it.Exam_Date < examDate ? it.Exam_Date : examDate;                               
+                                    examDate = it.Exam_Date < examDate ? it.Exam_Date : examDate;
                             }
-                            if (theme.Exam_DateType == 2)
+                            if (theme.Exam_DateType == 2)   //2为区间时间，即一定时间区间内可以随时考试。
                             {
                                 it.Exam_Date = theme.Exam_Date;
                                 it.Exam_DateOver = theme.Exam_DateOver;
                             }
-                            if (it.Sbj_ID < 1) continue;
                             it.Org_ID = theme.Org_ID;
+                            it.Org_Name = theme.Org_Name;
                             it.Exam_CrtTime = DateTime.Now;
                             it.Exam_Title = theme.Exam_Title;
                             it.Exam_GroupType = theme.Exam_GroupType;
@@ -77,17 +76,14 @@ namespace Song.ServiceImpls
                             theme.Exam_Date = examDate;
                             theme.Exam_DateOver = examDate;
                         }
-                        
                     }
                     tran.Save<Examination>(theme);
-                    if (groups != null)
-                    {
-                        foreach (Song.Entities.ExamGroup g in groups)
-                        {
-                            g.Org_ID = org.Org_ID;                         
-                            tran.Save<ExamGroup>(g);
-                        }
-                    }
+                    //保存学员组与考试的关联
+                    foreach (ExamGroup g in groups ?? Enumerable.Empty<ExamGroup>())
+                        tran.Save<ExamGroup>(g);
+                    //保存学员与考试的关联
+                    foreach (Exam_Accounts ea in accounts ?? Enumerable.Empty<Exam_Accounts>())
+                        tran.Save<Exam_Accounts>(ea);                
                     tran.Commit();
                 }
                 catch (Exception ex)
@@ -98,29 +94,7 @@ namespace Song.ServiceImpls
             }
         }
 
-        public void ExamSave(Examination entity)
-        {
-            using (DbTrans tran = Gateway.Default.BeginTrans())
-            {
-                try
-                {
-                    tran.Save<Examination>(entity);
-                    tran.Update<Examination>(new Field[] { Examination._.Exam_IsUse }, new object[] { entity.Exam_IsUse }, Examination._.Exam_UID == entity.Exam_UID);
-                    if (entity.Exam_IsTheme)
-                        tran.Update<ExamResults>(new Field[] { ExamResults._.Exam_Title }, new object[] { entity.Exam_Title }, ExamResults._.Exam_UID == entity.Exam_UID);
-                    else
-                        tran.Update<ExamResults>(new Field[] { ExamResults._.Exam_Name }, new object[] { entity.Exam_Name }, ExamResults._.Exam_ID == entity.Exam_ID);
-                    tran.Commit();
-                }
-                catch (Exception ex)
-                {
-                    tran.Rollback();
-                    throw ex;
-                }
-            }
-        }
-
-        public void ExamSave(Examination theme, Examination[] items, ExamGroup[] groups)
+        public void ExamSave(Examination theme, Examination[] items, ExamGroup[] groups, Exam_Accounts[] accounts)
         {
 
             using (DbTrans tran = Gateway.Default.BeginTrans())
@@ -166,12 +140,7 @@ namespace Song.ServiceImpls
                                 it.Exam_Date = theme.Exam_Date;
                                 it.Exam_DateOver = theme.Exam_DateOver;
                             }
-                            //if (it.Sbj_ID < 1)
-                            //{
-                            //    Gateway.Default.Delete<Examination>(it);
-                            //}
-                            //else
-                            //{
+
                                 it.Org_ID= theme.Org_ID;
                                 it.Exam_Title = theme.Exam_Title;
                                 it.Exam_GroupType = theme.Exam_GroupType;
@@ -186,7 +155,7 @@ namespace Song.ServiceImpls
                                     tran.Update<ExamResults>(new Field[] { ExamResults._.Exam_Name },
                                   new object[] { it.Exam_Name }, ExamResults._.Exam_ID == it.Exam_ID);
                                 tran.Save<Examination>(it);
-                            //}
+                            
                         }
                         if (theme.Exam_DateType == 1)
                         {
@@ -198,9 +167,12 @@ namespace Song.ServiceImpls
                     tran.Save<Examination>(theme);
                     //参考人员范围
                     tran.Delete<ExamGroup>(ExamGroup._.Exam_UID == theme.Exam_UID);
-                    foreach (ExamGroup g in groups ?? new ExamGroup[0])
+                    foreach (ExamGroup g in groups ?? Enumerable.Empty<ExamGroup>())
                         tran.Save<ExamGroup>(g);
-
+                    //保存学员与考试的关联
+                    tran.Delete<Exam_Accounts>(Exam_Accounts._.Exam_UID == theme.Exam_UID);
+                    foreach (Exam_Accounts ea in accounts ?? Enumerable.Empty<Exam_Accounts>())
+                        tran.Save<Exam_Accounts>(ea);
                     tran.Commit();
                 }
                 catch (Exception ex)
@@ -1731,10 +1703,9 @@ namespace Song.ServiceImpls
                 exr.Exam_Name = exam.Exam_Name;
                 exr.Exam_UID = exam.Exam_UID;
                 exr.Exam_Title = exam.Exam_Title;
-                //机构信息
-                Organization org = orgCom.OrganSingle(acc.Org_ID);
-                exr.Org_ID = acc.Org_ID;
-                if (org != null) exr.Org_Name = org.Org_Name;
+                //机构信息               
+                exr.Org_ID = acc.Org_ID;      
+                exr.Org_Name = exam.Org_Name;
                 //试卷信息
                 TestPaper tp = tpCom.PaperSingle(exam.Tp_Id);
                 exr.Tp_Id = tp.Tp_Id;

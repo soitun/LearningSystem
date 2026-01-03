@@ -55,14 +55,31 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="theme">考试主题的对象</param>
         /// <param name="items">考试场次的对象数组</param>
-        /// <param name="groups">关联的学员组，即可以参加考试的学员组</param>
-        /// <param name="accounts"></param>
+        /// <param name="groups">限定参考的学员组关联对象（ExamGroup），即可以参加考试的学员组</param>
+        /// <param name="accounts">限定参考的学员关联对象（Exam_Accounts）</param>
         [HttpPost]
         [Admin, Teacher]
         public bool Add(Examination theme, Examination[] items, ExamGroup[] groups, Exam_Accounts[] accounts)
         {
+            //当前机构
+            Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
+            if (org != null)
+            {
+                theme.Org_ID = org.Org_ID;
+                theme.Org_Name = org.Org_Name;
+            }
+            //当前编辑的教师
             Song.Entities.Teacher teacher = this.Teacher;
-            Business.Do<IExamination>().ExamAdd(teacher, theme, items, groups);
+            if (teacher != null)
+            {
+                theme.Th_ID = teacher.Th_ID;
+                theme.Th_Name = teacher.Th_Name;
+            }
+            //当前编辑的管理员
+            Song.Entities.EmpAccount admin = this.Admin;
+            if (admin != null) theme.Acc_Id = admin.Acc_Id;
+            //
+            Business.Do<IExamination>().ExamAdd(theme, items, groups, accounts);
             return true;
         }
         /// <summary>
@@ -71,9 +88,10 @@ namespace Song.ViewData.Methods
         /// <param name="theme">考试主题的对象</param>
         /// <param name="items">考试场次的对象数组</param>
         /// <param name="groups">关联的学员组，即可以参加考试的学员组</param>
+        /// <param name="accounts">限定参考的学员关联对象（Exam_Accounts）</param>
         [HttpPost]
         [Admin, Teacher]
-        public bool Modify(Examination theme, Examination[] items, ExamGroup[] groups)
+        public bool Modify(Examination theme, Examination[] items, ExamGroup[] groups, Exam_Accounts[] accounts)
         {
             Song.Entities.Examination old = Business.Do<IExamination>().ExamSingle(theme.Exam_ID);
             if (old == null) throw new Exception("Not found entity for Examination！");
@@ -95,7 +113,7 @@ namespace Song.ViewData.Methods
             List<ExamGroup> sorts = null;
             if (groups != null) sorts = groups.ToList<ExamGroup>();
 
-            Business.Do<IExamination>().ExamSave(old, items, groups);
+            Business.Do<IExamination>().ExamSave(old, items, groups, accounts);
 
             return true;
         }
