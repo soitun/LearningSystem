@@ -9,7 +9,7 @@ Vue.component('accountselect', {
             tabs: [
                 { title: '单个添加', name: 'add', icon: 'e759' },
                 { title: '批量添加', name: 'bat', icon: 'a04d' }],
-            activeName: 'bat',     //选项卡
+            activeName: 'add',     //选项卡
 
             loading: false
         }
