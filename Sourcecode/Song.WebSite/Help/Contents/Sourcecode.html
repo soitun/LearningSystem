@@ -38,7 +38,7 @@
         <dl>
             <dt>Song.ServiceInterfaces</dt>
             <dd> 业务层接口，系统由之前的三层架构升级而来，采用spring.net的IOC模块实现表现层与业务层的低耦合；</dd>
-            <dd>调用接口的方法示例：Business.Do().AccountsSingle(id); 其中IAccounts中接口名称，AccountsSingle为方法名；</dd>
+            <dd>调用接口的方法示例：Business.Do&lt;IAccounts&gt;().AccountsSingle(id); 其中IAccounts中接口名称，AccountsSingle为方法名；</dd>
 
             <dd>在调用接口前，需要在web.config中的“configuration/spring/objects”节点配置 &lt;object id="IAccounts"
                 type="Song.ServiceImpls.AccountsCom,Song.ServiceImpls" /&gt;</dd>

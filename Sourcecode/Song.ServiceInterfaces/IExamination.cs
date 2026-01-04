@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Song.Entities;
 using System.Data;
+using WeiSha.Data;
 
 namespace Song.ServiceInterfaces
 {
@@ -13,35 +14,34 @@ namespace Song.ServiceInterfaces
     {
 
         #region 考试管理
-        /// 添加
-        /// </summary>
-        /// <param name="entity">业务实体</param>
-        int ExamAdd(Teacher teacher,Examination entity);
         /// <summary>
-        /// 整体添加
-        /// </summary>
-        /// <param name="teacher"></param>
-        /// <param name="theme">考试主题</param>
-        /// <param name="items">考试的场次</param>
-        /// <param name="groups">参考人员的范围</param>
-        void ExamAdd(Teacher teacher, Examination theme, Examination[] items, ExamGroup[] groups);
-        /// <summary>
-        /// 修改
-        /// </summary>
-        /// <param name="entity">业务实体</param>
-        void ExamSave(Examination entity);
-        /// <summary>
-        /// 整体修改
+        /// 考试项目的整体添加，包括考试主题和场次，参考人员范围
         /// </summary>
         /// <param name="theme">考试主题</param>
         /// <param name="items">考试的场次</param>
         /// <param name="groups">参考人员的范围</param>
-        void ExamSave(Examination theme, Examination[] items, ExamGroup[] groups);
+        /// <param name="accounts">限定参考的学员关联对象（Exam_Accounts）</param>
+        void ExamAdd(Examination theme, Examination[] items, ExamGroup[] groups, Exam_Accounts[] accounts);
+        /// <summary>
+        /// 考试项目的整体修改，包括考试主题和场次，参考人员范围
+        /// </summary>
+        /// <param name="theme">考试主题</param>
+        /// <param name="items">考试的场次</param>
+        /// <param name="groups">参考人员的范围</param>
+        /// <param name="accounts">限定参考的学员关联对象（Exam_Accounts）</param>
+        void ExamSave(Examination theme, Examination[] items, ExamGroup[] groups, Exam_Accounts[] accounts);
+        /// <summary>
+        /// 修改考试主题，按条件修改
+        /// </summary>
+        /// <param name="examid">考试主题的ID</param>
+        /// <param name="fiels">要修改的字段</param>
+        /// <param name="objs">fiels对应的值</param>
+        int ExamUpdate(int examid, Field[] fiels, object[] objs);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void ExamDelete(int identify);
+        int ExamDelete(int identify);
         /// <summary>
         /// 获取单一实体对象，按主键ID；此处获取的是考试主题或场次
         /// </summary>
@@ -53,28 +53,55 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="uid"></param>
         /// <returns></returns>
-        Examination ExamSingle(string uid);
+        Examination ExamTheme(string uid);
         /// <summary>
         /// 获取单一实体对象，取最近一次考试；此处获取的是考试主题或场次
         /// </summary>
         /// <returns></returns>
         Examination ExamLast();
         /// <summary>
-        /// 获取当前考试的考试项目
+        /// 获取当前考试主题的考试项目
         /// </summary>
-        /// <param name="uid"></param>
+        /// <param name="uid">考试主题的uid</param>
         /// <returns></returns>
-        Examination[] ExamItem(string uid);
-        Examination[] ExamItem(int id);
+        List<Examination> ExamItem(string uid);
+        /// <summary>
+        /// 获取当前考试主题的考试项目
+        /// </summary>
+        /// <param name="id">考试主题的id</param>
+        /// <returns></returns>
+        List<Examination> ExamItem(int id);
         /// <summary>
         /// 当前考试主题关联的学员组
         /// </summary>
-        /// <param name="uid"></param>
+        /// <param name="uid">考试主题的uid</param>
         /// <returns></returns>
-        StudentSort[] GroupForStudentSort(string uid);  
+        List<StudentSort> ScopeForStudentSort(string uid);
+        /// <summary>
+        /// 当前考试主题关联的学员账号
+        /// </summary>
+        /// <param name="uid">考试主题的uid</param>
+        /// <returns></returns>
+        List<Accounts> ScopeForAccounts(string uid);
+        /// <summary>
+        /// 当前考试主题关联的学员账号
+        /// </summary>
+        /// <param name="uid">考试主题的uid</param>
+        /// <param name="index"></param>
+        /// <param name="size"></param>
+        /// <param name="countSum"></param>
+        /// <returns></returns>
+        List<Accounts> ScopeForAccounts(string uid, int index, int size, out int countSum);
+        /// <summary>
+        /// 当前考试主题关联的学员账号总数
+        /// </summary>
+        /// <param name="uid">考试主题的uid</param>
+        /// <returns></returns>
+        int ScopeForAccountTotal(string uid);
         /// <summary>
         /// 获取考试，不分页
         /// </summary>
+        /// <param name="orgid"></param>
         /// <param name="isUse"></param>
         /// <param name="count"></param>
         /// <returns></returns>
@@ -96,6 +123,17 @@ namespace Song.ServiceInterfaces
         /// <param name="search">考试主题检索</param>
         /// <returns></returns>
         List<Examination> GetSelfExam(int stid, DateTime? start, DateTime? end, string search);
+        /// <summary>
+        /// 分页获取当前学生要参加的考试
+        /// </summary>
+        /// <param name="stid"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="search"></param>
+        /// <param name="size"></param>
+        /// <param name="index"></param>
+        /// <param name="countSum"></param>
+        /// <returns></returns>
         List<Examination> GetSelfExam(int stid, DateTime? start, DateTime? end, string search, int size, int index, out int countSum);
         /// <summary>
         /// 判断某个考试是否允许某个学生参加
@@ -105,8 +143,9 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         bool ExamIsForStudent(int examid, int stid);
         /// <summary>
-        /// 获取指定时间内容的考试
+        /// 获取指定时间内容的考试,这里是考试主题
         /// </summary>
+        /// <param name="orgid"></param>
         /// <param name="start">时间区间检索的开始时间</param>
         /// <param name="end">时间区间检索的末尾时间</param>
         /// <param name="isUse"></param>
@@ -115,7 +154,21 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        Examination[] GetPager(int orgid, DateTime? start, DateTime? end, bool? isUse, string searName, int size, int index, out int countSum);
+        List<Examination> ThemePager(int orgid, DateTime? start, DateTime? end, bool? isUse, string searName, int size, int index, out int countSum);
+        /// <summary>
+        /// 获取指定时间内容的考试,这里是考试场次
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="isUse"></param>
+        /// <param name="ismanual">是否需要人工批阅</param>
+        /// <param name="searName"></param>
+        /// <param name="size"></param>
+        /// <param name="index"></param>
+        /// <param name="countSum"></param>
+        /// <returns></returns>
+        List<Examination> ExamPager(int orgid, DateTime? start, DateTime? end, bool? isUse, bool? ismanual, string searName, int size, int index, out int countSum);
         /// <summary>
         /// 获取当前学生参加的的考试
         /// </summary>
@@ -127,7 +180,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        ExamResults[] GetAttendPager(int stid, long  sbjid, int orgid, string sear, int size, int index, out int countSum);
+        List<ExamResults> GetAttendPager(int stid, long  sbjid, int orgid, string sear, int size, int index, out int countSum);
         #endregion
 
         #region 考试成绩提交等
@@ -163,13 +216,13 @@ namespace Song.ServiceInterfaces
         /// 删除考试成绩
         /// </summary>
         /// <param name="id">成绩记录的id</param>
-        void ResultDelete(int id);
+        int ResultDelete(int id);
         /// <summary>
         /// 删除某个学生的某个考试的成绩
         /// </summary>
         /// <param name="stid">学员账号id</param>
         /// <param name="examid">考试id</param>
-        void ResultDelete(int stid, int examid);
+        int ResultDelete(int stid, int examid);
         /// <summary>
         /// 删除考试下的所有成绩
         /// </summary>
@@ -323,7 +376,7 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        StudentSort[] StudentSort4Theme(int id);
+        List<StudentSort> StudentSort4Theme(int id);
         /// <summary>
         /// 考试场次下，参加考试的学员的学员组,仅统计参加考试的学员
         /// </summary>

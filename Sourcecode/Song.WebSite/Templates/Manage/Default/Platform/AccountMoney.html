@@ -13,7 +13,7 @@
             <el-row>
 
                 <el-form-item label="">
-                    <icon :man="entity.Ac_Sex!=2" :woman="entity.Ac_Sex==2" class="large">
+                    <icon :man="entity.Ac_Gender!=2" :woman="entity.Ac_Gender==2" class="large">
                         <span v-html='entity.Ac_Name' v-if="entity.Ac_Name!=''"></span>
                         <span v-else class="noname">(没有名字)</span>
                     </icon>

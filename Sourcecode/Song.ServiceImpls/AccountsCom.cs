@@ -78,7 +78,7 @@ namespace Song.ServiceImpls
                 {
                     IDCardNumber card = IDCardNumber.Get(entity.Ac_IDCardNumber);
                     entity.Ac_Age = card.Birthday.Year;
-                    entity.Ac_Sex = card.Gender;
+                    entity.Ac_Gender = card.Gender;
                     entity.Ac_Birthday = card.Birthday;
                     entity.Ac_Native = card.Province + "," + card.City + "," + card.District;
                     entity.Ac_IDCardNumber = card.CardNumber;
@@ -149,7 +149,7 @@ namespace Song.ServiceImpls
                 {
                     IDCardNumber card = IDCardNumber.Get(entity.Ac_IDCardNumber);
                     entity.Ac_Age = card.Birthday.Year;
-                    entity.Ac_Sex = card.Gender;
+                    entity.Ac_Gender = card.Gender;
                     entity.Ac_Birthday = card.Birthday;
                     entity.Ac_Native = card.Province + "," + card.City + "," + card.District;
                     entity.Ac_IDCardNumber = card.CardNumber;
@@ -185,11 +185,11 @@ namespace Song.ServiceImpls
                     //if (old != null && old.Sts_ID != entity.Sts_ID)
                     //{
                     //同步考试成绩中的学员组
-                    tran.Update<ExamResults>(new Field[] { ExamResults._.Sts_ID, ExamResults._.Ac_Sex, ExamResults._.Ac_Name, ExamResults._.Ac_IDCardNumber },
-                        new object[] { entity.Sts_ID, entity.Ac_Sex, entity.Ac_Name, entity.Ac_IDCardNumber }, ExamResults._.Ac_ID == entity.Ac_ID);
+                    tran.Update<ExamResults>(new Field[] { ExamResults._.Sts_ID, ExamResults._.Ac_Gender, ExamResults._.Ac_Name, ExamResults._.Ac_IDCardNumber },
+                        new object[] { entity.Sts_ID, entity.Ac_Gender, entity.Ac_Name, entity.Ac_IDCardNumber }, ExamResults._.Ac_ID == entity.Ac_ID);
                     //同步教师信息
-                    tran.Update<Teacher>(new Field[] { Teacher._.Th_Sex, Teacher._.Th_Birthday, Teacher._.Th_IDCardNumber, Teacher._.Th_Nation, Teacher._.Th_Native },
-                    new object[] { entity.Ac_Sex, entity.Ac_Birthday, entity.Ac_IDCardNumber, entity.Ac_Nation, entity.Ac_Native }, Teacher._.Ac_ID == entity.Ac_ID);
+                    tran.Update<Teacher>(new Field[] { Teacher._.Th_Gender, Teacher._.Th_Birthday, Teacher._.Th_IDCardNumber, Teacher._.Th_Nation, Teacher._.Th_Native },
+                    new object[] { entity.Ac_Gender, entity.Ac_Birthday, entity.Ac_IDCardNumber, entity.Ac_Nation, entity.Ac_Native }, Teacher._.Ac_ID == entity.Ac_ID);
                     //}
                     tran.Save<Accounts>(entity);
                     tran.Commit();
@@ -303,30 +303,31 @@ namespace Song.ServiceImpls
         /// <param name="entity"></param>
         /// <param name="fiels"></param>
         /// <param name="objs"></param>
-        public void AccountsUpdate(Accounts entity, Field[] fiels, object[] objs)
+        public int AccountsUpdate(Accounts entity, Field[] fiels, object[] objs)
         {
-            Gateway.Default.Update<Accounts>(fiels, objs, Accounts._.Ac_ID == entity.Ac_ID);         
+            return Gateway.Default.Update<Accounts>(fiels, objs, Accounts._.Ac_ID == entity.Ac_ID);         
         }
-        public void AccountsUpdate(int acid, Field[] fiels, object[] objs)
+        public int AccountsUpdate(int acid, Field[] fiels, object[] objs)
         {
-            Gateway.Default.Update<Accounts>(fiels, objs, Accounts._.Ac_ID == acid);
+            return Gateway.Default.Update<Accounts>(fiels, objs, Accounts._.Ac_ID == acid);
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void AccountsDelete(int identify)
+        public int AccountsDelete(int identify)
         {
             Song.Entities.Accounts ac = this.AccountsSingle(identify);
-            if (ac == null) return;
-            this.AccountsDelete(ac);
+            if (ac == null) return 0;
+            return this.AccountsDelete(ac);
         }
         /// <summary>
         /// 删除账户
         /// </summary>
         /// <param name="entity"></param>
-        public void AccountsDelete(Song.Entities.Accounts entity)
+        public int AccountsDelete(Song.Entities.Accounts entity)
         {
+            int i = 0;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
@@ -359,7 +360,7 @@ namespace Song.ServiceImpls
                     //下级学员全部提升一级                    
                     tran.Update<Accounts>(new Field[] { Accounts._.Ac_PID }, new object[] { entity.Ac_PID }, Accounts._.Ac_PID == entity.Ac_ID);
 
-                    tran.Delete<Accounts>(Accounts._.Ac_ID == entity.Ac_ID);                  
+                    i = tran.Delete<Accounts>(Accounts._.Ac_ID == entity.Ac_ID);         
                     //删除教师
                     Song.Entities.Teacher th = tran.From<Teacher>().Where(Teacher._.Ac_ID == entity.Ac_ID).ToFirst<Teacher>();
                     if (th != null) Business.Do<ITeacher>().TeacherDelete(th, tran, false);
@@ -377,6 +378,7 @@ namespace Song.ServiceImpls
                     throw ex;
                 }   
             }
+            return i;
         }
         /// <summary>
         /// 获取单一实体对象，按主键ID；
@@ -782,7 +784,7 @@ namespace Song.ServiceImpls
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Accounts._.Org_ID == orgid);
             if (isUse != null) wc.And(Accounts._.Ac_IsUse == isUse);
-            if (gender > 0) wc.And(Accounts._.Ac_Sex == gender);
+            if (gender > 0) wc.And(Accounts._.Ac_Gender == gender);
             return Gateway.Default.Count<Accounts>(wc);
         }
         /// <summary>
@@ -864,7 +866,7 @@ namespace Song.ServiceImpls
                 wc2.Or(Accounts._.Ac_AccName.Contains(phone.Trim()));
                 wc.And(wc2);
             }
-            if (gender > -1) wc.And(Accounts._.Ac_Sex == gender);
+            if (gender > -1) wc.And(Accounts._.Ac_Gender == gender);
            
             countSum = Gateway.Default.Count<Accounts>(wc);
             //排序方法
@@ -1918,17 +1920,17 @@ namespace Song.ServiceImpls
         /// 删除流水
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void MoneyDelete(MoneyAccount entity)
+        public int MoneyDelete(MoneyAccount entity)
         {
-            Gateway.Default.Delete<MoneyAccount>(MoneyAccount._.Ma_ID == entity.Ma_ID);
+            return Gateway.Default.Delete<MoneyAccount>(MoneyAccount._.Ma_ID == entity.Ma_ID);
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void MoneyDelete(int identify)
+        public int MoneyDelete(int identify)
         {
-            Gateway.Default.Delete<MoneyAccount>(MoneyAccount._.Ma_ID == identify);
+            return Gateway.Default.Delete<MoneyAccount>(MoneyAccount._.Ma_ID == identify);
         }
         /// <summary>
         /// 获取单一实体对象，按主键ID；
@@ -2256,10 +2258,12 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="orgid">机构id，小于或等0取所有</param>
         /// <returns></returns>
-        public int Total(int orgid)
+        public int Total(int orgid, bool? isuse, bool? ispass)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc &= Accounts._.Org_ID == orgid;
+            if (isuse != null) wc.And(Accounts._.Ac_IsUse == (bool)isuse);
+            if (ispass != null) wc.And(Accounts._.Ac_IsPass == (bool)ispass);
             return Gateway.Default.Count<Accounts>(wc);
         }
         /// <summary>

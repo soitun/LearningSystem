@@ -1,5 +1,4 @@
 //搜索框
-$dom.load.css([$dom.pagepath() + 'Components/Styles/TestHeader.css']);
 Vue.component('test_header', {
     props: ['title', 'icon','course'],
     data: function () {

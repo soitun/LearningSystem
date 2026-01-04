@@ -74,16 +74,17 @@ namespace Song.ServiceImpls
         /// <param name="guid">公告id</param>
         /// <param name="fiels"></param>
         /// <param name="objs"></param>
-        public void GuideUpdate(long guid, Field[] fiels, object[] objs)
+        public int GuideUpdate(long guid, Field[] fiels, object[] objs)
         {
-            Gateway.Default.Update<Guide>(fiels, objs, Guide._.Gu_ID == guid);
+            return Gateway.Default.Update<Guide>(fiels, objs, Guide._.Gu_ID == guid);
         }
         /// <summary>
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void GuideDelete(Guide entity)
+        public int GuideDelete(Guide entity)
         {
+            int i = 0;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
@@ -97,7 +98,7 @@ namespace Song.ServiceImpls
                         if (System.IO.File.Exists(img))
                             System.IO.File.Delete(img);
                     }
-                    tran.Delete<Guide>(Guide._.Gu_ID == entity.Gu_ID);
+                    i = tran.Delete<Guide>(Guide._.Gu_ID == entity.Gu_ID);
                     WeiSha.Core.Upload.Get["Guide"].DeleteDirectory(entity.Gu_ID.ToString());
                     tran.Commit();
                 }
@@ -106,16 +107,17 @@ namespace Song.ServiceImpls
                     tran.Rollback();
                     throw ex;
                 }
-            }       
+            }  
+            return i;
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void GuideDelete(long identify)
+        public int GuideDelete(long identify)
         {
             Song.Entities.Guide guide = this.GuideSingle(identify);
-            GuideDelete(guide);
+            return GuideDelete(guide);
         }
         /// <summary>
         /// 当前新闻的上一条新闻
@@ -271,10 +273,10 @@ namespace Song.ServiceImpls
             if (string.IsNullOrWhiteSpace(entity.Gc_PID)) entity.Gc_PID = "0";
             if (string.IsNullOrWhiteSpace(entity.Gc_UID)) entity.Gc_UID = WeiSha.Core.Request.UniqueID();
             //如果没有排序号，则自动计算
-            if (entity.Gc_Tax < 1)
+            if (entity.Gc_Order < 1)
             {
-                object obj = Gateway.Default.Max<GuideColumns>(GuideColumns._.Gc_Tax, GuideColumns._.Cou_ID == entity.Cou_ID && GuideColumns._.Gc_PID == entity.Gc_PID);
-                entity.Gc_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
+                object obj = Gateway.Default.Max<GuideColumns>(GuideColumns._.Gc_Order, GuideColumns._.Cou_ID == entity.Cou_ID && GuideColumns._.Gc_PID == entity.Gc_PID);
+                entity.Gc_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }            
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
             if (org != null) entity.Org_ID = org.Org_ID;
@@ -289,8 +291,8 @@ namespace Song.ServiceImpls
             Song.Entities.GuideColumns old = this.ColumnsSingle(entity.Gc_ID);
             if (old.Gc_PID != entity.Gc_PID)
             {
-                object obj = Gateway.Default.Max<GuideColumns>(GuideColumns._.Gc_Tax, GuideColumns._.Cou_ID == entity.Cou_ID && GuideColumns._.Gc_PID == entity.Gc_PID);
-                entity.Gc_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
+                object obj = Gateway.Default.Max<GuideColumns>(GuideColumns._.Gc_Order, GuideColumns._.Cou_ID == entity.Cou_ID && GuideColumns._.Gc_PID == entity.Gc_PID);
+                entity.Gc_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
             using (DbTrans trans = Gateway.Default.BeginTrans())
             {
@@ -315,22 +317,24 @@ namespace Song.ServiceImpls
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void ColumnsDelete(GuideColumns entity)
+        public int ColumnsDelete(GuideColumns entity)
         {
+            int i = 0;
             Song.Entities.GuideColumns[] cols = GetColumnsChild(entity.Cou_ID, entity.Gc_UID, null);
             foreach (Song.Entities.GuideColumns cl in cols)
-                ColumnsDelete(cl);
+                i += ColumnsDelete(cl);
             Gateway.Default.Delete<Guide>(Guide._.Gc_UID == entity.Gc_UID);
-            Gateway.Default.Delete<GuideColumns>(GuideColumns._.Gc_ID == entity.Gc_ID);
+            i += Gateway.Default.Delete<GuideColumns>(GuideColumns._.Gc_ID == entity.Gc_ID);
+            return i;
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void ColumnsDelete(int identify)
+        public int ColumnsDelete(int identify)
         {
             Song.Entities.GuideColumns col = ColumnsSingle(identify);
-            ColumnsDelete(col);
+            return ColumnsDelete(col);
         }        
         /// <summary>
         /// 获取单一实体对象，按主键ID；
@@ -355,11 +359,12 @@ namespace Song.ServiceImpls
             if (couid > 0) wc.And(GuideColumns._.Cou_ID == couid);
             if (isUse != null) wc.And(GuideColumns._.Gc_IsUse == (bool)isUse);
             if(!string.IsNullOrWhiteSpace(search)) wc.And(GuideColumns._.Gc_Title.Contains(search));
-            return Gateway.Default.From<GuideColumns>().Where(wc).OrderBy(GuideColumns._.Gc_Tax.Asc).ToArray<GuideColumns>();
+            return Gateway.Default.From<GuideColumns>().Where(wc).OrderBy(GuideColumns._.Gc_Order.Asc).ToArray<GuideColumns>();
         }
         /// <summary>
         /// 获取当前分类下的子分类
         /// </summary>
+        /// <param name="couid"></param>
         /// <param name="pid"></param>
         /// <param name="isUse"></param>
         /// <returns></returns>
@@ -368,12 +373,12 @@ namespace Song.ServiceImpls
             WhereClip wc = GuideColumns._.Cou_ID == couid;
             if (!string.IsNullOrWhiteSpace(pid)) wc.And(GuideColumns._.Gc_PID == pid);
             if (isUse != null) wc.And(GuideColumns._.Gc_IsUse == (bool)isUse);
-            return Gateway.Default.From<GuideColumns>().Where(wc).OrderBy(GuideColumns._.Gc_Tax.Asc).ToArray<GuideColumns>();
+            return Gateway.Default.From<GuideColumns>().Where(wc).OrderBy(GuideColumns._.Gc_Order.Asc).ToArray<GuideColumns>();
         }
         /// <summary>
         /// 更改排序
         /// </summary>
-        /// <param name="list">对象列表，Gc_ID、Gc_PID、Gc_Tax</param>
+        /// <param name="list">对象列表，Gc_ID、Gc_PID、Gc_Order</param>
         /// <returns></returns>
         public bool ColumnsUpdateTaxis(GuideColumns[] list)
         {
@@ -384,8 +389,8 @@ namespace Song.ServiceImpls
                     foreach (Song.Entities.GuideColumns item in list)
                     {
                         tran.Update<GuideColumns>(
-                            new Field[] { GuideColumns._.Gc_PID, GuideColumns._.Gc_Tax },
-                            new object[] { item.Gc_PID, item.Gc_Tax },
+                            new Field[] { GuideColumns._.Gc_PID, GuideColumns._.Gc_Order },
+                            new object[] { item.Gc_PID, item.Gc_Order },
                             GuideColumns._.Gc_ID == item.Gc_ID);
                     }
                     tran.Commit();

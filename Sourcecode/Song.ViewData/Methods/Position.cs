@@ -23,7 +23,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public Song.Entities.Position[] All()
+        public List<Song.Entities.Position> All()
         {
             Song.Entities.Organization org = LoginAdmin.Status.Organ(this.Letter);
             if (org == null) return null;
@@ -35,7 +35,7 @@ namespace Song.ViewData.Methods
         /// <param name="orgid">机构id</param>
         /// <returns></returns>
         [HttpGet]
-        public Song.Entities.Position[] All4Organ(int orgid)
+        public List<Song.Entities.Position> All4Organ(int orgid)
         {           
             return Business.Do<IPosition>().GetAll(orgid);
         }
@@ -44,7 +44,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public Song.Entities.Position[] EnableAll()
+        public List<Song.Entities.Position> EnableAll()
         {
             Song.Entities.Organization org = LoginAdmin.Status.Organ(this.Letter);
             return Business.Do<IPosition>().GetAll(org.Org_ID, true);
@@ -55,7 +55,7 @@ namespace Song.ViewData.Methods
         /// <param name="orgid">机构id</param>
         /// <returns></returns>
         [HttpGet]
-        public Song.Entities.Position[] Enable4Organ(int orgid)
+        public List<Song.Entities.Position> Enable4Organ(int orgid)
         {
             return Business.Do<IPosition>().GetAll(orgid, true);
         }
@@ -89,27 +89,14 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="id">岗位id，可以是多个，用逗号分隔</param>
         /// <returns>返回删除的个数</returns>
-        [HttpPost(Ignore =true),HttpDelete,Admin]
+        [HttpPost(Ignore = true), HttpDelete, Admin]
         public int Delete(string id)
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach(string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IPosition>().Delete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<IPosition>().Delete(s);            
             return i;
         }
         /// <summary>
@@ -192,9 +179,12 @@ namespace Song.ViewData.Methods
         /// <param name="id">岗位id</param>
         /// <returns></returns>
         [HttpGet]
-        public Song.Entities.EmpAccount[] Emplyees(int id)
+        public List<EmpAccount> Emplyees(int id)
         {
-            return Business.Do<IPosition>().GetAllEmplyee(id);
+            List<EmpAccount> list = Business.Do<IPosition>().GetAllEmplyee(id);
+            //清空账号的密码
+            foreach (EmpAccount emp in list) emp.Acc_Pw = string.Empty;
+            return list;
         }
         /// <summary>
         /// 保存员工与岗位的关联

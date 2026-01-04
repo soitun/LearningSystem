@@ -43,19 +43,19 @@ namespace Song.ServiceInterfaces
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void TeacherDelete(int identify);
+        int TeacherDelete(int identify);
         /// <summary>
         /// 删除教师
         /// </summary>
         /// <param name="entity"></param>
-        void TeacherDelete(Teacher entity);
+        int TeacherDelete(Teacher entity);
         /// <summary>
         /// 删除教师
         /// </summary>
         /// <param name="entity">教师数据实体</param>
         /// <param name="tran">事务</param>
         /// <param name="updateAccount">是否更新账号accounts表中的状态，true为更新，当教师删除后账号不具有教师角色</param>
-        void TeacherDelete(Teacher entity, DbTrans tran, bool updateAccount);
+        int TeacherDelete(Teacher entity, DbTrans tran, bool updateAccount);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>
@@ -171,7 +171,7 @@ namespace Song.ServiceInterfaces
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        /// <returns>如果删除成功，返回0；如果组包括学生，返回-1；如果是默认组，返回-2</returns>
+        /// <returns></returns>
         int SortDelete(int identify);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
@@ -287,8 +287,7 @@ namespace Song.ServiceInterfaces
         /// <summary>
         /// 获取教师
         /// </summary>
-        /// <param name="orgid">机构id</param>
-        /// <param name="isUse"></param>
+        /// <param name="thid"></param>
         /// <param name="count"></param>
         /// <returns></returns>
         TeacherHistory[] HistoryCount(int thid, int count);        

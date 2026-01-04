@@ -123,7 +123,7 @@ namespace Song.SMS
         /// <summary>
         /// 设置当前的短信平台
         /// </summary>
-        /// <param name="remarks"></param>
+        /// <param name="remak"></param>
         public static void SetCurrent(string remak)
         {
             Config.Singleton.CurrentName = remak;          

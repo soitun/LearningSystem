@@ -101,6 +101,7 @@ namespace Song.ViewData.Methods
         /// <param name="table">表名称</param>
         /// <param name="field">按字段模糊查询</param>
         /// <returns></returns>
+        [Localhost]
         public JObject FieldQuery(string dbtype,string table,string field)
         {
             Dictionary<string, string[]> dic = Business.Do<IDataBase>().FieldQuery(dbtype, table, field);

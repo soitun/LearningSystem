@@ -27,11 +27,16 @@
                 <el-input type="textarea" :rows="5" placeholder="请输入内容" v-model="entity.Posi_Intro"></el-input>
             </el-form-item>
             <el-form-item label="状态">
-                <el-switch v-model="entity.Posi_IsUse" :active-text="entity.Posi_IsUse ? '启用' : '禁用'" inactive-text="">
+                <el-switch v-model="entity.Posi_IsUse" :disabled="entity.Posi_IsAdmin"
+                    :active-text="entity.Posi_IsUse ? '启用' : '禁用'" inactive-text="">
                 </el-switch>
+                <div v-show="entity.Posi_IsAdmin">
+                    <help>管理员角色不能禁用</help>
+                </div>
+
             </el-form-item>
-            <el-form-item label="排序号">
-                <el-input-number v-model="entity.Posi_Tax"></el-input-number>
+            <el-form-item label="排序号" v-show="false">
+                <el-input-number v-model="entity.Posi_Order"></el-input-number>
             </el-form-item>
 
         </el-form>

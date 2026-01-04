@@ -68,7 +68,9 @@ Date.parse = function (str) {
     //如果是数值
     if (typeof (str) == 'number') return new Date(str);
     //如果本身就是日期对象
-    if (str instanceof Date) return str;
+    if (str instanceof Date ||
+        Object.prototype.toString.call(str) === '[object Date]' ||
+        (str.constructor && str.constructor.name === 'Date')) return str;
     let date = '', time = '';
     str = str.replace(/\//g, "-");
     if (str.indexOf(' ') > -1) {

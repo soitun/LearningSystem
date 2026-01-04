@@ -71,7 +71,7 @@ namespace Song.ServiceInterfaces
         /// 根据主键删除公司。
         /// </summary>
         /// <param name="identify">主键id</param>
-        void OrganDelete(int identify);
+        int OrganDelete(int identify);
         /// <summary>
         /// 取所有机构
         /// </summary>
@@ -159,7 +159,7 @@ namespace Song.ServiceInterfaces
         /// 根据主键删除公司。
         /// </summary>
         /// <param name="identify">主键id</param>
-        bool LevelDelete(int identify);
+        int LevelDelete(int identify);
         /// <summary>
         /// 当前对象名称是否重名
         /// </summary>

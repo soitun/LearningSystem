@@ -50,7 +50,7 @@ namespace Song.ServiceInterfaces
         /// <param name="fiels"></param>
         /// <param name="objs"></param>
         /// <returns></returns>
-        bool UpdateField(long couid, long olid, Field[] fiels, object[] objs);
+        int UpdateField(long couid, long olid, Field[] fiels, object[] objs);
         /// <summary>
         /// 更新章节的试题数
         /// </summary>
@@ -69,12 +69,12 @@ namespace Song.ServiceInterfaces
         /// 删除章节
         /// </summary>
         /// <param name="entity">章节对象</param>
-        void OutlineDelete(Outline entity);
+        int OutlineDelete(Outline entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="olid">实体的主键</param>
-        void OutlineDelete(long olid);
+        int OutlineDelete(long olid);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>
@@ -115,16 +115,19 @@ namespace Song.ServiceInterfaces
         /// <param name="video">是否为视频章节</param>
         /// <returns></returns>
         List<Outline> OutlineAll(long couid, bool? use, bool? finish, bool? video);
-        ///// <summary>
-        ///// 构建缓存，章节缓存以课程为单位存储
-        ///// </summary>
-        //List<Outline> BuildCache(long couid);
         /// <summary>
         /// 生成树形结构的章节列表
         /// </summary>
         /// <param name="outlines"></param>
         /// <returns></returns>
-        DataTable OutlineTree(Song.Entities.Outline[] outlines);
+        DataTable OutlineTree(List<Outline> outlines);
+        /// <summary>
+        /// 校验树形数据，主要是担心存在循环引用，导致递归栈溢出
+        /// </summary>
+        /// <param name="outlines"></param>
+        /// <param name="root">根节点id</param>
+        /// <returns></returns>
+        List<Outline> CheckTree(List<Outline> outlines);
         /// <summary>
         /// 清空章节下试题和附件
         /// </summary>
@@ -278,7 +281,7 @@ namespace Song.ServiceInterfaces
         /// <summary>
         /// 更改章节的排序
         /// </summary>
-        /// <param name="list">专业列表，Ol_ID、Ol_PID、Ol_Tax、Ol_Level</param>
+        /// <param name="list">专业列表，Ol_ID、Ol_PID、Ol_Order、Ol_Level</param>
         /// <returns></returns>
         bool UpdateTaxis(Outline[] list);
         #endregion

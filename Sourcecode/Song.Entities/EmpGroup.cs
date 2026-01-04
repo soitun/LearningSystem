@@ -18,7 +18,7 @@ namespace Song.Entities {
     		
     		protected String _EGrp_Name;
     		
-    		protected Int32 _EGrp_Tax;
+    		protected Int32 _EGrp_Order;
     		
     		protected Int32 _Org_ID;
     		
@@ -74,13 +74,13 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32 EGrp_Tax {
+    		public Int32 EGrp_Order {
     			get {
-    				return this._EGrp_Tax;
+    				return this._EGrp_Order;
     			}
     			set {
-    				this.OnPropertyValueChange(_.EGrp_Tax, _EGrp_Tax, value);
-    				this._EGrp_Tax = value;
+    				this.OnPropertyValueChange(_.EGrp_Order, _EGrp_Order, value);
+    				this._EGrp_Order = value;
     			}
     		}
     		
@@ -136,7 +136,7 @@ namespace Song.Entities {
     					_.EGrp_IsSystem,
     					_.EGrp_IsUse,
     					_.EGrp_Name,
-    					_.EGrp_Tax,
+    					_.EGrp_Order,
     					_.Org_ID,
     					_.Org_Name};
     		}
@@ -151,7 +151,7 @@ namespace Song.Entities {
     					this._EGrp_IsSystem,
     					this._EGrp_IsUse,
     					this._EGrp_Name,
-    					this._EGrp_Tax,
+    					this._EGrp_Order,
     					this._Org_ID,
     					this._Org_Name};
     		}
@@ -175,8 +175,8 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.EGrp_Name))) {
     				this._EGrp_Name = reader.GetString(_.EGrp_Name);
     			}
-    			if ((false == reader.IsDBNull(_.EGrp_Tax))) {
-    				this._EGrp_Tax = reader.GetInt32(_.EGrp_Tax);
+    			if ((false == reader.IsDBNull(_.EGrp_Order))) {
+    				this._EGrp_Order = reader.GetInt32(_.EGrp_Order);
     			}
     			if ((false == reader.IsDBNull(_.Org_ID))) {
     				this._Org_ID = reader.GetInt32(_.Org_ID);
@@ -236,9 +236,9 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field EGrp_Name = new WeiSha.Data.Field<EmpGroup>("EGrp_Name");
     			
     			/// <summary>
-    			/// 字段名：EGrp_Tax - 数据类型：Int32
+    			/// 字段名：EGrp_Order - 数据类型：Int32
     			/// </summary>
-    			public static WeiSha.Data.Field EGrp_Tax = new WeiSha.Data.Field<EmpGroup>("EGrp_Tax");
+    			public static WeiSha.Data.Field EGrp_Order = new WeiSha.Data.Field<EmpGroup>("EGrp_Order");
     			
     			/// <summary>
     			/// 字段名：Org_ID - 数据类型：Int32

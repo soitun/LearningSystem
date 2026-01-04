@@ -22,13 +22,13 @@
 		for (var t in param) this.attrs[t] = param[t];
 		eval($ctrl.attr_generate(this.attrs));
 		/* 自定义事件 */
-		//data:数据项源变动时;click:点击菜单项
-		eval($ctrl.event_generate(['data', 'click']));
+		//mounted:挂载完成;data:数据项源变动时;click:点击菜单项
+		eval($ctrl.event_generate(['mounted', 'data', 'click']));
 
 		this.datas = new Array(); //数据源
 		this._datas = ''; //数据源的序列化字符串
 		this.dom = null; //控件的html对象
-		//this.domtit = null; //控件标签栏部分的html对象
+		this._mounted_count = 0;		//挂载事件的调用次数
 		this.dombody = null; //控件内容区
 		//初始化并生成控件
 		this._initialization();
@@ -50,9 +50,15 @@
 		if (item instanceof Array) {
 			for (var i = 0; i < item.length; i++)
 				this.add(item[i]);
-		} else {
-			this.datas.push(item);
-		}
+		} else this.datas.push(item);
+	};
+	//隐藏控件
+	fn.hide = function () {
+		if (this.dom) this.dom.hide();
+	};
+	//显示控件
+	fn.show = function () {
+		if (this.dom) this.dom.show();
 	};
 	//当属性更改时触发相应动作
 	fn._watch = {
@@ -107,6 +113,11 @@
 			this.width = this._width;
 			this.height = this._height;
 			this.level = this._level;
+			//挂载事件
+			if (this._mounted_count < 1) {
+				this.trigger('mounted', {});
+				this._mounted_count++;
+			}
 		}
 	};
 	//生成结构
@@ -246,13 +257,13 @@
 					panel.show();
 					var maxset = obj.dom.offset();
 					var maxwd = maxset.left + obj.dom.width();
-					var maxhg = maxset.top + obj.dom.height();				
+					var maxhg = maxset.top + obj.dom.height();
 					if (maxwd > window.innerWidth / 2) panel.left(offset.left - panel.width() - 20);
 					if (maxwd < window.innerWidth / 2) panel.left(offset.left + obj.width + 20);
 					//var left = offset.left + panel.width() > maxwd ? offset.left - panel.width() - 20 : offset.left + obj.width + 20;
 					var top = offset.top + panel.width() > maxhg ? offset.top - panel.height() : offset.top;
 					//当前面板的位置
-					panel.top(top);				
+					panel.top(top);
 				}
 				obj.leavetime = 3;
 				obj.leave = false;

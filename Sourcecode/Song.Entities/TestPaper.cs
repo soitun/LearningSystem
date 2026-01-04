@@ -46,6 +46,8 @@ namespace Song.Entities {
     		
     		protected Boolean _Tp_IsFinal;
     		
+    		protected Boolean _Tp_IsManual;
+    		
     		protected Boolean _Tp_IsRec;
     		
     		protected Boolean _Tp_IsUse;
@@ -260,6 +262,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Boolean Tp_IsManual {
+    			get {
+    				return this._Tp_IsManual;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Tp_IsManual, _Tp_IsManual, value);
+    				this._Tp_IsManual = value;
+    			}
+    		}
+    		
     		public Boolean Tp_IsRec {
     			get {
     				return this._Tp_IsRec;
@@ -419,6 +431,7 @@ namespace Song.Entities {
     					_.Tp_Intro,
     					_.Tp_IsBuild,
     					_.Tp_IsFinal,
+    					_.Tp_IsManual,
     					_.Tp_IsRec,
     					_.Tp_IsUse,
     					_.Tp_Lasttime,
@@ -457,6 +470,7 @@ namespace Song.Entities {
     					this._Tp_Intro,
     					this._Tp_IsBuild,
     					this._Tp_IsFinal,
+    					this._Tp_IsManual,
     					this._Tp_IsRec,
     					this._Tp_IsUse,
     					this._Tp_Lasttime,
@@ -531,6 +545,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Tp_IsFinal))) {
     				this._Tp_IsFinal = reader.GetBoolean(_.Tp_IsFinal);
+    			}
+    			if ((false == reader.IsDBNull(_.Tp_IsManual))) {
+    				this._Tp_IsManual = reader.GetBoolean(_.Tp_IsManual);
     			}
     			if ((false == reader.IsDBNull(_.Tp_IsRec))) {
     				this._Tp_IsRec = reader.GetBoolean(_.Tp_IsRec);
@@ -688,6 +705,11 @@ namespace Song.Entities {
     			/// 字段名：Tp_IsFinal - 数据类型：Boolean
     			/// </summary>
     			public static WeiSha.Data.Field Tp_IsFinal = new WeiSha.Data.Field<TestPaper>("Tp_IsFinal");
+    			
+    			/// <summary>
+    			/// 字段名：Tp_IsManual - 数据类型：Boolean
+    			/// </summary>
+    			public static WeiSha.Data.Field Tp_IsManual = new WeiSha.Data.Field<TestPaper>("Tp_IsManual");
     			
     			/// <summary>
     			/// 字段名：Tp_IsRec - 数据类型：Boolean

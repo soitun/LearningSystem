@@ -10,13 +10,11 @@ namespace Song.Entities {
     		
     		protected Int32 _Eg_ID;
     		
-    		protected Int32 _Eg_Type;
+    		protected Int32? _Eg_Type;
     		
     		protected String _Exam_UID;
     		
     		protected Int32 _Org_ID;
-    		
-    		protected String _Org_Name;
     		
     		protected Int64 _Sts_ID;
     		
@@ -30,7 +28,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32 Eg_Type {
+    		public Int32? Eg_Type {
     			get {
     				return this._Eg_Type;
     			}
@@ -57,16 +55,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Org_ID, _Org_ID, value);
     				this._Org_ID = value;
-    			}
-    		}
-    		
-    		public String Org_Name {
-    			get {
-    				return this._Org_Name;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Org_Name, _Org_Name, value);
-    				this._Org_Name = value;
     			}
     		}
     		
@@ -111,7 +99,6 @@ namespace Song.Entities {
     					_.Eg_Type,
     					_.Exam_UID,
     					_.Org_ID,
-    					_.Org_Name,
     					_.Sts_ID};
     		}
     		
@@ -124,7 +111,6 @@ namespace Song.Entities {
     					this._Eg_Type,
     					this._Exam_UID,
     					this._Org_ID,
-    					this._Org_Name,
     					this._Sts_ID};
     		}
     		
@@ -143,9 +129,6 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Org_ID))) {
     				this._Org_ID = reader.GetInt32(_.Org_ID);
-    			}
-    			if ((false == reader.IsDBNull(_.Org_Name))) {
-    				this._Org_Name = reader.GetString(_.Org_Name);
     			}
     			if ((false == reader.IsDBNull(_.Sts_ID))) {
     				this._Sts_ID = reader.GetInt64(_.Sts_ID);
@@ -182,7 +165,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Eg_ID = new WeiSha.Data.Field<ExamGroup>("Eg_ID");
     			
     			/// <summary>
-    			/// 字段名：Eg_Type - 数据类型：Int32
+    			/// 字段名：Eg_Type - 数据类型：Int32(可空)
     			/// </summary>
     			public static WeiSha.Data.Field Eg_Type = new WeiSha.Data.Field<ExamGroup>("Eg_Type");
     			
@@ -195,11 +178,6 @@ namespace Song.Entities {
     			/// 字段名：Org_ID - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Org_ID = new WeiSha.Data.Field<ExamGroup>("Org_ID");
-    			
-    			/// <summary>
-    			/// 字段名：Org_Name - 数据类型：String
-    			/// </summary>
-    			public static WeiSha.Data.Field Org_Name = new WeiSha.Data.Field<ExamGroup>("Org_Name");
     			
     			/// <summary>
     			/// 字段名：Sts_ID - 数据类型：Int64

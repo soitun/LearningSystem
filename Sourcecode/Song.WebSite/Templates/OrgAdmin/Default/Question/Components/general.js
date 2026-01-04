@@ -25,7 +25,7 @@ Vue.component('general', {
                 if (nv.Qus_Diff >= 5) nv.Qus_Diff = 5;
                 //默认为启用状态
                 if (!nv.Qus_IsUse) nv['Qus_IsUse'] = true;
-                if (!nv.Qus_Tax) nv['Qus_Tax'] = 0;
+                if (!nv.Qus_Order) nv['Qus_Order'] = 0;
             }, immediate: true
         },
         'organ': {
@@ -61,7 +61,7 @@ Vue.component('general', {
         }
     },
     mounted: function () {
-        $dom.load.css([$dom.path() + 'Question/Components/Styles/general.css']);
+        
     },
     methods: {
         //专业更改时
@@ -192,8 +192,8 @@ Vue.component('general', {
             <el-form-item label="难度" prop="Qus_Diff">
                 <el-rate title="点击难度值" v-model="question.Qus_Diff" :max="5" show-score></el-rate>
             </el-form-item>
-            <el-form-item label="排序号" prop="Qus_Tax" v-if="false">
-                <el-input-number v-model="question.Qus_Tax"></el-input-number>
+            <el-form-item label="排序号" prop="Qus_Order" v-if="false">
+                <el-input-number v-model="question.Qus_Order"></el-input-number>
                 <help>数值越小越靠前，可以为负值</help>
             </el-form-item>
             <el-form-item label="" prop="Qus_IsUse">

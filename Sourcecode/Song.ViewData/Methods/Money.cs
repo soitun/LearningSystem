@@ -85,27 +85,14 @@ namespace Song.ViewData.Methods
         /// <param name="id">可以是多个，用逗号分隔</param>
         /// <returns></returns>
         [Admin]
-        [HttpDelete,HttpGet(Ignore =true)]
+        [HttpDelete, HttpGet(Ignore = true)]
         public int Delete(string id)
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IAccounts>().MoneyDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<IAccounts>().MoneyDelete(s);
             return i;
         }
         /// <summary>
@@ -117,15 +104,8 @@ namespace Song.ViewData.Methods
         [HttpDelete]
         public bool DeleteForAccount(int id)
         {
-            try
-            {
-                Business.Do<IAccounts>().MoneyDelete(id);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            int i = Business.Do<IAccounts>().MoneyDelete(id);
+            return i > 0;
         }
         /// <summary>
         /// 确认订单。
@@ -166,7 +146,7 @@ namespace Song.ViewData.Methods
         public ListResult Pager(int orgid, int type, int from, string account, DateTime? start, DateTime? end, string serial, int moneymin, int moneymax, int state, int size, int index)
         {
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
-            int count = 0;
+            int count;
             Song.Entities.MoneyAccount[] eas = null;
             eas = Business.Do<IAccounts>().MoneyPager(orgid, type, from, account, (DateTime?)start, (DateTime?)end, moneymin, moneymax, serial, state, size, index, out count);
             ListResult result = new ListResult(eas);
@@ -201,7 +181,7 @@ namespace Song.ViewData.Methods
                     acid = acc.Ac_ID;
             }
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
-            int count = 0;
+            int count;
             Song.Entities.MoneyAccount[] eas = null;
             eas = Business.Do<IAccounts>().MoneyPager(-1, acid, type, from, start, end, search, moneymin, moneymax, serial, state, size, index, out count);
             ListResult result = new ListResult(eas);

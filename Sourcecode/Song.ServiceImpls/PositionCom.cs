@@ -23,8 +23,8 @@ namespace Song.ServiceImpls
         public void Add(Position entity)
         {
             //添加对象，并设置排序号
-            object obj = Gateway.Default.Max<Position>(Position._.Posi_Tax, Position._.Posi_Tax > -1 && Position._.Org_ID == entity.Org_ID);
-            entity.Posi_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 1;
+            object obj = Gateway.Default.Max<Position>(Position._.Posi_Order, Position._.Posi_Order > -1 && Position._.Org_ID == entity.Org_ID);
+            entity.Posi_Order = obj != null ? Convert.ToInt32(obj) + 1 : 1;
 
             Gateway.Default.Save<Position>(entity);
         }
@@ -54,9 +54,10 @@ namespace Song.ServiceImpls
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void Delete(Position entity)
+        public int Delete(Position entity)
         {
-            if (entity.Posi_IsAdmin) return;
+            if (entity.Posi_IsAdmin) return 0;
+            int i = 0;
             //删除权限关联
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
@@ -65,7 +66,7 @@ namespace Song.ServiceImpls
                     tran.Delete<Purview>(Purview._.Posi_Id == entity.Posi_Id);
                     //修改员工信息中的岗位名称
                     tran.Update<EmpAccount>(new Field[] { EmpAccount._.Posi_Name }, new object[] { "" }, EmpAccount._.Posi_Id == entity.Posi_Id);
-                    tran.Delete<Position>(entity);
+                    i += tran.Delete<Position>(entity);
                     tran.Commit();
                 }
                 catch(Exception ex)
@@ -74,32 +75,33 @@ namespace Song.ServiceImpls
                     throw ex;
                 }               
             }
+            return i;
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void Delete(int identify)
+        public int Delete(int identify)
         {
             Song.Entities.Position entity = this.GetSingle(identify);
-            this.Delete(entity);            
+            return this.Delete(entity);            
         }
         /// <summary>
         /// 删除，按职位名称
         /// </summary>
         /// <param name="name">职位名称</param>
-        public void Delete(int orgid, string name)
+        public int Delete(int orgid, string name)
         {
             Song.Entities.Position entity = this.GetSingle(orgid,name);
-            this.Delete(entity); 
+            return this.Delete(entity); 
         }
         /// <summary>
         /// 删除与员工之间的关联
         /// </summary>
         /// <param name="identify"></param>
-        public void DeleteRelation4Emp(int identify)
+        public int DeleteRelation4Emp(int identify)
         {
-            Gateway.Default.Update<EmpAccount>(new Field[] { EmpAccount._.Posi_Id,EmpAccount._.Posi_Name}, new object[] { -1,"" }, EmpAccount._.Posi_Id == identify);
+            return Gateway.Default.Update<EmpAccount>(new Field[] { EmpAccount._.Posi_Id,EmpAccount._.Posi_Name}, new object[] { -1,"" }, EmpAccount._.Posi_Id == identify);
         }
         /// <summary>
         /// 获取单一实体对象，按主键ID；
@@ -117,7 +119,6 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public Position GetSingle(int orgid, string name)
         {
-
             return Gateway.Default.From<Position>().Where(Organization._.Org_ID == orgid && Position._.Posi_Name == name).ToFirst<Position>();
         }
         /// <summary>
@@ -134,28 +135,25 @@ namespace Song.ServiceImpls
         /// 获取对象；即所有职位；
         /// </summary>
         /// <returns></returns>
-        public Position[] GetAll(int orgid)
+        public List<Position> GetAll(int orgid)
         {
-            return Gateway.Default.From<Position>().Where(Position._.Org_ID == orgid).OrderBy(Position._.Posi_Tax.Asc).ToArray<Position>();
+            return GetAll(orgid, null);
         }
-        public Position[] GetAll(int orgid,bool? isUse)
+        public List<Position> GetAll(int orgid,bool? isUse)
         {
-            if (isUse == null)
-            {
-                return this.GetAll(orgid);
-            }
-            return Gateway.Default.From<Position>()
-                .Where(Position._.Org_ID == orgid && Position._.Posi_IsUse == isUse)
-                .OrderBy(Position._.Posi_Tax.Asc).ToArray<Position>();
+            WhereClip wc = new WhereClip();
+            if (orgid > 0) wc &= Position._.Org_ID == orgid;
+            if (isUse != null) wc &= Position._.Posi_IsUse == (bool)isUse;          
+            return Gateway.Default.From<Position>().Where(wc).OrderBy(Position._.Posi_Order.Asc).ToList<Position>();
         }
         /// <summary>
         /// 获取当前角色的所有员工
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public EmpAccount[] GetAllEmplyee(int id)
+        public List<EmpAccount> GetAllEmplyee(int id)
         {
-            return Gateway.Default.From<EmpAccount>().Where(EmpAccount._.Posi_Id == id).ToArray<EmpAccount>();
+            return Gateway.Default.From<EmpAccount>().Where(EmpAccount._.Posi_Id == id).ToList<EmpAccount>();
         }
         /// <summary>
         /// 获取当前角色的所有在职员工
@@ -163,9 +161,9 @@ namespace Song.ServiceImpls
         /// <param name="posid"></param>
         /// <param name="use">是否在职</param>
         /// <returns></returns>
-        public EmpAccount[] GetAllEmplyee(int posid, bool use)
+        public List<EmpAccount> GetAllEmplyee(int posid, bool use)
         {
-            return Gateway.Default.From<EmpAccount>().Where(EmpAccount._.Posi_Id == posid && EmpAccount._.Acc_IsUse == use).ToArray<EmpAccount>();
+            return Gateway.Default.From<EmpAccount>().Where(EmpAccount._.Posi_Id == posid && EmpAccount._.Acc_IsUse == use).ToList<EmpAccount>();
         }
         /// <summary>
         /// 岗位是否已经存在
@@ -197,8 +195,8 @@ namespace Song.ServiceImpls
                     foreach (Position item in entities)
                     {
                         tran.Update<Position>(
-                            new Field[] { Position._.Posi_Tax },
-                            new object[] { item.Posi_Tax },
+                            new Field[] { Position._.Posi_Order },
+                            new object[] { item.Posi_Order },
                             Position._.Posi_Id == item.Posi_Id);
                     }
                     tran.Commit();

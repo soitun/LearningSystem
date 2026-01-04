@@ -76,80 +76,47 @@ namespace Song.ViewData.Methods
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
             List<long> coulist = new List<long>();      //章节所属课程的id集体
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
             {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-
-                    Business.Do<IOutline>().UpdateField(0, idval,
-                    new WeiSha.Data.Field[] {
+                if (s == 0) continue;
+                i += Business.Do<IOutline>().UpdateField(0, s,
+                new WeiSha.Data.Field[] {
                         Song.Entities.Outline._.Ol_IsUse,Song.Entities.Outline._.Ol_IsFinish,Song.Entities.Outline._.Ol_IsFree },
-                    new object[] { (bool)use, (bool)finish, (bool)free });
-                    if (couid <= 0)
-                    {
-                        Song.Entities.Outline ol = Business.Do<IOutline>().OutlineSingle(idval);
-                        if (ol != null && !coulist.Contains(ol.Cou_ID)) coulist.Add(ol.Cou_ID);
-                    }
-                    i++;
-                }
-                catch (Exception ex)
+                new object[] { (bool)use, (bool)finish, (bool)free });
+                if (couid <= 0)
                 {
-                    throw ex;
+                    Song.Entities.Outline ol = Business.Do<IOutline>().OutlineSingle(s);
+                    if (ol != null && !coulist.Contains(ol.Cou_ID)) coulist.Add(ol.Cou_ID);
                 }
-            }           
+            }
             return i;
-
         }
         /// <summary>
         /// 更改章节的排序
         /// </summary>
-        /// <param name="list">章节列表，对像只有Ol_ID、Ol_PID、Ol_Tax、Ol_Level</param>
+        /// <param name="list">章节列表，对像只有Ol_ID、Ol_PID、Ol_Order、Ol_Level</param>
         /// <returns></returns>
         [HttpPost]
         [Admin, Teacher]
         public bool ModifyTaxis(Song.Entities.Outline[] list)
         {
-            try
-            {
-                Business.Do<IOutline>().UpdateTaxis(list);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return Business.Do<IOutline>().UpdateTaxis(list);
         }
         /// <summary>
         /// 删除课程章节
         /// </summary>
         /// <param name="id">账户id，可以是多个，用逗号分隔</param>
         /// <returns></returns>
-        [Admin,Teacher]
+        [Admin, Teacher]
         [HttpDelete]
         public int Delete(string id)
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IOutline>().OutlineDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<long> list = id.ToList<long>();
+            foreach (long s in list)
+                i += Business.Do<IOutline>().OutlineDelete(s);
             return i;
         }
         /// <summary>
@@ -203,7 +170,7 @@ namespace Song.ViewData.Methods
             {
                 foreach (Song.Entities.Outline ol in outlines) ol.Ol_Intro = string.Empty;
                 //树形章节输出
-                DataTable dt = Business.Do<IOutline>().OutlineTree(outlines.ToArray<Song.Entities.Outline>());              
+                DataTable dt = Business.Do<IOutline>().OutlineTree(outlines);              
                 return dt;
             }
             return null;
@@ -218,34 +185,40 @@ namespace Song.ViewData.Methods
         public JArray Tree(long couid, bool? isuse)
         {
             if (couid <= 0) return null;
-            List<Song.Entities.Outline> list = Business.Do<IOutline>().OutlineAll(couid, isuse, null, null);           
-            return list.Count > 0 ? _outlineNode(null, list) : null;
+            List<Song.Entities.Outline> list = Business.Do<IOutline>().OutlineAll(couid, isuse, null, null);
+            return list.Count > 0 ? _outlineNode(null, list, 0, string.Empty) : null;
         }
         /// <summary>
         /// 生成菜单子节点
         /// </summary>
         /// <param name="item">当前菜单项</param>
         /// <param name="items">所有菜单项</param>
+        /// <param name="level">层深</param>
+        /// <param name="prefix">序号前缀,用于生成类似1.1、1.2的序号</param>
         /// <returns></returns>
-        private JArray _outlineNode(Song.Entities.Outline item, List<Song.Entities.Outline> items)
+        private JArray _outlineNode(Song.Entities.Outline item, List<Song.Entities.Outline> items, int level, string prefix)
         {
-            JArray jarr = new JArray();
-            foreach (Song.Entities.Outline m in items)
+            List<Song.Entities.Outline> childs = new List<Song.Entities.Outline>();
+            for (int i = 0; i < items.Count; i++)
             {
-                if (item == null)
-                {
-                    if (m.Ol_PID != 0) continue;
-                }
-                else
-                {
-                    if (m.Ol_PID != item.Ol_ID) continue;
-                }
-                //string j = m.ToJson("", "Ol_LiveTime,Ol_Intro,Ol_Courseware");
-                JObject jo = m.ToJObject("", "Ol_Intro,Ol_Courseware");             
-                //计算下级
-                JArray charray = _outlineNode(m, items);
-                if (charray.Count > 0) jo.Add("children", charray);
+                Entities.Outline m = items[i];
+                if (item == null && m.Ol_PID != 0) continue;
+                if (item != null && m.Ol_PID != item.Ol_ID) continue;
+                childs.Add(m);
+                items.RemoveAt(i);
+                i--;
+            }
+            JArray jarr = new JArray();
+            for (int i = 0; i < childs.Count; i++)
+            {
+                Entities.Outline tm = childs[i];
+                tm.Ol_XPath = prefix + (i + 1).ToString();
+                tm.Ol_Level = level;
+                JObject jo = tm.ToJObject("", "Ol_Intro,Ol_Courseware");
                 jarr.Add(jo);
+                //计算下级
+                JArray charray = _outlineNode(tm, items, ++level, tm.Ol_XPath + ".");
+                if (charray.Count > 0) jo.Add("children", charray);
             }
             return jarr;
         }

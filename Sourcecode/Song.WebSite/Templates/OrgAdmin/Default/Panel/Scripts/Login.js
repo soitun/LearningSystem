@@ -70,6 +70,14 @@
         area.html('');
         if (!this._id) this._id = 'login_' + new Date().getTime();
     };
+    //隐藏控件
+    fn.hide = function () {
+        if (this.dom) this.dom.hide();
+    };
+    //显示控件
+    fn.show = function () {
+        if (this.dom) this.dom.show();
+    };
     //当属性更改时触发相应动作
     fn._watch = {
         'width': function (obj, val, old) {

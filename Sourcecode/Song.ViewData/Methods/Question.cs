@@ -71,8 +71,12 @@ namespace Song.ViewData.Methods
             //处理单选、多选的选项
             if (entity.Qus_Type == 1 || entity.Qus_Type == 2 || entity.Qus_Type == 5)
             {
-                entity.Qus_Items = Business.Do<IQuestions>().AnswerToItems(_answerToItems(entity));
+                entity.Qus_Items = Business.Do<IQuestions>().AnswerToItems(Helper.Question.AnswerToItems(entity));
             }
+            //清理脚本
+            entity.Qus_Title = QuestionHandler.CleanText.Title(entity.Qus_Title);
+            entity.Qus_Answer = QuestionHandler.CleanText.Content(entity.Qus_Answer);
+            entity.Qus_Explain = QuestionHandler.CleanText.Content(entity.Qus_Explain);
             Business.Do<IQuestions>().QuesAdd(entity);
             return entity.Qus_ID;
         }
@@ -88,14 +92,19 @@ namespace Song.ViewData.Methods
         {
             Song.Entities.Questions old = Business.Do<IQuestions>().QuesSingle(entity.Qus_ID);
             if (old == null) throw new Exception("Not found entity for Questions！");
+            //清理脚本
+            entity.Qus_Title = QuestionHandler.CleanText.Title(entity.Qus_Title);
+            entity.Qus_Answer = QuestionHandler.CleanText.Content(entity.Qus_Answer);
+            entity.Qus_Explain = QuestionHandler.CleanText.Content(entity.Qus_Explain);
             //是否更改章节id
             long oldOlid = old.Ol_ID, newOlid = entity.Ol_ID;
             old.Copy<Song.Entities.Questions>(entity);
             //处理单选、多选的选项
             if (entity.Qus_Type == 1 || entity.Qus_Type == 2 || entity.Qus_Type == 5)
             {
-                old.Qus_Items = Business.Do<IQuestions>().AnswerToItems(_answerToItems(entity));
-            }           
+                old.Qus_Items = Business.Do<IQuestions>().AnswerToItems(Helper.Question.AnswerToItems(entity));
+            }
+            
             Business.Do<IQuestions>().QuesSave(old);
 
             //更新章节试题数
@@ -105,41 +114,6 @@ namespace Song.ViewData.Methods
                 Business.Do<IOutline>().StatisticalQuestion(newOlid);
             }
             return true;
-        }
-        /// <summary>
-        /// 将试题的答题选项(Json)转换为数组
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        private List<Song.Entities.QuesAnswer> _answerToItems(Song.Entities.Questions entity)
-        {
-            if (string.IsNullOrWhiteSpace(entity.Qus_Items)) return null;
-            List<Song.Entities.QuesAnswer> items = new List<QuesAnswer>();
-            JArray jaryy = JArray.Parse(entity.Qus_Items);
-            if (jaryy != null)
-            {
-                for(int i = 0; i < jaryy.Count; i++)
-                {
-                    JToken jt = jaryy[i];
-                    try
-                    {
-                        Song.Entities.QuesAnswer obj = ExecuteMethod.ValueToEntity<Song.Entities.QuesAnswer>(null, jt.ToString());
-                        if (string.IsNullOrWhiteSpace(obj.Ans_Context)) continue;                     
-                        //生成答案项的id
-                        if (obj.Ans_ID <= 0)                       
-                            obj.Ans_ID = WeiSha.Core.Request.SnowID();                     
-                        //填空题，每项都是正确的
-                        if (entity.Qus_Type == 5)
-                        {
-                            obj.Ans_IsCorrect = true;
-                            obj.Ans_Context = HTML.ClearTag(obj.Ans_Context);
-                        }
-                        items.Add(obj);
-                    }
-                    catch { }
-                }
-            }
-            return items;
         }
         /// <summary>
         /// 修改使用状态
@@ -153,24 +127,11 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IQuestions>().QuesUpdate(idval,
-                    new WeiSha.Data.Field[] { Song.Entities.Questions._.Qus_IsUse },
-                    new object[] { use });
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<long> list = id.ToList<long>();
+            foreach (long s in list)
+                i += Business.Do<IQuestions>().QuesUpdate(s,
+                                    new WeiSha.Data.Field[] { Song.Entities.Questions._.Qus_IsUse },
+                                    new object[] { use });
             return i;
         }
         #endregion
@@ -186,6 +147,7 @@ namespace Song.ViewData.Methods
         /// <param name="type">试题类型</param>
         /// <param name="couid">试题所属课程的id</param>
         /// <returns>success:成功数;error:失败数</returns>
+        [HttpPost]
         public JObject ExcelImport(string xls, int sheet, string config, JArray matching, int type, long couid)
         {
             //获取Excel中的数据
@@ -403,7 +365,7 @@ namespace Song.ViewData.Methods
         {
             Song.Entities.Questions ques = Business.Do<IQuestions>().QuesSingle(id);
             if (ques == null) return null;
-            return _tran(ques);
+            return Helper.Question.Transform(ques);
         }
         /// <summary>
         /// 当前试题的下一个试题，在指定范围内取，例如课程内的试题
@@ -452,7 +414,7 @@ namespace Song.ViewData.Methods
                 orgid = org.Org_ID;
             }
             //总记录数
-            int count = 0;
+            int count;
             List<Questions> ques = Business.Do<IQuestions>().QuesPager
                 (orgid, type, sbjid, couid, olid, use, error, wrong, -1, search, size, index, out count);
             ListResult result = new ListResult(ques);
@@ -474,11 +436,12 @@ namespace Song.ViewData.Methods
         public List<Questions> ForCourse(long couid, long olid, int type, int count)
         {
             if (couid <= 0 && olid <= 0) return null;
-            int total = Business.Do<IQuestions>().QuesOfCount(-1, -1, couid, olid, type, -1, true);
+            int total;
+            total = Business.Do<IQuestions>().QuesOfCount(-1, -1, couid, olid, type, -1, true);
             List<Questions> ques = Business.Do<IQuestions>().QuesCount(-1, -1, couid, olid, type, -1, true, 0 - 1, count);
             for (int i = 0; i < ques.Count; i++)
             {
-                ques[i] = _tran(ques[i]);
+                ques[i] = Helper.Question.Transform(ques[i]);
             }
             return ques;
         }
@@ -512,68 +475,7 @@ namespace Song.ViewData.Methods
             }
             return dic;
         }
-        #endregion
-
-        #region 处理试题内容
-        private static Song.Entities.Questions _tran(Song.Entities.Questions ques)
-        {
-            return ques;
-
-            //if (ques == null) return ques;
-            //ques.Qus_Title = _tranText(ques.Qus_Title);
-            //ques.Qus_Answer = _tranText(ques.Qus_Answer);
-            //ques.Qus_Explain = _tranText(ques.Qus_Explain);   
-          
-            //return ques;
-        }
-        private static string _tranText(string txt)
-        {
-            if (string.IsNullOrWhiteSpace(txt)) return string.Empty;
-
-            txt = txt.Replace("&lt;", "<");
-            txt = txt.Replace("&gt;", ">");
-            txt = txt.Replace("\n", "<br/>");
-            txt = Html.ClearScript(txt);
-            txt = Html.ClearAttr(txt, "p", "div", "font", "span", "a");
-            txt = TransformImagePath(txt);
-            txt = txt.Replace("&nbsp;", " ");
-            return txt;
-        }
-        /// <summary>
-        /// 处理试题中的图片
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public static string TransformImagePath(string text)
-        {
-            RegexOptions options = RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase;
-            //将超链接处理为相对于模版页的路径
-            string linkExpr = @"<(img)[^>]+>";
-            foreach (Match match in new Regex(linkExpr, options).Matches(text))
-            {
-                string tagName = match.Groups[1].Value.Trim();      //标签名称
-                string tagContent = match.Groups[0].Value.Trim();   //标签内容
-                string expr = @"(?<=\s+)(?<key>src[^=""']*)=([""'])?(?<value>[^'"">]*)\1?";
-                foreach (Match m in new Regex(expr, options).Matches(tagContent))
-                {
-                    string key = m.Groups["key"].Value.Trim();      //属性名称
-                    string val = m.Groups["value"].Value.Trim();    //属性值    
-                    if (val.StartsWith("http://", StringComparison.OrdinalIgnoreCase)) continue;
-                    if (val.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) continue;
-                    if (val.StartsWith("data:image/", StringComparison.OrdinalIgnoreCase)) continue;
-
-                    val = val.Replace("&apos;", "");
-                    if (val.EndsWith("/")) val = val.Substring(0, val.Length - 1);
-                    val = m.Groups[2].Value + "=\"" + val + "\"";
-                    val = Regex.Replace(val, @"//", "/");
-
-                    tagContent = tagContent.Replace(m.Value, val);
-                }
-                text = text.Replace(match.Groups[0].Value.Trim(), tagContent);
-            }
-            return text;
-        }
-        #endregion
+        #endregion       
 
         #region 试题收藏
         /// <summary>
@@ -908,7 +810,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult ErrorCourse(int acid,string course, int size, int index)
         {
-            int count = 0;
+            int count;
             Song.Entities.Course[] courses = Business.Do<IStudent>().QuesForCourse(acid, course, size, index, out count);
             for (int i = 0; i < courses.Length; i++)
             {

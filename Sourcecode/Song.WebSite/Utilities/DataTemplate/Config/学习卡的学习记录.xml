@@ -6,7 +6,7 @@
   <item Column="学员" Field="Ac_Name" />
   <item Column="手机号" Field="Ac_MobiTel1" />
   <item Column="账号" Field="Ac_AccName" />
-  <item Column="性别" Field="Ac_Sex" DefautValue="0=未知|1=男|2=女"/>
+  <item Column="性别" Field="Ac_Gender" DefautValue="0=未知|1=男|2=女"/>
   <item Column="学生组" Field="Sts_Name" />
   <item Column="出生年月" Field="Ac_Birthday"  DataType="date" Format="yyyy-MM-dd" />
   <item Column="籍贯" Field="Ac_Native" />

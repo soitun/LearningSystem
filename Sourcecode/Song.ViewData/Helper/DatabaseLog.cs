@@ -34,7 +34,7 @@ namespace Song.ViewData.Helper
             //是否记录日志
             if ((int)WeiSha.Core.App.Get["LOG_LEVEL"].Int32 <= 2) return;
             //1秒内的不统计
-            if (elapsedTime < 1000) return;
+            //if (elapsedTime < 1000) return;
             try
             {
               

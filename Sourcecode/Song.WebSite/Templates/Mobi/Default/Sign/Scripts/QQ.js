@@ -84,7 +84,7 @@ $ready(function () {
                 obj.Ac_QqOpenID = user.openid;
                 obj.Ac_Name = user.nickname;
                 obj.Ac_Photo = user.figureurl_2;
-                obj.Ac_Sex = user.gender == "男" ? 1 : 2;
+                obj.Ac_Gender = user.gender == "男" ? 1 : 2;
                 var th = this;
                 th.loading_crt = true;
                 $api.post('Account/UserCreate', { 'acc': obj, 'openid': user.openid, 'field': th.tag }).then(function (req) {

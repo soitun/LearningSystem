@@ -166,7 +166,7 @@ namespace Song.DataQuery.SqlServer9
 
             //分页查询的脚本
             string sqljquery = @"select Ac_ID,count as 'Ac_CurrCourse',Ac_AccName,Ac_Name,Ac_IDCardNumber,Ac_Age,Ac_Photo,
-Ac_Money,Ac_Point,Ac_Coupon,Org_ID,Sts_ID,Sts_Name,Ac_Sex,Ac_MobiTel1,Ac_MobiTel2
+Ac_Money,Ac_Point,Ac_Coupon,Org_ID,Sts_ID,Sts_Name,Ac_Gender,Ac_MobiTel1,Ac_MobiTel2
                         from
                        (select a.*,count,ROW_NUMBER() OVER(Order by a.ac_id ) AS rowid from 
                          (select ac_id,count(ac_id) as 'count' from 
@@ -202,7 +202,7 @@ Ac_Money,Ac_Point,Ac_Coupon,Org_ID,Sts_ID,Sts_Name,Ac_Sex,Ac_MobiTel1,Ac_MobiTel
             int size, int index, out int countSum)
         {
             string sql = @"select *  from (
-	                    select acc.Ac_ID,Ac_Name,Ac_AccName,Ac_Sex,Ac_IDCardNumber,Ac_MobiTel1,Ac_LastTime,Sts_ID,Sts_Name,Ac_Money,Ac_Photo
+	                    select acc.Ac_ID,Ac_Name,Ac_AccName,Ac_Gender,Ac_IDCardNumber,Ac_MobiTel1,Ac_LastTime,Sts_ID,Sts_Name,Ac_Money,Ac_Photo
 		                    ,logincount,logintime
 		                    ,coursecount,rechargecount,lastrecharge,laststudy,lastexrcise,lasttest,lastexam
 		                    ,ROW_NUMBER() OVER( ORDER BY {{orderby}} {{orderpattr}} ) AS rowid from Accounts as acc

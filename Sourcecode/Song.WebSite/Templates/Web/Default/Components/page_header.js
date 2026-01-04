@@ -1,4 +1,4 @@
-﻿$dom.load.css([$dom.path() + 'Components/Styles/page_header.css']);
+﻿
 //顶部导航
 //事件：
 //login:当学员登录
@@ -226,7 +226,7 @@ Vue.component('page_header', {
                     <span :class="{'el-dropdown-link':true,'user-dropdown-show':visible_userdrop}">
                         <img v-if="!!account.Ac_Photo && account.Ac_Photo!=''" :src="account.Ac_Photo">
                         <template v-else>
-                            <img v-if="account.Ac_Sex==2" src="/Utilities/Images/head2.jpg" />
+                            <img v-if="account.Ac_Gender==2" src="/Utilities/Images/head2.jpg" />
                             <img v-else src="/Utilities/Images/head1.jpg" />
                         </template>
                         <span v-if="!!account.Ac_Name" class="acname" v-html="account.Ac_Name"></span>

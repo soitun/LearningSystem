@@ -22,3 +22,7 @@
     --drop-panel-hover-border: rgba(200, 200, 200, 0.8);
     --drop-panel-hover-bg: rgba(255, 255, 255, 0.3);
 }
+/*子菜单面板*/
+.dropmenu drop-panel {
+    box-shadow: none;
+}

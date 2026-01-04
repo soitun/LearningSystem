@@ -110,7 +110,7 @@ namespace Song.ViewData.Methods
         [HttpPost]
         public Song.Entities.Accounts Login(string acc, string pw, string vcode, string vmd5)
         {
-            string val = ConvertToAnyValue.Create(acc + vcode).MD5;
+            string val = ViewData.Helper.ConvertToAnyValue.Create(acc + vcode).MD5;
             if (!val.Equals(vmd5, StringComparison.CurrentCultureIgnoreCase))
                 throw VExcept.Verify("验证码错误", 101);
             Song.Entities.Accounts account = Business.Do<IAccounts>().AccountsLogin(acc, pw, true);
@@ -161,7 +161,7 @@ namespace Song.ViewData.Methods
         [HttpPost]
         public Song.Entities.Accounts LoginSms(string phone, string sms)
         {
-            string val = ConvertToAnyValue.Create(phone + sms).MD5;
+            string val = ViewData.Helper.ConvertToAnyValue.Create(phone + sms).MD5;
             Song.Entities.Accounts account = Business.Do<IAccounts>().AccountsLoginSms(phone, val);
             if (account == null) throw VExcept.Verify("验证码不正确", 105);
             if (!(bool)account.Ac_IsUse) throw VExcept.Verify("当前账号被禁用", 103);
@@ -208,7 +208,7 @@ namespace Song.ViewData.Methods
             //创建新账户
             Song.Entities.Accounts tmp = new Entities.Accounts();
             tmp.Ac_AccName = acc;
-            tmp.Ac_Pw = ConvertToAnyValue.Create(pw).MD5;
+            tmp.Ac_Pw = Song.ViewData.Helper.ConvertToAnyValue.Create(pw).MD5;
             //是否是手机号注册
             if ((bool)(config["IsRegSms"].Value.Boolean ?? false))
                 tmp.Ac_MobiTel1 = tmp.Ac_MobiTel2 = acc;
@@ -246,7 +246,7 @@ namespace Song.ViewData.Methods
         {
             //当前机构的配置信息
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
-            string val = ConvertToAnyValue.Create(org.Org_PlatformName + code).MD5;
+            string val = ViewData.Helper.ConvertToAnyValue.Create(org.Org_PlatformName + code).MD5;
             return val.Equals(vcode, StringComparison.CurrentCultureIgnoreCase);
         }
         /// <summary>
@@ -259,7 +259,7 @@ namespace Song.ViewData.Methods
         {
             //当前机构的配置信息
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
-            string val = ConvertToAnyValue.Create(org.Org_PlatformName + sms).SHA256;
+            string val = ViewData.Helper.ConvertToAnyValue.Create(org.Org_PlatformName + sms).SHA256;
             return val.Equals(vsms, StringComparison.CurrentCultureIgnoreCase);
         }
         /// <summary>
@@ -340,22 +340,8 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IStudent>().StudentOnlineDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            foreach (int tm in id.ToList<int>())
+                i += Business.Do<IStudent>().StudentOnlineDelete(tm);
             return i;
         }
         /// <summary>
@@ -369,7 +355,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult LoginLogs(int acid, DateTime? start, DateTime? end, int index, int size)
         {
-            int sum = 0;
+            int sum;
             Song.Entities.LogForStudentOnline[] list = Business.Do<IStudent>().LogForLoginPager(acid, string.Empty, start, end, size, index, out sum);
            
             Song.ViewData.ListResult result = new ListResult(list);
@@ -391,7 +377,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult LoginLogs(int orgid,string name,string acname, DateTime? start, DateTime? end, int index, int size)
         {
-            int sum = 0;
+            int sum;
             Song.Entities.LogForStudentOnline[] list = Business.Do<IStudent>().LogForLoginPager(orgid, 0, string.Empty, start, end, name, acname, size, index, out sum);
 
             Song.ViewData.ListResult result = new ListResult(list);
@@ -534,7 +520,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult Pager(int orgid, long sortid, bool? use, string acc, string name, string phone,string idcard,int gender, string orderby, string orderpattr, int index, int size)
         {
-            int sum = 0;
+            int sum;
             Song.Entities.Accounts[] accs = Business.Do<IAccounts>().AccountsPager(orgid, sortid, use, acc, name, phone, idcard, gender, orderby, orderpattr, size, index, out sum);
             for (int i = 0; i < accs.Length; i++)
             {
@@ -556,7 +542,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult PagerOfAll(int orgid, string search, int index, int size)
         {
-            int sum = 0;
+            int sum;
             Song.Entities.Accounts[] accs = Business.Do<IAccounts>().AccountsPager(orgid, -1, null, search, search, search, search, -1, string.Empty, string.Empty, size, index, out sum);
             for (int i = 0; i < accs.Length; i++)
             {
@@ -616,7 +602,7 @@ namespace Song.ViewData.Methods
         {
             acc.Ac_Photo = _uploadLogo();
             if (!string.IsNullOrWhiteSpace(acc.Ac_Pw))
-                acc.Ac_Pw = ConvertToAnyValue.Create(acc.Ac_Pw).MD5;
+                acc.Ac_Pw = ViewData.Helper.ConvertToAnyValue.Create(acc.Ac_Pw).MD5;
             Business.Do<IAccounts>().AccountsAdd(acc);
             acc.Ac_Photo = System.IO.File.Exists(_phyPath + acc.Ac_Photo) ? _virPath + acc.Ac_Photo : "";
             return acc;
@@ -706,22 +692,16 @@ namespace Song.ViewData.Methods
         /// <param name="pass">审核状态</param>
         /// <returns>学员id</returns>
         [HttpPost]
-        [Admin,SuperAdmin]
+        [Admin, SuperAdmin]
         public int ModifyState(int acid, bool use, bool pass)
         {
-            try
-            {
-                Business.Do<IAccounts>().AccountsUpdate(acid,
-                    new WeiSha.Data.Field[] {
+
+            Business.Do<IAccounts>().AccountsUpdate(acid,
+                new WeiSha.Data.Field[] {
                         Song.Entities.Accounts._.Ac_IsUse,
                         Song.Entities.Accounts._.Ac_IsPass },
-                    new object[] { use, pass });
-                return acid;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+                new object[] { use, pass });
+            return acid;
         }
         /// <summary>
         /// 修改学员的照片
@@ -876,26 +856,13 @@ namespace Song.ViewData.Methods
         [Admin]
         [HttpDelete]
         public int DeleteBatch(string ids)
-        {         
+        {
             int i = 0;
             if (string.IsNullOrWhiteSpace(ids)) return i;
-            string[] arr = ids.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IAccounts>().AccountsDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-            return i;           
+            List<int> list = ids.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<IAccounts>().AccountsDelete(s);           
+            return i;
         }
         /// <summary>
         /// 按id删除账户
@@ -1040,22 +1007,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IStudent>().SortDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<long> list = id.ToList<long>();
+            foreach (long s in list)
+                i += Business.Do<IStudent>().SortDelete(s);
             return i;
         }
         /// <summary>
@@ -1074,7 +1028,7 @@ namespace Song.ViewData.Methods
                 Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
                 orgid = org.Org_ID;
             }
-            int sum = 0;
+            int sum;
             Song.Entities.StudentSort[] accs = Business.Do<IStudent>().SortPager(orgid, use, search, size, index, out sum);
             Song.ViewData.ListResult result = new ListResult(accs);
             result.Index = index;
@@ -1129,24 +1083,11 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IAccounts>().AccountsUpdate(idval,
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<IAccounts>().AccountsUpdate(s,
                         new WeiSha.Data.Field[] { Song.Entities.Accounts._.Sts_ID, Song.Entities.Accounts._.Sts_Name },
-                        new object[] { 0, "" });                    
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+                        new object[] { 0, "" }); ;
             Business.Do<IStudent>().SortUpdateCount(stsid);
             return i;
         }
@@ -1164,24 +1105,11 @@ namespace Song.ViewData.Methods
             if (sort == null) throw new Exception("Not found entity for StudentSort！");
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IAccounts>().AccountsUpdate(idval,
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<IAccounts>().AccountsUpdate(s,
                         new WeiSha.Data.Field[] { Song.Entities.Accounts._.Sts_ID, Song.Entities.Accounts._.Sts_Name },
-                        new object[] { sort.Sts_ID, sort.Sts_Name });
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+                        new object[] { sort.Sts_ID, sort.Sts_Name });         
             Business.Do<IStudent>().SortUpdateCount();
             return i;
         }
@@ -1202,8 +1130,8 @@ namespace Song.ViewData.Methods
         /// 生成excel,按机构导出
         /// </summary>
         /// <param name="organs">机构id,多个id用逗号分隔</param>
-        /// <param name="path"></param> 
         /// <returns></returns>
+        [Admin, Teacher]
         public JObject ExcelOutputForOrg(string organs)
         {
             string outputPath = "AccountsToExcelForOrgan";
@@ -1228,6 +1156,7 @@ namespace Song.ViewData.Methods
         /// <param name="orgid"></param>
         /// <param name="sorts">分组id,多个id用逗号分隔</param> 
         /// <returns></returns>
+        [Admin, Teacher]
         public JObject ExcelOutputForSort(int orgid,string sorts)
         {
             string outputPath = "AccountsToExcelForSort";
@@ -1253,12 +1182,14 @@ namespace Song.ViewData.Methods
         /// <param name="path"></param>
         /// <returns></returns>
         [HttpDelete]
+        [Admin, Teacher]
         public bool ExcelDelete(string filename, string path)
             => ViewData.Helper.Excel.DeleteFile(filename, path, "Temp");
         /// <summary>
         /// 已经生成的Excel文件
         /// </summary>
         /// <returns>file:文件名,url:下载地址,date:创建时间</returns>
+        [Admin, Teacher]
         public JArray ExcelFiles(string path)
         {
             string rootpath = WeiSha.Core.Upload.Get["Temp"].Physics + path + "\\";
@@ -1387,6 +1318,7 @@ namespace Song.ViewData.Methods
         /// <param name="config">配置文件</param>
         /// <param name="matching">excel列与字段的匹配关联</param>
         /// <returns>success:成功数;error:失败数</returns>
+        [HttpPost]
         public JObject ExcelImport(string xls, int sheet, string config, JArray matching)
         {
             //获取Excel中的数据
@@ -1468,9 +1400,9 @@ namespace Song.ViewData.Methods
                 string column = dr[mathing[i]["column"].ToString()].ToString();
                 //数据库字段的名称
                 string field = mathing[i]["field"].ToString();
-                if (field == "Ac_Sex")
+                if (field == "Ac_Gender")
                 {
-                    obj.Ac_Sex = (short)(column == "男" ? 1 : (column == "女" ? 2 : 0));
+                    obj.Ac_Gender = (short)(column == "男" ? 1 : (column == "女" ? 2 : 0));
                     continue;
                 }
                 PropertyInfo[] properties = obj.GetType().GetProperties();
@@ -1580,7 +1512,7 @@ namespace Song.ViewData.Methods
             string acc, string name, string idcard, string mobi,
            DateTime? start, DateTime? end, int size, int index)
         {
-            int sum = 0;
+            int sum;
             List<Accounts> accs = Business.Do<IStudent>().PurchasePager(orgid, stsid, couid, acc, name, idcard, mobi,start,end, size, index, out sum);
             for (int i = 0; i < accs.Count; i++)           
                 accs[i] = _tran(accs[i]);
@@ -1764,10 +1696,12 @@ namespace Song.ViewData.Methods
         /// 学员数量
         /// </summary>
         /// <param name="orgid">机构id，小于或等0取所有</param>
+        /// <param name="use"></param>
+        /// <param name="pass"></param>
         /// <returns></returns>
-        public int Total(int orgid)
+        public int Total(int orgid, bool? use, bool? pass)
         {
-            return Business.Do<IAccounts>().Total(orgid);
+            return Business.Do<IAccounts>().Total(orgid, use, pass);
         }
         /// <summary>
         /// 指定学员组的账号数
@@ -1776,13 +1710,9 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public int TotalOfSort(string sts)
         {
-            List<long> list = new List<long>();
-            foreach(string t in sts.Split(','))
-            {
-                long tm = t.Convert<long>();
-                list.Add(tm);
-            }
-            return Business.Do<IStudent>().TotalOfSort(list.ToArray());
+            long[] list = sts.ToArray<long>();
+            if (list.Length == 0) return 0;
+            return Business.Do<IStudent>().TotalOfSort(list);
         }
         /// <summary>
         /// 统计各个年龄段的学员

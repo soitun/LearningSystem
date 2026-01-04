@@ -11,7 +11,7 @@ $ready(function () {
                 { name: '传输加密', tag: 'encrypt', icon: 'e613', size: 'large'  },             
                 { name: '缓存策略', tag: 'cache', icon: 'e81a', size: 'medium' },
                 { name: '导出', tag: 'export', icon: 'e73e', size: 'medium'  },
-                { name: '$API.js', tag: 'Apijsdoc', icon: 'e820', size: 'large'  },
+                { name: '$api.js', tag: 'Apijsdoc', icon: 'e820', size: 'large'  },
                
             ]
         },

@@ -28,16 +28,6 @@ Vue.component('subject_rec', {
     },
     computed: {},
     mounted: function () {
-        var css = $dom.path() + 'Components/Styles/subject_rec.css';
-        var isexist = false;
-        $dom("link[href]").each(function () {
-            var href = $dom(this).attr("href");
-            if (href.indexOf(css) > -1) {
-                isexist = true;
-                return false;
-            }
-        });
-        if (!isexist) $dom.load.css([css]);
         this.mincount = !parseInt(this.mincount) ? 0 : parseInt(this.mincount);
     },
     methods: {

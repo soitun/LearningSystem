@@ -188,6 +188,7 @@
     <Compile Include="Helper\AreaCode.cs" />
     <Compile Include="Helper\Browser.cs" />
     <Compile Include="Helper\Cache.cs" />
+    <Compile Include="Helper\Question.cs" />
     <Compile Include="Helper\ConvertToAnyValue.cs" />
     <Compile Include="Helper\DatabaseLog.cs" />
     <Compile Include="Helper\Desensitize.cs" />
@@ -214,6 +215,8 @@
     <Compile Include="Methods\DataBase.cs" />
     <Compile Include="Methods\DocHelper.cs" />
     <Compile Include="Methods\Exam.cs" />
+    <Compile Include="Methods\ExamQues.cs" />
+    <Compile Include="Methods\ExamTestPaper.cs" />
     <Compile Include="Methods\HelpDocument.cs" />
     <Compile Include="Methods\Knowledge.cs" />
     <Compile Include="Methods\Guide.cs" />
@@ -251,7 +254,7 @@
     <Compile Include="Methods\Subject.cs" />
     <Compile Include="Methods\Message.cs" />
     <Compile Include="Methods\Teacher.cs" />
-    <Compile Include="Methods\Helper.cs" />
+    <Compile Include="Methods\APIHelper.cs" />
     <Compile Include="Methods\Student.cs" />
     <Compile Include="Methods\Upload.cs" />
     <Compile Include="Pay\Weixin\business\DownloadBill.cs" />
@@ -271,6 +274,7 @@
     <Compile Include="Pay\Weixin\lib\Notify.cs" />
     <Compile Include="Pay\Weixin\lib\WxPayApi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Question\CleanText.cs" />
     <Compile Include="Question\Import.cs" />
     <Compile Include="VExcept.cs" />
     <Compile Include="ViewMethod.cs" />

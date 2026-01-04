@@ -1,5 +1,4 @@
 ﻿//课程图片
-$dom.load.css([$dom.pagepath() + 'Components/Styles/courimg.css']);
 Vue.component('courimg', {
     //course:课程
     props: ["course"],

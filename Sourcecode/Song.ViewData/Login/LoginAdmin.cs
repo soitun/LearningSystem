@@ -142,6 +142,29 @@ namespace Song.ViewData
             return (bool)posi.Posi_IsAdmin;
         }
         /// <summary>
+        /// 是否为管理员，非根机构的管理员
+        /// </summary>
+        /// <returns></returns>
+        public bool IsAdmin(Letter letter)
+        {
+            Song.Entities.EmpAccount acc = this.User(letter);
+            if (acc == null) return false;
+            return IsAdmin(acc);
+        }
+        /// <summary>
+        /// 是否为管理员，非根机构的管理员
+        /// </summary>
+        /// <param name="acc"></param>
+        /// <returns></returns>
+        public bool IsAdmin(Song.Entities.EmpAccount acc)
+        {
+            if (acc == null) return false; 
+            //当前登录对象的岗位
+            Song.Entities.Position posi = Business.Do<IPosition>().GetSingle((int)acc.Posi_Id);
+            if (posi == null) return false;
+            return (bool)posi.Posi_IsAdmin;
+        }
+        /// <summary>
         /// 当前登录对象所在的机构
         /// </summary>
         /// <param name="letter"></param>

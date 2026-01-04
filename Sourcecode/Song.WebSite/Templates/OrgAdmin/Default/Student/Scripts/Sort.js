@@ -26,18 +26,10 @@ $ready(function () {
         },
         created: function () {
             var th = this;
-            th.loading_init = true;
-            $api.bat(
-                $api.get('Organization/Current')
-            ).then(([organ]) => {
-                //获取结果             
-                th.organ = organ.data.result;
-                th.form.orgid = th.organ.Org_ID;
-                //机构配置信息
-                th.config = $api.organ(th.organ).config;
-                th.handleCurrentChange(1);
-            }).catch(err => console.error(err))
-                .finally(th.loading_init = false);
+            th.org = window.org;
+            th.config = window.config;
+            th.form.orgid = th.org.Org_ID;
+            th.handleCurrentChange(1);
         },
         methods: {
             //加载数据页

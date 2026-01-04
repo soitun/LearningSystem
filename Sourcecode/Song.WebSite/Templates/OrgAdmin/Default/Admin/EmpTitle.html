@@ -18,7 +18,7 @@
         </div>
         <template>
             <el-table ref="datatables"  border resizable :data="datas" :stripe="true" tooltip-effect="dark" style="width: 100%"
-                @selection-change="val=>selects=val" @row-dblclick="rowdblclick"  row-key="Title_Id" index-key="Title_Tax" 
+                @selection-change="val=>selects=val" @row-dblclick="rowdblclick"  row-key="Title_Id" index-key="Title_Order" 
                 :row-class-name="data=>{return data.row.Title_IsUse ? 'enable' : 'disabled';}">
                 <el-table-column type="selection" width="55">
                 </el-table-column>

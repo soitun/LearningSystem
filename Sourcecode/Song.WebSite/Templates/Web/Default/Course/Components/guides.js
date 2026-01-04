@@ -1,5 +1,4 @@
 //课程通知公告的列表
-$dom.load.css([$dom.pagepath() + 'Components/Styles/guides.css']);
 Vue.component('guides', {
     //课程id，分类uid
     props: ["couid", "gcuid"],

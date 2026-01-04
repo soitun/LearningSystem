@@ -70,21 +70,22 @@ namespace Song.ServiceImpls
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void ThemeDelete(ProfitSharing entity)
+        public int ThemeDelete(ProfitSharing entity)
         {
-            this.ThemeDelete(entity.Ps_ID);
+            return this.ThemeDelete(entity.Ps_ID);
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void ThemeDelete(int identify)
+        public int ThemeDelete(int identify)
         {
+            int i = 0;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
                 {
-                    tran.Delete<ProfitSharing>(ProfitSharing._.Ps_ID==identify);
+                    i = tran.Delete<ProfitSharing>(ProfitSharing._.Ps_ID == identify);
                     tran.Delete<ProfitSharing>(ProfitSharing._.Ps_PID == identify);
                     tran.Commit();
                 }
@@ -94,6 +95,7 @@ namespace Song.ServiceImpls
                     throw ex;
                 }              
             }
+            return i;
         }
         /// <summary>
         /// 获取单一实体对象，按主键ID；

@@ -109,7 +109,7 @@ namespace Song.ServiceImpls
                 {
                     IDCardNumber card = IDCardNumber.Get(entity.Th_IDCardNumber);
                     entity.Th_Age = card.Birthday.Year;
-                    entity.Th_Sex = card.Gender;
+                    entity.Th_Gender = card.Gender;
                     entity.Th_Birthday = card.Birthday;
                     entity.Th_Native = card.Province + "," + card.City + "," + card.District;
                     entity.Th_IDCardNumber = card.CardNumber;
@@ -136,8 +136,8 @@ namespace Song.ServiceImpls
                     tran.Update<Course>(new Field[] { Course._.Th_Name }, new object[] { entity.Th_Name }, Course._.Th_ID == entity.Th_ID);
                     //同步教师评价中的名称
                     tran.Update<TeacherComment>(new Field[] { TeacherComment._.Th_Name }, new object[] { entity.Th_Name }, TeacherComment._.Th_ID == entity.Th_ID);
-                    tran.Update<Accounts>(new Field[] { Accounts._.Ac_Sex, Accounts._.Ac_Birthday, Accounts._.Ac_IDCardNumber, Accounts._.Ac_Nation, Accounts._.Ac_Native },
-                        new object[] { entity.Th_Sex, entity.Th_Birthday, entity.Th_IDCardNumber, entity.Th_Nation, entity.Th_Native }, Accounts._.Ac_ID == entity.Ac_ID);
+                    tran.Update<Accounts>(new Field[] { Accounts._.Ac_Gender, Accounts._.Ac_Birthday, Accounts._.Ac_IDCardNumber, Accounts._.Ac_Nation, Accounts._.Ac_Native },
+                        new object[] { entity.Th_Gender, entity.Th_Birthday, entity.Th_IDCardNumber, entity.Th_Nation, entity.Th_Native }, Accounts._.Ac_ID == entity.Ac_ID);
                     tran.Commit();
                 }
                 catch (Exception ex)
@@ -151,18 +151,18 @@ namespace Song.ServiceImpls
         {
             return Gateway.Default.Update<Teacher>(fiels, objs, Teacher._.Th_ID == id);
         }
-        public void TeacherDelete(int identify)
+        public int TeacherDelete(int identify)
         {
             Song.Entities.Teacher th = this.TeacherSingle(identify);
-            if (th == null) return;
-            this.TeacherDelete(th);   
+            if (th == null) return 0;
+            return this.TeacherDelete(th);   
         }
 
-        public void TeacherDelete(Teacher entity)
+        public int TeacherDelete(Teacher entity)
         {
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
-                TeacherDelete(entity, tran, true);
+                return TeacherDelete(entity, tran, true);
             }
         }
         /// <summary>
@@ -171,12 +171,13 @@ namespace Song.ServiceImpls
         /// <param name="entity">教师数据实体</param>
         /// <param name="tran">事务</param>
         /// <param name="updateAccount">是否更新账号accounts表中的状态，true为更新，当教师删除后账号不具有教师角色</param>
-        public void TeacherDelete(Teacher entity, DbTrans tran, bool updateAccount)
+        public int TeacherDelete(Teacher entity, DbTrans tran, bool updateAccount)
         {
             if (tran == null) tran = Gateway.Default.BeginTrans();
+            int i = 0;
             try
             {
-                tran.Delete<Teacher>(Teacher._.Th_ID == entity.Th_ID);
+                i = tran.Delete<Teacher>(Teacher._.Th_ID == entity.Th_ID);
                 tran.Delete<TeacherHistory>(TeacherHistory._.Th_ID == entity.Th_ID);
                 if (updateAccount)
                 {
@@ -192,6 +193,7 @@ namespace Song.ServiceImpls
                 tran.Rollback();
                 throw ex;
             }
+            return i;
         }
         public Teacher TeacherSingle(int identify)
         {
@@ -381,7 +383,7 @@ namespace Song.ServiceImpls
             if (thsid > 0) wc.And(Teacher._.Ths_ID == thsid);
             if (isUse != null) wc.And(Teacher._.Th_IsUse == (bool)isUse);
             if (isShow != null) wc.And(Teacher._.Th_IsShow == (bool)isShow);
-            if (gender >=0) wc.And(Teacher._.Th_Sex == gender);
+            if (gender >=0) wc.And(Teacher._.Th_Gender == gender);
             if (!string.IsNullOrWhiteSpace(acc)) wc.And(Teacher._.Th_AccName.Contains(acc));
             if (!string.IsNullOrWhiteSpace(searName)) wc.And(Teacher._.Th_Name.Contains(searName));
             if (!string.IsNullOrWhiteSpace(idcard)) wc.And(Teacher._.Th_IDCardNumber.Contains(idcard));
@@ -411,8 +413,8 @@ namespace Song.ServiceImpls
                 entity.Org_Name = org.Org_Name;
             }
             //添加对象，并设置排序号
-            object obj = Gateway.Default.Max<TeacherSort>(TeacherSort._.Ths_Tax, TeacherSort._.Org_ID == org.Org_ID);
-            entity.Ths_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
+            object obj = Gateway.Default.Max<TeacherSort>(TeacherSort._.Ths_Order, TeacherSort._.Org_ID == org.Org_ID);
+            entity.Ths_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             Gateway.Default.Save<TeacherSort>(entity);
         }
 
@@ -479,7 +481,7 @@ namespace Song.ServiceImpls
             WhereClip wc = TeacherSort._.Org_ID == orgid;
             if (isUse != null) wc.And(TeacherSort._.Ths_IsUse == isUse);
             if(!string.IsNullOrWhiteSpace(search)) wc.And(TeacherSort._.Ths_Name.Contains(search));
-            return Gateway.Default.From<TeacherSort>().Where(wc).OrderBy(TeacherSort._.Ths_Tax.Asc).ToArray<TeacherSort>();
+            return Gateway.Default.From<TeacherSort>().Where(wc).OrderBy(TeacherSort._.Ths_Order.Asc).ToArray<TeacherSort>();
         }
 
         public List<TeacherSort> SortCount(int orgid, bool? isUse, int count)
@@ -544,8 +546,8 @@ namespace Song.ServiceImpls
                     foreach (TeacherSort item in items)
                     {
                         tran.Update<TeacherSort>(
-                            new Field[] { TeacherSort._.Ths_Tax },
-                            new object[] { item.Ths_Tax },
+                            new Field[] { TeacherSort._.Ths_Order },
+                            new object[] { item.Ths_Order },
                             TeacherSort._.Ths_ID == item.Ths_ID);
                     }
                     tran.Commit();
@@ -724,8 +726,7 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 获取教师
         /// </summary>
-        /// <param name="orgid">机构id</param>
-        /// <param name="isUse"></param>
+        /// <param name="thid"></param>
         /// <param name="count"></param>
         /// <returns></returns>
         public TeacherHistory[] HistoryCount(int thid, int count)

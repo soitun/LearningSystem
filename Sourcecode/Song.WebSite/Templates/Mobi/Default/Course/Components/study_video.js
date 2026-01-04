@@ -1,5 +1,4 @@
 //视频点播
-$dom.load.css([$dom.pagepath() + 'Components/Styles/study_video.css']);
 //事件:
 //completed:播放完成，参数：当前章节
 //playing:播放中，每播一秒触发一次，参数：当前进度（单位秒），累计学习计时（单位：秒），完成度的百分比，

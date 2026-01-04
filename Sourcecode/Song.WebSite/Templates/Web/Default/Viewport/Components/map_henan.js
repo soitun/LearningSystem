@@ -1,6 +1,5 @@
 ﻿
 //河南地图
-$dom.load.css([$dom.pagepath() + 'Components/Styles/map_henan.css'])
 Vue.component('map_henan', {
     props: [],
     data: function () {

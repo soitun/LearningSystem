@@ -26,7 +26,7 @@ namespace Song.ServiceInterfaces
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void KnowledgeDelete(long identify);
+        int KnowledgeDelete(long identify);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>
@@ -139,7 +139,7 @@ namespace Song.ServiceInterfaces
         /// <param name="search"></param>
         /// <param name="isUse"></param>
         /// <returns></returns>
-        KnowledgeSort[] GetSortAll(int orgid, long couid,string search, bool? isUse);
+        List<KnowledgeSort> GetSortAll(int orgid, long couid,string search, bool? isUse);
         /// <summary>
         /// 获取所有分类
         /// </summary>
@@ -148,20 +148,20 @@ namespace Song.ServiceInterfaces
         /// <param name="pid">父id（多级分类）</param>
         /// <param name="isUse"></param>
         /// <returns></returns>
-        KnowledgeSort[] GetSortAll(int orgid, long couid, int pid, bool? isUse);
+        List<KnowledgeSort> GetSortAll(int orgid, long couid, int pid, bool? isUse);
         /// <summary>
         /// 获取当前对象的下一级子对象；
         /// </summary>
         /// <param name="couid">课程id，当小于0时取所有（等于0什么也不取）</param>
         /// <param name="pid">上级</param>
         /// <returns>当前对象的下一级子对象</returns>
-        KnowledgeSort[] GetSortChilds(long pid, long couid, bool? isUse);
+        List<KnowledgeSort> GetSortChilds(long pid, long couid, bool? isUse);
         /// <summary>
         /// 更改排序
         /// </summary>
-        /// <param name="list">对象列表，Kns_ID、Kns_PID、Kns_Tax</param>
+        /// <param name="list">对象列表，Kns_ID、Kns_PID、Kns_Order</param>
         /// <returns></returns>
-        bool SortUpdateTaxis(KnowledgeSort[] list);
+        bool SortUpdateTaxis(List<KnowledgeSort> list);
         /// <summary>
         /// 当前分类下的所有子专业id
         /// </summary>

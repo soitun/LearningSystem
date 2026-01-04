@@ -43,9 +43,9 @@ namespace Song.ViewData.Methods
         /// <param name="pid">上级id</param>
         /// <param name="count">取多少条</param>
         /// <returns></returns>
-        public Song.Entities.Columns[] ColumnsShow(int orgid,string pid,int count)
+        public List<Columns> ColumnsShow(int orgid,string pid,int count)
         {
-            Song.Entities.Columns[] cols = Business.Do<IColumns>().ColumnCount(orgid, pid, "news", true, count);
+            List<Columns> cols = Business.Do<IColumns>().ColumnCount(orgid, pid, "news", true, count);
             return cols;
         }
         /// <summary>
@@ -54,7 +54,7 @@ namespace Song.ViewData.Methods
         /// <param name="pid">上级uid</param>
         /// <param name="isuse">是否启用</param>
         /// <returns></returns>
-        public Song.Entities.Columns[] ColumnsChildren(string pid, bool isuse)
+        public List<Columns> ColumnsChildren(string pid, bool isuse)
         {           
             return Business.Do<IColumns>().Children(pid, isuse);
         }
@@ -68,8 +68,8 @@ namespace Song.ViewData.Methods
         [HttpGet] 
         public JArray ColumnsTree(int orgid)
         {
-            Song.Entities.Columns[] cols = Business.Do<IColumns>().ColumnCount(orgid, null, "news", null, -1);
-            return cols.Length > 0 ? _columnsNode(null, cols.ToList<Song.Entities.Columns>()) : null;
+            List<Columns> cols = Business.Do<IColumns>().ColumnCount(orgid, null, "news", null, -1);
+            return cols.Count > 0 ? _columnsNode(null, cols.ToList<Song.Entities.Columns>()) : null;
         }
         /// <summary>
         /// 生成菜单子节点
@@ -79,30 +79,25 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         private JArray _columnsNode(Song.Entities.Columns item, List<Song.Entities.Columns> items)
         {
-            JArray jarr = new JArray();
-
-            foreach (Song.Entities.Columns m in items)
+            List<Song.Entities.Columns> childs = new List<Song.Entities.Columns>();
+            for (int i = 0; i < items.Count; i++)
             {
-
-                if (item == null)
-                {
-                    if (m.Col_PID != "" ) continue;
-                }
-                else
-                {
-                    if (m.Col_PID != item.Col_UID) continue;
-                }             
-
-                string j = m.ToJson("", "Col_CrtTime");
-
+                Entities.Columns m = items[i];
+                if (item == null && m.Col_PID != "") continue;
+                if (item != null && m.Col_PID != item.Col_UID) continue;
+                childs.Add(m);
+                items.RemoveAt(i);
+                i--;
+            }
+            JArray jarr = new JArray();
+            for (int i = 0; i < childs.Count; i++)
+            {
+                string j = childs[i].ToJson("", "Col_CrtTime");
                 JObject jo = JObject.Parse(j);
-                jo.Add("id", "node_" + m.Col_UID.ToString());
-                jo.Add("label", m.Col_Name);
                 jarr.Add(jo);
                 //计算下级
-                JArray charray = _columnsNode(m, items);
-                if (charray.Count > 0)
-                    jo.Add("children", charray);              
+                JArray charray = _columnsNode(childs[i], items);
+                if (charray.Count > 0) jo.Add("children", charray);
             }
             return jarr;
         }
@@ -119,7 +114,7 @@ namespace Song.ViewData.Methods
         {
             List<Song.Entities.Columns> mlist = new List<Entities.Columns>();
             _ColumnsUpdate(tree, "", mlist);
-            Business.Do<IColumns>().UpdateColumnsTree(mlist.ToArray(), orgid);
+            Business.Do<IColumns>().UpdateColumnsTree(mlist, orgid);
             return true;
         }
         private void _ColumnsUpdate(string tree, string pid, List<Song.Entities.Columns> mlist)
@@ -132,7 +127,7 @@ namespace Song.ViewData.Methods
                 Song.Entities.Columns m = _ColumnsParse((JObject)jarr[i], out childJson);
                 if (string.IsNullOrWhiteSpace(m.Col_UID))
                     m.Col_UID = WeiSha.Core.Request.UniqueID();
-                m.Col_Tax = i;
+                m.Col_Order = i;
                 m.Col_PID = pid;
                 mlist.Add(m);
                 if (m.Col_IsChildren)
@@ -224,7 +219,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult ArticlePagerShow(string uid, string search, string order, int size, int index)
         {
-            int count = 0;
+            int count;
             Song.Entities.Article[] news = Business.Do<IContents>().ArticlePager(-1, uid, search, null, true, order, size, index, out count);
             foreach (Song.Entities.Article art in news)
             {
@@ -256,7 +251,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult ArticlePager(int orgid, string uid, string search, bool? verify, bool? del, string order,bool isintro, int size, int index)
         {
-            int count = 0;
+            int count;
             Song.Entities.Article[] news = Business.Do<IContents>().ArticlePager(orgid, uid, search, verify, del, order, size, index, out count);
             if (!isintro)
                 foreach (Song.Entities.Article art in news) art.Art_Intro = string.Empty;
@@ -456,22 +451,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IContents>().ArticleDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<long> list = id.ToList<long>();
+            foreach (long s in list)
+                i += Business.Do<IContents>().ArticleDelete(s);
             return i;
         }
         /// <summary>

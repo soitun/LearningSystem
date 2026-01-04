@@ -1,6 +1,5 @@
 ﻿
 //数值的展示
-$dom.load.css([$dom.pagepath() + 'Components/Styles/number.css'])
 Vue.component('number', {
     //number:要显示的值
     //icon:图标

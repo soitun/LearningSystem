@@ -17,7 +17,7 @@
             <el-form-item label="学员">
                 <div class="accinfo">
                     <img v-if="!!account.Ac_Photo && account.Ac_Photo!=''" :src="account.Ac_Photo" />
-                    <img v-else-if="account.Ac_Sex==2" src="/Utilities/images/head2.jpg" />
+                    <img v-else-if="account.Ac_Gender==2" src="/Utilities/images/head2.jpg" />
                     <img v-else src="/Utilities/images/head1.jpg" />
                     <div class="acc-name">
                         <span v-if="account.Ac_Name!=''">{{account.Ac_Name}}</span>

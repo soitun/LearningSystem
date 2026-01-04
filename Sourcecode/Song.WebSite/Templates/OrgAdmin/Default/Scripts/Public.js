@@ -40,7 +40,7 @@
         arr2.push('/Utilities/Components/sbj_cascader.js');
         //日期区间选择器
         arr2.push('/Utilities/Components/date_range.js');
-        window.$dom.load.js(arr2, f);
+        window.$dom.componentjs(arr2, f);
     };
     //加载组件所需的javascript文件
     window.$ctrljs = function (f) {
@@ -56,10 +56,10 @@
     window.$ready = function (f, source) {
         //如果参数没有按顺序传，自动调整，例如原本第一个是方法，第二个是资源路径，调用时写反了也可以
         var func = null, jsfile = [];
-        for (let i = 0; i < arguments.length; i++) {
+        for (let i = 0; i < arguments?.length ?? 0; i++) {
             if (arguments[i].constructor === Function) func = arguments[i];
             if (arguments[i] instanceof Array) {
-                for (let j = 0; j < arguments[i].length; j++)
+                for (let j = 0; j < arguments[i]?.length ?? 0; j++)
                     if (typeof arguments[i][j] === 'string') jsfile.push(arguments[i][j]);
             }
             if (typeof arguments[i] === 'string') jsfile.push(arguments[i]);
@@ -67,8 +67,8 @@
         $dom.ready(function () {
             $dom.corejs(function () {
                 $components(function () {
+                    window.$init_load(() => $dom.componentjs(jsfile, func));
                     window.$init_func();
-                    $dom.componentjs(jsfile, func);
                 });
             });
         });
@@ -125,4 +125,17 @@
             return txt.replace(regExp, (match, p1) => '<red>' + p1 + '</red>');
         };
     };
+    //初始加载
+    window.$init_load = function (func) {
+        $api.get('Organization/Current').then(function (req) {
+            if (req.data.success) {
+                window.org = req.data.result;
+                window.config = $api.organ(window.org).config;
+            } else {
+                console.error(req.data.exception);
+                throw req.data.message;
+            }
+        }).catch(err => console.error(err))
+            .finally(() => func());
+    }
 })();

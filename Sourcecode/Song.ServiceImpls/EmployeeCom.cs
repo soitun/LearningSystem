@@ -39,7 +39,7 @@ namespace Song.ServiceImpls
             {
                 IDCardNumber card = IDCardNumber.Get(entity.Acc_IDCardNumber);
                 entity.Acc_Age = card.Birthday.Year;
-                entity.Acc_Sex = card.Gender;
+                entity.Acc_Gender = card.Gender;
                 entity.Acc_Birthday = card.Birthday;
             }
             catch { }
@@ -73,7 +73,7 @@ namespace Song.ServiceImpls
                 //解析身份证信息，取年龄、性别等
                 IDCardNumber card = IDCardNumber.Get(entity.Acc_IDCardNumber);
                 entity.Acc_Age = card.Birthday.Year;
-                entity.Acc_Sex = card.Gender;
+                entity.Acc_Gender = card.Gender;
                 entity.Acc_Birthday = card.Birthday;
             }
             catch { }         
@@ -214,7 +214,7 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 获取单一实体对象，按员工手机号码
         /// </summary>
-        /// <param name="acc">员工手机号码</param>
+        /// <param name="phoneNumber">员工手机号码</param>
         /// <returns></returns>
         public EmpAccount GetSingleByPhone(string phoneNumber)
         {
@@ -223,7 +223,7 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 获取单一实体对象，按员工名称
         /// </summary>
-        /// <param name="phoneNumber"></param>
+        /// <param name="name"></param>
         /// <returns></returns>
         public EmpAccount GetSingleByName(string name)
         {
@@ -388,22 +388,22 @@ namespace Song.ServiceImpls
         /// 获取对象；即所有员工帐号；
         /// </summary>
         /// <returns></returns>
-        public EmpAccount[] GetAll(int orgid)
+        public List<EmpAccount> GetAll(int orgid)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(EmpAccount._.Org_ID == orgid);
             return Gateway.Default.From<EmpAccount>().Where(wc)
-                .OrderBy(EmpAccount._.Acc_NamePinyin.Asc).ToArray<EmpAccount>();
+                .OrderBy(EmpAccount._.Acc_NamePinyin.Asc).ToList<EmpAccount>();
         }
        
-        public EmpAccount[] GetAll(int orgid, int depId, bool? isUse, string searTxt)
+        public List<EmpAccount> GetAll(int orgid, int depId, bool? isUse, string searTxt)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(EmpAccount._.Org_ID == orgid);
             if (depId > 0) wc.And(EmpAccount._.Dep_Id == depId);
             if (isUse != null) wc.And(EmpAccount._.Acc_IsUse == isUse);
             if (!string.IsNullOrWhiteSpace(searTxt) && searTxt != "") wc.And(EmpAccount._.Acc_Name.Contains(searTxt));
-            return Gateway.Default.From<EmpAccount>().Where(wc).OrderBy(EmpAccount._.Acc_NamePinyin.Asc).ToArray<EmpAccount>();
+            return Gateway.Default.From<EmpAccount>().Where(wc).OrderBy(EmpAccount._.Acc_NamePinyin.Asc).ToList<EmpAccount>();
         }
         /// <summary>
         /// 获取某个分厂的所有员工帐号；
@@ -412,13 +412,13 @@ namespace Song.ServiceImpls
         /// <param name="isUse"></param>
         /// <param name="searTxt">员工名称</param>
         /// <returns></returns>
-        public EmpAccount[] GetAll4Org(int orgid, bool? isUse, string searTxt)
+        public List<EmpAccount> GetAll4Org(int orgid, bool? isUse, string searTxt)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(EmpAccount._.Org_ID == orgid);
             if (isUse != null) wc.And(EmpAccount._.Acc_IsUse == (bool)isUse);
             if (!string.IsNullOrEmpty(searTxt) && searTxt != "") wc.And(EmpAccount._.Acc_Name.Contains(searTxt));
-            return Gateway.Default.From<EmpAccount>().Where(wc).OrderBy(EmpAccount._.Acc_EmpCode.Asc).ToArray<EmpAccount>();
+            return Gateway.Default.From<EmpAccount>().Where(wc).OrderBy(EmpAccount._.Acc_EmpCode.Asc).ToList<EmpAccount>();
         }
         /// <summary>
         /// 分页获取所有的员工帐号；
@@ -429,14 +429,14 @@ namespace Song.ServiceImpls
         /// <param name="index">当前第几页</param>
         /// <param name="countSum">记录总数</param>
         /// <returns></returns>
-        public EmpAccount[] GetPager(int orgid, int posi, string name,int size, int index, out int countSum)
+        public List<EmpAccount> GetPager(int orgid, int posi, string name,int size, int index, out int countSum)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(EmpAccount._.Org_ID == orgid);
             if (posi > 0) wc.And(EmpAccount._.Posi_Id == posi);
             if (!string.IsNullOrWhiteSpace(name)) wc.And(EmpAccount._.Acc_Name.Contains(name));
             countSum = Gateway.Default.Count<EmpAccount>(wc);
-            return Gateway.Default.From<EmpAccount>().Where(wc).OrderBy(EmpAccount._.Acc_RegTime.Desc).ToArray<EmpAccount>(size, (index - 1) * size);
+            return Gateway.Default.From<EmpAccount>().Where(wc).OrderBy(EmpAccount._.Acc_RegTime.Desc).ToList<EmpAccount>(size, (index - 1) * size);
         }
         #endregion
 
@@ -448,9 +448,9 @@ namespace Song.ServiceImpls
         public void TitileAdd(EmpTitle entity)
         {
             //添加对象，并设置排序号
-            object obj = Gateway.Default.Max<EmpTitle>(EmpTitle._.Title_Tax, EmpTitle._.Title_Tax > -1);
+            object obj = Gateway.Default.Max<EmpTitle>(EmpTitle._.Title_Order, EmpTitle._.Title_Order > -1);
             int tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
-            entity.Title_Tax = tax + 1;
+            entity.Title_Order = tax + 1;
             Organization org = Gateway.Default.From<Organization>().Where(Organization._.Org_ID == entity.Org_ID).ToFirst<Organization>();
             if (org != null) entity.Org_Name = org.Org_Name; 
             Gateway.Default.Save<EmpTitle>(entity);
@@ -480,17 +480,17 @@ namespace Song.ServiceImpls
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void TitleDelete(EmpTitle entity)
+        public int TitleDelete(EmpTitle entity)
         {
-            this.TitleDelete(entity.Title_Id);
+            return this.TitleDelete(entity.Title_Id);
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void TitleDelete(int identify)
+        public int TitleDelete(int identify)
         {
-            Gateway.Default.Delete<EmpTitle>(EmpTitle._.Title_Id == identify);
+            return Gateway.Default.Delete<EmpTitle>(EmpTitle._.Title_Id == identify);
         }
         /// <summary>
         /// 获取单一实体对象，按主键ID；
@@ -507,14 +507,14 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public EmpTitle[] TitleAll(int orgid)
         {
-            return Gateway.Default.From<EmpTitle>().Where(EmpTitle._.Org_ID == orgid).OrderBy(EmpTitle._.Title_Tax.Asc).ToArray<EmpTitle>();
+            return Gateway.Default.From<EmpTitle>().Where(EmpTitle._.Org_ID == orgid).OrderBy(EmpTitle._.Title_Order.Asc).ToArray<EmpTitle>();
         }
         public EmpTitle[] TitleAll(int orgid,bool? isUse)
         {
             if (isUse == null) return this.TitleAll(orgid);
             return Gateway.Default.From<EmpTitle>()
                 .Where(EmpTitle._.Org_ID == orgid && EmpTitle._.Title_IsUse == (bool)isUse)
-                .OrderBy(EmpTitle._.Title_Tax.Asc).ToArray<EmpTitle>();
+                .OrderBy(EmpTitle._.Title_Order.Asc).ToArray<EmpTitle>();
         }
         public EmpTitle[] TitlePager(int orgid, bool? isUse, string name, int size, int index, out int countSum)
         {
@@ -523,7 +523,7 @@ namespace Song.ServiceImpls
             if (isUse != null) wc.And(EmpTitle._.Title_IsUse == (bool)isUse);
             if (!string.IsNullOrWhiteSpace(name)) wc.And(EmpTitle._.Title_Name.Contains(name));
             countSum = Gateway.Default.Count<EmpTitle>(wc);
-            return Gateway.Default.From<EmpTitle>().Where(wc).OrderBy(EmpTitle._.Title_Tax.Asc).ToArray<EmpTitle>(size, (index - 1) * size);
+            return Gateway.Default.From<EmpTitle>().Where(wc).OrderBy(EmpTitle._.Title_Order.Asc).ToArray<EmpTitle>(size, (index - 1) * size);
         }
         /// <summary>
         /// 获取当前职务的所有员工
@@ -567,8 +567,8 @@ namespace Song.ServiceImpls
                     foreach (EmpTitle item in entities)
                     {
                         tran.Update<EmpTitle>(
-                            new Field[] { EmpTitle._.Title_Tax },
-                            new object[] { item.Title_Tax },
+                            new Field[] { EmpTitle._.Title_Order },
+                            new object[] { item.Title_Order },
                             EmpTitle._.Title_Id == item.Title_Id);
                     }
                     tran.Commit();

@@ -269,9 +269,9 @@ $ready(function () {
                         {{(form.index-1) * form.size+i+1}}   
                     </span>
                     <span class="name">                       
-                        <icon v-if="item.Ac_Sex==2" class="woman" title="女性">&#xe647</icon>
+                        <icon v-if="item.Ac_Gender==2" class="woman" title="女性">&#xe647</icon>
                         <icon v-else class="man">&#xe645</icon>
-                        <span v-html='item.Ac_Name' :class="{'woman':item.Ac_Sex=='2','name':true}"></span>
+                        <span v-html='item.Ac_Name' :class="{'woman':item.Ac_Gender=='2','name':true}"></span>
                     </span>
                     <span class="idcard"> 
                         {{item.Ac_IDCardNumber}}   
@@ -554,9 +554,9 @@ $ready(function () {
         template: `<span title="学员信息">
             <span v-if="state==-1" class="el-icon-loading"></span>
             <span v-if="state==0"><el-tag type="info">不存在</el-tag></span>
-            <span v-if="state==1"  :class="{'woman': data.Ac_Sex==2,'disable':!data.Ac_IsUse}">
-                <icon v-if="data.Ac_Sex==2" woman></icon>
-                <icon v-if="data.Ac_Sex==1" man></icon>             
+            <span v-if="state==1"  :class="{'woman': data.Ac_Gender==2,'disable':!data.Ac_IsUse}">
+                <icon v-if="data.Ac_Gender==2" woman></icon>
+                <icon v-if="data.Ac_Gender==1" man></icon>             
                 {{data.Ac_Name}}
                 <span v-if="!data.Ac_IsUse">（已经禁用）</span>
             </span>

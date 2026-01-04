@@ -105,9 +105,8 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult Pager(int orgid,long couid, long olid, string search, int size, int index)
         {
-            int count = 0;
-            Song.Entities.Message[] eas = null;
-            eas = Business.Do<IMessage>().GetPager(orgid, couid, olid, -1, search, null, null, size, index, out count);
+            int count;
+            Song.Entities.Message[] eas = Business.Do<IMessage>().GetPager(orgid, couid, olid, -1, search, null, null, size, index, out count);
             ListResult result = new ListResult(eas);
             result.Index = index;
             result.Size = size;
@@ -144,22 +143,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IMessage>().Delete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<IMessage>().Delete(s);
             return i;
         }
         /// <summary>

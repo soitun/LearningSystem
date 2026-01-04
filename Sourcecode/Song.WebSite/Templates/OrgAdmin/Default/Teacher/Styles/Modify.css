@@ -1,14 +1,8 @@
 ﻿@charset "utf-8";
 .panel {
-	width: 100%;
 	height: calc(100% - 55px);
-    border: 1px solid #DCDFE6;
-    box-sizing: border-box;
 }
-.panel>div:not(:first-child){
-	border: 1px solid #DCDFE6;
-	border-top: none;
-}
+
 .el-form {
     height: calc(100% - 40px);
     width: 100%;
@@ -32,14 +26,7 @@
 .el-form>div.about_editor .tox-statusbar{
 	border: none !important;
 }
-.el-tabs--border-card {
-	box-shadow: none;
-	border: none;
-}
 
-.el-tabs__content {
-	display: none;
-}
 .upload_img_area img {
     width: 100px;
     height: 100px;

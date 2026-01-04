@@ -1,5 +1,4 @@
 ﻿//支付接口的类型
-$dom.load.css([$dom.pagepath() + 'Components/Styles/modifybox.css']);
 Vue.component('modifybox', {
     //entity:接口的对象实体 
     props: ['entity', 'config', 'rules', 'loading'],

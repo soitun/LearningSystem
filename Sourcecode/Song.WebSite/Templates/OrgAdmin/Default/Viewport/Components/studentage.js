@@ -1,6 +1,6 @@
 ﻿
 //学员年龄分布的图表
-$dom.load.css([$dom.path() + 'Viewport/Components/Styles/studentage.css'])
+
 Vue.component('studentage', {
     props: ["show", "org"],
     data: function () {

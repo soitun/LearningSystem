@@ -39,7 +39,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public Song.Entities.EmpAccount Login(string acc, string pw, string vcode, string vmd5)
         {
-            string val = ConvertToAnyValue.Create(acc + vcode).MD5;
+            string val = ViewData.Helper.ConvertToAnyValue.Create(acc + vcode).MD5;
             if (!val.Equals(vmd5, StringComparison.CurrentCultureIgnoreCase))
                 throw VExcept.Verify("验证码错误", 101);
             //当前机构等于管理员所在机构
@@ -68,7 +68,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public Song.Entities.EmpAccount LoginSuper(string acc, string pw, string vcode, string vmd5)
         {
-            string val = ConvertToAnyValue.Create(acc + vcode).MD5;
+            string val = ViewData.Helper.ConvertToAnyValue.Create(acc + vcode).MD5;
             if (!val.Equals(vmd5, StringComparison.CurrentCultureIgnoreCase))
                 throw VExcept.Verify("验证码错误", 101);
             //必须处于根机构
@@ -275,31 +275,22 @@ namespace Song.ViewData.Methods
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
             bool issuper = this.IsSuper();    //是否超管登录
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
+            List<int> arr = id.ToList<int>();
+
+            foreach (int s in arr)
             {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
+                if (acc != null && acc.Acc_Id == s) throw new Exception("不可删除自身账号");
+                Song.Entities.EmpAccount emp = Business.Do<IEmployee>().GetSingle(s);
+                if (emp == null) continue;
+                //如果用户属于超管角色，则不允许删除
+                Song.Entities.Position posi = Business.Do<IPosition>().GetSingle(emp.Posi_Id);
+                if (posi != null)
                 {
-                    if (acc != null && acc.Acc_Id == idval) throw new Exception("不可删除自身账号");
-                    Song.Entities.EmpAccount emp = Business.Do<IEmployee>().GetSingle(idval);
-                    if (emp == null) continue;
-                    //如果用户属于超管角色，则不允许删除
-                    Song.Entities.Position posi = Business.Do<IPosition>().GetSingle(emp.Posi_Id);
-                    if (posi != null)
-                    {
-                        if (posi.Posi_IsAdmin == true && !issuper) throw new Exception("管理员不可以删除！");
-                    }
-                    Business.Do<IEmployee>().Delete(emp);
-                    LoginAdmin.Cache.Remove<EmpAccount>(emp.Acc_Id); //清理登录状态
-                    i++;
+                    if (posi.Posi_IsAdmin == true && !issuper) throw new Exception("管理员不可以删除！");
                 }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                Business.Do<IEmployee>().Delete(emp);
+                LoginAdmin.Cache.Remove<EmpAccount>(emp.Acc_Id); //清理登录状态
+                i++;
             }
             return i;
         }
@@ -451,8 +442,8 @@ namespace Song.ViewData.Methods
         {
             Song.Entities.Organization org = LoginAdmin.Status.Organ(this.Letter);
             //总记录数
-            int count = 0;
-            EmpAccount[] eas = Business.Do<IEmployee>().GetPager(org.Org_ID, -1, name, size, index, out count);
+            int count;
+            List<EmpAccount> eas = Business.Do<IEmployee>().GetPager(org.Org_ID, -1, name, size, index, out count);
             foreach (EmpAccount ea in eas) ea.Acc_Pw = string.Empty;
             ListResult result = new ListResult(eas);
             result.Index = index;
@@ -474,8 +465,8 @@ namespace Song.ViewData.Methods
         public ListResult Pager(int orgid, int posi, string name, int index, int size)
         {
             //总记录数
-            int count = 0;
-            EmpAccount[] eas = Business.Do<IEmployee>().GetPager(orgid, posi, name, size, index, out count);
+            int count;
+            List<EmpAccount> eas = Business.Do<IEmployee>().GetPager(orgid, posi, name, size, index, out count);
             foreach (EmpAccount ea in eas) ea.Acc_Pw = string.Empty;
             ListResult result = new ListResult(eas);
             result.Index = index;
@@ -489,9 +480,9 @@ namespace Song.ViewData.Methods
         /// <param name="search">按名称索引</param>
         /// <returns></returns>
         [HttpGet]
-        public Song.Entities.EmpAccount[] Search(string search)
+        public List<EmpAccount> Search(string search)
         {
-            EmpAccount[] eas = Business.Do<IEmployee>().GetAll(-1, -1, true, search);
+            List<EmpAccount> eas = Business.Do<IEmployee>().GetAll(-1, -1, true, search);
             foreach (EmpAccount ea in eas) ea.Acc_Pw = string.Empty;
             return eas;
         }
@@ -500,9 +491,9 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="search"></param>
         /// <returns></returns>
-        public Song.Entities.EmpAccount[] All(string search)
+        public List<EmpAccount> All(string search)
         {
-            EmpAccount[] eas = Business.Do<IEmployee>().GetAll(-1, -1, null, search);
+            List<EmpAccount> eas = Business.Do<IEmployee>().GetAll(-1, -1, null, search);
             foreach (EmpAccount ea in eas) ea.Acc_Pw = string.Empty;
             return eas;
         }
@@ -592,22 +583,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IEmployee>().TitleDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> arr = id.ToList<int>();
+            foreach (int s in arr)
+                i += Business.Do<IEmployee>().TitleDelete(s);
             return i;
         }
         /// <summary>
@@ -640,7 +618,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult TitlePager(int orgid, string name, int index, int size)
         {
-            int sum = 0;
+            int sum;
             Song.Entities.EmpTitle[] titles = Business.Do<IEmployee>().TitlePager(orgid, null, name, size, index, out sum);
             Song.ViewData.ListResult result = new ListResult(titles);
             result.Index = index;
@@ -743,22 +721,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IEmpGroup>().Delete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<IEmpGroup>().Delete(s);           
             return i;
         }
         /// <summary>
@@ -791,7 +756,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult GroupPager(int orgid, string name, int index, int size)
         {
-            int sum = 0;
+            int sum;
             Song.Entities.EmpGroup[] titles = Business.Do<IEmpGroup>().Pager(orgid, null, name, size, index, out sum);
             Song.ViewData.ListResult result = new ListResult(titles);
             result.Index = index;

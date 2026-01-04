@@ -11,6 +11,9 @@ html, body, #vapp {
 #vapp {
     position: relative;
 }
+*{
+    font-family: "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
 
 /* 设置滚动条宽度和高度 */
 .el-table__body-wrapper::-webkit-scrollbar {

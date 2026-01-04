@@ -44,7 +44,12 @@ html, body {
     background-position: bottom;
 }
 
+html:has(meta[license="false"]) {
+    /* 直接在CSS中使用SVG定义文字背景 */
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><text x='20' y='120' font-family='Arial' font-size='20' fill='rgba(255,0,0,.1)' transform='rotate(45 100 100)'>社区版 - 仅限学习交流</text></svg>");
+    background-repeat: repeat;
 
+}
 
 /*特殊字体*/
 
@@ -67,46 +72,86 @@ a[download] {
 a[download]:hover {
     text-decoration: underline;
 }
-a[link]{
-    text-decoration:underline;
-}
-a[link]:hover{
-    color: #409EFF;
-}
-/*字体大小*/
-.large {
-	font-size: 16px;
+
+a[link] {
+    text-decoration: underline;
 }
 
-.medium {
-	font-size: 14px;
+a[link]:hover {
+    color: #409EFF;
 }
+
+/*字体大小*/
+.huge, *[huge] {
+    font-size: 1.2rem;
+}
+
+.large, *[large] {
+    font-size: 1.05rem;
+}
+
+.medium, *[medium] {
+    font-size: 1rem;
+}
+
+.small, *[small] {
+    font-size: .9rem;
+}
+
+.mini, *[mini] {
+    font-size: .75rem;
+}
+
+/*颜色*/
+*[primary] {
+    color: #409eff;
+}
+
+*[success] {
+    color: #67c23a;
+}
+
+*[info] {
+    color: #909399;
+}
+
+*[warning] {
+    color: #e6a23c;
+}
+
+*[danger] {
+    color: #f56c6c;
+}
+
 /*卡片*/
 
 card {
-	display: block;
-	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
-	border-radius: 4px;
-	border: 1px solid #ebeef5;
-	background-color: #fff;
-	overflow: hidden;
-	color: #303133;
-	transition: .3s;
-	margin: 15px;
-	width: calc(100% - 30px);
+    display: block;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
+    border-radius: 4px;
+    border: 1px solid #ebeef5;
+    background-color: #fff;
+    overflow: hidden;
+    color: #303133;
+    transition: .3s;
+    margin: 15px;
+    width: calc(100% - 30px);
 }
-card[shadow]{
+
+card[shadow] {
     box-shadow: none;
 }
-card[shadow="hover"]:hover{
+
+card[shadow="hover"]:hover {
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
 }
+
 card-title {
-	display: block;
-	padding: 15px;
-	line-height: 25px;
-	position: relative;
-	border-bottom: solid 1px rgba(0, 0, 0, .1);
+    display: block;
+    padding: 15px;
+    line-height: 25px;
+    position: relative;
+    border-bottom: solid 1px rgba(0, 0, 0, .1);
 }
 
 card:has(card-content[notnull]) card-title::after {
@@ -119,45 +164,117 @@ card:has(card-content[notnull]) card-title::after {
 }
 
 card-title[arrow]::after {
-	content: '\e670';
-	position: absolute;
-	top: 15px;
-	right: 8px;
-	font-size: 18px;
-	font-family: "webdesk_icon" !important;
+    content: '\e670';
+    position: absolute;
+    top: 15px;
+    right: 8px;
+    font-size: 18px;
+    font-family: "webdesk_icon" !important;
 }
 
 card-title[line] {
-	border-bottom: solid 1px rgba(0, 0, 0, .1);
+    border-bottom: solid 1px rgba(0, 0, 0, .1);
 }
 
 card-content {
-	display: block;
-	padding: 10px 15px 15px 15px;
-	line-height: 30px;
-	box-sizing: border-box;
+    display: block;
+    padding: 10px 15px 15px 15px;
+    line-height: 30px;
+    box-sizing: border-box;
 }
 
+/* ElementUI  的Card */
+.el-card[type="primary"] {
+    color: #409eff;
+    border-color: #b3d8ff;
+}
+
+.el-card[type="primary"] .el-card__header {
+    background-color: #ecf5ff;
+    border-bottom: 1px solid #b3d8ff;
+}
+
+.el-card[type="success"] {
+    color: #46961e;
+    border-color: #c2e7b0;
+}
+
+.el-card[type="success"] .el-card__header {
+    background-color: #f0f9eb;
+    border-bottom: 1px solid #c2e7b0;
+}
+
+.el-card[type="info"] {
+    color: #666;
+    border-color: #d3d4d6;
+}
+
+.el-card[type="info"] .el-card__header {
+    background-color: #f4f4f5;
+    border-bottom: 1px solid #d3d4d6;
+}
+
+.el-card[type="warning"] {
+    color: #c47b0e;
+    border-color: #f5dab1;
+}
+
+.el-card[type="warning"] .el-card__header {
+    background-color: #fdf6ec;
+    border-bottom: 1px solid #f5dab1;
+}
+
+.el-card[type="danger"] {
+    color: #f56c6c;
+    border-color: #fbc4c4;
+}
+
+.el-card[type="danger"] .el-card__header {
+    background-color: #fef0f0;
+    border-bottom: 1px solid #fbc4c4;
+}
+
+/* card的箭头*/
+.el-card[arrow] .el-card__header {
+    position: relative;
+}
+
+.el-card[arrow] .el-card__header::after {
+    content: '\e6c6';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2rem;
+    font-family: "webdesk_icon" !important;
+}
+
+.el-card[arrow]:hover .el-card__header::after {
+    animation: frames_quiver 1.5s infinite linear;
+}
 
 /*拖动柄*/
 
 .draghandle {
     cursor: move;
 }
+
 /*下拉菜单*/
-.el-menu--horizontal>.el-submenu .el-submenu__title{
+.el-menu--horizontal>.el-submenu .el-submenu__title {
     height: 40px;
     line-height: 40px;
     color: #555;
 }
-.el-menu--horizontal>.el-menu-item{
+
+.el-menu--horizontal>.el-menu-item {
     height: 40px;
     line-height: 40px;
     color: #555;
 }
-.el-menu--horizontal .el-menu .el-menu-item, .el-menu--horizontal .el-menu .el-submenu__title{
+
+.el-menu--horizontal .el-menu .el-menu-item, .el-menu--horizontal .el-menu .el-submenu__title {
     color: #555;
 }
+
 /*表格背景透明*/
 
 .table-wrapper .el-table--fit {
@@ -204,9 +321,11 @@ card-content {
     color: yellow !important;
     padding: 2px 5px 2px 5px !important;
 }
+
 .el-input__inner[type="number"] {
     padding-right: 0px;
 }
+
 /*消息框*/
 
 .el-message-box {

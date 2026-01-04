@@ -27,6 +27,14 @@
     "mark": "课程价格",
     "intro": "用于记录课程的价格项，每一个课程，可以设置多个价格项，例如一个月多少钱，一个季度多少钱。"
   },
+  "DataOperateLog": {
+    "mark": "操作日志",
+    "intro": ""
+  },
+  "DataOperateLogArchive": {
+    "mark": "操作日志的存档",
+    "intro": "操作日志的存档记录"
+  },
   "Depart": {
     "mark": "部门",
     "intro": ""
@@ -54,6 +62,14 @@
   "ExamResults": {
     "mark": "考试成绩",
     "intro": ""
+  },
+  "ExamTestPaper": {
+    "mark": "考试专用试卷",
+    "intro": "考试专用的试卷，有别于课程模拟测试的试卷"
+  },
+  "Exam_Accounts": {
+    "mark": "考试范围限定的学员",
+    "intro": "当考试限定的学员范围为“按学员”时，这里是关联的学员账号"
   },
   "Examination": {
     "mark": "考试管理",
@@ -153,7 +169,7 @@
   },
   "NewsNote": {
     "mark": "新闻的评论",
-    "intro": ""
+    "intro": "考虑到留言的评审问题，新闻不再让评论"
   },
   "Notice": {
     "mark": "通知公告",
@@ -199,12 +215,40 @@
     "mark": "试题答案项",
     "intro": "用于单选题、多选题、填空题的选项；实际没有存储任何数据，仅作为数据格式存在于Question表的Qus_Items字段中，在应用中数据被解析成QuesAnswer的格式而已。\n这么做的原因是兼容历史版本。"
   },
+  "QuesCollect": {
+    "mark": "试题收藏",
+    "intro": "试题收藏，这里是管理员收藏的试题，用于编辑试卷"
+  },
+  "QuesKnowledge": {
+    "mark": "试题知识点",
+    "intro": "考试试题的知识点"
+  },
+  "QuesPart": {
+    "mark": "试题分类",
+    "intro": "用于在线考试的试题的试题分类，课程中的试题与此无关联"
+  },
+  "QuesTags": {
+    "mark": "试题标签",
+    "intro": "试题的标签，与试题为多对多关联。"
+  },
   "QuesTypes": {
     "mark": "试题分类",
-    "intro": ""
+    "intro": "未启用该功能，原计是要做公共题干，后来由于精力有限，未继续开发。"
   },
   "Questions": {
     "mark": "试题",
+    "intro": ""
+  },
+  "Questions_QKnl": {
+    "mark": "试题知识点",
+    "intro": ""
+  },
+  "Questions_QPart": {
+    "mark": "试题与试题分类的关联表",
+    "intro": "试题与试题分类的关联表"
+  },
+  "Questions_QTags": {
+    "mark": "试题与标签的关联表",
     "intro": ""
   },
   "RechargeCode": {
@@ -212,7 +256,7 @@
     "intro": ""
   },
   "RechargeSet": {
-    "mark": "充值码的设置",
+    "mark": "充值码的设置项",
     "intro": ""
   },
   "ShowPicture": {
@@ -297,7 +341,7 @@
   },
   "TestPaperItem": {
     "mark": "试卷的配置项",
-    "intro": "用于配置试卷，例如单选题多少道，占多少百分比，总分多少；也可以按章节划分。"
+    "intro": "用于配置试卷，例如单选题多少道，占多少百分比，总分多少；也可以按章节划分。该表并没有实际数据，仅作为实体使用。"
   },
   "TestPaperQues": {
     "mark": "试卷的试题",

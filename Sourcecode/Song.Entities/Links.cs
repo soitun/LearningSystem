@@ -30,17 +30,17 @@ namespace Song.Entities {
     		
     		protected String _Lk_Name;
     		
+    		protected Int32? _Lk_Order;
+    		
     		protected String _Lk_QQ;
     		
     		protected String _Lk_SiteMaster;
-    		
-    		protected Int32 _Lk_Tax;
     		
     		protected String _Lk_Tootip;
     		
     		protected String _Lk_Url;
     		
-    		protected Int32 _Ls_Id;
+    		protected Int32? _Ls_Id;
     		
     		protected String _Ls_Name;
     		
@@ -158,6 +158,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32? Lk_Order {
+    			get {
+    				return this._Lk_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Lk_Order, _Lk_Order, value);
+    				this._Lk_Order = value;
+    			}
+    		}
+    		
     		public String Lk_QQ {
     			get {
     				return this._Lk_QQ;
@@ -175,16 +185,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Lk_SiteMaster, _Lk_SiteMaster, value);
     				this._Lk_SiteMaster = value;
-    			}
-    		}
-    		
-    		public Int32 Lk_Tax {
-    			get {
-    				return this._Lk_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Lk_Tax, _Lk_Tax, value);
-    				this._Lk_Tax = value;
     			}
     		}
     		
@@ -208,7 +208,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32 Ls_Id {
+    		public Int32? Ls_Id {
     			get {
     				return this._Ls_Id;
     			}
@@ -286,9 +286,9 @@ namespace Song.Entities {
     					_.Lk_LogoSmall,
     					_.Lk_Mobile,
     					_.Lk_Name,
+    					_.Lk_Order,
     					_.Lk_QQ,
     					_.Lk_SiteMaster,
-    					_.Lk_Tax,
     					_.Lk_Tootip,
     					_.Lk_Url,
     					_.Ls_Id,
@@ -313,9 +313,9 @@ namespace Song.Entities {
     					this._Lk_LogoSmall,
     					this._Lk_Mobile,
     					this._Lk_Name,
+    					this._Lk_Order,
     					this._Lk_QQ,
     					this._Lk_SiteMaster,
-    					this._Lk_Tax,
     					this._Lk_Tootip,
     					this._Lk_Url,
     					this._Ls_Id,
@@ -361,14 +361,14 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Lk_Name))) {
     				this._Lk_Name = reader.GetString(_.Lk_Name);
     			}
+    			if ((false == reader.IsDBNull(_.Lk_Order))) {
+    				this._Lk_Order = reader.GetInt32(_.Lk_Order);
+    			}
     			if ((false == reader.IsDBNull(_.Lk_QQ))) {
     				this._Lk_QQ = reader.GetString(_.Lk_QQ);
     			}
     			if ((false == reader.IsDBNull(_.Lk_SiteMaster))) {
     				this._Lk_SiteMaster = reader.GetString(_.Lk_SiteMaster);
-    			}
-    			if ((false == reader.IsDBNull(_.Lk_Tax))) {
-    				this._Lk_Tax = reader.GetInt32(_.Lk_Tax);
     			}
     			if ((false == reader.IsDBNull(_.Lk_Tootip))) {
     				this._Lk_Tootip = reader.GetString(_.Lk_Tootip);
@@ -470,6 +470,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Lk_Name = new WeiSha.Data.Field<Links>("Lk_Name");
     			
     			/// <summary>
+    			/// 字段名：Lk_Order - 数据类型：Int32(可空)
+    			/// </summary>
+    			public static WeiSha.Data.Field Lk_Order = new WeiSha.Data.Field<Links>("Lk_Order");
+    			
+    			/// <summary>
     			/// 字段名：Lk_QQ - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Lk_QQ = new WeiSha.Data.Field<Links>("Lk_QQ");
@@ -478,11 +483,6 @@ namespace Song.Entities {
     			/// 字段名：Lk_SiteMaster - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Lk_SiteMaster = new WeiSha.Data.Field<Links>("Lk_SiteMaster");
-    			
-    			/// <summary>
-    			/// 字段名：Lk_Tax - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field Lk_Tax = new WeiSha.Data.Field<Links>("Lk_Tax");
     			
     			/// <summary>
     			/// 字段名：Lk_Tootip - 数据类型：String
@@ -495,7 +495,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Lk_Url = new WeiSha.Data.Field<Links>("Lk_Url");
     			
     			/// <summary>
-    			/// 字段名：Ls_Id - 数据类型：Int32
+    			/// 字段名：Ls_Id - 数据类型：Int32(可空)
     			/// </summary>
     			public static WeiSha.Data.Field Ls_Id = new WeiSha.Data.Field<Links>("Ls_Id");
     			

@@ -1,6 +1,6 @@
 ﻿
 //顶部导航
-$dom.load.css([$dom.path() + 'Components/Styles/page_footer.css']);
+
 Vue.component('page_footer', {
     props: ["organ"],
     data: function () {

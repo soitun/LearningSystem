@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Song.ViewData
@@ -122,7 +123,8 @@ namespace Song.ViewData
             //----验证是否需要登录
             LoginAttribute loginattr = LoginAttribute.Verify(method, letter);
             //----验证API请求的所在页面，是否拥有操作权限,(本机访问时不验证)
-            if (!WeiSha.Core.IP.IsLocalIP(letter.IP) && apicheck.PageCheck) Helper.PageCheck.Instance.CheckPageAccess(letter);
+            if (!WeiSha.Core.IP.IsLocalIP(letter.IP) && apicheck.PageCheck)
+                Helper.PageCheck.Instance.CheckPageAccess(letter);
             //----验证是否购买课程,是否可以学习课程内容
             Attri.PurchasedAttribute.Verify(method, letter);
             Attri.StudyAttribute.Verify(method, letter);
@@ -464,11 +466,21 @@ namespace Song.ViewData
                                         piValue = DateTime.MinValue;
                                         break;
                                     }
-                                    DateTime dt = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
-                                    if (val.IndexOf(".") > -1) val = val.Substring(0, val.IndexOf("."));
-                                    long lTime = long.Parse(val + "0000");
-                                    //piValue = lTime > 0 ? dt.Add(new TimeSpan(lTime)) : dt;
-                                    piValue = dt.Add(new TimeSpan(lTime));
+                                    //如果字符为 2023-01-07 16:20:08 的格式
+                                    string patternWithGroups = @"^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$";
+                                    Match match = Regex.Match(val, patternWithGroups);
+                                    if (match.Success)
+                                    {
+                                        piValue = DateTime.Parse(val);
+                                    }
+                                    else
+                                    {
+                                        DateTime dt = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+                                        if (val.IndexOf(".") > -1) val = val.Substring(0, val.IndexOf("."));
+                                        long lTime = long.Parse(val + "0000");
+                                        //piValue = lTime > 0 ? dt.Add(new TimeSpan(lTime)) : dt;
+                                        piValue = dt.Add(new TimeSpan(lTime));
+                                    }
                                     break;
                                 default:
                                     piValue = string.IsNullOrEmpty(val) ? null : WeiSha.Core.DataConvert.ChangeType(val.Trim(), opi.PropertyType);

@@ -1,5 +1,4 @@
 //留言咨询
-$dom.load.css([$dom.pagepath() + 'Components/Styles/course_message.css']);
 Vue.component('course_message', {
     props: ['outline', 'account','config'],
     data: function () {

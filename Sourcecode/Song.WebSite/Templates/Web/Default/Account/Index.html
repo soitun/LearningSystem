@@ -33,17 +33,17 @@
                                     </el-link>
                                 </template>
                                 <div class="nophoto" v-else>
-                                    <img v-if="account.Ac_Sex==2" src="/Utilities/Images/head2.jpg" />
+                                    <img v-if="account.Ac_Gender==2" src="/Utilities/Images/head2.jpg" />
                                     <img v-else src="/Utilities/Images/head1.jpg" />
                                     <span class="photo-txt" v-if="upfile==null">选择头像</span>
                                 </div>
                             </upload-img>
                             <loading v-else>头像上传中...</loading>
-                            <div :class="{'woman': account.Ac_Sex==2,'name':true}">
+                            <div :class="{'woman': account.Ac_Gender==2,'name':true}">
                                 <a href="/web/account/">
-                                    <icon v-if="account.Ac_Sex==2" title="女性">&#xe650</icon>
-                                    <icon v-if="account.Ac_Sex==1" title="男性">&#xe6a1</icon>
-                                    <icon v-if="account.Ac_Sex==0" title="未知">&#xa043</icon>
+                                    <icon v-if="account.Ac_Gender==2" title="女性">&#xe650</icon>
+                                    <icon v-if="account.Ac_Gender==1" title="男性">&#xe6a1</icon>
+                                    <icon v-if="account.Ac_Gender==0" title="未知">&#xa043</icon>
                                     <span v-if="!!account.Ac_Name" v-html="account.Ac_Name"></span>
                                     <span v-else class="noname">(无名)</span>
                                 </a>

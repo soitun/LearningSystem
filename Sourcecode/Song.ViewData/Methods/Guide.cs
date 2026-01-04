@@ -70,28 +70,15 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="id">账户id，可以是多个，用逗号分隔</param>
         /// <returns></returns>
-        [Admin,Teacher]
+        [Admin, Teacher]
         [HttpDelete]
         public int ColumnsDelete(string id)
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IGuide>().ColumnsDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<IGuide>().ColumnsDelete(s);
             return i;
         }
         /// <summary>
@@ -114,18 +101,20 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         private JArray _childrenNode(Song.Entities.GuideColumns item, List<Song.Entities.GuideColumns> items)
         {
-            JArray jarr = new JArray();
-
-            foreach (Song.Entities.GuideColumns m in items)
+            List<Song.Entities.GuideColumns> childs = new List<Song.Entities.GuideColumns>();
+            for (int i = 0; i < items.Count; i++)
             {
-                if (item == null)
-                {
-                    if (m.Gc_PID != "0") continue;
-                }
-                else
-                {
-                    if (m.Gc_PID != item.Gc_UID) continue;
-                }
+                Entities.GuideColumns m = items[i];
+                if (item == null && m.Gc_PID != "0") continue;
+                if (item != null && m.Gc_PID != item.Gc_UID) continue;
+                childs.Add(m);
+                items.RemoveAt(i);
+                i--;
+            }
+            JArray jarr = new JArray();
+            for (int i = 0; i < childs.Count; i++)
+            {
+                Entities.GuideColumns m = childs[i];
                 string j = m.ToJson("", "Gc_CrtTime");
                 JObject jo = JObject.Parse(j);
                 jarr.Add(jo);
@@ -210,26 +199,13 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(guid)) return i;
-            string[] arr = guid.Split(',');
-            foreach (string s in arr)
-            {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IGuide>().GuideUpdate(idval,
-                    new WeiSha.Data.Field[] {
+            List<long> list = guid.ToList<long>();
+            foreach (long s in list)
+                i += Business.Do<IGuide>().GuideUpdate(s,
+                                    new WeiSha.Data.Field[] {
                         Song.Entities.Guide._.Gu_IsShow,
                         Song.Entities.Guide._.Gu_IsUse },
-                    new object[] { show, use });
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+                                    new object[] { show, use });
             return i;
         }
         /// <summary>
@@ -243,22 +219,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IGuide>().GuideDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<long> list = id.ToList<long>();
+            foreach (long s in list)
+                i += Business.Do<IGuide>().GuideDelete(s);
             return i;
         }
         /// <summary>
@@ -275,7 +238,7 @@ namespace Song.ViewData.Methods
         public ListResult Pager(long couid,string uid, bool? show, bool? use,string search, int size, int index)
         {
             //总记录数
-            int count = 0;
+            int count;
             Song.Entities.Guide[] eas = Business.Do<IGuide>().GuidePager(-1, couid, uid, search, show, use, size, index, out count);
             ListResult result = new ListResult(eas);
             result.Index = index;

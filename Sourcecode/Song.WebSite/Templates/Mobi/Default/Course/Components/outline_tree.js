@@ -1,5 +1,3 @@
-//menutree
-$dom.load.css([$dom.pagepath() + 'Components/Styles/outline_tree.css']);
 // 章节列表组件
 //事件;
 //show:菜单显示的事件，隐藏时也会触发

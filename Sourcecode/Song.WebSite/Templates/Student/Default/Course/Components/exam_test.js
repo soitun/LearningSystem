@@ -1,5 +1,4 @@
 //课程视频的学习进度
-$dom.load.css([$dom.pagepath() + 'Components/Styles/exam_test.css']);
 Vue.component('exam_test', {
     //config:机构的配置项，其实包括了视频完成度的容差值（VideoTolerance）
     props: ['course', 'stid', 'config', 'purchase'],

@@ -53,12 +53,12 @@ $ready(function () {
         watch: {
         },
         methods: {
-            //根据试卷类型（随机抽题还是固定试题）跳转
+            //根据试卷类型（随机出题还是固定试题）跳转
             gourl: function () {
                 var entity = this.entity;
                 var type = entity == null ? 2 : entity.Tp_Type;
                 type = type <= 1 ? 1 : type;
-                //类型默认是随时抽题，即2
+                //类型默认是随时出题，即2
                 type = 2;
                 var url = "Modify_Type" + type + ".html";
                 if (entity == null) {

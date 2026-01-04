@@ -52,11 +52,11 @@ namespace Song.Entities {
     		
     		protected String _MM_Name;
     		
+    		protected Int32 _MM_Order;
+    		
     		protected String _MM_PatId;
     		
     		protected Int32 _MM_Root;
-    		
-    		protected Int32 _MM_Tax;
     		
     		protected String _MM_Type;
     		
@@ -296,6 +296,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32 MM_Order {
+    			get {
+    				return this._MM_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.MM_Order, _MM_Order, value);
+    				this._MM_Order = value;
+    			}
+    		}
+    		
     		public String MM_PatId {
     			get {
     				return this._MM_PatId;
@@ -313,16 +323,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.MM_Root, _MM_Root, value);
     				this._MM_Root = value;
-    			}
-    		}
-    		
-    		public Int32 MM_Tax {
-    			get {
-    				return this._MM_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.MM_Tax, _MM_Tax, value);
-    				this._MM_Tax = value;
     			}
     		}
     		
@@ -465,9 +465,9 @@ namespace Song.Entities {
     					_.MM_Link,
     					_.MM_Marker,
     					_.MM_Name,
+    					_.MM_Order,
     					_.MM_PatId,
     					_.MM_Root,
-    					_.MM_Tax,
     					_.MM_Type,
     					_.MM_UID,
     					_.MM_WinHeight,
@@ -506,9 +506,9 @@ namespace Song.Entities {
     					this._MM_Link,
     					this._MM_Marker,
     					this._MM_Name,
+    					this._MM_Order,
     					this._MM_PatId,
     					this._MM_Root,
-    					this._MM_Tax,
     					this._MM_Type,
     					this._MM_UID,
     					this._MM_WinHeight,
@@ -590,14 +590,14 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.MM_Name))) {
     				this._MM_Name = reader.GetString(_.MM_Name);
     			}
+    			if ((false == reader.IsDBNull(_.MM_Order))) {
+    				this._MM_Order = reader.GetInt32(_.MM_Order);
+    			}
     			if ((false == reader.IsDBNull(_.MM_PatId))) {
     				this._MM_PatId = reader.GetString(_.MM_PatId);
     			}
     			if ((false == reader.IsDBNull(_.MM_Root))) {
     				this._MM_Root = reader.GetInt32(_.MM_Root);
-    			}
-    			if ((false == reader.IsDBNull(_.MM_Tax))) {
-    				this._MM_Tax = reader.GetInt32(_.MM_Tax);
     			}
     			if ((false == reader.IsDBNull(_.MM_Type))) {
     				this._MM_Type = reader.GetString(_.MM_Type);
@@ -763,6 +763,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field MM_Name = new WeiSha.Data.Field<ManageMenu>("MM_Name");
     			
     			/// <summary>
+    			/// 字段名：MM_Order - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field MM_Order = new WeiSha.Data.Field<ManageMenu>("MM_Order");
+    			
+    			/// <summary>
     			/// 字段名：MM_PatId - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field MM_PatId = new WeiSha.Data.Field<ManageMenu>("MM_PatId");
@@ -771,11 +776,6 @@ namespace Song.Entities {
     			/// 字段名：MM_Root - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field MM_Root = new WeiSha.Data.Field<ManageMenu>("MM_Root");
-    			
-    			/// <summary>
-    			/// 字段名：MM_Tax - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field MM_Tax = new WeiSha.Data.Field<ManageMenu>("MM_Tax");
     			
     			/// <summary>
     			/// 字段名：MM_Type - 数据类型：String

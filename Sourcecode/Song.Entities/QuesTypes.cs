@@ -22,7 +22,7 @@ namespace Song.Entities {
     		
     		protected String _Qt_Name;
     		
-    		protected Int32 _Qt_Tax;
+    		protected Int32 _Qt_Order;
     		
     		protected Int32 _Qt_Type;
     		
@@ -98,13 +98,13 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32 Qt_Tax {
+    		public Int32 Qt_Order {
     			get {
-    				return this._Qt_Tax;
+    				return this._Qt_Order;
     			}
     			set {
-    				this.OnPropertyValueChange(_.Qt_Tax, _Qt_Tax, value);
-    				this._Qt_Tax = value;
+    				this.OnPropertyValueChange(_.Qt_Order, _Qt_Order, value);
+    				this._Qt_Order = value;
     			}
     		}
     		
@@ -162,7 +162,7 @@ namespace Song.Entities {
     					_.Qt_Intro,
     					_.Qt_IsUse,
     					_.Qt_Name,
-    					_.Qt_Tax,
+    					_.Qt_Order,
     					_.Qt_Type,
     					_.Qt_TypeName};
     		}
@@ -179,7 +179,7 @@ namespace Song.Entities {
     					this._Qt_Intro,
     					this._Qt_IsUse,
     					this._Qt_Name,
-    					this._Qt_Tax,
+    					this._Qt_Order,
     					this._Qt_Type,
     					this._Qt_TypeName};
     		}
@@ -209,8 +209,8 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Qt_Name))) {
     				this._Qt_Name = reader.GetString(_.Qt_Name);
     			}
-    			if ((false == reader.IsDBNull(_.Qt_Tax))) {
-    				this._Qt_Tax = reader.GetInt32(_.Qt_Tax);
+    			if ((false == reader.IsDBNull(_.Qt_Order))) {
+    				this._Qt_Order = reader.GetInt32(_.Qt_Order);
     			}
     			if ((false == reader.IsDBNull(_.Qt_Type))) {
     				this._Qt_Type = reader.GetInt32(_.Qt_Type);
@@ -280,9 +280,9 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Qt_Name = new WeiSha.Data.Field<QuesTypes>("Qt_Name");
     			
     			/// <summary>
-    			/// 字段名：Qt_Tax - 数据类型：Int32
+    			/// 字段名：Qt_Order - 数据类型：Int32
     			/// </summary>
-    			public static WeiSha.Data.Field Qt_Tax = new WeiSha.Data.Field<QuesTypes>("Qt_Tax");
+    			public static WeiSha.Data.Field Qt_Order = new WeiSha.Data.Field<QuesTypes>("Qt_Order");
     			
     			/// <summary>
     			/// 字段名：Qt_Type - 数据类型：Int32

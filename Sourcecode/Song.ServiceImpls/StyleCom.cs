@@ -27,11 +27,11 @@ namespace Song.ServiceImpls
                 entity.Org_Name = org.Org_Name;
             }
             //如果没有排序号，则自动计算
-            if (entity.Nav_Tax < 1)
+            if (entity.Nav_Order < 1)
             {
-                object obj = Gateway.Default.Max<Navigation>(Navigation._.Nav_Tax,
+                object obj = Gateway.Default.Max<Navigation>(Navigation._.Nav_Order,
                     Navigation._.Org_ID == entity.Org_ID && Navigation._.Nav_Site == entity.Nav_Site && Navigation._.Nav_Type == entity.Nav_Type && Navigation._.Nav_PID == entity.Nav_PID);
-                entity.Nav_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
+                entity.Nav_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
             if (!string.IsNullOrWhiteSpace(entity.Nav_Logo))
             {
@@ -65,9 +65,9 @@ namespace Song.ServiceImpls
             Navigation old = this.NaviSingle(entity.Nav_ID);
             if (old != null && old.Nav_PID != entity.Nav_PID)
             {
-                object obj = Gateway.Default.Max<Navigation>(Navigation._.Nav_Tax, 
+                object obj = Gateway.Default.Max<Navigation>(Navigation._.Nav_Order, 
                     Navigation._.Nav_Site == entity.Nav_Site && Navigation._.Nav_Type == entity.Nav_Type && Navigation._.Nav_PID == entity.Nav_PID);
-                entity.Nav_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
+                entity.Nav_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
             if (!string.IsNullOrWhiteSpace(entity.Nav_Logo))
             {
@@ -117,7 +117,7 @@ namespace Song.ServiceImpls
             if (nav == null) return;
             WeiSha.Core.Upload.Get["Org"].DeleteFile(nav.Nav_Logo);         
             //
-            Navigation[] child = this.NaviChildren(nav.Nav_UID, null);
+            List<Navigation> child = this.NaviChildren(nav.Nav_UID, null);
             foreach (Navigation n in child)
             {
                 NaviDelete(n.Nav_ID);
@@ -153,7 +153,7 @@ namespace Song.ServiceImpls
             if (!string.IsNullOrWhiteSpace(site)) wc.And(Navigation._.Nav_Site == site);
             //导航分类
             if (!string.IsNullOrWhiteSpace(type)) wc.And(Navigation._.Nav_Type == type);
-            return Gateway.Default.From<Navigation>().Where(wc).OrderBy(Navigation._.Nav_Tax.Asc).ToList<Navigation>();
+            return Gateway.Default.From<Navigation>().Where(wc).OrderBy(Navigation._.Nav_Order.Asc).ToList<Navigation>();
         }
         public List<Navigation> NaviAll(bool? isShow, string site, string type, int orgid, string pid)
         {
@@ -166,7 +166,7 @@ namespace Song.ServiceImpls
             //导航分类
             if (!string.IsNullOrWhiteSpace(type) && type.Trim() != "")
                 wc.And(Navigation._.Nav_Type == type);
-            return Gateway.Default.From<Navigation>().Where(wc).OrderBy(Navigation._.Nav_Tax.Asc).ToList<Navigation>();
+            return Gateway.Default.From<Navigation>().Where(wc).OrderBy(Navigation._.Nav_Order.Asc).ToList<Navigation>();
         }
         /// <summary>
         /// 当前分类的下级分类
@@ -174,11 +174,11 @@ namespace Song.ServiceImpls
         /// <param name="pid">父级id，如果小于等0，仍作为0使用</param>
         /// <param name="isShow">是否显示</param>
         /// <returns></returns>
-        public Navigation[] NaviChildren(string pid, bool? isShow)
+        public List<Navigation> NaviChildren(string pid, bool? isShow)
         {
             WhereClip wc = Navigation._.Nav_PID == pid;
             if (isShow != null) wc.And(Navigation._.Nav_IsShow == (bool)isShow);
-            return Gateway.Default.From<Navigation>().Where(wc).OrderBy(Navigation._.Nav_Tax.Asc).ToArray<Navigation>();
+            return Gateway.Default.From<Navigation>().Where(wc).OrderBy(Navigation._.Nav_Order.Asc).ToList<Navigation>();
         }
         /// <summary>
         /// 更新导航菜单树
@@ -203,6 +203,7 @@ namespace Song.ServiceImpls
                     foreach (Navigation item in items)
                     {
                         item.Org_ID = orgid;
+                        item.Nav_ID = 0;
                         if (string.IsNullOrWhiteSpace(item.Nav_Name))
                             item.Nav_Name = "null";
                         if (string.IsNullOrWhiteSpace(item.Nav_UID))
@@ -237,11 +238,11 @@ namespace Song.ServiceImpls
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
             if (org != null) entity.Org_ID = org.Org_ID;            
             //如果没有排序号，则自动计算
-            if (entity.Shp_Tax < 1)
+            if (entity.Shp_Order < 1)
             {
-                object obj = Gateway.Default.Max<ShowPicture>(ShowPicture._.Shp_Tax,
+                object obj = Gateway.Default.Max<ShowPicture>(ShowPicture._.Shp_Order,
                     ShowPicture._.Org_ID == entity.Org_ID && ShowPicture._.Shp_Site == entity.Shp_Site);
-                entity.Shp_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
+                entity.Shp_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
             if (!string.IsNullOrWhiteSpace(entity.Shp_File))
             {
@@ -301,7 +302,7 @@ namespace Song.ServiceImpls
             //所属站点
             if (!string.IsNullOrWhiteSpace(site) && site.Trim() != "")
                 wc.And(ShowPicture._.Shp_Site == site);
-            return Gateway.Default.From<ShowPicture>().Where(wc).OrderBy(ShowPicture._.Shp_Tax.Asc).ToArray<ShowPicture>();
+            return Gateway.Default.From<ShowPicture>().Where(wc).OrderBy(ShowPicture._.Shp_Order.Asc).ToArray<ShowPicture>();
         }
         /// <summary>
         /// 更改顺序
@@ -317,8 +318,8 @@ namespace Song.ServiceImpls
                     foreach (ShowPicture item in items)
                     {
                         tran.Update<ShowPicture>(
-                            new Field[] { ShowPicture._.Shp_Tax },
-                            new object[] { item.Shp_Tax },
+                            new Field[] { ShowPicture._.Shp_Order },
+                            new object[] { item.Shp_Order },
                             ShowPicture._.Shp_ID == item.Shp_ID);
                     }
                     tran.Commit();

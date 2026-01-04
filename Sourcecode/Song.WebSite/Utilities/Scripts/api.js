@@ -17,7 +17,7 @@
         versions: ["", "1", "2"],
         versionDefault: "2", //默认版本号
         //调用地址的根路径
-        baseURL: '',
+        baseURL: "",
         pathUrl: "/api/v{0}/", //url路径
         apicache_location: false,     //本机是否缓存数据
         timeout: 60 * 60 * 24 * 1000,        //请求过期时效    
@@ -34,7 +34,7 @@
         apiurl: function (version, way) {
             if (way === undefined) throw 'api名称不得为空';
             if (way.indexOf(':') > -1) way = way.substring(0, way.indexOf(':'));
-            var url = config.pathUrl.replace("{0}", version);
+            var url = config.pathUrl.replace('{0}', version);
             //调用地址的根路径可以在此处理，（如果需要跨多台服务器请求的话）
             if (config.baseURL != '') url = config.baseURL + url;
             return url + way;

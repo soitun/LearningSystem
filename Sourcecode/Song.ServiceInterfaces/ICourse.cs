@@ -72,12 +72,12 @@ namespace Song.ServiceInterfaces
         /// 删除课程
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void CourseDelete(Course entity);
+        int CourseDelete(Course entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="couid">课程的主键id</param>
-        void CourseDelete(long couid);
+        int CourseDelete(long couid);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>
@@ -581,17 +581,17 @@ namespace Song.ServiceInterfaces
         /// 删除价格记录
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void PriceDelete(CoursePrice entity);
+        int PriceDelete(CoursePrice entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void PriceDelete(int identify);
+        int PriceDelete(int identify);
         /// <summary>
         /// 删除，按全局唯一标识
         /// </summary>
         /// <param name="uid"></param>
-        void PriceDelete(string uid);
+        int PriceDelete(string uid);
         /// <summary>
         /// 将产品价格写入到课程所在的表，取第一条价格
         /// </summary>

@@ -24,8 +24,8 @@ namespace Song.ServiceImpls
                 if (org != null) entity.Org_ID = org.Org_ID;              
             }
             //添加对象，并设置排序号
-            object obj = Gateway.Default.Max<PayInterface>(PayInterface._.Pai_Tax, PayInterface._.Pai_Tax > -1 && PayInterface._.Org_ID == entity.Org_ID);
-            entity.Pai_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 1;
+            object obj = Gateway.Default.Max<PayInterface>(PayInterface._.Pai_Order, PayInterface._.Pai_Order > -1 && PayInterface._.Org_ID == entity.Org_ID);
+            entity.Pai_Order = obj != null ? Convert.ToInt32(obj) + 1 : 1;
             Gateway.Default.Save<PayInterface>(entity);
         }
         /// <summary>
@@ -45,17 +45,17 @@ namespace Song.ServiceImpls
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void PayDelete(PayInterface entity)
+        public int PayDelete(PayInterface entity)
         {
-            Gateway.Default.Delete<PayInterface>(entity);
+            return Gateway.Default.Delete<PayInterface>(entity);
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void PayDelete(int identify)
+        public int PayDelete(int identify)
         {
-            Gateway.Default.Delete<PayInterface>(PayInterface._.Pai_ID == identify);
+            return Gateway.Default.Delete<PayInterface>(PayInterface._.Pai_ID == identify);
         }
         /// <summary>
         /// 获取单一实体对象，按主键ID；
@@ -79,7 +79,7 @@ namespace Song.ServiceImpls
              if (orgid > -1) wc.And(PayInterface._.Org_ID == orgid);
              if (!string.IsNullOrWhiteSpace(platform)) wc &= PayInterface._.Pai_Platform == platform.ToLower();
              if (isEnable != null) wc.And(PayInterface._.Pai_IsEnable == (bool)isEnable);
-             return Gateway.Default.From<PayInterface>().Where(wc).OrderBy(PayInterface._.Pai_Tax.Asc).ToArray<PayInterface>();
+             return Gateway.Default.From<PayInterface>().Where(wc).OrderBy(PayInterface._.Pai_Order.Asc).ToArray<PayInterface>();
         }
         /// <summary>
         /// 接口是否存在（接口名称不得重复）
@@ -117,8 +117,8 @@ namespace Song.ServiceImpls
                     foreach (PayInterface item in items)
                     {
                         tran.Update<PayInterface>(
-                            new Field[] { PayInterface._.Pai_Tax },
-                            new object[] { item.Pai_Tax },
+                            new Field[] { PayInterface._.Pai_Order },
+                            new object[] { item.Pai_Order },
                             PayInterface._.Pai_ID == item.Pai_ID);
                     }
                     tran.Commit();

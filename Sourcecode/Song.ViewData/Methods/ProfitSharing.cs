@@ -71,23 +71,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-
-                    Business.Do<IProfitSharing>().ThemeDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<IProfitSharing>().ThemeDelete(s);
             return i;
         }
         /// <summary>
@@ -99,15 +85,7 @@ namespace Song.ViewData.Methods
         [SuperAdmin]
         public bool ModifyTaxis(Song.Entities.ProfitSharing[] items)
         {
-            try
-            {
-                Business.Do<IProfitSharing>().UpdateTaxis(items);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return Business.Do<IProfitSharing>().UpdateTaxis(items);
         }
         #endregion
 

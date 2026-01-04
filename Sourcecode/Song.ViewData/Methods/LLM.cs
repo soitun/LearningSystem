@@ -128,23 +128,10 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(ids)) return i;
-            string[] arr = ids.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<ILargeLanguage>().RecordsDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-            return i;         
+            List<int> list = ids.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<ILargeLanguage>().RecordsDelete(s);
+            return i;
         }
         /// <summary>
         /// 删除学员所有交流信息
@@ -188,7 +175,6 @@ namespace Song.ViewData.Methods
         /// <summary>
         /// 与AI交流问题，可以多轮沟通
         /// </summary>
-        /// <param name="character">AI的角色设定，可以为空</param>
         /// <param name="couid">课程</param>
         /// <param name="messages">
         /// 由于AI并不存储沟通过程，这里是多轮沟通的内容。

@@ -3,7 +3,7 @@
 
 <config>
   <item Column="姓名" Field="Acc_Name" />
-  <item Column="性别" Field="Acc_Sex" />
+  <item Column="性别" Field="Acc_Gender" />
   <item Column="工号" Field="Acc_EmpCode" />
   <item Column="院系" Field="Dep_CnName" />
   <item Column="班组" Field="Team_Name" />

@@ -47,9 +47,9 @@ namespace Song.ServiceImpls
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void RecordsDelete(int identify)
+        public int RecordsDelete(int identify)
         {
-            Gateway.Default.Delete<LlmRecords>(LlmRecords._.Llr_ID == identify);
+            return Gateway.Default.Delete<LlmRecords>(LlmRecords._.Llr_ID == identify);
         }
         /// <summary>
         /// 清理学员所有记录

@@ -13,7 +13,7 @@
     /*更多的面板*/
     --tab-more-bgcolor: rgba(255, 253, 253, 0.8);
     /*内容区背景*/
-    --tab-body-bgcolor: rgb(255 255 255 / 80%);
+    --tab-body-bgcolor: rgb(255 255 255 / 90%);
     /*右键菜单,依次为：前景色，背景色，分隔线，边线颜色*/
     --tab-menu-color: #666;
     --tab-menu-bgcolor: #eee;

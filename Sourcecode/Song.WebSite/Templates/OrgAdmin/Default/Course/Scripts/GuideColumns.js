@@ -96,7 +96,7 @@
                         var obj = {
                             'Gc_ID': d.Gc_ID,
                             'Gc_PID': pid,
-                            'Gc_Tax': i + 1
+                            'Gc_Order': i + 1
                         }
                         list.push(obj);
                         if (d.children && d.children.length > 0) {

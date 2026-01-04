@@ -1,5 +1,4 @@
 //飘浮信息，防录屏
-$dom.load.css([$dom.pagepath() + 'Components/Styles/study_float.css']);
 Vue.component('study_float', {
     props: ['account', 'tag'],
     data: function () {

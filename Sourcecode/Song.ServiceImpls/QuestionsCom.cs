@@ -30,10 +30,7 @@ namespace Song.ServiceImpls
             if (entity.Qus_ID <= 0) entity.Qus_ID = WeiSha.Core.Request.SnowID();
    
             entity.Qus_CrtTime = DateTime.Now;
-            entity.Qus_LastTime = DateTime.Now;
-            entity.Qus_Title = _ClearString(entity.Qus_Title);
-            entity.Qus_Answer = _ClearString(entity.Qus_Answer);
-            entity.Qus_Explain = _ClearString(entity.Qus_Explain);
+            entity.Qus_LastTime = DateTime.Now;           
             if (entity.Org_ID <= 0)
             {
                 Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
@@ -65,9 +62,7 @@ namespace Song.ServiceImpls
         public void QuesSave(Questions entity)
         {
             entity.Qus_LastTime = DateTime.Now;
-            entity.Qus_IsError = false;
-            entity.Qus_Title = _ClearString(entity.Qus_Title);
-            entity.Qus_Answer = _ClearString(entity.Qus_Answer);
+            entity.Qus_IsError = false;         
             //获取科目名称
             if (entity.Sbj_ID > 0 && string.IsNullOrWhiteSpace(entity.Sbj_Name))
             {
@@ -86,27 +81,7 @@ namespace Song.ServiceImpls
                     entity.Qus_ErrorInfo = "答案不得为空";
                 }
             }
-            if (entity.Qus_Type == 5)
-            {
-                //entity.Qus_Items
-                //HTML.ClearTag
-            }
-            entity.Qus_Explain = _ClearString(entity.Qus_Explain);
-            using (DbTrans tran = Gateway.Default.BeginTrans())
-            {
-                try
-                {
-                    tran.Save<Questions>(entity);
-                    tran.Update<QuesAnswer>(new Field[] { QuesAnswer._.Qus_ID }, new object[] { entity.Qus_ID }, QuesAnswer._.Qus_UID == entity.Qus_UID);
-                    tran.Commit();
-                    this.OnSave(entity, EventArgs.Empty);
-                }
-                catch (Exception ex)
-                {
-                    tran.Rollback();
-                    throw ex;
-                }
-            }
+            Gateway.Default.Save<Questions>(entity);
             //更新统计数据
             new Task(() =>
             {
@@ -115,10 +90,7 @@ namespace Song.ServiceImpls
         }
 
         public void QuesInput(Questions entity, List<Song.Entities.QuesAnswer> ansItem)
-        {
-            entity.Qus_Title = _ClearString(entity.Qus_Title);
-            entity.Qus_Answer = _ClearString(entity.Qus_Answer);
-            entity.Qus_Explain = _ClearString(entity.Qus_Explain);
+        {           
             //获取科目名称
             if (entity.Sbj_ID > 0 && string.IsNullOrWhiteSpace(entity.Sbj_Name))
             {
@@ -258,17 +230,9 @@ namespace Song.ServiceImpls
         /// <param name="fiels"></param>
         /// <param name="objs"></param>
         /// <returns></returns>
-        public bool QuesUpdate(long qusid, Field[] fiels, object[] objs)
+        public int QuesUpdate(long qusid, Field[] fiels, object[] objs)
         {
-            try
-            {
-                Gateway.Default.Update<Questions>(fiels, objs, Questions._.Qus_ID == qusid);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return Gateway.Default.Update<Questions>(fiels, objs, Questions._.Qus_ID == qusid);
         }
         /// <summary>
         /// 修改试题的某些项
@@ -277,10 +241,9 @@ namespace Song.ServiceImpls
         /// <param name="field"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public bool QuesUpdate(long qusid, Field field, object obj)
+        public int QuesUpdate(long qusid, Field field, object obj)
         {
-            Gateway.Default.Update<Questions>(field, obj, Questions._.Qus_ID == qusid);
-            return true;
+            return Gateway.Default.Update<Questions>(field, obj, Questions._.Qus_ID == qusid);
         }
         public Questions QuesSingle(long identify)
         {
@@ -329,7 +292,7 @@ namespace Song.ServiceImpls
             if (type > 0) wc.And(Questions._.Qus_Type == type);
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
             return Gateway.Default.From<Questions>().Where(wc)
-                .OrderBy(Questions._.Qus_Type.Asc && Questions._.Qus_ID.Asc)
+                .OrderBy(Questions._.Qus_Type.Asc && Questions._.Qus_ID.Desc)
                 .ToList<Questions>(count);
         }
         /// <summary>
@@ -364,7 +327,7 @@ namespace Song.ServiceImpls
             if (diff > 0) wc.And(Questions._.Qus_Diff == diff);
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
             return Gateway.Default.From<Questions>().Where(wc)
-                .OrderBy(Questions._.Qus_Type.Asc && Questions._.Qus_ID.Asc)
+                .OrderBy(Questions._.Qus_Type.Asc && Questions._.Qus_ID.Desc)
                 .ToList<Questions>(count, index);
         }
         /// <summary>
@@ -478,7 +441,7 @@ namespace Song.ServiceImpls
             if (diff.Length > 0)
             {
                 WhereClip wcdiff = new WhereClip();
-                foreach (int d in diff) wcdiff |= Questions._.Qus_Diff == d;
+                foreach (int d in diff) if (d > 0 && d <= 5) wcdiff |= Questions._.Qus_Diff == d;
                 wc.And(wcdiff);
             }
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
@@ -1152,10 +1115,10 @@ namespace Song.ServiceImpls
         public int TypeAdd(QuesTypes entity)
         {
             //如果没有排序号，则自动计算
-            if (entity.Qt_Tax < 1)
+            if (entity.Qt_Order < 1)
             {
-                object obj = Gateway.Default.Max<QuesTypes>(QuesTypes._.Qt_Tax, QuesTypes._.Cou_ID == entity.Cou_ID);
-                entity.Qt_Tax = obj!=null ? Convert.ToInt32(obj) + 1 : 0;
+                object obj = Gateway.Default.Max<QuesTypes>(QuesTypes._.Qt_Order, QuesTypes._.Cou_ID == entity.Cou_ID);
+                entity.Qt_Order = obj!=null ? Convert.ToInt32(obj) + 1 : 0;
             }
             Gateway.Default.Save<QuesTypes>(entity);
             return entity.Qt_ID;
@@ -1214,7 +1177,7 @@ namespace Song.ServiceImpls
             WhereClip wc = new WhereClip();
             if (couid > 0) wc.And(QuesTypes._.Cou_ID == couid);
             if (isUse != null) wc.And(QuesTypes._.Qt_IsUse == (bool)isUse);
-            return Gateway.Default.From<QuesTypes>().Where(wc).OrderBy(QuesTypes._.Qt_Tax.Asc).ToArray<QuesTypes>(count);
+            return Gateway.Default.From<QuesTypes>().Where(wc).OrderBy(QuesTypes._.Qt_Order.Asc).ToArray<QuesTypes>(count);
         }
         /// <summary>
         /// 将当前项目向上移动；仅在当前对象的同层移动，即同一父节点下的对象这前移动；
@@ -1225,15 +1188,15 @@ namespace Song.ServiceImpls
         {
             //当前对象
             QuesTypes current = Gateway.Default.From<QuesTypes>().Where(QuesTypes._.Qt_ID == id).ToFirst<QuesTypes>();
-            int tax = (int)current.Qt_Tax;
+            int tax = (int)current.Qt_Order;
             //上一个对象，即兄长对象；兄长不存则直接返回false;
             QuesTypes prev = Gateway.Default.From<QuesTypes>()
-                .Where(QuesTypes._.Qt_Tax < tax && QuesTypes._.Cou_ID == current.Cou_ID)
-                .OrderBy(QuesTypes._.Qt_Tax.Desc).ToFirst<QuesTypes>();
+                .Where(QuesTypes._.Qt_Order < tax && QuesTypes._.Cou_ID == current.Cou_ID)
+                .OrderBy(QuesTypes._.Qt_Order.Desc).ToFirst<QuesTypes>();
             if (prev == null) return false;
             //交换排序号
-            current.Qt_Tax = prev.Qt_Tax;
-            prev.Qt_Tax = tax;
+            current.Qt_Order = prev.Qt_Order;
+            prev.Qt_Order = tax;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
@@ -1259,15 +1222,15 @@ namespace Song.ServiceImpls
         {
             //当前对象
             QuesTypes current = Gateway.Default.From<QuesTypes>().Where(QuesTypes._.Qt_ID == id).ToFirst<QuesTypes>();
-            int tax = (int)current.Qt_Tax;
+            int tax = (int)current.Qt_Order;
             //下一个对象，即弟弟对象；弟弟不存则直接返回false;
             QuesTypes next = Gateway.Default.From<QuesTypes>()
-                .Where(QuesTypes._.Qt_Tax > tax && QuesTypes._.Cou_ID == current.Cou_ID)
-                .OrderBy(QuesTypes._.Qt_Tax.Asc).ToFirst<QuesTypes>();
+                .Where(QuesTypes._.Qt_Order > tax && QuesTypes._.Cou_ID == current.Cou_ID)
+                .OrderBy(QuesTypes._.Qt_Order.Asc).ToFirst<QuesTypes>();
             if (next == null) return false;
             //交换排序号
-            current.Qt_Tax = next.Qt_Tax;
-            next.Qt_Tax = tax;
+            current.Qt_Order = next.Qt_Order;
+            next.Qt_Order = tax;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
@@ -1632,45 +1595,6 @@ namespace Song.ServiceImpls
             return corrNum == ans5.Count;
         }
         #endregion
-
-        #region 私有方法
-        /// <summary>
-        /// 清理字符中的非法字符
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        private string _ClearString(string html)
-        {
-            if (string.IsNullOrWhiteSpace(html)) return html;
-            RegexOptions option = RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace;
-            //删除脚本
-            html = Regex.Replace(html, @"<script[^>]+?>[\s\S]*?</script>", "", option);
-            html = Regex.Replace(html, @"<script[^>]*>[\s\S]*?</script>", "", option);
-            ////删除HTML
-            ////html = Regex.Replace(html, @"<(.[^>]*)>", "", option);
-            //html = Regex.Replace(html, @"([\r\n])[\s]+", "", option);
-            //html = Regex.Replace(html, @"-->", "", option);
-            //html = Regex.Replace(html, @"<!--.*", "", option);
-            //html = Regex.Replace(html, @"&(quot|#34);", "\"", option);
-            //html = Regex.Replace(html, @"&(amp|#38);", "&", option);
-            ////html = Regex.Replace(html, @"&(lt|#60);", "<", option);
-            ////html = Regex.Replace(html, @"&(gt|#62);", ">", option);
-            //html = Regex.Replace(html, @"&(nbsp|#160);", " ", option);
-            //html = Regex.Replace(html, @"&(iexcl|#161);", "\xa1", option);
-            //html = Regex.Replace(html, @"&(cent|#162);", "\xa2", option);
-            //html = Regex.Replace(html, @"&(pound|#163);", "\xa3", option);
-            //html = Regex.Replace(html, @"&(copy|#169);", "\xa9", option);
-            //html = Regex.Replace(html, @"&#(\d+);", "", option);
-
-            html = Regex.Replace(html, @"//\(function\(\)[\s\S]+?}\)\(\);", "", option);
-            //html = html.Replace("<", "&lt;");
-            //html = html.Replace(">", "&gt;");
-            html = html.Replace("\r", "");
-            html = html.Replace("\n", "");
-            return html;
-        }
-        #endregion
-
 
         #region 事件
         public event EventHandler Save;

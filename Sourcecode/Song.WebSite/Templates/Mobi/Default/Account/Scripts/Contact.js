@@ -34,7 +34,7 @@ $ready(function () {
                 handler: function (nv, ov) {
                     this.loading = false;
                     if ($api.isnull(nv)) return;
-                    this.account.Ac_Sex = String(nv.Ac_Sex); 
+                    this.account.Ac_Gender = String(nv.Ac_Gender); 
                 }, immediate: true
             },
         },

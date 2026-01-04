@@ -1,5 +1,4 @@
 ﻿//答题卡
-$dom.load.css([$dom.pagepath() + 'Components/Styles/answercard.css']);
 Vue.component('answercard', {
     //ansstate:答题的状态
     props: ['questions', 'types', 'ansstate', 'width'],

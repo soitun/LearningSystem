@@ -46,7 +46,7 @@
                                     @click.stop="{upfile=null;entity.Th_Photo='';}">清除图片</el-link>
                             </template>
                             <div class="nophoto" v-else>
-                                <img class="photo" v-if="entity.Th_Sex==2" src="/Utilities/images/head2.jpg" />
+                                <img class="photo" v-if="entity.Th_Gender==2" src="/Utilities/images/head2.jpg" />
                                 <img class="photo" v-else src="/Utilities/images/head1.jpg" />
                                 <el-tooltip content="点击上传图片" placement="right" effect="light">
                                     <span class="photo-txt">上传头像</span>
@@ -88,8 +88,8 @@
                                 {{d}} <span v-show='i<accPingyin.length-1'>, </span>
                             </span>）
                     </el-form-item>
-                    <el-form-item label="性别" prop="Th_Sex">
-                        <el-radio-group v-model="entity.Th_Sex">
+                    <el-form-item label="性别" prop="Th_Gender">
+                        <el-radio-group v-model="entity.Th_Gender">
                             <el-radio-button label="1">男</el-radio-button>
                             <el-radio-button label="2">女</el-radio-button>
                             <el-radio-button label="0">未知</el-radio-button>

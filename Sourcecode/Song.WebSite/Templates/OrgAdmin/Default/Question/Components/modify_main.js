@@ -1,5 +1,4 @@
 ﻿//试题编辑中的主要组件
-$dom.load.css([$dom.path() + 'Question/Components/Styles/modify_main.css']);
 //事件:
 //load,
 Vue.component('modify_main', {
@@ -233,7 +232,7 @@ Vue.component('modify_main', {
             <el-tab-pane name="question" v-if="question && types">
                 <template slot="label">
                     <span v-if="loading_init && typename">...</span>
-                    <ques_type v-else :type="quesType" :types="types" :showname="true"></ques_type>
+                    <ques_type v-else :type="quesType" :types="types" :showname="true" :showicon="true"></ques_type>
                 </template>
             </el-tab-pane>   
             <el-tab-pane v-for="(item,index) in tabs" :name="item.name" v-if="tabshow(item)">

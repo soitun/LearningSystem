@@ -23,8 +23,8 @@ namespace Song.ServiceImpls
         public void Add(EmpGroup entity)
         {
             //添加对象，并设置排序号
-            object obj = Gateway.Default.Max<EmpGroup>(EmpGroup._.EGrp_Tax, EmpGroup._.EGrp_Tax > -1 && EmpGroup._.Org_ID == entity.Org_ID);
-            entity.EGrp_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 1;
+            object obj = Gateway.Default.Max<EmpGroup>(EmpGroup._.EGrp_Order, EmpGroup._.EGrp_Order > -1 && EmpGroup._.Org_ID == entity.Org_ID);
+            entity.EGrp_Order = obj != null ? Convert.ToInt32(obj) + 1 : 1;
             Gateway.Default.Save<EmpGroup>(entity);
         }
         /// <summary>
@@ -67,37 +67,38 @@ namespace Song.ServiceImpls
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void Delete(EmpGroup entity)
+        public int Delete(EmpGroup entity)
         {
-            if (entity == null) return;
+            int i = 0;
+            if (entity == null) return i;
             //如果是系统组，则不允许删除
-            if (entity.EGrp_IsSystem) return;
+            if (entity.EGrp_IsSystem) return i;
 
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
                 {
-                    tran.Delete<EmpAcc_Group>(EmpAcc_Group._.EGrp_Id == entity.EGrp_Id);
+                    i = tran.Delete<EmpAcc_Group>(EmpAcc_Group._.EGrp_Id == entity.EGrp_Id);
                     tran.Delete<Purview>(Purview._.EGrp_Id == entity.EGrp_Id);
                     tran.Delete<EmpGroup>(entity);
                     tran.Commit();
+                    return i;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     tran.Rollback();
                     throw ex;
                 }
-
             }
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void Delete(int identify)
+        public int Delete(int identify)
         {
             EmpGroup entity = this.GetSingle(identify);
-            this.Delete(entity);                  
+            return this.Delete(entity);                  
         }        
         /// <summary>
         /// 获取单一实体对象，按主键ID；
@@ -115,7 +116,7 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public EmpGroup[] GetAll(int orgid)
         {
-            return Gateway.Default.From<EmpGroup>().Where(EmpGroup._.Org_ID==orgid).OrderBy(EmpGroup._.EGrp_Tax.Asc).ToArray<EmpGroup>();
+            return Gateway.Default.From<EmpGroup>().Where(EmpGroup._.Org_ID==orgid).OrderBy(EmpGroup._.EGrp_Order.Asc).ToArray<EmpGroup>();
         }
         public EmpGroup[] GetAll(int orgid, bool? isUse)
         {
@@ -125,7 +126,7 @@ namespace Song.ServiceImpls
             }
             return Gateway.Default.From<EmpGroup>()
                 .Where(EmpGroup._.Org_ID == orgid && EmpGroup._.EGrp_IsUse == isUse)
-                .OrderBy(EmpGroup._.EGrp_Tax.Asc).ToArray<EmpGroup>();
+                .OrderBy(EmpGroup._.EGrp_Order.Asc).ToArray<EmpGroup>();
         }
         /// <summary>
         /// 获取某员工所属的所有组；
@@ -136,7 +137,7 @@ namespace Song.ServiceImpls
         {
             return Gateway.Default.From<EmpGroup>().InnerJoin<EmpAcc_Group>(EmpGroup._.EGrp_Id == EmpAcc_Group._.EGrp_Id)
                 .Where(EmpAcc_Group._.Acc_Id == EmpAccountId)
-                .OrderBy(EmpGroup._.EGrp_Tax.Asc).ToArray<EmpGroup>();
+                .OrderBy(EmpGroup._.EGrp_Order.Asc).ToArray<EmpGroup>();
         }
         /// <summary>
         /// 获取某个组的所有员工
@@ -192,8 +193,8 @@ namespace Song.ServiceImpls
                     foreach (EmpGroup item in entities)
                     {
                         tran.Update<EmpGroup>(
-                            new Field[] { EmpGroup._.EGrp_Tax },
-                            new object[] { item.EGrp_Tax },
+                            new Field[] { EmpGroup._.EGrp_Order },
+                            new object[] { item.EGrp_Order },
                             EmpGroup._.EGrp_Id == item.EGrp_Id);
                     }
                     tran.Commit();
@@ -223,7 +224,7 @@ namespace Song.ServiceImpls
             if (isUse != null) wc.And(EmpGroup._.EGrp_IsUse == (bool)isUse);
             if (!string.IsNullOrWhiteSpace(name)) wc.And(EmpGroup._.EGrp_Name.Contains(name));
             countSum = Gateway.Default.Count<EmpGroup>(wc);
-            return Gateway.Default.From<EmpGroup>().Where(wc).OrderBy(EmpGroup._.EGrp_Tax.Asc).ToArray<EmpGroup>(size, (index - 1) * size);
+            return Gateway.Default.From<EmpGroup>().Where(wc).OrderBy(EmpGroup._.EGrp_Order.Asc).ToArray<EmpGroup>(size, (index - 1) * size);
         }
     }
 }

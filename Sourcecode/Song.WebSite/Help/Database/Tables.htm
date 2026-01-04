@@ -18,11 +18,14 @@
             <div class="entity_header">
                 <div class="name">
                     <span @dblclick="copy(entity.name)" title="双击复制"> {{entity.index+1}}.  {{entity.name}}</span>
-                    <span class="mark" v-if="!state('mark')" @dblclick="edit('mark')">{{entity.mark}}</span>
+                    <span class="mark" v-if="!state('mark')" @dblclick="edit('mark')">
+                        <template v-if="entity.mark!=''">{{entity.mark}}</template>
+                        <template v-else> (双击编辑) </template>
+                    </span>                   
                     <el-input v-else class="mark" ref="mark" v-model="entity.mark" clearable
                         @keyup.enter="updateentity('mark')" @blur="updateentity('mark')">
                     </el-input>
-                    <el-input placeholder="搜索" prefix-icon="el-icon-search" class="query" clearable v-model="search">
+                    <el-input placeholder="搜索" prefix-icon="el-icon-search" class="query" clearable v-model.trim="search">
                     </el-input>
                 </div>
                 <div class="intro">

@@ -1,6 +1,6 @@
 ﻿
 //学员登录数据的图表
-$dom.load.css([$dom.path() + 'Viewport/Components/Styles/studentlogin.css'])
+
 Vue.component('studentlogin', {
     //month:显示的月数
     props: ["show", "org", "month", "title"],

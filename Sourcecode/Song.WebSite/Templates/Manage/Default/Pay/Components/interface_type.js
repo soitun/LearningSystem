@@ -1,5 +1,4 @@
 ﻿//支付接口的类型
-$dom.load.css([$dom.pagepath() + 'Components/Styles/interface_type.css']);
 Vue.component('interface_type', {
     //entity:接口的对象实体
     //layout:布局方式，list为列表，single显示单个

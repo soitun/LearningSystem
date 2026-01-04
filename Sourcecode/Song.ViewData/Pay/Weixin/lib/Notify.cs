@@ -31,7 +31,7 @@ namespace WxPayAPI
             System.IO.Stream s = page.Request.InputStream;
             //System.Web.HttpContext _context = System.Web.HttpContext.Current;
             //_context.Request.InputStream;
-            int count = 0;
+            int count;
             byte[] buffer = new byte[1024];
             StringBuilder builder = new StringBuilder();
             while ((count = s.Read(buffer, 0, 1024)) > 0)

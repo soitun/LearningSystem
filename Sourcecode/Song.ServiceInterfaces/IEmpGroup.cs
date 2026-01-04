@@ -40,12 +40,12 @@ namespace Song.ServiceInterfaces
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void Delete(EmpGroup entity);
+        int Delete(EmpGroup entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void Delete(int identify);
+        int Delete(int identify);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>
@@ -84,6 +84,7 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         bool IsExist(EmpGroup entity);
         bool IsExist(string name, int id, int orgid);
+        /// <summary>
         /// 更改排序
         /// </summary>
         /// <param name="entities"></param>

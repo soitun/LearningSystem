@@ -1,5 +1,4 @@
 //底部按钮组件
-$dom.load.css([$dom.pagepath() + 'Components/Styles/study_footer.css']);
 Vue.component('study_footer', {
     props: ['course', 'state'],
     data: function () {

@@ -1,7 +1,4 @@
 ﻿using Newtonsoft.Json.Linq;
-using Song.Entities;
-using Song.ServiceInterfaces;
-using Song.ViewData.Attri;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,6 +8,9 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 using WeiSha.Core;
+using Song.Entities;
+using Song.ServiceInterfaces;
+using Song.ViewData.Attri;
 
 namespace Song.ViewData.Methods
 {
@@ -21,10 +21,10 @@ namespace Song.ViewData.Methods
     public class TestPaper : ViewMethod, IViewAPI
     {
         //资源的虚拟路径和物理路径
-        public static string PathKey = "TestPaper";
+        private static string PathKey = "TestPaper";
 
-        public static string VirPath = WeiSha.Core.Upload.Get[PathKey].Virtual;
-        public static string PhyPath = WeiSha.Core.Upload.Get[PathKey].Physics;
+        private static string VirPath = WeiSha.Core.Upload.Get[PathKey].Virtual;
+        private static string PhyPath = WeiSha.Core.Upload.Get[PathKey].Physics;
 
         #region 增删改查
 
@@ -52,33 +52,19 @@ namespace Song.ViewData.Methods
         [HtmlClear(Not = "entity")]
         public Song.Entities.TestPaper Add(Song.Entities.TestPaper entity)
         {
-            try
+            string filename = string.Empty, smallfile = string.Empty;
+            //只保存第一张图片
+            foreach (string key in this.Files)
             {
-                string filename = string.Empty, smallfile = string.Empty;
-                try
-                {
-                    //只保存第一张图片
-                    foreach (string key in this.Files)
-                    {
-                        HttpPostedFileBase file = this.Files[key];
-                        filename = WeiSha.Core.Request.UniqueID() + Path.GetExtension(file.FileName);
-                        file.SaveAs(PhyPath + filename);
-                        break;
-                    }
-                    entity.Tp_Logo = filename;
+                HttpPostedFileBase file = this.Files[key];
+                filename = WeiSha.Core.Request.UniqueID() + Path.GetExtension(file.FileName);
+                file.SaveAs(PhyPath + filename);
+                break;
+            }
+            entity.Tp_Logo = filename;
 
-                    Business.Do<ITestPaper>().PaperAdd(entity);
-                    return entity;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            Business.Do<ITestPaper>().PaperAdd(entity);
+            return entity;
         }
 
         /// <summary>
@@ -92,47 +78,34 @@ namespace Song.ViewData.Methods
         [HtmlClear(Not = "entity")]
         public Song.Entities.TestPaper Modify(Song.Entities.TestPaper entity)
         {
-            try
-            {
-                string filename = string.Empty, smallfile = string.Empty;
-                try
-                {
-                    Song.Entities.TestPaper old = Business.Do<ITestPaper>().PaperSingle(entity.Tp_Id);
-                    if (old == null) throw new Exception("Not found entity for TestPaper！");
-                    //如果有上传文件
-                    if (this.Files.Count > 0)
-                    {
-                        //只保存第一张图片
-                        foreach (string key in this.Files)
-                        {
-                            HttpPostedFileBase file = this.Files[key];
-                            filename = WeiSha.Core.Request.UniqueID() + Path.GetExtension(file.FileName);
-                            file.SaveAs(PhyPath + filename);
-                            break;
-                        }
-                        entity.Tp_Logo = filename;
-                        if (!string.IsNullOrWhiteSpace(old.Tp_Logo))
-                            WeiSha.Core.Upload.Get[PathKey].DeleteFile(old.Tp_Logo);
-                    }
-                    //如果没有上传图片，且新对象没有图片，则删除旧图
-                    else if (string.IsNullOrWhiteSpace(entity.Tp_Logo) && !string.IsNullOrWhiteSpace(old.Tp_Logo))
-                    {
-                        WeiSha.Core.Upload.Get[PathKey].DeleteFile(old.Tp_Logo);
-                    }
+            string filename = string.Empty, smallfile = string.Empty;
 
-                    old.Copy<Song.Entities.TestPaper>(entity);
-                    Business.Do<ITestPaper>().PaperSave(old);
-                    return old;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-            catch (Exception ex)
+            Song.Entities.TestPaper old = Business.Do<ITestPaper>().PaperSingle(entity.Tp_Id);
+            if (old == null) throw new Exception("Not found entity for TestPaper！");
+            //如果有上传文件
+            if (this.Files.Count > 0)
             {
-                throw ex;
+                //只保存第一张图片
+                foreach (string key in this.Files)
+                {
+                    HttpPostedFileBase file = this.Files[key];
+                    filename = WeiSha.Core.Request.UniqueID() + Path.GetExtension(file.FileName);
+                    file.SaveAs(PhyPath + filename);
+                    break;
+                }
+                entity.Tp_Logo = filename;
+                if (!string.IsNullOrWhiteSpace(old.Tp_Logo))
+                    WeiSha.Core.Upload.Get[PathKey].DeleteFile(old.Tp_Logo);
             }
+            //如果没有上传图片，且新对象没有图片，则删除旧图
+            else if (string.IsNullOrWhiteSpace(entity.Tp_Logo) && !string.IsNullOrWhiteSpace(old.Tp_Logo))
+            {
+                WeiSha.Core.Upload.Get[PathKey].DeleteFile(old.Tp_Logo);
+            }
+
+            old.Copy<Song.Entities.TestPaper>(entity);
+            Business.Do<ITestPaper>().PaperSave(old);
+            return old;
         }
 
         /// <summary>
@@ -146,23 +119,10 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<ITestPaper>().PaperDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-            return i;
+            List<long> list = id.ToList<long>();
+            foreach (long s in list)
+                i += Business.Do<ITestPaper>().PaperDelete(s);
+            return i;           
         }
 
         /// <summary>
@@ -178,33 +138,23 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
+            List<long> list = id.ToList<long>();
+            foreach (long s in list)
             {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
+                if (rec != null)
                 {
-                    if (rec != null)
-                    {
-                        Business.Do<ITestPaper>().PaperUpdate(idval,
-                        new WeiSha.Data.Field[] {
+                    Business.Do<ITestPaper>().PaperUpdate(s,
+                    new WeiSha.Data.Field[] {
                         Song.Entities.TestPaper._.Tp_IsUse,
                         Song.Entities.TestPaper._.Tp_IsRec },
-                        new object[] { use, rec });
-                    }
-                    else
-                    {
-                        Business.Do<ITestPaper>().PaperUpdate(idval, new WeiSha.Data.Field[] { Song.Entities.TestPaper._.Tp_IsUse },
-                            new object[] { use });
-                    }
-                    i++;
+                    new object[] { use, rec });
                 }
-                catch (Exception ex)
+                else
                 {
-                    throw ex;
+                    Business.Do<ITestPaper>().PaperUpdate(s, new WeiSha.Data.Field[] { Song.Entities.TestPaper._.Tp_IsUse },
+                        new object[] { use });
                 }
+                i++;
             }
             return i;
         }
@@ -222,9 +172,9 @@ namespace Song.ViewData.Methods
         {
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
             int orgid = org.Org_ID;
-            int count = 0;
-            Song.Entities.TestPaper[] tps = Business.Do<ITestPaper>().PaperPager(orgid, -1, couid, diff, true, search, size, index, out count);
-            for (int i = 0; i < tps.Length; i++)
+            int count;
+            List<Song.Entities.TestPaper> tps = Business.Do<ITestPaper>().PaperPager(orgid, -1, couid, diff, true, search, size, index, out count);
+            for (int i = 0; i < tps.Count; i++)
                 tps[i] = _tran(tps[i]);
             ListResult result = new ListResult(tps);
             result.Index = index;
@@ -259,10 +209,10 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult Pager(int orgid, long sbjid, long couid, string search, bool? isuse, int diff, int size, int index)
         {
-            int count = 0;
-            Song.Entities.TestPaper[] tps = Business.Do<ITestPaper>()
+            int count;
+            List<Song.Entities.TestPaper> tps = Business.Do<ITestPaper>()
                 .PaperPager(orgid, sbjid, couid, diff, isuse, search, size, index, out count);
-            for (int i = 0; i < tps.Length; i++)
+            for (int i = 0; i < tps.Count; i++)
                 tps[i] = _tran(tps[i]);
             ListResult result = new ListResult(tps);
             result.Index = index;
@@ -434,9 +384,9 @@ namespace Song.ViewData.Methods
                     throw new Exception(string.Format(txt + "试题通过率应达到{0}%，实际通过率为{1}%", condition_ques, purchase.Stc_QuesScore));              
                 //最多可以考几次
                 int finaltest_count = config["finaltest_count"].Value.Int32 ?? 1;
-                Song.Entities.TestResults[] trs = Business.Do<ITestPaper>().ResultsCount(stid, tpid);
-                if (finaltest_count <= trs.Length)               
-                    throw new Exception(string.Format("最多允许考试{0}次， 已经考了{1}次，", finaltest_count, trs.Length));               
+                List<TestResults> trs = Business.Do<ITestPaper>().ResultsCount(stid, tpid);
+                if (finaltest_count <= trs.Count)               
+                    throw new Exception(string.Format("最多允许考试{0}次， 已经考了{1}次，", finaltest_count, trs.Count));               
             }
 
             //专业id,专业名称
@@ -463,7 +413,7 @@ namespace Song.ViewData.Methods
             exr.St_IDCardNumber = cardid;
             exr.Sts_ID = stid;
             exr.Sts_Name = stsname;
-            exr.St_Sex = stsex;     //性别
+            exr.Ac_Gender = stsex;     //性别
             exr.Tr_IP = WeiSha.Core.Browser.IP;
             exr.Tr_Mac = "";
             exr.Tr_UID = uid;
@@ -543,8 +493,8 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult ResultsPager(int stid, long tpid, int size, int index)
         {
-            int count = 0;
-            Song.Entities.TestResults[] trs = Business.Do<ITestPaper>().ResultsPager(stid, tpid, size, index, out count);
+            int count;
+            List<TestResults> trs = Business.Do<ITestPaper>().ResultsPager(stid, tpid, size, index, out count);
             ListResult result = new ListResult(trs);
             result.Index = index;
             result.Size = size;
@@ -574,8 +524,8 @@ namespace Song.ViewData.Methods
             string stname, string cardid, float score_min, float score_max, DateTime? time_min, DateTime? time_max,
             int size, int index)
         {
-            int count = 0;
-            Song.Entities.TestResults[] trs = Business.Do<ITestPaper>().ResultsPager(stid, tpid, tpname, couid, sbjid, orgid,
+            int count;
+            List<TestResults> trs = Business.Do<ITestPaper>().ResultsPager(stid, tpid, tpname, couid, sbjid, orgid,
                 stname, cardid, score_min, score_max, time_min, time_max,
                 size, index, out count);
             ListResult result = new ListResult(trs);
@@ -609,12 +559,11 @@ namespace Song.ViewData.Methods
         /// <param name="stid">学员id</param>
         /// <param name="tpid">试卷id</param>
         /// <returns></returns>
-        public Song.Entities.TestResults[] ResultsAll(int stid, long tpid)
+        public List<TestResults> ResultsAll(int stid, long tpid)
         {
             if (stid <= 0) throw new Exception("学员id为空，无法获取成绩");
             if (tpid <= 0) throw new Exception("试卷id为空，无法获取成绩");
-            Song.Entities.TestResults[] trs = Business.Do<ITestPaper>().ResultsCount(stid, tpid);
-            return trs;
+            return Business.Do<ITestPaper>().ResultsCount(stid, tpid);
         }
         /// <summary>
         /// 试卷的成绩数，即参加考试的人次
@@ -676,22 +625,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(trid)) return i;
-            string[] arr = trid.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<ITestPaper>().ResultsDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = trid.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<ITestPaper>().ResultsDelete(s);
             return i;
         }
 

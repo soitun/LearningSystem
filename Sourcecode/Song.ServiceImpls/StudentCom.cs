@@ -30,11 +30,11 @@ namespace Song.ServiceImpls
                 entity.Org_ID = org.Org_ID;
                 entity.Org_Name = org.Org_Name;
             }
-            if (entity.Sts_Tax <= 0)
+            if (entity.Sts_Order <= 0)
             {
                 //添加对象，并设置排序号
-                object obj = Gateway.Default.Max<StudentSort>(StudentSort._.Sts_Tax, StudentSort._.Org_ID == entity.Org_ID);
-                entity.Sts_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
+                object obj = Gateway.Default.Max<StudentSort>(StudentSort._.Sts_Order, StudentSort._.Org_ID == entity.Org_ID);
+                entity.Sts_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
             Gateway.Default.Save<StudentSort>(entity);
         }
@@ -176,7 +176,7 @@ namespace Song.ServiceImpls
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(StudentSort._.Org_ID == orgid);
             if (isUse != null) wc.And(StudentSort._.Sts_IsUse == isUse);
-            return Gateway.Default.From<StudentSort>().Where(wc).OrderBy(StudentSort._.Sts_Tax.Asc).ToArray<StudentSort>();
+            return Gateway.Default.From<StudentSort>().Where(wc).OrderBy(StudentSort._.Sts_Order.Asc).ToArray<StudentSort>();
         }
 
         public List<StudentSort> SortCount(int orgid, bool? isUse, int count)
@@ -184,7 +184,7 @@ namespace Song.ServiceImpls
             WhereClip wc = StudentSort._.Org_ID == orgid;
             if (isUse != null) wc.And(StudentSort._.Sts_IsUse == isUse);
             count = count > 0 ? count : int.MaxValue;
-            return Gateway.Default.From<StudentSort>().Where(wc).OrderBy(StudentSort._.Sts_Tax.Asc).ToList<StudentSort>(count);
+            return Gateway.Default.From<StudentSort>().Where(wc).OrderBy(StudentSort._.Sts_Order.Asc).ToList<StudentSort>(count);
         }
 
         public StudentSort Sort4Student(int studentId)
@@ -216,6 +216,7 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public int TotalOfSort(long[] sts)
         {
+            if (sts.Length == 0) return 0;
             WhereClip wc = new WhereClip();
             foreach (long l in sts) if (l > 0) wc.Or(Accounts._.Sts_ID == l);
             return Gateway.Default.Count<Accounts>(wc);
@@ -284,7 +285,7 @@ namespace Song.ServiceImpls
             if (isUse != null) wc.And(StudentSort._.Sts_IsUse == (bool)isUse);
             if (!string.IsNullOrWhiteSpace(name) && name.Trim() != "") wc.And(StudentSort._.Sts_Name.Contains(name));
             countSum = Gateway.Default.Count<StudentSort>(wc);
-            return Gateway.Default.From<StudentSort>().Where(wc).OrderBy(StudentSort._.Sts_Tax.Desc).ToArray<StudentSort>(size, (index - 1) * size);
+            return Gateway.Default.From<StudentSort>().Where(wc).OrderBy(StudentSort._.Sts_Order.Desc).ToArray<StudentSort>(size, (index - 1) * size);
         }
         /// <summary>
         /// 更改学员组的排序
@@ -300,8 +301,8 @@ namespace Song.ServiceImpls
                     foreach (StudentSort item in items)
                     {
                         tran.Update<StudentSort>(
-                            new Field[] { StudentSort._.Sts_Tax },
-                            new object[] { item.Sts_Tax },
+                            new Field[] { StudentSort._.Sts_Order },
+                            new object[] { item.Sts_Order },
                             StudentSort._.Sts_ID == item.Sts_ID);
                     }
                     tran.Commit();
@@ -548,7 +549,7 @@ namespace Song.ServiceImpls
             if (!string.IsNullOrWhiteSpace(name)) wc.And(Accounts._.Ac_Name.Contains(name));
             if (!string.IsNullOrWhiteSpace(acc)) wc.And(Accounts._.Ac_AccName.Contains(acc));
             if (!string.IsNullOrWhiteSpace(phone)) wc.And(Accounts._.Ac_MobiTel1.Contains(phone) || Accounts._.Ac_MobiTel2.Contains(phone));
-            if (gender >= 0) wc.And(Accounts._.Ac_Sex == gender);
+            if (gender >= 0) wc.And(Accounts._.Ac_Gender == gender);
             if (!string.IsNullOrWhiteSpace(couname)) wc.And(Course._.Cou_Name.Contains(couname));
             //查询方法
             QuerySection<LearningCard> query = Gateway.Default.From<LearningCard>()
@@ -767,13 +768,14 @@ namespace Song.ServiceImpls
         /// <param name="stsid"></param>
         /// <param name="couid"></param>
         /// <returns></returns>
-        public bool SortCourseDelete(long stsid, long couid)
+        public int SortCourseDelete(long stsid, long couid)
         {
+            int i = 0;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
                 {
-                    tran.Delete<StudentSort_Course>(StudentSort_Course._.Sts_ID == stsid && StudentSort_Course._.Cou_ID == couid);
+                    i = tran.Delete<StudentSort_Course>(StudentSort_Course._.Sts_ID == stsid && StudentSort_Course._.Cou_ID == couid);
                     //在学员与课程的记录中，相关课程禁用
                     tran.Update<Student_Course>(
                        new Field[] { Student_Course._.Stc_IsEnable },
@@ -783,13 +785,13 @@ namespace Song.ServiceImpls
                     tran.Commit();
                     this._update_cache(stsid);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     tran.Rollback();
                     throw ex;
                 }
             }
-            return true;
+            return i;
         }
         /// <summary>
         /// 判断某个课程是否存在于学员组
@@ -1062,9 +1064,9 @@ namespace Song.ServiceImpls
         /// 删除学员在线记录
         /// </summary>
         /// <param name="identify"></param>
-        public void StudentOnlineDelete(int identify)
+        public int StudentOnlineDelete(int identify)
         {
-            Gateway.Default.Delete<LogForStudentOnline>(LogForStudentOnline._.Lso_ID == identify);
+            return Gateway.Default.Delete<LogForStudentOnline>(LogForStudentOnline._.Lso_ID == identify);
         }
         /// <summary>
         /// 分页获取
@@ -2090,9 +2092,7 @@ namespace Song.ServiceImpls
         /// 分页获取学员的错误试题
         /// </summary>
         /// <param name="acid">学员id</param>
-        /// <param name="quesid">试题id</param>
-        /// <param name="type">试题类型</param>
-        /// <param name="diff">难易度</param>
+        /// <param name="quesid">试题id</param> 
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <param name="countSum"></param>

@@ -293,16 +293,16 @@ namespace Song.ViewData
         /// </summary>
         /// <param name="key">参数名</param>
         /// <returns></returns>
-        public ConvertToAnyValue this[string key]=>GetParameter(key);
+        public Helper.ConvertToAnyValue this[string key]=>GetParameter(key);
         /// <summary>
         /// 获取参数值
         /// </summary>
         /// <param name="key">参数名</param>
         /// <returns>参数Value值</returns>
-        public ConvertToAnyValue GetParameter(string key)
+        public Helper.ConvertToAnyValue GetParameter(string key)
         {
             string val = _params.FirstOrDefault(kv => key.Trim().Equals(kv.Key, StringComparison.CurrentCultureIgnoreCase)).Value;        
-            return new ConvertToAnyValue(val);
+            return new Helper.ConvertToAnyValue(val);
         }
         /// <summary>
         /// 设置参数
@@ -362,7 +362,7 @@ namespace Song.ViewData
         /// </summary>
         /// <param name="key">cookie名称</param>
         /// <returns>cookie的值</returns>
-        public ConvertToAnyValue GetCookie(string key)
+        public ViewData.Helper.ConvertToAnyValue GetCookie(string key)
         {
             string val = string.Empty;
             foreach (KeyValuePair<string, string> kv in _cookies)
@@ -373,7 +373,7 @@ namespace Song.ViewData
                     break;
                 }
             }
-            return new ConvertToAnyValue(val);
+            return new ViewData.Helper.ConvertToAnyValue(val);
         }
         #endregion
 

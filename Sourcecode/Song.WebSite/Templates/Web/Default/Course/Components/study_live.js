@@ -1,5 +1,4 @@
 //直播
-$dom.load.css([$dom.path() + 'course/Components/Styles/study_live.css']);
 Vue.component('study_live', {
     props: ['account', 'state', 'outline'],
     data: function () {

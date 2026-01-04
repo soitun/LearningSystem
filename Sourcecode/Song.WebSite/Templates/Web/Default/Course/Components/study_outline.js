@@ -3,7 +3,6 @@
 //int:初始化完成，返回 课程、章节
 //change:更改章节时，返回 章节状态、章节
 //switch:选项卡切换时，返回 选项卡tag和索引
-$dom.load.css([$dom.pagepath() + 'Components/Styles/study_outline.css']);
 Vue.component('study_outline', {
     props: ['account', 'owned', 'config'],
     data: function () {

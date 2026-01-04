@@ -251,7 +251,7 @@ namespace Song.ServiceInterfaces
         /// <param name="stsid"></param>
         /// <param name="couid"></param>
         /// <returns></returns>
-        bool SortCourseDelete(long stsid, long couid);
+        int SortCourseDelete(long stsid, long couid);
         /// <summary>
         /// 判断某个课程是否存在于学员组
         /// </summary>
@@ -329,7 +329,7 @@ namespace Song.ServiceInterfaces
         /// 删除学员在线记录
         /// </summary>
         /// <param name="identify"></param>
-        void StudentOnlineDelete(int identify);
+        int StudentOnlineDelete(int identify);
         /// <summary>
         /// 账号的登录记录
         /// </summary>   
@@ -712,6 +712,7 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="stid">学员id</param>
         /// <param name="quesid">试题id</param>
+        /// <param name="searTxt"></param>
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <param name="countSum"></param>

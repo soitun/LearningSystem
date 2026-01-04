@@ -24,7 +24,7 @@ $ready(function () {
                 //获取结果
                 th.account = account.data.result;
                 if (th.account)
-                    th.account.Ac_Sex = String(th.account.Ac_Sex);
+                    th.account.Ac_Gender = String(th.account.Ac_Gender);
                 th.platinfo = platinfo.data.result;
                 th.organ = organ.data.result;
                 //机构配置信息
@@ -44,7 +44,7 @@ $ready(function () {
             'account': {
                 handler: function (nv, ov) {
                     if ($api.isnull(nv)) return;
-                    this.account.Ac_Sex = String(nv.Ac_Sex);
+                    this.account.Ac_Gender = String(nv.Ac_Gender);
                     this.loading = false;
                 }, immediate: true
             },

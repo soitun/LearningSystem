@@ -35,6 +35,7 @@ namespace Song.ServiceInterfaces
         /// <param name="entity"></param>
         /// <param name="logo"></param>
         void NaviSaveLogo(Navigation entity, string logo);
+        /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
@@ -67,7 +68,7 @@ namespace Song.ServiceInterfaces
         /// <param name="pid">父级id</param>
         /// <param name="isShow">是否显示</param>
         /// <returns></returns>
-        Navigation[] NaviChildren(string pid, bool? isShow);
+        List<Navigation> NaviChildren(string pid, bool? isShow);
         /// <summary>
         /// 更新导航菜单树
         /// </summary>
@@ -109,7 +110,6 @@ namespace Song.ServiceInterfaces
         /// <param name="orgid">机构id</param>
         /// <returns></returns>
         ShowPicture[] ShowPicAll(bool? isShow, string site, int orgid);
-        /// <summary>
         /// <summary>
         /// 更改顺序
         /// </summary>

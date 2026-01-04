@@ -67,9 +67,7 @@ $ready(function () {
                     }
                 }).catch(function (err) {
                     alert(err);
-                }).finally(function () {
-                    th.loading = false;
-                });
+                }).finally(() => th.loading = false);
             },
             modify: function (isclose) {
                 if (this.loading) return;
@@ -89,13 +87,11 @@ $ready(function () {
                     }
                 }).catch(function (err) {
                     alert(err, '错误');
-                }).finally(function () {
-                    th.loading = false;
-                });
+                }).finally(() => th.loading = false);
             },
             //操作成功
             operateSuccess: function (isclose) {
-                window.top.$pagebox.source.tab(window.name, 'vue.loadDatas', isclose);
+                window.top.$pagebox.source.tab(window.name, 'vapp.loadDatas', isclose);
             }
         },
     });

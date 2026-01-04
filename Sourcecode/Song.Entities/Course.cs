@@ -32,6 +32,8 @@ namespace Song.Entities {
     		
     		protected String _Cou_Intro;
     		
+    		protected Boolean _Cou_IsDeleted;
+    		
     		protected Boolean _Cou_IsFree;
     		
     		protected Boolean _Cou_IsLimitFree;
@@ -54,6 +56,8 @@ namespace Song.Entities {
     		
     		protected String _Cou_Name;
     		
+    		protected Int32 _Cou_Order;
+    		
     		protected Int32 _Cou_OutlineCount;
     		
     		protected Int64 _Cou_PID;
@@ -73,8 +77,6 @@ namespace Song.Entities {
     		protected Int32 _Cou_StudentSum;
     		
     		protected String _Cou_Target;
-    		
-    		protected Int32 _Cou_Tax;
     		
     		protected Int32 _Cou_TestCount;
     		
@@ -226,6 +228,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Boolean Cou_IsDeleted {
+    			get {
+    				return this._Cou_IsDeleted;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Cou_IsDeleted, _Cou_IsDeleted, value);
+    				this._Cou_IsDeleted = value;
+    			}
+    		}
+    		
     		public Boolean Cou_IsFree {
     			get {
     				return this._Cou_IsFree;
@@ -336,6 +348,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32 Cou_Order {
+    			get {
+    				return this._Cou_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Cou_Order, _Cou_Order, value);
+    				this._Cou_Order = value;
+    			}
+    		}
+    		
     		public Int32 Cou_OutlineCount {
     			get {
     				return this._Cou_OutlineCount;
@@ -433,16 +455,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Cou_Target, _Cou_Target, value);
     				this._Cou_Target = value;
-    			}
-    		}
-    		
-    		public Int32 Cou_Tax {
-    			get {
-    				return this._Cou_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Cou_Tax, _Cou_Tax, value);
-    				this._Cou_Tax = value;
     			}
     		}
     		
@@ -628,6 +640,7 @@ namespace Song.Entities {
     					_.Cou_FreeEnd,
     					_.Cou_FreeStart,
     					_.Cou_Intro,
+    					_.Cou_IsDeleted,
     					_.Cou_IsFree,
     					_.Cou_IsLimitFree,
     					_.Cou_IsRec,
@@ -639,6 +652,7 @@ namespace Song.Entities {
     					_.Cou_Logo,
     					_.Cou_LogoSmall,
     					_.Cou_Name,
+    					_.Cou_Order,
     					_.Cou_OutlineCount,
     					_.Cou_PID,
     					_.Cou_Price,
@@ -649,7 +663,6 @@ namespace Song.Entities {
     					_.Cou_Score,
     					_.Cou_StudentSum,
     					_.Cou_Target,
-    					_.Cou_Tax,
     					_.Cou_TestCount,
     					_.Cou_TryNum,
     					_.Cou_Type,
@@ -684,6 +697,7 @@ namespace Song.Entities {
     					this._Cou_FreeEnd,
     					this._Cou_FreeStart,
     					this._Cou_Intro,
+    					this._Cou_IsDeleted,
     					this._Cou_IsFree,
     					this._Cou_IsLimitFree,
     					this._Cou_IsRec,
@@ -695,6 +709,7 @@ namespace Song.Entities {
     					this._Cou_Logo,
     					this._Cou_LogoSmall,
     					this._Cou_Name,
+    					this._Cou_Order,
     					this._Cou_OutlineCount,
     					this._Cou_PID,
     					this._Cou_Price,
@@ -705,7 +720,6 @@ namespace Song.Entities {
     					this._Cou_Score,
     					this._Cou_StudentSum,
     					this._Cou_Target,
-    					this._Cou_Tax,
     					this._Cou_TestCount,
     					this._Cou_TryNum,
     					this._Cou_Type,
@@ -763,6 +777,9 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Cou_Intro))) {
     				this._Cou_Intro = reader.GetString(_.Cou_Intro);
     			}
+    			if ((false == reader.IsDBNull(_.Cou_IsDeleted))) {
+    				this._Cou_IsDeleted = reader.GetBoolean(_.Cou_IsDeleted);
+    			}
     			if ((false == reader.IsDBNull(_.Cou_IsFree))) {
     				this._Cou_IsFree = reader.GetBoolean(_.Cou_IsFree);
     			}
@@ -796,6 +813,9 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Cou_Name))) {
     				this._Cou_Name = reader.GetString(_.Cou_Name);
     			}
+    			if ((false == reader.IsDBNull(_.Cou_Order))) {
+    				this._Cou_Order = reader.GetInt32(_.Cou_Order);
+    			}
     			if ((false == reader.IsDBNull(_.Cou_OutlineCount))) {
     				this._Cou_OutlineCount = reader.GetInt32(_.Cou_OutlineCount);
     			}
@@ -825,9 +845,6 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Cou_Target))) {
     				this._Cou_Target = reader.GetString(_.Cou_Target);
-    			}
-    			if ((false == reader.IsDBNull(_.Cou_Tax))) {
-    				this._Cou_Tax = reader.GetInt32(_.Cou_Tax);
     			}
     			if ((false == reader.IsDBNull(_.Cou_TestCount))) {
     				this._Cou_TestCount = reader.GetInt32(_.Cou_TestCount);
@@ -961,6 +978,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Cou_Intro = new WeiSha.Data.Field<Course>("Cou_Intro");
     			
     			/// <summary>
+    			/// 字段名：Cou_IsDeleted - 数据类型：Boolean
+    			/// </summary>
+    			public static WeiSha.Data.Field Cou_IsDeleted = new WeiSha.Data.Field<Course>("Cou_IsDeleted");
+    			
+    			/// <summary>
     			/// 字段名：Cou_IsFree - 数据类型：Boolean
     			/// </summary>
     			public static WeiSha.Data.Field Cou_IsFree = new WeiSha.Data.Field<Course>("Cou_IsFree");
@@ -1016,6 +1038,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Cou_Name = new WeiSha.Data.Field<Course>("Cou_Name");
     			
     			/// <summary>
+    			/// 字段名：Cou_Order - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Cou_Order = new WeiSha.Data.Field<Course>("Cou_Order");
+    			
+    			/// <summary>
     			/// 字段名：Cou_OutlineCount - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Cou_OutlineCount = new WeiSha.Data.Field<Course>("Cou_OutlineCount");
@@ -1064,11 +1091,6 @@ namespace Song.Entities {
     			/// 字段名：Cou_Target - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Cou_Target = new WeiSha.Data.Field<Course>("Cou_Target");
-    			
-    			/// <summary>
-    			/// 字段名：Cou_Tax - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field Cou_Tax = new WeiSha.Data.Field<Course>("Cou_Tax");
     			
     			/// <summary>
     			/// 字段名：Cou_TestCount - 数据类型：Int32

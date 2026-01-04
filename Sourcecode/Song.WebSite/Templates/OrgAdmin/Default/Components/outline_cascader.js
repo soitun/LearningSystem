@@ -1,5 +1,4 @@
 //章节的级联选择器
-$dom.load.css([$dom.path() + 'Components/Styles/outline_cascader.css']);
 Vue.component('outline_cascader', {
     //olid:当前章节id
     props: ['olid', 'couid', 'disabled'],

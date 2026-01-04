@@ -1,5 +1,5 @@
 //课程试题练习的通过率
-$dom.load.css([$dom.pagepath() + 'Components/Styles/ques_progress.css']);
+
 Vue.component('ques_progress', {
     //config:机构的配置项，其实包括了视频完成度的容差值（VideoTolerance）
     //purchase:购买记录

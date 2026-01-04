@@ -1,13 +1,18 @@
-#app {
-    margin: 20px 0px 60px 20px;
-    padding: 0px 20px 0px 0px;
-    max-width: calc(100% - 40px);
-    max-height: calc(100% - 80px);
-    overflow-y: auto;
+section {
+    margin: 10px 0px 60px 20px;
+    padding: 0px 10px 0px 0px;
+    max-width: calc(100% - 10px);
+    height: calc(100% - 10px);
+   
+    display: flex;
+    flex-direction: column;
 }
+
 .el-tree{
     background-color: transparent !important;
     background: transparent !important;
+    flex: 1;
+    overflow-y: auto;
 }
 .drawer_item {
     width: 50% !important;
@@ -58,6 +63,7 @@
     text-overflow: ellipsis;
     overflow: hidden;
     word-break: break-all;
+    font-size: 15px;   
 }
 .tree-node[color] {
     color: attr(color);
@@ -74,13 +80,13 @@
     color: #aaa;
     font-size: 12px;
 }
-.mmlink{
-    font-size: 12px;
+.mmlink {
+    font-size: 13px;
     margin-left: 10px;
     color: #aaa;
+    line-height: 25px;
     max-width: 200px;
     display: inline-block;
-   
 }
 .tree-handle{
     display: inline-block;
@@ -103,11 +109,7 @@
 /*底部按钮*/
 
 .btnFooter {
-    position: fixed;
-    width: calc(100% - 20px);
-    height: 33px;
+    width: calc(100% - 10px);  
     padding: 10px;
-    bottom: 0px;
-    left: 0px;
     text-align: right;
 }

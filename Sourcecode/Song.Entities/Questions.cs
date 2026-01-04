@@ -36,6 +36,8 @@ namespace Song.Entities {
     		
     		protected Boolean _Qus_IsCorrect;
     		
+    		protected Boolean _Qus_IsDeleted;
+    		
     		protected Boolean _Qus_IsError;
     		
     		protected Boolean _Qus_IsTitle;
@@ -50,7 +52,9 @@ namespace Song.Entities {
     		
     		protected Single _Qus_Number;
     		
-    		protected Int32 _Qus_Tax;
+    		protected Int32 _Qus_Order;
+    		
+    		protected Int32 _Qus_Purpose;
     		
     		protected String _Qus_Title;
     		
@@ -204,6 +208,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Boolean Qus_IsDeleted {
+    			get {
+    				return this._Qus_IsDeleted;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Qus_IsDeleted, _Qus_IsDeleted, value);
+    				this._Qus_IsDeleted = value;
+    			}
+    		}
+    		
     		public Boolean Qus_IsError {
     			get {
     				return this._Qus_IsError;
@@ -274,13 +288,23 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32 Qus_Tax {
+    		public Int32 Qus_Order {
     			get {
-    				return this._Qus_Tax;
+    				return this._Qus_Order;
     			}
     			set {
-    				this.OnPropertyValueChange(_.Qus_Tax, _Qus_Tax, value);
-    				this._Qus_Tax = value;
+    				this.OnPropertyValueChange(_.Qus_Order, _Qus_Order, value);
+    				this._Qus_Order = value;
+    			}
+    		}
+    		
+    		public Int32 Qus_Purpose {
+    			get {
+    				return this._Qus_Purpose;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Qus_Purpose, _Qus_Purpose, value);
+    				this._Qus_Purpose = value;
     			}
     		}
     		
@@ -378,6 +402,7 @@ namespace Song.Entities {
     					_.Qus_Errornum,
     					_.Qus_Explain,
     					_.Qus_IsCorrect,
+    					_.Qus_IsDeleted,
     					_.Qus_IsError,
     					_.Qus_IsTitle,
     					_.Qus_IsUse,
@@ -385,7 +410,8 @@ namespace Song.Entities {
     					_.Qus_Items,
     					_.Qus_LastTime,
     					_.Qus_Number,
-    					_.Qus_Tax,
+    					_.Qus_Order,
+    					_.Qus_Purpose,
     					_.Qus_Title,
     					_.Qus_Type,
     					_.Qus_UID,
@@ -413,6 +439,7 @@ namespace Song.Entities {
     					this._Qus_Errornum,
     					this._Qus_Explain,
     					this._Qus_IsCorrect,
+    					this._Qus_IsDeleted,
     					this._Qus_IsError,
     					this._Qus_IsTitle,
     					this._Qus_IsUse,
@@ -420,7 +447,8 @@ namespace Song.Entities {
     					this._Qus_Items,
     					this._Qus_LastTime,
     					this._Qus_Number,
-    					this._Qus_Tax,
+    					this._Qus_Order,
+    					this._Qus_Purpose,
     					this._Qus_Title,
     					this._Qus_Type,
     					this._Qus_UID,
@@ -475,6 +503,9 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Qus_IsCorrect))) {
     				this._Qus_IsCorrect = reader.GetBoolean(_.Qus_IsCorrect);
     			}
+    			if ((false == reader.IsDBNull(_.Qus_IsDeleted))) {
+    				this._Qus_IsDeleted = reader.GetBoolean(_.Qus_IsDeleted);
+    			}
     			if ((false == reader.IsDBNull(_.Qus_IsError))) {
     				this._Qus_IsError = reader.GetBoolean(_.Qus_IsError);
     			}
@@ -496,8 +527,11 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Qus_Number))) {
     				this._Qus_Number = reader.GetFloat(_.Qus_Number);
     			}
-    			if ((false == reader.IsDBNull(_.Qus_Tax))) {
-    				this._Qus_Tax = reader.GetInt32(_.Qus_Tax);
+    			if ((false == reader.IsDBNull(_.Qus_Order))) {
+    				this._Qus_Order = reader.GetInt32(_.Qus_Order);
+    			}
+    			if ((false == reader.IsDBNull(_.Qus_Purpose))) {
+    				this._Qus_Purpose = reader.GetInt32(_.Qus_Purpose);
     			}
     			if ((false == reader.IsDBNull(_.Qus_Title))) {
     				this._Qus_Title = reader.GetString(_.Qus_Title);
@@ -614,6 +648,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Qus_IsCorrect = new WeiSha.Data.Field<Questions>("Qus_IsCorrect");
     			
     			/// <summary>
+    			/// 字段名：Qus_IsDeleted - 数据类型：Boolean
+    			/// </summary>
+    			public static WeiSha.Data.Field Qus_IsDeleted = new WeiSha.Data.Field<Questions>("Qus_IsDeleted");
+    			
+    			/// <summary>
     			/// 字段名：Qus_IsError - 数据类型：Boolean
     			/// </summary>
     			public static WeiSha.Data.Field Qus_IsError = new WeiSha.Data.Field<Questions>("Qus_IsError");
@@ -649,9 +688,14 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Qus_Number = new WeiSha.Data.Field<Questions>("Qus_Number");
     			
     			/// <summary>
-    			/// 字段名：Qus_Tax - 数据类型：Int32
+    			/// 字段名：Qus_Order - 数据类型：Int32
     			/// </summary>
-    			public static WeiSha.Data.Field Qus_Tax = new WeiSha.Data.Field<Questions>("Qus_Tax");
+    			public static WeiSha.Data.Field Qus_Order = new WeiSha.Data.Field<Questions>("Qus_Order");
+    			
+    			/// <summary>
+    			/// 字段名：Qus_Purpose - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Qus_Purpose = new WeiSha.Data.Field<Questions>("Qus_Purpose");
     			
     			/// <summary>
     			/// 字段名：Qus_Title - 数据类型：String

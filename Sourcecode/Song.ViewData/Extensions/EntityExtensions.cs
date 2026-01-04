@@ -167,5 +167,20 @@ namespace Song.ViewData
             }
             return str;
         }
+        /// <summary>
+        /// 将List转换成JArray
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static JArray ToJArray<T>(this List<T> list) where T : WeiSha.Data.Entity
+        {
+            JArray array = new JArray();
+            foreach (T item in list)
+            {
+                array.Add(item.ToJObject());
+            }
+            return array;
+        }
     }
 }

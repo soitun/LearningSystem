@@ -274,7 +274,7 @@ namespace Song.ViewData.Methods
         /// <summary>
         /// 删除附件
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">附件ID，多个ID用逗号分隔</param>
         /// <returns></returns>
         [HttpDelete]
         [Admin, Teacher]
@@ -282,22 +282,8 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IAccessory>().Delete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            foreach (int tm in id.ToArray<int>())
+                i += Business.Do<IAccessory>().Delete(tm);
             return i;
         }
         /// <summary>
@@ -307,11 +293,11 @@ namespace Song.ViewData.Methods
         /// <param name="type"></param>
         /// <returns></returns>
         [HttpDelete]
-        [Admin,Teacher]
-        public bool DeleteForUID(string uid,string type)
+        [Admin, Teacher]
+        public bool DeleteForUID(string uid, string type)
         {
-            Business.Do<IAccessory>().Delete(uid, type);
-            return true;
+            int i = Business.Do<IAccessory>().Delete(uid, type);
+            return i > 0;
         }
         #region 文件列表
         /// <summary>

@@ -44,7 +44,7 @@ namespace Song.ServiceInterfaces
         /// <param name="fields">字段</param>
         /// <param name="objs"></param>
         /// <returns></returns>
-        bool SubjectUpdate(long sbjid, Field[] fields, object[] objs);
+        int SubjectUpdate(long sbjid, Field[] fields, object[] objs);
         /// <summary>
         /// 修改专业的某些项
         /// </summary>
@@ -52,12 +52,12 @@ namespace Song.ServiceInterfaces
         /// <param name="field">字段</param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        bool SubjectUpdate(long sbjid, Field field, object obj);
+        int SubjectUpdate(long sbjid, Field field, object obj);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void SubjectDelete(long identify);
+        int SubjectDelete(long identify);
         /// <summary>
         /// 清空专业下的所有试题
         /// </summary>
@@ -179,7 +179,7 @@ namespace Song.ServiceInterfaces
         /// <summary>
         /// 更改专业的排序
         /// </summary>
-        /// <param name="list">专业列表，对象中只有Sbj_ID、Sbj_PID、Sbj_Tax、Sbj_Level</param>
+        /// <param name="list">专业列表，对象中只有Sbj_ID、Sbj_PID、Sbj_Order、Sbj_Level</param>
         /// <returns></returns>
         bool UpdateTaxis(Subject[] list);
 

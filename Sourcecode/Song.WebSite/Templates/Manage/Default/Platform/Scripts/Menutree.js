@@ -1,11 +1,14 @@
 $ready(function () {
     window.vapp = new Vue({
-        el: '#app',
+        el: '#vapp',
         data: {
-            uid: $api.querystring('uid'),
+            //uid: $api.querystring('uid'),
+            uid: $api.dot('uid'),   //根菜单的标识
             rootMenu: {},    //根菜单
             rootdata: [],    //所有的根菜单
             data: [],       //菜单树数据
+            filterText: '',     //过滤字符
+
             curr: {},    //当前要编辑的节点
             curr_node: {},
 
@@ -14,7 +17,7 @@ $ready(function () {
                     { required: true, message: '不得为空', trigger: 'blur' }
                 ],
                 MM_Link: [
-                    { required: false, message: '不得为空', trigger: 'blur' }
+                    { required: true, message: '不得为空', trigger: 'blur' }
                 ]
             },
             MM_PatId: '',    //临时数据，用于移动菜单时的临时记录
@@ -24,6 +27,7 @@ $ready(function () {
             drawer: false  //编辑的面板         
         },
         watch: {
+            //编辑面板的显示与隐藏
             drawer: function (nl, ol) {
                 var th = this;
                 if (ol && !nl) {
@@ -31,7 +35,44 @@ $ready(function () {
                         if (!valid) this.drawer = true;
                     });
                 }
+            },
+            //过滤树形节点项
+            filterText: function (val) {
+                this.$refs.tree.filter(val);
             }
+        },
+        computed: {
+            //判断是否处于pagebox控件内
+            ispagebox: function () {
+                let t = top.$pagebox ? top.$pagebox.source.self(window.name) : null;
+                return t != null ? true : false;
+            },
+            //节点总数
+            total: function () {
+                //获取总数
+                let getTotal = function (data) {
+                    let total = 0;
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].MM_Type != 'hr') total += 1;
+                        if (data[i].children) total += getTotal(data[i].children);
+                    }
+                    return total;
+                }
+                return getTotal(this.data);
+            },
+            //当前菜单项的子项总数
+            nodetotal: function () {
+                //获取总数
+                let getTotal = function (data) {
+                    let total = 0;
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].MM_Type != 'hr' && (data[i].children == null || data[i].children.length == 0)) total += 1;
+                        if (data[i].children) total += getTotal(data[i].children);
+                    }
+                    return total;
+                }
+                return getTotal(this.data);
+            },
         },
         created: function () {
             var th = this;
@@ -41,7 +82,8 @@ $ready(function () {
                 $api.get('ManageMenu/FuncMenu', { 'uid': this.uid }),
                 $api.get("ManageMenu/Root")     //所有根节点
             ).then(([menu, menus, root]) => {
-                th.rootMenu = menu.data.result; //当前菜单项                
+                th.rootMenu = menu.data.result; //当前菜单项    
+                if (th.rootMenu == null) throw '当前菜单项不存在！';
                 if (menus.data.result != null)
                     th.data = menus.data.result; //当前菜单树             
                 th.rootdata = root.data.result;
@@ -49,8 +91,15 @@ $ready(function () {
                 th.error = err;
                 console.error(err);
             }).finally(() => th.loading_init = false);
+
         },
         methods: {
+            //过滤树形节点项
+            filterNode: function (value, data) {
+                if (!value) return true;
+                return data.label.indexOf(value) !== -1;
+            },
+            //添加节点
             append: function (d) {
                 var obj = this.clone();
                 if (d != null) {
@@ -65,7 +114,7 @@ $ready(function () {
                 let isshow = this.rootMenu.MM_IsShow;
                 let temp = {
                     "MM_Id": -1, "MM_Name": "", "MM_Type": "", "MM_Root": 0, "MM_Link": "",
-                    "MM_Marker": "", "MM_Tax": 0, "MM_PatId": 0, "MM_Color": "",
+                    "MM_Marker": "", "MM_Order": 0, "MM_PatId": 0, "MM_Color": "",
                     "MM_Font": "", "MM_IsBold": false, "MM_IsItalic": false, "MM_IcoCode": "",
                     "MM_IcoSize": "", "MM_IsUse": true, "MM_IsShow": isshow, "MM_Intro": "",
                     "MM_IsChilds": false, "MM_Func": "func", "MM_WinWidth": 0, "MM_WinHeight": 0,
@@ -134,7 +183,7 @@ $ready(function () {
             //设置菜单文本样式
             setTextstyle: function (data) {
                 let css = 'background-image: linear-gradient(to right, rgba(255, 255, 255,0) '
-                    + (data.MM_IsUse ? data.MM_Complete : 100) + '%,rgb(255, 0, 0) ' + (100 - data.MM_Complete) + '%);';
+                    + (data.MM_IsUse ? data.MM_Complete : 100) + '%,rgba(255, 0, 0,0.5) ' + (100 - data.MM_Complete) + '%);';
                 if (!$api.isnull(data.MM_Color) && data.MM_Color != '') css += 'color:' + data.MM_Color + ';';
                 if (data.MM_IsBold) css += 'font-weight: bold;';
                 if (data.MM_IsItalic) css += 'font-style: italic;';
@@ -150,6 +199,12 @@ $ready(function () {
                 css += 'margin-left:' + ($api.isnull(data.MM_IcoX) || data.MM_IcoX == 0 ? 0 : data.MM_IcoX) + 'px;';
                 //console.log(css);
                 return css;
+            },
+            //打开编辑面板
+            showedit: function (node, data) {
+                this.drawer = true;
+                this.curr_node = node;
+                this.curr = data;
             },
             //保存菜单项
             btnSave: function () {
@@ -228,7 +283,7 @@ $ready(function () {
             },
             //更新后触发的事件
             updatedEvent: function () {
-                $api.cache('ManageMenu/OrganMarkerMenus:update', { 'marker': this.rootMenu.MM_Marker });
+                $api.cache('ManageMenu/OrganMenus:update', { 'marker': this.rootMenu.MM_Marker });
             }
         }
     });

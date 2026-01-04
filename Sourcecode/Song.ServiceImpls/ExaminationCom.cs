@@ -13,6 +13,7 @@ using System.Xml;
 using NPOI.HSSF.UserModel;
 using System.IO;
 using NPOI.SS.UserModel;
+using System.Linq;
 
 namespace Song.ServiceImpls
 {
@@ -24,41 +25,24 @@ namespace Song.ServiceImpls
         private static QuestionsCom quesCom = new QuestionsCom();
         private static TestPaperCom tpCom = new TestPaperCom();
         private static SubjectCom sbjCom = new SubjectCom();
-        public int ExamAdd(Teacher teacher, Examination entity)
-        {
-            entity.Exam_CrtTime = DateTime.Now;
-            //当前考试的创建人
-            entity.Th_ID = teacher.Th_ID;
-            entity.Th_Name = teacher.Th_Name;
-            //
-            Song.Entities.Organization org = orgCom.OrganCurrent();
-            if (org != null)
-            {
-                entity.Org_ID = org.Org_ID;
-                entity.Org_Name = org.Org_Name;
-            }
-            return Gateway.Default.Save<Examination>(entity);
-        }
 
-        public void ExamAdd(Teacher teacher, Examination theme, Examination[] items, ExamGroup[] groups)
+        public void ExamAdd(Examination theme, Examination[] items, ExamGroup[] groups, Exam_Accounts[] accounts)
         {
-            Song.Entities.Organization org = orgCom.OrganCurrent();
-            if (org != null)
+            if (theme.Org_ID <= 0)
             {
-                theme.Org_ID = org.Org_ID;
-                theme.Org_Name = org.Org_Name;
+                Song.Entities.Organization org = orgCom.OrganCurrent();
+                if (org != null)
+                {
+                    theme.Org_ID = org.Org_ID;
+                    theme.Org_Name = org.Org_Name;
+                }
             }
+            //创建时间
             theme.Exam_CrtTime = DateTime.Now;
-            //当前考试的创建人
-            if (teacher != null)
-            {
-                theme.Th_ID = teacher.Th_ID;
-                theme.Th_Name = teacher.Th_Name;
-            }
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
-                {                   
+                {
                     if (items != null)
                     {
                         //考试主题时间
@@ -66,17 +50,18 @@ namespace Song.ServiceImpls
                         foreach (Song.Entities.Examination it in items)
                         {
                             it.Exam_DateType = theme.Exam_DateType;
-                            if (theme.Exam_DateType == 1)
+                            if (theme.Exam_DateType == 1)   //	1为固定时间，即准点考试
                             {
                                 if (it.Exam_Date.AddYears(30) > DateTime.Now)
-                                    examDate = it.Exam_Date < examDate ? it.Exam_Date : examDate;                               
+                                    examDate = it.Exam_Date < examDate ? it.Exam_Date : examDate;
                             }
-                            if (theme.Exam_DateType == 2)
+                            if (theme.Exam_DateType == 2)   //2为区间时间，即一定时间区间内可以随时考试。
                             {
                                 it.Exam_Date = theme.Exam_Date;
                                 it.Exam_DateOver = theme.Exam_DateOver;
                             }
-                            if (it.Sbj_ID < 1) continue;
+                            it.Org_ID = theme.Org_ID;
+                            it.Org_Name = theme.Org_Name;
                             it.Exam_CrtTime = DateTime.Now;
                             it.Exam_Title = theme.Exam_Title;
                             it.Exam_GroupType = theme.Exam_GroupType;
@@ -91,18 +76,14 @@ namespace Song.ServiceImpls
                             theme.Exam_Date = examDate;
                             theme.Exam_DateOver = examDate;
                         }
-                        
                     }
                     tran.Save<Examination>(theme);
-                    if (groups != null)
-                    {
-                        foreach (Song.Entities.ExamGroup g in groups)
-                        {
-                            g.Org_ID = org.Org_ID;
-                            g.Org_Name = org.Org_Name;
-                            tran.Save<ExamGroup>(g);
-                        }
-                    }
+                    //保存学员组与考试的关联
+                    foreach (ExamGroup g in groups ?? Enumerable.Empty<ExamGroup>())
+                        tran.Save<ExamGroup>(g);
+                    //保存学员与考试的关联
+                    foreach (Exam_Accounts ea in accounts ?? Enumerable.Empty<Exam_Accounts>())
+                        tran.Save<Exam_Accounts>(ea);                
                     tran.Commit();
                 }
                 catch (Exception ex)
@@ -113,29 +94,7 @@ namespace Song.ServiceImpls
             }
         }
 
-        public void ExamSave(Examination entity)
-        {
-            using (DbTrans tran = Gateway.Default.BeginTrans())
-            {
-                try
-                {
-                    tran.Save<Examination>(entity);
-                    tran.Update<Examination>(new Field[] { Examination._.Exam_IsUse }, new object[] { entity.Exam_IsUse }, Examination._.Exam_UID == entity.Exam_UID);
-                    if (entity.Exam_IsTheme)
-                        tran.Update<ExamResults>(new Field[] { ExamResults._.Exam_Title }, new object[] { entity.Exam_Title }, ExamResults._.Exam_UID == entity.Exam_UID);
-                    else
-                        tran.Update<ExamResults>(new Field[] { ExamResults._.Exam_Name }, new object[] { entity.Exam_Name }, ExamResults._.Exam_ID == entity.Exam_ID);
-                    tran.Commit();
-                }
-                catch (Exception ex)
-                {
-                    tran.Rollback();
-                    throw ex;
-                }
-            }
-        }
-
-        public void ExamSave(Examination theme, Examination[] items, ExamGroup[] groups)
+        public void ExamSave(Examination theme, Examination[] items, ExamGroup[] groups, Exam_Accounts[] accounts)
         {
 
             using (DbTrans tran = Gateway.Default.BeginTrans())
@@ -151,7 +110,7 @@ namespace Song.ServiceImpls
                         //获取原来的场次
                         Examination[] exams = Gateway.Default.From<Examination>()
                             .Where(Examination._.Exam_UID == theme.Exam_UID && Examination._.Exam_IsTheme == false)
-                            .OrderBy(Examination._.Exam_CrtTime.Asc).ToArray<Examination>();
+                            .OrderBy(Examination._.Exam_Order.Asc).ToArray<Examination>();
                         foreach (Examination old in exams)
                         {
                             bool isexist = false;
@@ -181,12 +140,8 @@ namespace Song.ServiceImpls
                                 it.Exam_Date = theme.Exam_Date;
                                 it.Exam_DateOver = theme.Exam_DateOver;
                             }
-                            if (it.Sbj_ID < 1)
-                            {
-                                Gateway.Default.Delete<Examination>(it);
-                            }
-                            else
-                            {
+
+                                it.Org_ID= theme.Org_ID;
                                 it.Exam_Title = theme.Exam_Title;
                                 it.Exam_GroupType = theme.Exam_GroupType;
                                 it.Exam_IsUse = theme.Exam_IsUse;
@@ -200,7 +155,7 @@ namespace Song.ServiceImpls
                                     tran.Update<ExamResults>(new Field[] { ExamResults._.Exam_Name },
                                   new object[] { it.Exam_Name }, ExamResults._.Exam_ID == it.Exam_ID);
                                 tran.Save<Examination>(it);
-                            }
+                            
                         }
                         if (theme.Exam_DateType == 1)
                         {
@@ -212,9 +167,12 @@ namespace Song.ServiceImpls
                     tran.Save<Examination>(theme);
                     //参考人员范围
                     tran.Delete<ExamGroup>(ExamGroup._.Exam_UID == theme.Exam_UID);
-                    foreach (ExamGroup g in groups ?? new ExamGroup[0])
+                    foreach (ExamGroup g in groups ?? Enumerable.Empty<ExamGroup>())
                         tran.Save<ExamGroup>(g);
-
+                    //保存学员与考试的关联
+                    tran.Delete<Exam_Accounts>(Exam_Accounts._.Exam_UID == theme.Exam_UID);
+                    foreach (Exam_Accounts ea in accounts ?? Enumerable.Empty<Exam_Accounts>())
+                        tran.Save<Exam_Accounts>(ea);
                     tran.Commit();
                 }
                 catch (Exception ex)
@@ -224,18 +182,30 @@ namespace Song.ServiceImpls
                 }
             }
         }
-        public void ExamDelete(int identify)
+        /// <summary>
+        /// 修改考试主题，按条件修改
+        /// </summary>
+        /// <param name="examid">考试主题的ID</param>
+        /// <param name="fiels">要修改的字段</param>
+        /// <param name="objs">fiels对应的值</param>
+        public int ExamUpdate(int examid, Field[] fiels, object[] objs)
         {
+            return Gateway.Default.Update<Examination>(fiels, objs, Examination._.Exam_GroupType == examid);
+        }
+        public int ExamDelete(int identify)
+        {
+            int count = 0;
             Song.Entities.Examination exam = this.ExamSingle(identify);
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
                 {
-                    tran.Delete<Examination>(Examination._.Exam_ID == identify);
+                    count = tran.Delete<Examination>(Examination._.Exam_ID == identify);
                     tran.Delete<Examination>(Examination._.Exam_UID == exam.Exam_UID && Examination._.Exam_IsTheme == false);
                     tran.Delete<ExamGroup>(ExamGroup._.Exam_UID == exam.Exam_UID);
                     tran.Delete<ExamResults>(ExamResults._.Exam_ID == exam.Exam_ID);
                     tran.Commit();
+                    return count;
                 }
                 catch (Exception ex)
                 {
@@ -267,7 +237,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="uid"></param>
         /// <returns></returns>
-        public Examination ExamSingle(string uid)
+        public Examination ExamTheme(string uid)
         {
             return Gateway.Default.From<Examination>().Where(Examination._.Exam_UID == uid && Examination._.Exam_IsTheme == true).ToFirst<Examination>();
         }
@@ -331,14 +301,14 @@ namespace Song.ServiceImpls
             }
             return true;
         }
-        public Examination[] ExamItem(string uid)
+        public List<Examination> ExamItem(string uid)
         {
             return Gateway.Default.From<Examination>()
                 .Where(Examination._.Exam_UID == uid && Examination._.Exam_IsTheme == false)
-                .OrderBy(Examination._.Exam_ID.Asc).ToArray<Examination>();
+                .OrderBy(Examination._.Exam_Order.Asc).ToList<Examination>();
         }
 
-        public Examination[] ExamItem(int id)
+        public List<Examination> ExamItem(int id)
         {
             Song.Entities.Examination exam = this.ExamSingle(id);
             if (exam == null) return null;
@@ -350,14 +320,59 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="uid"></param>
         /// <returns></returns>
-        public StudentSort[] GroupForStudentSort(string uid)
+        public List<StudentSort> ScopeForStudentSort(string uid)
         {
             //所在班组的考试
-            Song.Entities.StudentSort[] sts = Gateway.Default.From<StudentSort>().InnerJoin<ExamGroup>(ExamGroup._.Sts_ID == StudentSort._.Sts_ID)
-                .Where(ExamGroup._.Exam_UID == uid && ExamGroup._.Eg_Type == 2).ToArray<StudentSort>();
-            return sts;            
+            return  Gateway.Default.From<StudentSort>().InnerJoin<ExamGroup>(ExamGroup._.Sts_ID == StudentSort._.Sts_ID)
+                .Where(ExamGroup._.Exam_UID == uid).ToList<StudentSort>();         
         }
+        /// <summary>
+        /// 当前考试主题关联的学员账号
+        /// </summary>
+        /// <param name="uid">考试主题的uid</param>
+        /// <returns></returns>
+        public List<Accounts> ScopeForAccounts(string uid)
+        {
+            WhereClip wc=new WhereClip();
+            wc &= Accounts._.Ac_IsUse == true;
+            wc &= Accounts._.Ac_IsPass == true;
 
+            return Gateway.Default.From<Accounts>().InnerJoin<Exam_Accounts>(Exam_Accounts._.Ac_ID == Accounts._.Ac_ID)
+                 .Where(Exam_Accounts._.Exam_UID == uid && wc).ToList<Accounts>();
+        }
+        /// <summary>
+        /// 当前考试主题关联的学员账号
+        /// </summary>
+        /// <param name="uid">考试主题的uid</param>
+        /// <param name="index"></param>
+        /// <param name="size"></param>
+        /// <param name="countSum"></param>
+        /// <returns></returns>
+        public List<Accounts> ScopeForAccounts(string uid, int index, int size, out int countSum)
+        {
+            WhereClip wc = new WhereClip();
+            wc &= Accounts._.Ac_IsUse == true;
+            wc &= Accounts._.Ac_IsPass == true;
+
+            QuerySection<Accounts> query = Gateway.Default.From<Accounts>().InnerJoin<Exam_Accounts>(Exam_Accounts._.Ac_ID == Accounts._.Ac_ID)
+                 .Where(Exam_Accounts._.Exam_UID == uid && wc);
+            countSum = query.Count();   //记录总数
+            return query.ToList<Accounts>(size, (index - 1) * size);
+        }
+        /// <summary>
+        /// 当前考试主题关联的学员账号总数
+        /// </summary>
+        /// <param name="uid">考试主题的uid</param>
+        /// <returns></returns>
+        public int ScopeForAccountTotal(string uid)
+        {
+            WhereClip wc = new WhereClip();
+            wc &= Accounts._.Ac_IsUse == true;
+            wc &= Accounts._.Ac_IsPass == true;
+
+            return Gateway.Default.From<Accounts>().InnerJoin<Exam_Accounts>(Exam_Accounts._.Ac_ID == Accounts._.Ac_ID)
+                 .Where(Exam_Accounts._.Exam_UID == uid && wc).Count();
+        }
         public List<Examination> ExamCount(int orgid, bool? isUse, int count)
         {
             WhereClip wc = new WhereClip();
@@ -475,7 +490,7 @@ namespace Song.ServiceImpls
             }
             return false;
         }
-        public Examination[] GetPager(int orgid, DateTime? start, DateTime? end, bool? isUse, string searName, int size, int index, out int countSum)
+        public List<Examination> ThemePager(int orgid, DateTime? start, DateTime? end, bool? isUse, string searName, int size, int index, out int countSum)
         {
             WhereClip wc = Examination._.Exam_IsTheme == true;
             if (orgid > 0) wc.And(Examination._.Org_ID == orgid);
@@ -484,9 +499,34 @@ namespace Song.ServiceImpls
             if (start != null) wc.And(Examination._.Exam_Date >= (DateTime)start);
             if (end != null) wc.And(Examination._.Exam_Date < (DateTime)end);
             countSum = Gateway.Default.Count<Examination>(wc);
-            return Gateway.Default.From<Examination>().Where(wc).OrderBy(Examination._.Exam_Date.Desc && Examination._.Exam_ID.Desc).ToArray<Examination>(size, (index - 1) * size);
+            return Gateway.Default.From<Examination>().Where(wc).OrderBy(Examination._.Exam_Date.Desc && Examination._.Exam_ID.Desc).ToList<Examination>(size, (index - 1) * size);
         }
-        public ExamResults[] GetAttendPager(int stid, long sbjid, int orgid, string sear, int size, int index, out int countSum)
+        /// <summary>
+        /// 获取指定时间内容的考试,这里是考试场次
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="isUse"></param>
+        /// <param name="ismanual">是否需要人工批阅</param>
+        /// <param name="searName"></param>
+        /// <param name="size"></param>
+        /// <param name="index"></param>
+        /// <param name="countSum"></param>
+        /// <returns></returns>
+        public List<Examination> ExamPager(int orgid, DateTime? start, DateTime? end, bool? isUse, bool? ismanual, string searName, int size, int index, out int countSum)
+        {
+            WhereClip wc = Examination._.Exam_IsTheme == false;
+            if (orgid > 0) wc.And(Examination._.Org_ID == orgid);
+            if (isUse != null) wc.And(Examination._.Exam_IsUse == (bool)isUse);
+            if (ismanual != null) wc.And(Examination._.Exam_IsManual == (bool)ismanual);
+            if (searName != null && searName != "") wc.And(Examination._.Exam_Name.Contains(searName));
+            if (start != null) wc.And(Examination._.Exam_Date >= (DateTime)start);
+            if (end != null) wc.And(Examination._.Exam_Date < (DateTime)end);
+            countSum = Gateway.Default.Count<Examination>(wc);
+            return Gateway.Default.From<Examination>().Where(wc).OrderBy(Examination._.Exam_Date.Desc && Examination._.Exam_ID.Desc).ToList<Examination>(size, (index - 1) * size);
+        }
+        public List<ExamResults> GetAttendPager(int stid, long sbjid, int orgid, string sear, int size, int index, out int countSum)
         {
             WhereClip wc = new WhereClip();
             if (stid > 0) wc.And(ExamResults._.Ac_ID == stid);
@@ -497,8 +537,8 @@ namespace Song.ServiceImpls
 
             if (sear != null && sear != "") wc.And(ExamResults._.Exam_Name.Contains(sear));
             countSum = Gateway.Default.Count<ExamResults>(wc);
-            ExamResults[] exr = Gateway.Default.From<ExamResults>().Where(wc).OrderBy(ExamResults._.Exr_CrtTime.Desc).ToArray<ExamResults>(size, (index - 1) * size);
-            for (int i = 0; i < exr.Length; i++)
+            List<ExamResults> exr = Gateway.Default.From<ExamResults>().Where(wc).OrderBy(ExamResults._.Exr_CrtTime.Desc).ToList<ExamResults>(size, (index - 1) * size);
+            for (int i = 0; i < exr.Count; i++)
             {
                 if (exr[i].Exr_Score < 0 || exr[i].Exr_IsCalc==false)
                     exr[i] = ResultClacScore(exr[i]);
@@ -593,24 +633,24 @@ namespace Song.ServiceImpls
         /// 删除考试成绩
         /// </summary>
         /// <param name="id"></param>
-        public void ResultDelete(int id)
+        public int ResultDelete(int id)
         {
             ExamResults exr = Gateway.Default.From<ExamResults>().Where(ExamResults._.Exr_ID == id).ToFirst<ExamResults>();
-            if (exr == null) return;
+            if (exr == null) return 0;
 
             List<ExamResults> results = Gateway.Default.From<ExamResults>()
                 .Where(ExamResults._.Exam_ID == exr.Exam_ID && ExamResults._.Ac_ID == exr.Ac_ID)
                 .ToList<ExamResults>();
-            if (results.Count <= 1) ResultDelete(exr.Ac_ID, exr.Exam_ID);
+            if (results.Count <= 1)return ResultDelete(exr.Ac_ID, exr.Exam_ID);
             else
-                Gateway.Default.Delete<ExamResults>(ExamResults._.Exr_ID == id);
+                return Gateway.Default.Delete<ExamResults>(ExamResults._.Exr_ID == id);
         }
         /// <summary>
         /// 删除某个员工的某个考试的成绩
         /// </summary>
         /// <param name="stid"></param>
         /// <param name="examid"></param>
-        public void ResultDelete(int stid, int examid)
+        public int ResultDelete(int stid, int examid)
         {
             Examination exam = Gateway.Default.From<Examination>().Where(Examination._.Exam_ID == examid).ToFirst<Examination>();
             if (exam != null)
@@ -623,7 +663,7 @@ namespace Song.ServiceImpls
             WhereClip wc = new WhereClip();
             if (stid > -1) wc.And(ExamResults._.Ac_ID == stid);
             if (examid > -1) wc.And(ExamResults._.Exam_ID == examid);
-            Gateway.Default.Delete<ExamResults>(wc);
+            return Gateway.Default.Delete<ExamResults>(wc);
         }
         /// <summary>
         /// 删除考试下的所有成绩
@@ -917,7 +957,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public StudentSort[] StudentSort4Theme(int id)
+        public List<StudentSort> StudentSort4Theme(int id)
         {
             //下述Sql语句，兼容Sqlserver,postgresql,sqlite
             string sql = @"select  sts.""Sts_ID"", ""Sts_Name"",exr.count as Sts_Count from ""StudentSort"" as sts  inner join 
@@ -933,11 +973,11 @@ namespace Song.ServiceImpls
                         and ""Exam_IsTheme"" = false
                     )  group by ""Ac_ID""
 				)as ac group by sts_id)  as exr
-            on sts.""Sts_ID"" = exr.""sts_id"" order by sts.""Sts_Tax"" asc";
+            on sts.""Sts_ID"" = exr.""sts_id"" order by sts.""Sts_Order"" asc";
             sql = string.Format(sql, id.ToString());
             if (Gateway.Default.DbType != DbProviderType.PostgreSQL)
                 sql = sql.Replace("true", "1").Replace("false", "0");
-            return Gateway.Default.FromSql(sql).ToArray<StudentSort>();
+            return Gateway.Default.FromSql(sql).ToList<StudentSort>();
         }
         /// <summary>
         /// 考试场次下学员成绩的学员组
@@ -949,7 +989,7 @@ namespace Song.ServiceImpls
             //下述Sql语句，兼容Sqlserver,postgresql,sqlite
             string sql = @"select sts.""Sts_ID"", ""Sts_Name"",exr.count as ""Sts_Count"" from ""StudentSort"" as sts  inner join 
                         (select ""Sts_ID"", COUNT(*) as count from ""ExamResults"" where ""ExamResults"".""Exam_ID"" = {0} group by ""Sts_ID"") as exr
-                        on sts.""Sts_ID"" = exr.""Sts_ID"" order by sts.""Sts_Tax"" asc";
+                        on sts.""Sts_ID"" = exr.""Sts_ID"" order by sts.""Sts_Order"" asc";
             sql = string.Format(sql, examid);
             return Gateway.Default.FromSql(sql).ToList<StudentSort>();
         }
@@ -965,7 +1005,7 @@ namespace Song.ServiceImpls
           (SELECT ""Accounts"".""Sts_ID"",COUNT(*) as count FROM ""Accounts"" WHERE 
                 NOT EXISTS (SELECT ""ExamResults"".""Ac_ID"" FROM ""ExamResults"" WHERE ""ExamResults"".""Exam_ID"" = {0} and ""ExamResults"".""Ac_ID"" = ""Accounts"".""Ac_ID"")
              GROUP BY ""Accounts"".""Sts_ID"") as acc
-        on ""StudentSort"".""Sts_ID"" = acc.""Sts_ID"" order by ""StudentSort"".""Sts_Tax"" asc";
+        on ""StudentSort"".""Sts_ID"" = acc.""Sts_ID"" order by ""StudentSort"".""Sts_Order"" asc";
             sql = string.Format(sql, examid);
             return Gateway.Default.FromSql(sql).ToList<StudentSort>();
         }
@@ -978,7 +1018,7 @@ namespace Song.ServiceImpls
         public DataTable Result4Theme(int examid, long stsid)
         {
             Examination theme = this.ExamSingle(examid);
-            Examination[] exams = this.ExamItem(theme.Exam_UID);    //当前考试下的多场考试
+            List<Examination> exams = this.ExamItem(theme.Exam_UID);    //当前考试下的多场考试
             DataTable dt = new DataTable("DataBase");
             //人员id与姓名
             dt.Columns.Add(new DataColumn("ID", typeof(int)));
@@ -1026,7 +1066,7 @@ namespace Song.ServiceImpls
                     {
                         dr["账号"] = student.Ac_AccName;
                     }
-                    dr["性别"] = er.Ac_Sex == 0 ? "未知" : (er.Ac_Sex == 1 ? "男" : "女");
+                    dr["性别"] = er.Ac_Gender == 0 ? "未知" : (er.Ac_Gender == 1 ? "男" : "女");
                     dr["身份证"] = er.Ac_IDCardNumber;
                     dt.Rows.Add(dr);
                 }
@@ -1124,7 +1164,7 @@ namespace Song.ServiceImpls
         {
             if (!isAll) return Result4Theme(id, stsid);
             Examination theme = this.ExamSingle(id);
-            Examination[] exams = this.ExamItem(theme.Exam_UID);    //当前考试下的多场考试
+            List<Examination> exams = this.ExamItem(theme.Exam_UID);    //当前考试下的多场考试
             //构建表结构
             DataTable dt = new DataTable("DataBase");
             //人员id与姓名
@@ -1148,7 +1188,7 @@ namespace Song.ServiceImpls
                 dr["ID"] = ac.Ac_ID;
                 dr["姓名"] = ac.Ac_Name;
                 dr["账号"] = ac.Ac_AccName;
-                dr["性别"] = ac.Ac_Sex == 0 ? "未知" : (ac.Ac_Sex == 1 ? "男" : "女");
+                dr["性别"] = ac.Ac_Gender == 0 ? "未知" : (ac.Ac_Gender == 1 ? "男" : "女");
                 dr["身份证"] = ac.Ac_IDCardNumber;
                 dt.Rows.Add(dr);
             }
@@ -1256,7 +1296,7 @@ namespace Song.ServiceImpls
         //            results[i] = _ClacScore(results[i]);                  
         //    }
         //    Song.Entities.Depart[] deps = this.GroupForDepart(theme.Exam_UID);
-        //    if (deps.Length < 1) deps = Gateway.Default.From<Depart>().OrderBy(Depart._.Dep_Tax.Asc).ToArray<Depart>();
+        //    if (deps.Length < 1) deps = Gateway.Default.From<Depart>().OrderBy(Depart._.Dep_Order.Asc).ToArray<Depart>();
         //    foreach (Depart dep in deps)
         //    {
         //        DataRow dr = dt.NewRow();
@@ -1347,10 +1387,10 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public double PassRate4Theme(string uid)
         {
-            Examination[] exam = this.ExamItem(uid);
+            List<Examination> exam = this.ExamItem(uid);
             double rate = 0;
             foreach (Examination ex in exam) rate += this.PassRate4Exam(ex);
-            return rate / exam.Length;
+            return rate / exam.Count;
         }
         /// <summary>
         /// 计算某场考试的及极率
@@ -1388,13 +1428,13 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public double Avg4Theme(string uid)
         {
-            Examination[] exam = this.ExamItem(uid);
+            List<Examination> exam = this.ExamItem(uid);
             double avg = 0;
             foreach (Examination ex in exam)
             {
                 avg += this.Avg4Exam(ex.Exam_ID);
             }
-            return avg / exam.Length;
+            return avg / exam.Count;
         }
         /// <summary>
         /// 计算某场考试的平均分
@@ -1450,15 +1490,15 @@ namespace Song.ServiceImpls
         {
             //下述Sql语句，兼容Sqlserver,postgresql,sqlite
             //当前考试主题下的所有参考学员
-            string sql = @"select ""Ac_ID"",max(""Ac_Name"") as Ac_Name,MAX(""Ac_Sex"") as ac_sex,MAX(""Ac_IDCardNumber"") as Ac_IDCardNumber,
+            string sql = @"select ""Ac_ID"",max(""Ac_Name"") as Ac_Name,MAX(""Ac_Gender"") as ac_sex,MAX(""Ac_IDCardNumber"") as Ac_IDCardNumber,
                             MAX(""Exr_OverTime"") as Exr_OverTime, MAX(""Sts_ID"") as Sts_ID
             from ""ExamResults"" where {where} and ({examid}) group by ""Ac_ID""";
             //考试id的判断条件            
-            Examination[] items = this.ExamItem(examid);
+            List<Examination> items = this.ExamItem(examid);
             //if (items.Length < 1) return null;
             string exam_id = string.Empty;
-            for (int i = 0; items != null && i < items.Length; i++)
-                exam_id += @"""Exam_ID""=" + items[0].Exam_ID + (i < items.Length - 1 ? " or " : "");
+            for (int i = 0; items != null && i < items.Count; i++)
+                exam_id += @"""Exam_ID""=" + items[0].Exam_ID + (i < items.Count - 1 ? " or " : "");
             sql = sql.Replace("{examid}", string.IsNullOrWhiteSpace(exam_id) ? "1=0" : exam_id);
 
             //查询条件
@@ -1511,13 +1551,13 @@ namespace Song.ServiceImpls
         public List<Accounts> AbsenceExamAccounts(int examid, string name, string idcard, string phone, long stsid, int size, int index, out int countSum)
         {
             Examination exam = this.ExamSingle(examid);
-            if (!exam.Exam_IsTheme) exam= this.ExamSingle(exam.Exam_UID);
+            if (!exam.Exam_IsTheme) exam= this.ExamTheme(exam.Exam_UID);
             //查询条件
             WhereClip wc = new WhereClip();
             //如果参考人员为按学员组
             if (exam.Exam_GroupType == 2)
             {
-                StudentSort[] sts = this.GroupForStudentSort(exam.Exam_UID);
+                List<StudentSort> sts = this.ScopeForStudentSort(exam.Exam_UID);
                 foreach (StudentSort ss in sts) wc.Or(Accounts._.Sts_ID == ss.Sts_ID);
             }
             if (!string.IsNullOrWhiteSpace(name)) wc.And(Accounts._.Ac_Name.Contains(name));
@@ -1693,17 +1733,16 @@ namespace Song.ServiceImpls
                 exr.Ac_ID = acc.Ac_ID;
                 exr.Ac_IDCardNumber = acc.Ac_IDCardNumber;  //身份证号
                 exr.Ac_Name = acc.Ac_Name;
-                exr.Ac_Sex = acc.Ac_Sex;
+                exr.Ac_Gender = acc.Ac_Gender;
                 exr.Sts_ID = acc.Sts_ID;    //学员组id
                 //考试的信息
                 exr.Exam_ID = exam.Exam_ID;
                 exr.Exam_Name = exam.Exam_Name;
                 exr.Exam_UID = exam.Exam_UID;
                 exr.Exam_Title = exam.Exam_Title;
-                //机构信息
-                Organization org = orgCom.OrganSingle(acc.Org_ID);
-                exr.Org_ID = acc.Org_ID;
-                if (org != null) exr.Org_Name = org.Org_Name;
+                //机构信息               
+                exr.Org_ID = acc.Org_ID;      
+                exr.Org_Name = exam.Org_Name;
                 //试卷信息
                 TestPaper tp = tpCom.PaperSingle(exam.Tp_Id);
                 exr.Tp_Id = tp.Tp_Id;
@@ -1913,9 +1952,9 @@ namespace Song.ServiceImpls
             //如果没有指定学员组，则取所有学员组
             if (sorts == null || sorts.Length < 1)
             {
-                StudentSort[] list = this.StudentSort4Theme(examid);
-                sorts = new long[list.Length];
-                for (int i = 0; i < list.Length; i++)              
+                List<StudentSort> list = this.StudentSort4Theme(examid);
+                sorts = new long[list.Count];
+                for (int i = 0; i < list.Count; i++)              
                     sorts[i] = list[i].Sts_ID;
             }
             HSSFWorkbook hssfworkbook = new HSSFWorkbook();
@@ -2066,10 +2105,15 @@ namespace Song.ServiceImpls
             //按学员组计算
             if (exam.Exam_GroupType == 2)
             {
-                StudentSort[] sts = this.GroupForStudentSort(exam.Exam_UID);
+                List<StudentSort> sts = this.ScopeForStudentSort(exam.Exam_UID);
                 WhereClip wc = new WhereClip();
                 foreach (StudentSort ss in sts) wc.Or(Accounts._.Sts_ID == ss.Sts_ID);
                 total = Gateway.Default.Count<Accounts>(wc);
+            }
+            //按学员计算
+            if (exam.Exam_GroupType == 3)
+            {
+                total = this.ScopeForAccountTotal(exam.Exam_UID);
             }
             return total;
         }
@@ -2100,13 +2144,13 @@ namespace Song.ServiceImpls
         public int NumberAbsence4Exam(int examid)
         {
             Examination exam = this.ExamSingle(examid);
-            if (!exam.Exam_IsTheme) exam = this.ExamSingle(exam.Exam_UID);
+            if (!exam.Exam_IsTheme) exam = this.ExamTheme(exam.Exam_UID);
             //查询条件
             WhereClip wc = new WhereClip();
             //如果参考人员为按学员组
             if (exam.Exam_GroupType == 2)
             {
-                StudentSort[] sts = this.GroupForStudentSort(exam.Exam_UID);
+                List<StudentSort> sts = this.ScopeForStudentSort(exam.Exam_UID);
                 foreach (StudentSort ss in sts) wc.Or(Accounts._.Sts_ID == ss.Sts_ID);
             }
             //子查询条件
@@ -2127,8 +2171,8 @@ namespace Song.ServiceImpls
             Examination exam = this.ExamSingle(examid);
             if (!exam.Exam_IsTheme) return this.Numbertimes4Exam(examid);
             //考试主题下的所有考试场次
-            Examination[] exams = this.ExamItem(exam.Exam_UID);
-            if (exams.Length < 1) return 0;
+            List<Examination> exams = this.ExamItem(exam.Exam_UID);
+            if (exams.Count < 1) return 0;
             WhereClip wc = new WhereClip();
             foreach (Examination em in exams) wc.Or(ExamResults._.Exam_ID == em.Exam_ID);
             return Gateway.Default.Count<ExamResults>(wc);
@@ -2143,8 +2187,8 @@ namespace Song.ServiceImpls
             Examination exam = this.ExamSingle(examid);
             if (!exam.Exam_IsTheme) return this.Number4Exam(examid);
             //考试主题下的所有考试场次
-            Examination[] exams = this.ExamItem(exam.Exam_UID);
-            if (exams.Length < 1) return 0;
+            List<Examination> exams = this.ExamItem(exam.Exam_UID);
+            if (exams.Count < 1) return 0;
             WhereClip wc = new WhereClip();
             foreach (Examination em in exams) wc.Or(ExamResults._.Exam_ID == em.Exam_ID);
             //

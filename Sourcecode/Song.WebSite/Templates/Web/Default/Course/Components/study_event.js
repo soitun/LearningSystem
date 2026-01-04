@@ -30,8 +30,7 @@ Vue.component('study_event', {
         }
     },
     mounted: function () {
-        var css = $dom.path() + 'course/Components/Styles/study_event.css';
-        $dom.load.css([css]);
+
     },
     methods: {
 

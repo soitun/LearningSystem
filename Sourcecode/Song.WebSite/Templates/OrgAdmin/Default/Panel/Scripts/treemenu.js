@@ -28,8 +28,8 @@
 		for (let t in param) this.attrs[t] = param[t];
 		eval($ctrl.attr_generate(this.attrs));
 		/* 自定义事件 */
-		//fold,折叠或展开;data，数据源变化时; change，切换根菜单,click点击菜单项
-		eval($ctrl.event_generate(['fold', 'data', 'change', 'resize', 'click']));
+		//mounted:挂载完成;fold,折叠或展开;data，数据源变化时; change，切换根菜单,click点击菜单项
+		eval($ctrl.event_generate(['mounted', 'fold', 'data', 'change', 'resize', 'click']));
 
 		this.datas = new Array(); //子级	
 		this._datas = ''; //数据源的序列化字符串	
@@ -37,13 +37,14 @@
 		this.domtit = null; //控件标签栏部分的html对象
 		this.dombody = null; //控件内容区
 		this.domquery = null;	//查询菜单的面板
+		this._mounted_count = 0;		//挂载事件的调用次数
 		//面板是否显示，当鼠标滑过时如果为false，3秒后隐藏面板
 		this.leavetime = 3;
 		this.leaveshow = false;
 		//默认数据
 		this.def_data = {
-			title: '数据加载...', id: 'loading',
-			tit: 'load', type: 'loading', ico: 'e621'
+			"title": '数据加载...', "id": 'loading',
+			"tit": 'load', "type": 'loading', "ico": 'e621'
 		};
 		this.datas.push(this.def_data);
 		//查询按钮
@@ -79,6 +80,43 @@
 				this.datas.splice(i, 1);
 		}
 	};
+	//隐藏控件
+	fn.hide = function () {
+		if (this.dom) this.dom.hide();
+	};
+	//显示控件
+	fn.show = function () {
+		if (this.dom) this.dom.show();
+	};
+	//没有可绑定的数据
+	fn.nodata = function () {
+		//一旦加载数据，则去除最初的预载信息
+		for (let i = 0; i < this.datas.length; i++) {
+			if (this.datas[i].type && this.datas[i].type == 'loading')
+				this.datas.splice(i, 1);
+		}
+
+		let nodatanode = {
+			"title": "没有数据", "tit": "Null",
+			"id": "nodata", "type": "item", "ico": "a01f",
+			"childs": [
+				{
+					"title": "未能加载数据", "tit": "无",
+					"id": "nodata2", "type": "item", "ico": "e70e",
+					"icon": {
+						"size": -2, "x": 0, "y": -3, "color": "#ff0000"
+					},
+					"font": { "color": "#ff0000" }
+				}
+			]
+		};
+		this.datas.push(nodatanode);
+		var th = this;
+		window.setTimeout(function () {
+			let first = th.domtit.find('tree_tag[type=item]').first();
+			th.switch(th, first);
+		}, 500);
+	};
 	//当属性更改时触发相应动作
 	fn._watch = {
 		'width': function (obj, val, old) {
@@ -110,7 +148,7 @@
 		'querypanel': function (obj, val, old) {
 			if (obj.domquery) {
 				if (!val) return obj.domquery.hide();
-				obj.domquery.find('section:first-child').css('min-width', obj.datas.length * 180 + 'px');
+				obj.domquery.find('section:first-child').css('min-width', obj.datas.length * 200 + 'px');
 				//将树形菜单的html直接放入查询面板，不再直接生成
 				let sect = obj.domquery.find('section>section');
 				sect.html(obj.dombody.html());
@@ -205,6 +243,11 @@
 			this.width = this._width;
 			this.height = this._height;
 			this.complete = this._complete;
+			//挂载事件
+			if (this._mounted_count < 1) {
+				this.trigger('mounted', {});
+				this._mounted_count++;
+			}
 		}
 	};
 
@@ -275,7 +318,7 @@
 				//右侧菜单的大标题
 				let tit = area.add('tree_tit');
 				if (item.ico != '') {
-					let ico = tit.add("i").html("&#x" + item.ico);				
+					let ico = tit.add("i").html("&#x" + item.ico);
 					if (item.icon) {
 						if (item.icon.y != 0) ico.css('margin-top', item.icon.y + 'px');
 						if (item.icon.size != 0) ico.css('transform', 'scale(' + (1 + item.icon.size / 100) + ')');

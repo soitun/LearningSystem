@@ -98,8 +98,6 @@ Vue.component('study_video', {
         islogin: t => { return !$api.isnull(t.account); }
     },
     mounted: function () {
-        var css = $dom.path() + 'course/Components/Styles/study_video.css';
-        $dom.load.css([css]);
     },
     methods: {
         //播放器是否准备好

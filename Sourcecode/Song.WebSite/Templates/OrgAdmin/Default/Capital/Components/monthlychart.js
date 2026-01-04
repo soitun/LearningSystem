@@ -1,6 +1,5 @@
 ﻿
 //月度收入图表
-$dom.load.css([$dom.path() + 'Capital/Components/Styles/monthlychart.css'])
 Vue.component('monthlychart', {
     props: ["show", "orgid"],
     data: function () {

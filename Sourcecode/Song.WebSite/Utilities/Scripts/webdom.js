@@ -182,26 +182,14 @@
         }
     };
     fn.html = function (str) {
-        if (str != undefined) {
-            return this.each(function () {
-                this.innerHTML = str;
-            });
-        } else {
-            return this.each(function () {
-                return this.innerHTML;
-            }, 1);
-        }
+        return this.each(function () {
+            return str !== undefined ? this.innerHTML = str : this.innerHTML;
+        }, str === undefined ? 1 : undefined);
     };
     fn.outHtml = function (str) {
-        if (str != undefined) {
-            return this.each(function () {
-                this.outerHTML = str;
-            });
-        } else {
-            return this.each(function () {
-                return this.outerHTML;
-            }, 1);
-        }
+        return this.each(function () {
+            return str !== undefined ? this.outerHTML = str : this.outerHTML;
+        }, str === undefined ? 1 : undefined);
     };
     fn.val = function (str) {
         if (str != undefined) {
@@ -216,11 +204,20 @@
             }, 1);
         }
     };
+    //设置焦点
     fn.focus = function () {
         this.each(function () {
             return this.focus();
         });
         return this;
+    };
+    //设置元素平滑效果
+    fn.smooth = function (smooth) {
+        smooth = smooth == null ? true : smooth;
+        return this.each(function () {
+            if (smooth) this.style.setProperty('transition', 'width 0.3s,height 0.3s,left 0.3s,top 0.3s');
+            else this.style.setProperty('transition', '');
+        });
     };
     //设置或获取属性
     //arguments:
@@ -892,8 +889,7 @@
         for (let t in arr) arr[t] = '/Utilities/Scripts/' + arr[t] + '.js';
         //附加js文件
         if (jsfile != null) {
-            if (jsfile instanceof Array)
-                arr = arr.concat(jsfile);
+            if (jsfile instanceof Array) arr = arr.concat(jsfile);
             else arr.push(jsfile);
         }
         webdom.load.js(arr, func);
@@ -909,7 +905,22 @@
                 if (jsfile[i].length >= 8 && jsfile[i].substring(0, 8).toLowerCase() == "https://") continue;
                 jsfile[i] = $dom.pagepath() + jsfile[i];
             }
+            //加载组件的css文件
+            let cssfile = [];
+            for (let i = 0; i < jsfile.length; i++) {
+                const element = jsfile[i];
+                if (element.toLowerCase().indexOf('components') > -1) {
+                    let file = element.split('/').pop().replace(/\.[^.]*$/, '');
+                    let path = element.split('/').slice(0, -1).join('/');
+                    let css = path + '/Styles/' + file + '.css';
+                    cssfile.push(css);
+                    //console.error(file);
+                    //console.error(css);
+                }
+
+            }
             window.$dom.load.js(jsfile, func);
+            window.$dom.load.css(cssfile);
         } else if (func != null) func();
     };
     //加载自身相关的js或css  
@@ -933,7 +944,7 @@
         //禁用鼠标右键菜单
         if (webdom('head[disabledmenu]').length > 0) {
             document.addEventListener('contextmenu', e => e.preventDefault());
-            webdom('body').attr('oncontextmenu','return false');
+            webdom('body').attr('oncontextmenu', 'return false');
         }
         //禁用文本选择
         if (webdom('head[disabledselect]').length > 0) {

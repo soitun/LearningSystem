@@ -78,22 +78,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IRecharge>().RechargeSetDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<IRecharge>().RechargeSetDelete(s);
             return i;
         }
         /// <summary>
@@ -128,7 +115,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult SetPager(int orgid, string search, int size, int index)
         {
-            int count = 0;         
+            int count;         
             Song.Entities.RechargeSet[] eas = null;
             eas = Business.Do<IRecharge>().RechargeSetPager(orgid, null, search, size, index, out count);          
             ListResult result = new ListResult(eas);
@@ -171,7 +158,7 @@ namespace Song.ViewData.Methods
         public ListResult CodePager(int rsid, bool isused, bool isdisable,string code, string account, int index, int size)
         {
             //总记录数
-            int count = 0;
+            int count;
             Song.Entities.RechargeCode[] eas = null;
             bool? isUsed = isused ? (bool?)true : null;       
             bool? isEnable = !isdisable ? null : (bool?)false;

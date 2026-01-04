@@ -342,13 +342,24 @@ namespace Song.ServiceImpls
         //    //    sql = sql.Replace("true", "1");
         //    return Gateway.Default.FromSql(sql).ToArray<ManageMenu>();
         //}
+
+
         /// <summary>
         /// 获取机构的基础权限，如果不设置机构所在等级的所权，则获取此权限
         /// </summary>
         /// <returns></returns>
-        public Purview[] OrganLevelItems(int lvid)
+        public List<Purview> OrganLevelPurview(int lvid)
         {
-            return Gateway.Default.From<Purview>().Where(Purview._.Olv_ID == lvid).ToArray<Purview>();
+            return Gateway.Default.From<Purview>().Where(Purview._.Olv_ID == lvid).ToList<Purview>();
+        }
+        /// <summary>
+        /// 岗位的权限
+        /// </summary>
+        /// <param name="posid">岗位的id</param>
+        /// <returns></returns>
+        public List<Purview> PositionPurview(int posid)
+        {
+            return Gateway.Default.From<Purview>().Where(Purview._.Posi_Id == posid).ToList<Purview>();
         }
         /// <summary>
         /// 获取机构的某一个根菜单项的权限
@@ -356,18 +367,21 @@ namespace Song.ServiceImpls
         /// <param name="org"></param>
         /// <param name="marker">例如教师管理teacher,学生管理student,机构管理organAdmin</param>
         /// <returns></returns>
-        public List<ManageMenu> GetOrganPurview(Song.Entities.Organization org, string marker)
+        public List<ManageMenu> OrganPurviewMenu(Song.Entities.Organization org, string marker)
         {
             //实际选中的菜单(即权限中选中的菜单项）
             List<ManageMenu> selected = new List<ManageMenu>();
-            //在权限表中记录的MM_UID
-            Purview[] purview = Gateway.Default.From<Purview>().Where(Purview._.Olv_ID == org.Olv_ID).ToArray<Purview>();
-            if (purview == null || purview.Length < 1) return selected;
             //marker标识下的所有菜单项
             ManageMenu root = Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_Marker == marker && ManageMenu._.MM_PatId == "0").ToFirst<ManageMenu>();
             List<ManageMenu> mms = Business.Do<IManageMenu>().GetFunctionMenu(root.MM_UID, true, false);
             if (mms == null || mms.Count < 1) return selected;
+            else if(!mms.Exists(x => x.MM_Id == root.MM_Id)) mms.Add(root);
 
+            //在权限表中记录的MM_UID
+            List<Purview> purview = Gateway.Default.From<Purview>().Where(Purview._.Olv_ID == org.Olv_ID).ToList<Purview>();
+            if (purview == null || purview.Count < 1) return mms;
+
+            //如果设置了权限，则按权限进行过滤
             foreach (Purview p in purview)
             {
                 //当前菜单的所有父级（因为Purview表中记录了最底一级菜单，所以要上溯直到root菜单）
@@ -383,13 +397,82 @@ namespace Song.ServiceImpls
                 //将当前菜单所有父级菜单添加到selected
                 foreach (ManageMenu m in parents)
                 {
-                    if (selected.Exists(i => i.MM_UID == m.MM_UID))
-                        continue;
+                    if (selected.Exists(i => i.MM_UID == m.MM_UID)) continue;
                     selected.Add(m);
                 }
             }
-            selected.Add(root);
-            return selected;
-        }       
+            if (!selected.Exists(x => x.MM_Id == root.MM_Id)) selected.Insert(0, root);
+            //
+            return selected.Count<1 || (selected.Count==1 && selected[0].MM_Id == root.MM_Id) ? mms : selected;
+        }
+        /// <summary>
+        /// 获取某机构的某一个根菜单项的权限
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="marker">例如教师管理teacher,学生管理student,机构管理organAdmin</param>
+        /// <returns></returns>
+        public List<ManageMenu> OrganPurviewMenu(int orgid, string marker)
+        {
+            Organization org = Business.Do<IOrganization>().OrganSingle(orgid);
+            return this.OrganPurviewMenu(org, marker);
+        }
+        /// <summary>
+        /// 岗位的管理菜单
+        /// </summary>
+        /// <param name="posi">岗位对象</param>
+        /// <returns></returns>
+        public List<ManageMenu> PosiPurviewMenu(Position posi)
+        {
+            if (posi == null) return null;
+            //如果是管理岗，则取所有菜单
+            if (posi.Posi_IsAdmin) return this.OrganPurviewMenu(posi.Org_ID, "organAdmin");
+            //
+            //当前岗位的权限
+            List<Purview> purview = Gateway.Default.From<Purview>().Where(Purview._.Posi_Id == posi.Posi_Id).ToList<Purview>();
+            if (purview == null || purview.Count < 1) return null;
+
+            //实际选中的菜单(即权限中选中的菜单项）
+            List<ManageMenu> selected = new List<ManageMenu>();
+            //marker标识下的所有菜单项
+            ManageMenu root = Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_Marker == "organAdmin" && ManageMenu._.MM_PatId == "0").ToFirst<ManageMenu>();
+            List<ManageMenu> mms = Business.Do<IManageMenu>().GetFunctionMenu(root.MM_UID, true, false);
+            if (mms == null || mms.Count < 1) return selected;
+            else if (!mms.Exists(x => x.MM_Id == root.MM_Id)) mms.Add(root);
+           
+
+            //如果设置了权限，则按权限进行过滤
+            foreach (Purview p in purview)
+            {
+                //当前菜单的所有父级（因为Purview表中记录了最底一级菜单，所以要上溯直到root菜单）
+                List<ManageMenu> parents = new List<ManageMenu>();
+                string uid = p.MM_UID;
+                while (uid != root.MM_UID)
+                {
+                    ManageMenu mm = mms.Find(i => i.MM_UID == uid);
+                    if (mm == null) break;
+                    parents.Add(mm);
+                    uid = mm.MM_PatId;
+                }
+                //将当前菜单所有父级菜单添加到selected
+                foreach (ManageMenu m in parents)
+                {
+                    if (selected.Exists(i => i.MM_UID == m.MM_UID)) continue;
+                    selected.Add(m);
+                }
+            }
+            if (!selected.Exists(x => x.MM_Id == root.MM_Id)) selected.Insert(0, root);
+            //
+            return selected.Count < 1 || (selected.Count == 1 && selected[0].MM_Id == root.MM_Id) ? mms : selected;
+        }
+        /// <summary>
+        /// 岗位的管理菜单
+        /// </summary>
+        /// <param name="posid">岗位对象的id</param>
+        /// <returns></returns>
+        public List<ManageMenu> PosiPurviewMenu(int posid)
+        {
+            Position posi = Gateway.Default.From<Position>().Where(Position._.Posi_Id == posid).ToFirst<Position>();
+            return PosiPurviewMenu(posi);
+        }
     }
 }

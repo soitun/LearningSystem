@@ -16,28 +16,38 @@ icon {
     font-variant: normal;
     text-transform: none;
 }
+:root{
+    --icon-size: 1rem;
+    --icon-size-huge: 1.6rem;
+    --icon-size-large: 1.2rem;
+    --icon-size-medium: 1rem;
+    --icon-size-small: 0.8rem;
+    --icon-size-mini: 0.7rem;   
+}
 icon:not([icon]) {
     margin-right: 5px;
 }
-icon[huge]:not(:empty,[size]) {
-    font-size: 25px;
-    line-height: 23px;
+
+icon[huge]:not(:empty, [size]) {
+    font-size: var(--icon-size-huge);
 }
+
 icon[large]:not(:empty) {
-    font-size: 20px;
-    line-height: 20px;
+    font-size: var(--icon-size-large);
 }
+
 icon[medium]:not(:empty) {
-    font-size: 18px;
-    line-height: 18px;
+    font-size: var(--icon-size-medium);
 }
+
 icon[small]:not(:empty) {
-    font-size: 16px;
-    line-height: 16px;
+    font-size: var(--icon-size-small);
 }
+
 icon[mini]:not(:empty) {
-    font-size: 14px;
+    font-size: var(--icon-size-mini);
 }
+
 /*  图标引用方式二，显示Html标签内容的前面，但在在Vue组件代码中使用时，无法输出
 	html标签中增加icon属性， 例如：<span icon="&#xa038">内容</span>
 */
@@ -46,20 +56,25 @@ icon[mini]:not(:empty) {
     font-family: "webdesk_icon" !important;
     margin-right: 5px;
 }
-*[icon][huge]:not(:empty)::before{
-    font-size: 25px;
+
+*[icon][huge]:not(:empty)::before {
+    font-size: var(--icon-size-huge);
 }
-*[icon][large]:not(:empty)::before{
-    font-size: 20px;
+
+*[icon][large]:not(:empty)::before {
+    font-size: var(--icon-size-large);
 }
-*[icon][medium]:not(:empty)::before{
-    font-size: 18px;
+
+*[icon][medium]:not(:empty)::before {
+    font-size: var(--icon-size-medium);
 }
-*[icon][small]:not(:empty)::before{
-    font-size: 16px;
+
+*[icon][small]:not(:empty)::before {
+    font-size: var(--icon-size-small);
 }
-*[icon][mini]:not(:empty)::before{
-    font-size: 14px;
+
+*[icon][mini]:not(:empty)::before {
+    font-size: var(--icon-size-mini);
 }
 
 
@@ -70,38 +85,54 @@ icon::before {
     font-family: "webdesk_icon" !important;
     margin-right: 5px;
 }
+
 /*带hide属性，则不显示图标*/
 icon[hide]::before {
     display: none;
 }
+
 icon[size='huge']::before {
-    font-size: 25px;
+    font-size: var(--icon-size-huge);
 }
-icon[size='large']::before  {
-    font-size: 20px;
+
+icon[size='large']::before {
+    font-size: var(--icon-size-large);
 }
-icon[size='medium']::before  {
-    font-size: 18px;
+
+icon[size='medium']::before {
+    font-size: var(--icon-size-medium);
 }
-icon[size='small']::before  {
-    font-size: 16px;
+
+icon[size='small']::before {
+    font-size: var(--icon-size-small);
 }
-icon[size='mini']::before  {
-    font-size: 14px;
+
+icon[size='mini']::before {
+    font-size: var(--icon-size-mini);
 }
+
 /*首页*/
 icon[home]::before {
     content: '\a020';
     transform: scale(0.95);
     display: inline-block;
 }
+
 /*返回*/
 icon[back]::before {
     content: '\e748';
 }
+
 /*刷新*/
 icon[fresh]::before {
     content: '\e694';
+}
+/*空*/
+icon[null]::before {
+    content: '\a01f';
+}
+icon[null]{
+    color: #999;
 }
 /*禁用*/
 icon[disabled]::before {
@@ -109,14 +140,17 @@ icon[disabled]::before {
     transform: scale(0.9);
     display: inline-block;
 }
+
 /*提交*/
 icon[submit]::before {
     content: '\e84c';
 }
+
 /*确认*/
 icon[enter]::before {
     content: '\e634';
 }
+
 /*学员*/
 icon[student]::before {
     content: '\e804';
@@ -175,19 +209,19 @@ icon[setup]::before {
 /*货币符号 人民币*/
 icon[money]::before {
     content: '\e624';
-    font-size: 16px;
+    font-size: var(--icon-size-medium);
 }
 
 /*卡券*/
 icon[coupon]::before {
     content: '\e847';
-    font-size: 16px;
+    font-size: var(--icon-size-medium);
 }
 
 /*积分*/
 icon[point]::before {
     content: '\e88a';
-    font-size: 16px;
+    font-size: var(--icon-size-medium);
 }
 
 /*身份证*/
@@ -203,7 +237,7 @@ icon[phone]::before {
 /*移动电话*/
 icon[mobile]::before {
     content: '\e677';
-    font-size: 16px;
+    font-size: var(--icon-size-medium);
 }
 
 /*关闭按钮*/
@@ -218,8 +252,7 @@ icon[man] {
 }
 
 icon[man]::before {
-    content: '\e645';
-    color: rgb(73 128 210);
+    content: '\e645';  
 }
 
 /*女性*/
@@ -244,6 +277,7 @@ icon[copy]::before {
 icon[paste]::before {
     content: '\a061';
 }
+
 /*删除*/
 icon[delete]::before {
     content: '\e800';
@@ -252,10 +286,12 @@ icon[delete]::before {
 icon[delete] {
     cursor: pointer;
 }
+
 /*QQ*/
 icon[qq]::before {
     content: '\e82a';
 }
+
 /*微信*/
 icon[weixin]::before {
     content: '\e730';
@@ -276,20 +312,24 @@ warning, warning * {
     color: #E6A23C;
 }
 
-help, alert, help *, alert *, warning, warning * {
-    font-size: 14px;
+empty, empty * {
+    color: #777;
+}
+
+help, alert, help *, alert *, warning, warning *, empty, empty * {
+    font-size: var(--icon-size-small);
     cursor: default;
 }
 
-help::before, alert::before, warning::before {
+help::before, alert::before, warning::before, empty::before {
     font-family: "webdesk_icon" !important;
     display: inline-block;
     margin-right: 8px;
-    font-size: 16px;
+    font-size: var(--icon-size-medium);
 }
 
 /*多行帮助信息*/
-help[multi], alert[multi],warning[multi] {
+help[multi], alert[multi], warning[multi], empty[multi] {
     position: relative;
     display: block;
     padding-left: 25px;
@@ -298,30 +338,36 @@ help[multi], alert[multi],warning[multi] {
 
 }
 
-help[multi]::before, alert[multi]::before, warning[multi]::before {
+help[multi]::before, alert[multi]::before, warning[multi]::before, empty[multi]::before {
     position: absolute;
     left: 0px;
     top: 3px;
 }
 
 /*边距*/
-help[margin],alert[margin],warning[margin] {
+help[margin], alert[margin], warning[margin], empty[margin] {
     margin: 15px;
 }
+
 /*大小*/
-help[large], alert[large],warning[large], help[large] *, alert[large] *, warning[large] * {
-    font-size: 18px;
+help[large], alert[large], warning[large],empty[large], help[large] *, alert[large] *, warning[large] *, empty[large] * {
+
+    font-size: var(--icon-size-large);
     line-height: 30px;
 }
-help[large]::before, alert[large]::before,warning[large]::before {
-    font-size: 25px;
+
+help[large]::before, alert[large]::before, warning[large]::before {
+    font-size: var(--icon-size-large);
 }
-help[medium], alert[medium],warning[medium], help[medium] *, alert[medium] *, warning[medium] * {
-    font-size: 16px;
+
+help[medium], alert[medium], warning[medium], help[medium] *, alert[medium] *, warning[medium] * {
+    font-size: var(--icon-size-medium);
     line-height: 25px;
 }
-help[medium]::before, alert[medium]::before,warning[medium]::before {
-    font-size: 20px;
+
+help[medium]::before, alert[medium]::before, warning[medium]::before, empty[medium]::before {
+
+    font-size: var(--icon-size-medium);
 }
 
 
@@ -336,6 +382,52 @@ alert::before {
 warning::before {
     content: "\f73f";
     font-size: 23px;
+}
+
+empty::before {
+    content: "\a01f";
+    font-size: 1.2rem;
+}
+/*动画效果*/
+/*颤抖*/
+icon[quiver] {
+    animation: frames_quiver 1s infinite linear;
+}
+*[icon][quiver]::before { 
+    animation: frames_quiver 1s infinite linear;
+    display: inline-block;
+}
+@keyframes frames_quiver  {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+/*旋转*/
+icon[spin] {
+    animation: frames_spin 1s infinite linear;
+}
+*[icon][spin]::before { 
+    animation: frames_spin 1s infinite linear;
+    display: inline-block;
+}
+@keyframes frames_spin  {
+    0% {transform: rotate(0deg);}
+    100% {transform: rotate(360deg);}
+}
+/*水平翻转*/
+icon[flip] {
+    animation: frames_flip 1.5s infinite linear;    
+    transform-style: preserve-3d; 
+}
+*[icon][flip]::before { 
+    animation: frames_flip 1.5s infinite linear;
+    transform-style: preserve-3d; 
+    display: inline-block;
+}
+@keyframes frames_flip  {
+    0% {transform: rotateX(0deg);}
+    50% {transform: rotateX(180deg);}   
+    100% {transform: rotateX(0deg);}   
 }
 /*预载*/
 loading {
@@ -399,10 +491,11 @@ loading[fish]::before {
 @keyframes rotate_360 {
     from {
         transform: rotate(0deg);
-      }
-      to {
+    }
+
+    to {
         transform: rotate(360deg);
-      }
+    }
 }
 
 /*更多预载效果*/
@@ -529,7 +622,7 @@ loading[fish]::before {
     text-align: center;
     font-size: 13px;
     line-height: 25px;
-    border-radius: 20px;   
+    border-radius: 20px;
     color: #333;
     border: 2px solid #aaa;
     position: relative;
@@ -602,58 +695,73 @@ loading[fish]::before {
 }
 
 /*文件类型的样式*/
-*[filetype]::before { 
+*[filetype]::before {
     font-family: "webdesk_icon";
     display: inline-block;
     font-size: 25px;
-    content: '\a022';  
-}
-*[filetype=xls]::before {
-    content: '\e85e';  
-}
-*[filetype=xlsx]::before {
-    content: '\e6a7';  
-}
-*[filetype=doc]::before {
-    content: '\e85d';  
-}
-*[filetype=docx]::before {
-    content: '\e6a3';  
-}
-*[filetype=ppt]::before  {
-    content: '\e6a9';  
-}
-*[filetype=pptx]::before  {
-    content: '\e754';  
-}
-*[filetype=zip]::before {
-    content: '\e6a5';  
-}
-*[filetype=rar]::before {
-    content: '\e78a';  
-}
-*[filetype=pdf]::before {
-    content: '\e848';  
-}
-*[filetype=mp4]::before {
-    content: '\e859';  
+    content: '\a022';
 }
 
-*[filetype=xls],*[filetype=xlsx]{
+*[filetype=xls]::before {
+    content: '\e85e';
+}
+
+*[filetype=xlsx]::before {
+    content: '\e6a7';
+}
+
+*[filetype=doc]::before {
+    content: '\e85d';
+}
+
+*[filetype=docx]::before {
+    content: '\e6a3';
+}
+
+*[filetype=ppt]::before {
+    content: '\e6a9';
+}
+
+*[filetype=pptx]::before {
+    content: '\e754';
+}
+
+*[filetype=zip]::before {
+    content: '\e6a5';
+}
+
+*[filetype=rar]::before {
+    content: '\e78a';
+}
+
+*[filetype=pdf]::before {
+    content: '\e848';
+}
+
+*[filetype=mp4]::before {
+    content: '\e859';
+}
+
+*[filetype=xls], *[filetype=xlsx] {
     color: rgb(0 114 57) !important;
 }
-*[filetype=doc],*[filetype=docx]{
+
+*[filetype=doc], *[filetype=docx] {
     color: #1c56a9 !important;
 }
-*[filetype=ppt],*[filetype=pptx]{
+
+*[filetype=ppt], *[filetype=pptx] {
     color: #ba3e1f !important;
 }
-*[filetype=zip],*[filetype=rar]{
+
+*[filetype=zip], *[filetype=rar] {
     color: #04354c !important;
 }
-*[filetype=pdf]{
-    color: #b60b00!important;
+
+*[filetype=pdf] {
+    color: #b60b00 !important;
 }
-*[filetype=mp4]{
-    color: #700391!important;
+
+*[filetype=mp4] {
+    color: #700391 !important;
 }

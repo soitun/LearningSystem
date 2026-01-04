@@ -1,5 +1,4 @@
 //栏目下的新闻
-$dom.load.css([$dom.pagepath() + 'Components/Styles/articles.css']);
 Vue.component('articles', {
     props: ['column', 'index'],
     data: function () {

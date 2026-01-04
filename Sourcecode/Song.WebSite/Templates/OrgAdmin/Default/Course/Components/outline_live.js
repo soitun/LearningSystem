@@ -20,7 +20,7 @@ Vue.component('outline_live', {
     },
     computed: {},
     mounted: function () {
-        $dom.load.css([$dom.path() + 'Course/Components/Styles/outline_live.css']);
+
     },
     methods: {
         //设置初始值

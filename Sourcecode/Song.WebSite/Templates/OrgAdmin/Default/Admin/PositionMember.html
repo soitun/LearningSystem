@@ -31,8 +31,8 @@
                         </template>
                         <template slot-scope="scope">
 
-                            <span v-if="scope.row.Acc_Sex=='1'" class="man" icon="&#xe645" title="男性"></span>
-                            <span v-if="scope.row.Acc_Sex=='2'" class="woman" icon="&#xe647" title="女性"></span>
+                            <span v-if="scope.row.Acc_Gender=='1'" class="man" icon="&#xe645" title="男性"></span>
+                            <span v-if="scope.row.Acc_Gender=='2'" class="woman" icon="&#xe647" title="女性"></span>
                             <span v-html='showsearch(scope.row.Acc_Name,form.name)'></span>/ {{ scope.row.Acc_AccName }}
                         </template>
                     </el-table-column>
@@ -65,8 +65,8 @@
                             </el-tag>
                         </template>
                         <template slot-scope="scope">
-                            <span v-if="scope.row.Acc_Sex=='1'" class="man" icon="&#xe645" title="男性"></span>
-                            <span v-if="scope.row.Acc_Sex=='2'" class="woman" icon="&#xe647" title="女性"></span>
+                            <span v-if="scope.row.Acc_Gender=='1'" class="man" icon="&#xe645" title="男性"></span>
+                            <span v-if="scope.row.Acc_Gender=='2'" class="woman" icon="&#xe647" title="女性"></span>
                             <span v-html='showsearch(scope.row.Acc_Name,form.name)'></span>/ {{ scope.row.Acc_AccName }}
                         </template>
                     </el-table-column>

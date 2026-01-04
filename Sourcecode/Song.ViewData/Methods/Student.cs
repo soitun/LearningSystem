@@ -93,7 +93,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult SortCoursePager(long sortid, string name, int size, int index)
         {
-            int count = 0;
+            int count;
             List<Song.Entities.Course> list = Business.Do<IStudent>().SortCoursePager(sortid, name, size, index, out count);
             for (int i = 0; i < list.Count; i++)
             {
@@ -116,27 +116,17 @@ namespace Song.ViewData.Methods
         /// <param name="couid">课程id,多个id用逗号分隔</param>
         /// <returns></returns>
         [HttpPost]
-        [Admin,Teacher]
+        [Admin, Teacher]
         public int SortCourseAdd(long sortid, string couid)
         {
             int i = 0;
-            if (string.IsNullOrWhiteSpace(couid)) return i;
-            string[] arr = couid.Split(',');
-            foreach (string s in arr)
+            if (string.IsNullOrWhiteSpace(couid)) return i; 
+            List<long> list = couid.ToList<long>();
+            foreach (long s in list)
             {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    int n= Business.Do<IStudent>().SortCourseAdd(sortid, idval);
-                    if (n > 0) i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }            
+                int n = Business.Do<IStudent>().SortCourseAdd(sortid, s);
+                if (n > 0) i++;
+            }
             return i;
         }
         /// <summary>
@@ -151,22 +141,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(couid)) return i;
-            string[] arr = couid.Split(',');
-            foreach (string s in arr)
-            {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IStudent>().SortCourseDelete(sortid, idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<long> list = couid.ToList<long>();
+            foreach (long s in list)
+                i += Business.Do<IStudent>().SortCourseDelete(sortid, s);
             return i;
         }
         #endregion
@@ -203,7 +180,7 @@ namespace Song.ViewData.Methods
            string orderby, string orderpattr,
            int size, int index)
         {
-            int total = 0;
+            int total;
             DataTable dt = Business.Do<IStudent>().Activation(orgid, stsid, acc, name, mobi, idcard, code, orderby, orderpattr, size, index, out total);
             ListResult result = new ListResult(dt);
             result.Index = index;

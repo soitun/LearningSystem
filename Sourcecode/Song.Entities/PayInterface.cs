@@ -28,6 +28,8 @@ namespace Song.Entities {
     		
     		protected String _Pai_Name;
     		
+    		protected Int32 _Pai_Order;
+    		
     		protected String _Pai_ParterID;
     		
     		protected String _Pai_Pattern;
@@ -37,8 +39,6 @@ namespace Song.Entities {
     		protected String _Pai_Returl;
     		
     		protected String _Pai_Scene;
-    		
-    		protected Int32 _Pai_Tax;
     		
     		public Int32 Pai_ID {
     			get {
@@ -140,6 +140,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32 Pai_Order {
+    			get {
+    				return this._Pai_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Pai_Order, _Pai_Order, value);
+    				this._Pai_Order = value;
+    			}
+    		}
+    		
     		public String Pai_ParterID {
     			get {
     				return this._Pai_ParterID;
@@ -190,16 +200,6 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32 Pai_Tax {
-    			get {
-    				return this._Pai_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Pai_Tax, _Pai_Tax, value);
-    				this._Pai_Tax = value;
-    			}
-    		}
-    		
     		/// <summary>
     		/// 获取实体对应的表名
     		/// </summary>
@@ -237,12 +237,12 @@ namespace Song.Entities {
     					_.Pai_IsEnable,
     					_.Pai_Key,
     					_.Pai_Name,
+    					_.Pai_Order,
     					_.Pai_ParterID,
     					_.Pai_Pattern,
     					_.Pai_Platform,
     					_.Pai_Returl,
-    					_.Pai_Scene,
-    					_.Pai_Tax};
+    					_.Pai_Scene};
     		}
     		
     		/// <summary>
@@ -260,12 +260,12 @@ namespace Song.Entities {
     					this._Pai_IsEnable,
     					this._Pai_Key,
     					this._Pai_Name,
+    					this._Pai_Order,
     					this._Pai_ParterID,
     					this._Pai_Pattern,
     					this._Pai_Platform,
     					this._Pai_Returl,
-    					this._Pai_Scene,
-    					this._Pai_Tax};
+    					this._Pai_Scene};
     		}
     		
     		/// <summary>
@@ -302,6 +302,9 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Pai_Name))) {
     				this._Pai_Name = reader.GetString(_.Pai_Name);
     			}
+    			if ((false == reader.IsDBNull(_.Pai_Order))) {
+    				this._Pai_Order = reader.GetInt32(_.Pai_Order);
+    			}
     			if ((false == reader.IsDBNull(_.Pai_ParterID))) {
     				this._Pai_ParterID = reader.GetString(_.Pai_ParterID);
     			}
@@ -316,9 +319,6 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Pai_Scene))) {
     				this._Pai_Scene = reader.GetString(_.Pai_Scene);
-    			}
-    			if ((false == reader.IsDBNull(_.Pai_Tax))) {
-    				this._Pai_Tax = reader.GetInt32(_.Pai_Tax);
     			}
     		}
     		
@@ -397,6 +397,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Pai_Name = new WeiSha.Data.Field<PayInterface>("Pai_Name");
     			
     			/// <summary>
+    			/// 字段名：Pai_Order - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Pai_Order = new WeiSha.Data.Field<PayInterface>("Pai_Order");
+    			
+    			/// <summary>
     			/// 字段名：Pai_ParterID - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Pai_ParterID = new WeiSha.Data.Field<PayInterface>("Pai_ParterID");
@@ -420,11 +425,6 @@ namespace Song.Entities {
     			/// 字段名：Pai_Scene - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Pai_Scene = new WeiSha.Data.Field<PayInterface>("Pai_Scene");
-    			
-    			/// <summary>
-    			/// 字段名：Pai_Tax - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field Pai_Tax = new WeiSha.Data.Field<PayInterface>("Pai_Tax");
     		}
     	}
     }

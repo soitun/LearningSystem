@@ -1,5 +1,4 @@
 //结课条件
-$dom.load.css([$dom.pagepath() + 'Components/Styles/final_condition.css']);
 Vue.component('final_condition', {
     //参数：机构参数，购买记录，试卷id，学员,是否一直显示
     props: ['config', 'purchase', 'paperid', 'account', 'show'],

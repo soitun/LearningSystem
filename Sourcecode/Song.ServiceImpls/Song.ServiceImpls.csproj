@@ -186,6 +186,7 @@
     <Compile Include="AccountLogin\Buffer.cs" />
     <Compile Include="Cache\EntitiesCache.cs" />
     <Compile Include="Cache\ExamResultsCache.cs" />
+    <Compile Include="ExamTestPaperCom.cs" />
     <Compile Include="DepartCom.cs" />
     <Compile Include="Exam\BatchResults.cs" />
     <Compile Include="Exam\HandlerExtensions.cs" />
@@ -193,6 +194,7 @@
     <Compile Include="Exam\TestPaperHandler.cs" />
     <Compile Include="GuideCom.cs" />
     <Compile Include="DataBaseCom.cs" />
+    <Compile Include="Handler\DataTableTree.cs" />
     <Compile Include="ManageMenuCom.cs" />
     <Compile Include="RechargeCom.cs" />
     <Compile Include="OutlineCom.cs" />
@@ -205,6 +207,7 @@
     <Compile Include="LogsCom.cs" />
     <Compile Include="MessageCom.cs" />
     <Compile Include="LargeLanguageCom.cs" />
+    <Compile Include="ExamQuesCom.cs" />
     <Compile Include="ThirdpartyLoginCom.cs" />
     <Compile Include="SystemParaCom.cs" />
     <Compile Include="LinksCom.cs" />

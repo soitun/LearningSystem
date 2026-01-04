@@ -223,7 +223,7 @@ namespace Song.ViewData.Methods
             if (acc == null) throw new Exception("当前手机号不存在");
 
             string vcode = Business.Do<ISMS>().SendVcode(phone, len);
-            acc.Ac_CheckUID = ConvertToAnyValue.Create(phone + vcode).MD5;
+            acc.Ac_CheckUID = ViewData.Helper.ConvertToAnyValue.Create(phone + vcode).MD5;
             Business.Do<IAccounts>().AccountsSave(acc);
 
             return acc.Ac_CheckUID;
@@ -245,7 +245,7 @@ namespace Song.ViewData.Methods
 
             //string vcode = "666888";
             string vcode = Business.Do<ISMS>().SendVcode(phone, len);
-            return ConvertToAnyValue.Create(phone + vcode).MD5;           
+            return ViewData.Helper.ConvertToAnyValue.Create(phone + vcode).MD5;           
         }
         /// <summary>
         /// 发送短信验证码
@@ -262,7 +262,7 @@ namespace Song.ViewData.Methods
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
 
             string vcode = Business.Do<ISMS>().SendVcode(phone, len);
-            return ConvertToAnyValue.Create(org.Org_PlatformName + vcode).SHA256;
+            return ViewData.Helper.ConvertToAnyValue.Create(org.Org_PlatformName + vcode).SHA256;
         }
     }
 }

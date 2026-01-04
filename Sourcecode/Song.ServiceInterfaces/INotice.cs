@@ -24,12 +24,12 @@ namespace Song.ServiceInterfaces
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void Delete(Notice entity);
+        int Delete(Notice entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void Delete(long identify);
+        int Delete(long identify);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>

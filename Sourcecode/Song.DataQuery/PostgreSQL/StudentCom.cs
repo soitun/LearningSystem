@@ -171,7 +171,7 @@ namespace Song.DataQuery.PostgreSQL
             //分页查询的脚本
             string sqljquery = @"
                 select a.""Ac_ID"",sc.count as Ac_CurrCourse,""Ac_AccName"",""Ac_Name"",""Ac_IDCardNumber"",""Ac_Age"",""Ac_Photo"",
-                ""Ac_Money"",""Ac_Point"",""Ac_Coupon"",""Org_ID"",""Sts_ID"",""Sts_Name"",""Ac_Sex"",""Ac_MobiTel1"",""Ac_MobiTel2""
+                ""Ac_Money"",""Ac_Point"",""Ac_Coupon"",""Org_ID"",""Sts_ID"",""Sts_Name"",""Ac_Gender"",""Ac_MobiTel1"",""Ac_MobiTel2""
                         from
                        (
                         select * from
@@ -215,7 +215,7 @@ namespace Song.DataQuery.PostgreSQL
         {
             //支持Posgresql
             string sql = @"
-	                    select acc.""Ac_ID"",""Ac_Name"",""Ac_AccName"",""Ac_Sex"",""Ac_Photo"",""Ac_IDCardNumber"",""Ac_MobiTel1"",""Ac_LastTime"",""Sts_ID"",""Sts_Name"",""Ac_Money""
+	                    select acc.""Ac_ID"",""Ac_Name"",""Ac_AccName"",""Ac_Gender"",""Ac_Photo"",""Ac_IDCardNumber"",""Ac_MobiTel1"",""Ac_LastTime"",""Sts_ID"",""Sts_Name"",""Ac_Money""
 		                    ,logincount,logintime
 		                    ,coursecount,rechargecount,lastrecharge,laststudy,lastexrcise,lasttest,lastexam
                             from ""Accounts"" as acc
@@ -326,7 +326,7 @@ namespace Song.DataQuery.PostgreSQL
                     ///* 不要删除
                     //*****如果没有购买的，则去除
                     //购买的课程(含概试用的）
-                    int count = 0;
+                    //int count = 0;
                     List<Song.Entities.Course> cous = Business.Do<ICourse>().CourseForStudent(acid, null, 0, null, null);
                     for (int i = 0; i < dt.Rows.Count; i++)
                     {

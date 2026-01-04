@@ -35,9 +35,9 @@ namespace Song.ServiceImpls
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void DomainDelete(int identify)
+        public int DomainDelete(int identify)
         {
-            Gateway.Default.Delete<LimitDomain>(LimitDomain._.LD_ID == identify);
+            return Gateway.Default.Delete<LimitDomain>(LimitDomain._.LD_ID == identify);
         }
         /// <summary>
         /// 获取单一实体对象，按主键ID；

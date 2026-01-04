@@ -49,7 +49,7 @@ Vue.component('knowledge', {
     },
     computed: {},
     mounted: function () {
-        $dom.load.css([$dom.path() + 'Question/Components/Styles/knowledge.css']);
+      
     },
     methods: {
         //获取知识分类

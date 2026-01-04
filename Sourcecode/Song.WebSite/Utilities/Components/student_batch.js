@@ -251,7 +251,7 @@ Vue.component('student_batch_getaccount', {
         <span v-if="state==-1" class="el-icon-loading"></span>
         <span v-if="state==0"><el-tag type="info">不存在</el-tag></span>
         <span v-if="state==1">           
-            <icon :woman="data.Ac_Sex==2" :man="data.Ac_Sex!=2">{{data.Ac_Name}}</icon>
+            <icon :woman="data.Ac_Gender==2" :man="data.Ac_Gender!=2">{{data.Ac_Name}}</icon>
             <span v-if="!data.Ac_IsUse">（已禁用）</span>
         </span>
         <icon v-if="state==1 && (!this.only_used || data.Ac_IsUse)" v-html="'&#x'+add_icon" class="add_btn" @click="btnClick(data)"></icon>

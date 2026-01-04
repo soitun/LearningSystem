@@ -3,9 +3,6 @@ $ready(function () {
     window.vapp = new Vue({
         el: '#vapp',
         data: {
-            organ: {},
-            config: {},      //当前机构配置项    
-
             form: {
                 orgid: '', sortid: '', use: '',
                 show: '', name: '', link: '',
@@ -23,30 +20,21 @@ $ready(function () {
         },
         mounted: function () {
             var th = this;
-            $api.bat(
-                $api.get('Organization/Current')
-            ).then(([organ]) => {
-                //获取结果             
-                th.organ = organ.data.result;
-                //机构配置信息
-                th.config = $api.organ(th.organ).config;
-                th.form.orgid = th.organ.Org_ID;
-                $api.get('Link/SortCount',
-                    { 'orgid': th.organ.Org_ID, 'use': true, 'show': '', 'search': '', 'count': 0 })
-                    .then(function (req) {
-                        if (req.data.success) {
-                            th.sorts = req.data.result;
-                        } else {
-                            console.error(req.data.exception);
-                            throw req.data.message;
-                        }
-                        th.handleCurrentChange(1);
-                    }).catch(function (err) {
-                        alert(err);
-                        console.error(err);
-                    });
-            }).catch(err => console.error(err))
-                .finally(() => th.loading_init = false);
+            th.form.orgid = window.org.Org_ID;
+            $api.get('Link/SortCount',
+                { 'orgid': th.form.orgid, 'use': true, 'show': '', 'search': '', 'count': 0 })
+                .then(function (req) {
+                    if (req.data.success) {
+                        th.sorts = req.data.result;
+                    } else {
+                        console.error(req.data.exception);
+                        throw req.data.message;
+                    }
+                    th.handleCurrentChange(1);
+                }).catch(function (err) {
+                    alert(err);
+                    console.error(err);
+                }).finally(() => th.loading_init = false);
         },
         created: function () {
 

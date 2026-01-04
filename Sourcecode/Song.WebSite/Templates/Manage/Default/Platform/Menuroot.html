@@ -7,20 +7,20 @@
 </head>
 
 <body>
-  <div id="app" v-cloak>
+  <div id="vapp" v-cloak>
     <div class="toolsbar">
       <btngroup show="新增,修改,删除" ref='btngroup' @delete="deleteData" path="MenurootModify" width="600" height="400"
         :selects='selects' idkey='MM_Id' table="datatables"></btngroup>
     </div>
     <template>
       <el-table ref="datatables" border resizable :data="datas" tooltip-effect="dark" style="width: 100%" v-loading="loading"
-        @selection-change="val=>selects=val" @row-dblclick="rowdblclick" row-key="MM_Id"
+        @selection-change="val=>selects=val" @row-dblclick="row=>$refs.btngroup.modify(row)" row-key="MM_Id"
         :row-class-name="data=>{return data.row.MM_IsUse ? 'enable' : 'disabled';}" draggable>
         <el-table-column type="selection" width="35">
         </el-table-column>
         <el-table-column type="index" width="50">
         </el-table-column>
-        <el-table-column label="菜单树名称" width="120">
+        <el-table-column label="菜单树名称" width="200">
           <template slot-scope="scope">
 
             <icon v-if="scope.row.MM_IcoCode==null || scope.row.MM_IcoCode==''">&#xa038;</icon>
@@ -40,7 +40,7 @@
         <el-table-column label="管理" width="80">
           <template slot-scope="scope">
             <el-link type="primary" plain icon="el-icon-edit"
-              @click="$refs.btngroup.pagebox('Menutree?uid='+scope.row.MM_UID,'“'+scope.row.MM_Name+'”的子菜单',null,'800px','80%')">
+              @click="$refs.btngroup.pagebox('Menutree.'+scope.row.MM_UID,'“'+scope.row.MM_Name+'”的子菜单',null,'800px','80%')">
               管理树</el-link>
           </template>
         </el-table-column>

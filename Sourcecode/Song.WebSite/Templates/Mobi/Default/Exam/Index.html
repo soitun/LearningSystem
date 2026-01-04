@@ -25,7 +25,7 @@
           <div class="acc_photo" v-if="!!account.Ac_Photo && account.Ac_Photo!=''"
             :style="'background-image: url('+account.Ac_Photo+');'"></div>
           <template v-else>
-            <div class="acc_photo woman" v-if="account.Ac_Sex==2">
+            <div class="acc_photo woman" v-if="account.Ac_Gender==2">
             </div>
             <div class="acc_photo man" v-else>
             </div> <span>{{account.Ac_Name}} <span class="acc-acname">({{account.Ac_AccName}})</span></span>

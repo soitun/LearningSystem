@@ -1,0 +1,32 @@
+.student_select{
+    display: flex;
+}
+.student_select>*:last-child{
+    flex: 1;
+    margin-left: 30px;
+    overflow-y: auto;
+    padding-right: 10px;
+    box-sizing: border-box;
+}
+.examaccounts dl dd::before {
+    content: attr(index);
+    display: inline-block;
+    min-width: 20px;
+    margin-right: 10px;
+    text-align: center;
+
+}
+.examaccounts dl dd{
+    display: flex;
+    justify-content: space-between;
+}
+.examaccounts dl dd .name{
+    margin-right: auto;
+}
+.examaccounts dl dd, .examaccounts dl dd *{
+    line-height: 30px;
+}
+.examaccounts dl dd>*:not(.name){
+    margin-left: 20px;
+
+}

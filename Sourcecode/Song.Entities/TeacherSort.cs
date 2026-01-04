@@ -22,7 +22,7 @@ namespace Song.Entities {
     		
     		protected String _Ths_Name;
     		
-    		protected Int32 _Ths_Tax;
+    		protected Int32 _Ths_Order;
     		
     		public Int32 Ths_ID {
     			get {
@@ -94,13 +94,13 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32 Ths_Tax {
+    		public Int32 Ths_Order {
     			get {
-    				return this._Ths_Tax;
+    				return this._Ths_Order;
     			}
     			set {
-    				this.OnPropertyValueChange(_.Ths_Tax, _Ths_Tax, value);
-    				this._Ths_Tax = value;
+    				this.OnPropertyValueChange(_.Ths_Order, _Ths_Order, value);
+    				this._Ths_Order = value;
     			}
     		}
     		
@@ -138,7 +138,7 @@ namespace Song.Entities {
     					_.Ths_IsDefault,
     					_.Ths_IsUse,
     					_.Ths_Name,
-    					_.Ths_Tax};
+    					_.Ths_Order};
     		}
     		
     		/// <summary>
@@ -153,7 +153,7 @@ namespace Song.Entities {
     					this._Ths_IsDefault,
     					this._Ths_IsUse,
     					this._Ths_Name,
-    					this._Ths_Tax};
+    					this._Ths_Order};
     		}
     		
     		/// <summary>
@@ -181,8 +181,8 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Ths_Name))) {
     				this._Ths_Name = reader.GetString(_.Ths_Name);
     			}
-    			if ((false == reader.IsDBNull(_.Ths_Tax))) {
-    				this._Ths_Tax = reader.GetInt32(_.Ths_Tax);
+    			if ((false == reader.IsDBNull(_.Ths_Order))) {
+    				this._Ths_Order = reader.GetInt32(_.Ths_Order);
     			}
     		}
     		
@@ -246,9 +246,9 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Ths_Name = new WeiSha.Data.Field<TeacherSort>("Ths_Name");
     			
     			/// <summary>
-    			/// 字段名：Ths_Tax - 数据类型：Int32
+    			/// 字段名：Ths_Order - 数据类型：Int32
     			/// </summary>
-    			public static WeiSha.Data.Field Ths_Tax = new WeiSha.Data.Field<TeacherSort>("Ths_Tax");
+    			public static WeiSha.Data.Field Ths_Order = new WeiSha.Data.Field<TeacherSort>("Ths_Order");
     		}
     	}
     }

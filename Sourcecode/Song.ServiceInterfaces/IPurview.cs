@@ -89,18 +89,44 @@ namespace Song.ServiceInterfaces
         ///// <param name="marker">例如教师管理teacher,学生管理student,机构管理organAdmin</param>
         ///// <returns></returns>
         //ManageMenu[] GetAll4Org(int orgid, string marker);
+
         /// <summary>
         /// 获取机构等级的权限
         /// </summary>
         /// <param name="lvid">机构等级的id</param>
         /// <returns></returns>
-        Purview[] OrganLevelItems(int lvid);
+        List<Purview> OrganLevelPurview(int lvid);
+        /// <summary>
+        /// 岗位的权限
+        /// </summary>
+        /// <param name="posid">岗位的id</param>
+        /// <returns></returns>
+        List<Purview> PositionPurview(int posid);
         /// <summary>
         /// 获取某机构的某一个根菜单项的权限
         /// </summary>
         /// <param name="org"></param>
         /// <param name="marker">例如教师管理teacher,学生管理student,机构管理organAdmin</param>
         /// <returns></returns>
-        List<ManageMenu> GetOrganPurview(Song.Entities.Organization org, string marker);
+        List<ManageMenu> OrganPurviewMenu(Organization org, string marker);
+        /// <summary>
+        /// 获取某机构的某一个根菜单项的权限
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="marker">例如教师管理teacher,学生管理student,机构管理organAdmin</param>
+        /// <returns></returns>
+        List<ManageMenu> OrganPurviewMenu(int orgid, string marker);
+        /// <summary>
+        /// 岗位的管理菜单
+        /// </summary>
+        /// <param name="posi">岗位对象</param>
+        /// <returns></returns>
+        List<ManageMenu> PosiPurviewMenu(Position posi);
+        /// <summary>
+        /// 岗位的管理菜单
+        /// </summary>
+        /// <param name="posid">岗位对象的id</param>
+        /// <returns></returns>
+        List<ManageMenu> PosiPurviewMenu(int posid);
     }
 }

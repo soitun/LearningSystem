@@ -52,10 +52,11 @@ namespace Song.ServiceImpls
             Gateway.Default.Save<Knowledge>(entity);
         }
 
-        public void KnowledgeDelete(long identify)
+        public int KnowledgeDelete(long identify)
         {
-            Gateway.Default.Delete<Knowledge>(Knowledge._.Kn_ID == identify);
+            int i = Gateway.Default.Delete<Knowledge>(Knowledge._.Kn_ID == identify);
             WeiSha.Core.Upload.Get["Knowledge"].DeleteDirectory(identify.ToString());
+            return i;
         }
 
         public Knowledge KnowledgeSingle(long identify)
@@ -167,10 +168,10 @@ namespace Song.ServiceImpls
 
             entity.Kns_CrtTime = DateTime.Now;
             //如果没有排序号，则自动计算
-            if (entity.Kns_Tax < 1 )
+            if (entity.Kns_Order < 1 )
             {
-                object obj = Gateway.Default.Max<KnowledgeSort>(KnowledgeSort._.Kns_Tax, KnowledgeSort._.Cou_ID == entity.Cou_ID && KnowledgeSort._.Kns_PID == entity.Kns_PID);
-                entity.Kns_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
+                object obj = Gateway.Default.Max<KnowledgeSort>(KnowledgeSort._.Kns_Order, KnowledgeSort._.Cou_ID == entity.Cou_ID && KnowledgeSort._.Kns_PID == entity.Kns_PID);
+                entity.Kns_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
             if (org != null)
@@ -225,7 +226,7 @@ namespace Song.ServiceImpls
                         if (nc != null)
                         {
                             nc.Kns_PID = pid;
-                            nc.Kns_Tax = tax;
+                            nc.Kns_Order = tax;
                             tran.Save<KnowledgeSort>(nc);
                         }
                     }
@@ -248,7 +249,7 @@ namespace Song.ServiceImpls
         }
         public void SortDelete(KnowledgeSort sort)
         {
-            KnowledgeSort[] child = this.GetSortChilds(sort.Kns_ID, -1, null);
+            List<KnowledgeSort> child = this.GetSortChilds(sort.Kns_ID, -1, null);
             foreach (KnowledgeSort n in child)
             {
                 SortDelete(n.Kns_ID);
@@ -260,39 +261,39 @@ namespace Song.ServiceImpls
         {
             return Gateway.Default.From<KnowledgeSort>().Where(KnowledgeSort._.Kns_ID == identify).ToFirst<KnowledgeSort>();
         }
-        public KnowledgeSort[] GetSortAll(int orgid, long couid, string search, bool? isUse)
+        public List<KnowledgeSort> GetSortAll(int orgid, long couid, string search, bool? isUse)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(KnowledgeSort._.Org_ID == orgid);
             if (couid >= 0) wc.And(KnowledgeSort._.Cou_ID == couid);
             if (isUse != null) wc.And(KnowledgeSort._.Kns_IsUse == (bool)isUse);
             if(!string.IsNullOrWhiteSpace(search)) wc.And(KnowledgeSort._.Kns_Name.Contains(search));
-            return Gateway.Default.From<KnowledgeSort>().Where(wc).OrderBy(KnowledgeSort._.Kns_Tax.Asc).ToArray<KnowledgeSort>();
+            return Gateway.Default.From<KnowledgeSort>().Where(wc).OrderBy(KnowledgeSort._.Kns_Order.Asc).ToList<KnowledgeSort>();
         }
 
-        public KnowledgeSort[] GetSortAll(int orgid, long couid, int pid, bool? isUse)
+        public List<KnowledgeSort> GetSortAll(int orgid, long couid, int pid, bool? isUse)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(KnowledgeSort._.Org_ID == orgid);
             if (couid > 0) wc.And(KnowledgeSort._.Cou_ID == couid);
             if (pid >= 0) wc.And(KnowledgeSort._.Kns_PID == pid);
             if (isUse != null) wc.And(KnowledgeSort._.Kns_IsUse == (bool)isUse);
-            return Gateway.Default.From<KnowledgeSort>().Where(wc).OrderBy(KnowledgeSort._.Kns_Tax.Asc).ToArray<KnowledgeSort>();
+            return Gateway.Default.From<KnowledgeSort>().Where(wc).OrderBy(KnowledgeSort._.Kns_Order.Asc).ToList<KnowledgeSort>();
         }
 
-        public KnowledgeSort[] GetSortChilds(long pid, long couid, bool? isUse)
+        public List<KnowledgeSort> GetSortChilds(long pid, long couid, bool? isUse)
         {
             WhereClip wc = KnowledgeSort._.Kns_PID == pid;
             if (couid >= 0) wc.And(KnowledgeSort._.Cou_ID == couid);
             if (isUse != null) wc.And(KnowledgeSort._.Kns_IsUse == (bool)isUse);
-            return Gateway.Default.From<KnowledgeSort>().Where(wc).OrderBy(KnowledgeSort._.Kns_Tax.Asc).ToArray<KnowledgeSort>();
+            return Gateway.Default.From<KnowledgeSort>().Where(wc).OrderBy(KnowledgeSort._.Kns_Order.Asc).ToList<KnowledgeSort>();
         }
         /// <summary>
         /// 更改排序
         /// </summary>
-        /// <param name="list">对象列表，Kns_ID、Kns_PID、Kns_Tax</param>
+        /// <param name="list">对象列表，Kns_ID、Kns_PID、Kns_Order</param>
         /// <returns></returns>
-        public bool SortUpdateTaxis(KnowledgeSort[] list)
+        public bool SortUpdateTaxis(List<KnowledgeSort> list)
         {
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
@@ -301,8 +302,8 @@ namespace Song.ServiceImpls
                     foreach (Song.Entities.KnowledgeSort item in list)
                     {
                         tran.Update<KnowledgeSort>(
-                            new Field[] { KnowledgeSort._.Kns_PID, KnowledgeSort._.Kns_Tax },
-                            new object[] { item.Kns_PID, item.Kns_Tax },
+                            new Field[] { KnowledgeSort._.Kns_PID, KnowledgeSort._.Kns_Order },
+                            new object[] { item.Kns_PID, item.Kns_Order },
                             KnowledgeSort._.Kns_ID == item.Kns_ID);
                     }
                     tran.Commit();

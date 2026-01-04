@@ -1,1 +1,42 @@
-{"TPI_ID":{"mark":"","intro":"","relation":""},"Tp_UID":{"mark":"","intro":"","relation":"TestPaper"},"TPI_Type":{"mark":"","intro":"","relation":""},"TPI_Percent":{"mark":"","intro":"","relation":""},"TPI_Number":{"mark":"","intro":"","relation":""},"TPI_Count":{"mark":"","intro":"","relation":""},"Org_ID":{"mark":"","intro":"","relation":"Organization"},"Org_Name":{"mark":"","intro":"","relation":"Organization"},"Ol_ID":{"mark":"","intro":"","relation":"Outline"}}
+{
+  "TPI_ID": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "TPI_Type": {
+    "mark": "试题类型",
+    "intro": "",
+    "relation": ""
+  },
+  "TPI_Percent": {
+    "mark": "百分比",
+    "intro": "",
+    "relation": ""
+  },
+  "TPI_Number": {
+    "mark": "占用多少分",
+    "intro": "",
+    "relation": ""
+  },
+  "TPI_Count": {
+    "mark": "试题数目",
+    "intro": "",
+    "relation": ""
+  },
+  "Org_ID": {
+    "mark": "机构ID",
+    "intro": "没有用",
+    "relation": "Organization"
+  },
+  "Ol_ID": {
+    "mark": "章节ID",
+    "intro": "",
+    "relation": "Outline"
+  },
+  "Tp_Id": {
+    "mark": "试卷ID",
+    "intro": "",
+    "relation": "TestPaper"
+  }
+}

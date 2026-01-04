@@ -59,7 +59,7 @@ namespace UnitTest
             {
                 //int t = i;
             }
-            int j =0;
+            //int j =0;
             string file = "aaa.txt";
             string ext = Path.GetExtension(file);
             string prefix = file.IndexOf(".") > -1 ? file.Substring(0, file.LastIndexOf(".")) : file;

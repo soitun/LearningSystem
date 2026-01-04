@@ -10,6 +10,10 @@ namespace Song.Entities {
     		
     		protected Int32 _Exam_ID;
     		
+    		protected Int32 _Acc_Id;
+    		
+    		protected Int64 _Etp_Id;
+    		
     		protected DateTime _Exam_CrtTime;
     		
     		protected DateTime _Exam_Date;
@@ -21,6 +25,10 @@ namespace Song.Entities {
     		protected Int32 _Exam_GroupType;
     		
     		protected String _Exam_Intro;
+    		
+    		protected Boolean _Exam_IsDeleted;
+    		
+    		protected Boolean _Exam_IsManual;
     		
     		protected Boolean _Exam_IsRightClick;
     		
@@ -36,11 +44,13 @@ namespace Song.Entities {
     		
     		protected String _Exam_Name;
     		
+    		protected Int32 _Exam_Order;
+    		
     		protected Int32 _Exam_PassScore;
     		
-    		protected Int32 _Exam_Span;
+    		protected Int64 _Exam_Purpose;
     		
-    		protected Int32 _Exam_Tax;
+    		protected Int32 _Exam_Span;
     		
     		protected String _Exam_Title;
     		
@@ -69,6 +79,26 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Exam_ID, _Exam_ID, value);
     				this._Exam_ID = value;
+    			}
+    		}
+    		
+    		public Int32 Acc_Id {
+    			get {
+    				return this._Acc_Id;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Acc_Id, _Acc_Id, value);
+    				this._Acc_Id = value;
+    			}
+    		}
+    		
+    		public Int64 Etp_Id {
+    			get {
+    				return this._Etp_Id;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Etp_Id, _Etp_Id, value);
+    				this._Etp_Id = value;
     			}
     		}
     		
@@ -129,6 +159,26 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Exam_Intro, _Exam_Intro, value);
     				this._Exam_Intro = value;
+    			}
+    		}
+    		
+    		public Boolean Exam_IsDeleted {
+    			get {
+    				return this._Exam_IsDeleted;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Exam_IsDeleted, _Exam_IsDeleted, value);
+    				this._Exam_IsDeleted = value;
+    			}
+    		}
+    		
+    		public Boolean Exam_IsManual {
+    			get {
+    				return this._Exam_IsManual;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Exam_IsManual, _Exam_IsManual, value);
+    				this._Exam_IsManual = value;
     			}
     		}
     		
@@ -202,6 +252,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32 Exam_Order {
+    			get {
+    				return this._Exam_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Exam_Order, _Exam_Order, value);
+    				this._Exam_Order = value;
+    			}
+    		}
+    		
     		public Int32 Exam_PassScore {
     			get {
     				return this._Exam_PassScore;
@@ -212,6 +272,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int64 Exam_Purpose {
+    			get {
+    				return this._Exam_Purpose;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Exam_Purpose, _Exam_Purpose, value);
+    				this._Exam_Purpose = value;
+    			}
+    		}
+    		
     		public Int32 Exam_Span {
     			get {
     				return this._Exam_Span;
@@ -219,16 +289,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Exam_Span, _Exam_Span, value);
     				this._Exam_Span = value;
-    			}
-    		}
-    		
-    		public Int32 Exam_Tax {
-    			get {
-    				return this._Exam_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Exam_Tax, _Exam_Tax, value);
-    				this._Exam_Tax = value;
     			}
     		}
     		
@@ -360,12 +420,16 @@ namespace Song.Entities {
     		protected override WeiSha.Data.Field[] GetFields() {
     			return new WeiSha.Data.Field[] {
     					_.Exam_ID,
+    					_.Acc_Id,
+    					_.Etp_Id,
     					_.Exam_CrtTime,
     					_.Exam_Date,
     					_.Exam_DateOver,
     					_.Exam_DateType,
     					_.Exam_GroupType,
     					_.Exam_Intro,
+    					_.Exam_IsDeleted,
+    					_.Exam_IsManual,
     					_.Exam_IsRightClick,
     					_.Exam_IsShowBtn,
     					_.Exam_IsTheme,
@@ -373,9 +437,10 @@ namespace Song.Entities {
     					_.Exam_IsUse,
     					_.Exam_Monitor,
     					_.Exam_Name,
+    					_.Exam_Order,
     					_.Exam_PassScore,
+    					_.Exam_Purpose,
     					_.Exam_Span,
-    					_.Exam_Tax,
     					_.Exam_Title,
     					_.Exam_Total,
     					_.Exam_UID,
@@ -394,12 +459,16 @@ namespace Song.Entities {
     		protected override object[] GetValues() {
     			return new object[] {
     					this._Exam_ID,
+    					this._Acc_Id,
+    					this._Etp_Id,
     					this._Exam_CrtTime,
     					this._Exam_Date,
     					this._Exam_DateOver,
     					this._Exam_DateType,
     					this._Exam_GroupType,
     					this._Exam_Intro,
+    					this._Exam_IsDeleted,
+    					this._Exam_IsManual,
     					this._Exam_IsRightClick,
     					this._Exam_IsShowBtn,
     					this._Exam_IsTheme,
@@ -407,9 +476,10 @@ namespace Song.Entities {
     					this._Exam_IsUse,
     					this._Exam_Monitor,
     					this._Exam_Name,
+    					this._Exam_Order,
     					this._Exam_PassScore,
+    					this._Exam_Purpose,
     					this._Exam_Span,
-    					this._Exam_Tax,
     					this._Exam_Title,
     					this._Exam_Total,
     					this._Exam_UID,
@@ -429,6 +499,12 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Exam_ID))) {
     				this._Exam_ID = reader.GetInt32(_.Exam_ID);
     			}
+    			if ((false == reader.IsDBNull(_.Acc_Id))) {
+    				this._Acc_Id = reader.GetInt32(_.Acc_Id);
+    			}
+    			if ((false == reader.IsDBNull(_.Etp_Id))) {
+    				this._Etp_Id = reader.GetInt64(_.Etp_Id);
+    			}
     			if ((false == reader.IsDBNull(_.Exam_CrtTime))) {
     				this._Exam_CrtTime = reader.GetDateTime(_.Exam_CrtTime);
     			}
@@ -446,6 +522,12 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Exam_Intro))) {
     				this._Exam_Intro = reader.GetString(_.Exam_Intro);
+    			}
+    			if ((false == reader.IsDBNull(_.Exam_IsDeleted))) {
+    				this._Exam_IsDeleted = reader.GetBoolean(_.Exam_IsDeleted);
+    			}
+    			if ((false == reader.IsDBNull(_.Exam_IsManual))) {
+    				this._Exam_IsManual = reader.GetBoolean(_.Exam_IsManual);
     			}
     			if ((false == reader.IsDBNull(_.Exam_IsRightClick))) {
     				this._Exam_IsRightClick = reader.GetBoolean(_.Exam_IsRightClick);
@@ -468,14 +550,17 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Exam_Name))) {
     				this._Exam_Name = reader.GetString(_.Exam_Name);
     			}
+    			if ((false == reader.IsDBNull(_.Exam_Order))) {
+    				this._Exam_Order = reader.GetInt32(_.Exam_Order);
+    			}
     			if ((false == reader.IsDBNull(_.Exam_PassScore))) {
     				this._Exam_PassScore = reader.GetInt32(_.Exam_PassScore);
     			}
+    			if ((false == reader.IsDBNull(_.Exam_Purpose))) {
+    				this._Exam_Purpose = reader.GetInt64(_.Exam_Purpose);
+    			}
     			if ((false == reader.IsDBNull(_.Exam_Span))) {
     				this._Exam_Span = reader.GetInt32(_.Exam_Span);
-    			}
-    			if ((false == reader.IsDBNull(_.Exam_Tax))) {
-    				this._Exam_Tax = reader.GetInt32(_.Exam_Tax);
     			}
     			if ((false == reader.IsDBNull(_.Exam_Title))) {
     				this._Exam_Title = reader.GetString(_.Exam_Title);
@@ -539,6 +624,16 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Exam_ID = new WeiSha.Data.Field<Examination>("Exam_ID");
     			
     			/// <summary>
+    			/// 字段名：Acc_Id - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Acc_Id = new WeiSha.Data.Field<Examination>("Acc_Id");
+    			
+    			/// <summary>
+    			/// 字段名：Etp_Id - 数据类型：Int64
+    			/// </summary>
+    			public static WeiSha.Data.Field Etp_Id = new WeiSha.Data.Field<Examination>("Etp_Id");
+    			
+    			/// <summary>
     			/// 字段名：Exam_CrtTime - 数据类型：DateTime
     			/// </summary>
     			public static WeiSha.Data.Field Exam_CrtTime = new WeiSha.Data.Field<Examination>("Exam_CrtTime");
@@ -567,6 +662,16 @@ namespace Song.Entities {
     			/// 字段名：Exam_Intro - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Exam_Intro = new WeiSha.Data.Field<Examination>("Exam_Intro");
+    			
+    			/// <summary>
+    			/// 字段名：Exam_IsDeleted - 数据类型：Boolean
+    			/// </summary>
+    			public static WeiSha.Data.Field Exam_IsDeleted = new WeiSha.Data.Field<Examination>("Exam_IsDeleted");
+    			
+    			/// <summary>
+    			/// 字段名：Exam_IsManual - 数据类型：Boolean
+    			/// </summary>
+    			public static WeiSha.Data.Field Exam_IsManual = new WeiSha.Data.Field<Examination>("Exam_IsManual");
     			
     			/// <summary>
     			/// 字段名：Exam_IsRightClick - 数据类型：Boolean
@@ -604,19 +709,24 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Exam_Name = new WeiSha.Data.Field<Examination>("Exam_Name");
     			
     			/// <summary>
+    			/// 字段名：Exam_Order - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Exam_Order = new WeiSha.Data.Field<Examination>("Exam_Order");
+    			
+    			/// <summary>
     			/// 字段名：Exam_PassScore - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Exam_PassScore = new WeiSha.Data.Field<Examination>("Exam_PassScore");
     			
     			/// <summary>
+    			/// 字段名：Exam_Purpose - 数据类型：Int64
+    			/// </summary>
+    			public static WeiSha.Data.Field Exam_Purpose = new WeiSha.Data.Field<Examination>("Exam_Purpose");
+    			
+    			/// <summary>
     			/// 字段名：Exam_Span - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Exam_Span = new WeiSha.Data.Field<Examination>("Exam_Span");
-    			
-    			/// <summary>
-    			/// 字段名：Exam_Tax - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field Exam_Tax = new WeiSha.Data.Field<Examination>("Exam_Tax");
     			
     			/// <summary>
     			/// 字段名：Exam_Title - 数据类型：String

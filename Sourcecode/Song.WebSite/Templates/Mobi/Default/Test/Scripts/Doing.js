@@ -244,7 +244,7 @@
                     "examid": 0,
                     "stid": this.account.Ac_ID,
                     "stname": this.account.Ac_Name,
-                    "stsex": this.account.Ac_Sex,
+                    "stsex": this.account.Ac_Gender,
                     "stcardid": this.account.Ac_IDCardNumber,
                     "stsid": this.account.Sts_ID,
                     "stsname": this.account.Sts_Name,

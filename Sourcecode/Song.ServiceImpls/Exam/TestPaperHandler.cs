@@ -208,7 +208,7 @@ namespace Song.ServiceImpls.Exam
             results.AccountID = acc.Ac_ID;
             results.AccountName = acc.Ac_Name;
             results.IDCardNumber = acc.Ac_IDCardNumber;
-            results.Gender = acc.Ac_Sex;
+            results.Gender = acc.Ac_Gender;
             results.SortID = acc.Sts_ID;
             
             return results;

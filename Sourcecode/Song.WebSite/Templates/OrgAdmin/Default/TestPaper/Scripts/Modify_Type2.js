@@ -236,7 +236,7 @@ $ready(function () {
             update_save: function (isclose) {
                 var th = this;
                 th.entity.Tp_FromConfig = th.buildFromConfig();
-                th.entity.Tp_Type = 2;    //试卷类型为随时抽题
+                th.entity.Tp_Type = 2;    //试卷类型为随时出题
                 th.loading = true;
                 var apipath = 'TestPaper/' + (th.edit ? 'Modify' : 'add');
                 //接口参数，如果有上传文件，则增加file

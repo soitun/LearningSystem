@@ -66,8 +66,7 @@ Vue.component('study_tabs', {
         }
     },
     mounted: function () {
-        var css = $dom.path() + 'course/Components/Styles/study_tabs.css';
-        $dom.load.css([css]);
+
     },
     methods: {
         //选项卡的点击事件

@@ -1,6 +1,9 @@
 ﻿
 //查询面板
-//事件search:触发查询,如果引用组件时不添加这个事件，查询按钮也不会显示出来
+$dom.load.css(['/Utilities/Components/Styles/query_panel.css']);
+//事件
+//search:触发查询,如果引用组件时不添加这个事件，查询按钮也不会显示出来
+//reset:重置表单
 Vue.component('query_panel', {
     //model:表单绑定的数据对象
     //rules: 表单校验的方法 
@@ -79,6 +82,7 @@ Vue.component('query_panel', {
             var model = this.model_init;
             for (var m in model)
                 this.$set(this.model, m, model[m]);
+            this.$emit('reset', this.model);
         }
     },
     template: `<div :class="{'query_panel':true,'query_panel_expand':expanded}">
@@ -102,7 +106,7 @@ Vue.component('query_panel', {
                     </el-tooltip>                   
                 </el-button-group>               
             </el-form-item>
-            <slot name="more" v-if="expanded"></slot>
+            <div v-show="expanded"><slot name="more"> </slot></div>
             <el-form-item label="" class="search_btns" v-show="expanded">
                 <el-button type="primary"  v-on:click="onserch()" plain :loading="loading" class="el-icon-search">
                     查 询
@@ -114,4 +118,3 @@ Vue.component('query_panel', {
         </el-form>
     </div>`
 });
-$dom.load.css(['/Utilities/Components/Styles/query_panel.css']);

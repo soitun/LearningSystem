@@ -116,22 +116,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<ITeacher>().SortDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<ITeacher>().SortDelete(s);
             return i;
         }
         /// <summary>
@@ -143,15 +130,7 @@ namespace Song.ViewData.Methods
         [Admin]
         public bool TitleUpdateTaxis(Song.Entities.TeacherSort[] items)
         {
-            try
-            {
-                Business.Do<ITeacher>().SortUpdateTaxis(items);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return Business.Do<ITeacher>().SortUpdateTaxis(items);                
         }
         /// <summary>
         /// 教师职称的课程数
@@ -247,7 +226,7 @@ namespace Song.ViewData.Methods
                     th.Th_IsShow = true;
                     acc.Ac_IsUse = th.Th_IsUse = true;
                               
-                    acc.Ac_Sex = th.Th_Sex;        //性别
+                    acc.Ac_Gender = th.Th_Gender;        //性别
                     acc.Ac_Birthday = th.Th_Birthday;
                     acc.Ac_Qq = th.Th_Qq;
                     acc.Ac_Email = th.Th_Email;
@@ -329,22 +308,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<ITeacher>().TeacherDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<ITeacher>().TeacherDelete(s);
             return i;
         }
         /// <summary>
@@ -358,18 +324,11 @@ namespace Song.ViewData.Methods
         [Admin, SuperAdmin]
         public int ModifyState(int id, bool use, bool pass)
         {
-            try
-            {
-                return Business.Do<ITeacher>().TeacherUpdate(id,
-                    new WeiSha.Data.Field[] {
+            return Business.Do<ITeacher>().TeacherUpdate(id,
+                new WeiSha.Data.Field[] {
                         Song.Entities.Teacher._.Th_IsUse,
                         Song.Entities.Teacher._.Th_IsPass },
-                    new object[] { use, pass });
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+                new object[] { use, pass });
         }
         /// <summary>
         /// 修改教师的照片
@@ -446,7 +405,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult Pager(int orgid, int titid, string search, int gender, bool? isuse, string phone, string acc, string idcard,string order, int size, int index)
         {
-            int count = 0;
+            int count;
             Song.Entities.Teacher[] eas = Business.Do<ITeacher>().TeacherPager(orgid, titid, gender, isuse, null, search, phone, acc, idcard, order, size, index, out count);
             for (int i = 0; i < eas.Length; i++)
                 eas[i] = _tran(eas[i]);
@@ -661,6 +620,7 @@ namespace Song.ViewData.Methods
         /// <param name="config">配置文件</param>
         /// <param name="matching">excel列与字段的匹配关联</param>
         /// <returns>success:成功数;error:失败数</returns>
+        [HttpPost]
         public JObject ExcelImport(string xls, int sheet, string config, JArray matching)
         {
             //获取Excel中的数据
@@ -747,9 +707,9 @@ namespace Song.ViewData.Methods
                 string column = dr[mathing[i]["column"].ToString()].ToString();
                 //数据库字段的名称
                 string field = mathing[i]["field"].ToString();
-                if (field == "Th_Sex")
+                if (field == "Th_Gender")
                 {
-                    teacher.Th_Sex = (short)(column == "男" ? 1 : 2);
+                    teacher.Th_Gender = (short)(column == "男" ? 1 : 2);
                     continue;
                 }
                 PropertyInfo[] properties = teacher.GetType().GetProperties();
@@ -778,7 +738,7 @@ namespace Song.ViewData.Methods
                 acc.Ac_AccName = teacher.Th_AccName;  //账号手机号
                 acc.Ac_Pw = new WeiSha.Core.Param.Method.ConvertToAnyValue(teacher.Th_Pw).MD5;    //密码       
                 acc.Ac_MobiTel2 = teacher.Th_PhoneMobi;
-                acc.Ac_Sex = teacher.Th_Sex;        //性别
+                acc.Ac_Gender = teacher.Th_Gender;        //性别
                 acc.Ac_Birthday = teacher.Th_Birthday;
                 acc.Ac_Qq = teacher.Th_Qq;
                 acc.Ac_Email = teacher.Th_Email;
@@ -850,6 +810,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="organs">机构id,多个id用逗号分隔</param>
         /// <returns></returns>
+        [Admin, Teacher]
         public JObject ExcelOutputForOrg(string organs)
         {
             string outputPath = "TeacherToExcelForTitle";
@@ -874,6 +835,7 @@ namespace Song.ViewData.Methods
         /// <param name="orgid"></param>
         /// <param name="sorts">分组id,多个id用逗号分隔</param> 
         /// <returns></returns>
+        [Admin, Teacher]
         public JObject ExcelOutputForSort(int orgid, string sorts)
         {
             string outputPath = "TeacherToExcelForTitle";
@@ -899,6 +861,7 @@ namespace Song.ViewData.Methods
         /// <param name="path"></param>
         /// <returns></returns>
         [HttpDelete]
+        [Admin,Teacher]
         public bool ExcelDelete(string filename, string path)
         {
             return Song.ViewData.Helper.Excel.DeleteFile(filename, path, "Temp");         

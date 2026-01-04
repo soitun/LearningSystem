@@ -25,6 +25,11 @@ Vue.component('btngroup', {
                 text: '删除', tips: '删除选中的数据项',
                 id: 'delete', type: 'danger',
                 class: 'el-icon-delete'
+            },
+            {
+                text: '还原', tips: '还原数据项',
+                id: 'recycle', type: 'warning',
+                icon: 'a014'
             }, {
                 text: '导入', tips: '批量导入数据',
                 id: 'input', type: 'info',
@@ -37,7 +42,7 @@ Vue.component('btngroup', {
                 icon: 'e73e'
             }, {
                 text: '说明', tips: '相关说明',
-                id: 'help', type: 'warning',
+                id: 'help', type: 'info',
                 class: 'el-icon-document-copy',
                 icon: 'a026'
             }],
@@ -51,8 +56,8 @@ Vue.component('btngroup', {
         var p = this.$parent;
         if (p == null || !this.table) return;
         var t = p.$refs[this.table];
-        if(t==null)return;
-        
+        if (t == null) return;
+
         /** 下述代码为隐藏或显示一些指定的列，没有完成，下述代码作为参考，不要删除 */
         t.$nextTick(() => {
             //表格的列名
@@ -119,7 +124,7 @@ Vue.component('btngroup', {
         }
     },
     methods: {
-        //添加按钮
+        //自定义添加按钮
         addbtn: function (btn) {
             if (btn == null) return;
             if (Array.isArray(btn)) {
@@ -144,10 +149,22 @@ Vue.component('btngroup', {
             }
             if (btn.id == 'add') return this.add();     //添加            
             if (btn.id == 'modify') return this.modify(this.getid());       //修改            
-            if (btn.id == 'delete') return this.delete(this.getids(), btn);    //删除   
+            if (btn.id == 'delete') return this.delete(this.getids(), btn);    //删除               
             //其它按钮事件
             let existEvent = this.$listeners[btn.id];
-            if (existEvent) return this.$emit(btn.id, btn, this.getids());
+            if (existEvent) return this.events(btn.id, this.getids());
+        },
+        //执行事件
+        //第一个参数：按钮的id
+        //后续参数，自动传入
+        events: function () {
+            const args = Array.from(arguments);
+            if (args.length == 0) return;
+            //第一个参数为按钮的id
+            let btnid = args.length > 0 ? args[0] : null;
+            //按钮事件
+            let existEvent = this.$listeners[btnid];
+            if (existEvent) return existEvent.apply(this, args.slice(1));
         },
         //添加按钮事件
         add: function (url, param) {
@@ -188,10 +205,14 @@ Vue.component('btngroup', {
         },
         //删除事件
         delete: function (ids, btn) {
+            if (this.table == null) {
+                this.$emit('delete', ids, btn);
+                return true;
+            }
             let arr = String(ids).split(',');
             if (ids == '' || arr.length < 1) {
                 this.$message({
-                    message: '请选中要操作的数据行',
+                    message: '请选中要操作的数据项',
                     type: 'error'
                 });
                 return false;

@@ -137,7 +137,7 @@ $ready(function () {
                         this.$nextTick(function () {
                             this.datas = arr;
                             for (var i = 0; i < this.datas.length; i++) {
-                                this.datas[i].Ths_Tax = i + 1;
+                                this.datas[i].Ths_Order = i + 1;
                             }
                             this.changeTax();
                         });

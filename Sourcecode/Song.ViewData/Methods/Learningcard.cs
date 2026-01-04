@@ -180,22 +180,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<ILearningCard>().SetDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<ILearningCard>().SetDelete(s);
             return i;
         }
         /// <summary>
@@ -230,9 +217,8 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult SetPager(int orgid, string search, int size, int index)
         {
-            int count = 0;         
-            Song.Entities.LearningCardSet[] eas = null;
-            eas = Business.Do<ILearningCard>().SetPager(orgid, null, search, size, index, out count);          
+            int count;         
+            Song.Entities.LearningCardSet[] eas = Business.Do<ILearningCard>().SetPager(orgid, null, search, size, index, out count);          
             ListResult result = new ListResult(eas);
             result.Index = index;
             result.Size = size;
@@ -295,7 +281,7 @@ namespace Song.ViewData.Methods
         public ListResult CardPager(int lsid, bool isused, bool isback, bool isdisable, string card, string account, int index, int size)
         {
             //总记录数
-            int count = 0;
+            int count;
             Song.Entities.LearningCard[] eas = null;
             bool? isUsed = isused ? (bool?)true : null;
             bool? isBack = isback ? (bool?)true : null;
@@ -385,7 +371,7 @@ namespace Song.ViewData.Methods
         public ListResult AccountCards(int acid, bool isused, bool isback, bool isdisable, string code, int index, int size)
         {
             //总记录数
-            int count = 0;
+            int count;
             Song.Entities.LearningCard[] entities = null;
             bool? isUsed = isused ? (bool?)true : null;
             bool? isBack = isback ? (bool?)true : null;

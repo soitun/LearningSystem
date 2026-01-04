@@ -30,7 +30,7 @@ namespace Song.ViewData.Methods
         public static string VirPath = WeiSha.Core.Upload.Get[PathKey].Virtual;
         public static string PhyPath = WeiSha.Core.Upload.Get[PathKey].Physics;
 
-        #region 考试主题
+        #region 增删改查
 
         /// <summary>
         /// 考试主题
@@ -39,96 +39,47 @@ namespace Song.ViewData.Methods
         /// <returns></returns>    
         public Song.Entities.Examination ThemeForUID(string uid)
         {
-            return Business.Do<IExamination>().ExamSingle(uid);
+            return Business.Do<IExamination>().ExamTheme(uid);
         }
         /// <summary>
-        /// 考试主题
+        /// 根据ID查询考试
         /// </summary>
-        /// <param name="entity">考试主题</param>
+        /// <param name="id">考试id，可以是考试题，也可以是场次</param>
         /// <returns></returns>    
-        public Song.Entities.Examination ThemeModify(Song.Entities.Examination entity)
+        public Song.Entities.Examination ForID(int id)
         {
-            Song.Entities.Examination old = Business.Do<IExamination>().ExamSingle(entity.Exam_ID);
-            if (old == null) throw new Exception("Not found entity for Examination！");
-
-            old.Copy<Song.Entities.Examination>(entity);
-            Business.Do<IExamination>().ExamSave(old);
-            return entity;
-        }
-        /// <summary>
-        /// 删除考试
-        /// </summary>
-        /// <param name="id">考试主题的id，可以是多个，用逗号分隔</param>
-        /// <returns></returns>
-        [Admin,Teacher]
-        [HttpDelete]
-        public int ThemeDelete(string id)
-        {
-            int i = 0;
-            if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IExamination>().ExamDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-            return i;
-        }
-        /// <summary>
-        /// 修改考试的状态
-        /// </summary>
-        /// <param name="id">考试的id，可以是多个，用逗号分隔</param>
-        /// <param name="use">是否启用</param>    
-        /// <returns></returns>
-        [HttpPost]
-        [Admin,Teacher]
-        public int ModifyState(string id, bool use)
-        {
-            int i = 0;
-            if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Song.Entities.Examination old = Business.Do<IExamination>().ExamSingle(idval);
-                    if (old == null) continue;
-                    old.Exam_IsUse = use;
-                    Business.Do<IExamination>().ExamSave(old);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-            return i;
+            return Business.Do<IExamination>().ExamSingle(id);
         }
         /// <summary>
         /// 新增考试
         /// </summary>
         /// <param name="theme">考试主题的对象</param>
         /// <param name="items">考试场次的对象数组</param>
-        /// <param name="groups">关联的学员组，即可以参加考试的学员组</param>
+        /// <param name="groups">限定参考的学员组关联对象（ExamGroup），即可以参加考试的学员组</param>
+        /// <param name="accounts">限定参考的学员关联对象（Exam_Accounts）</param>
         [HttpPost]
         [Admin, Teacher]
-        public bool Add(Examination theme, Examination[] items, ExamGroup[] groups)
+        public bool Add(Examination theme, Examination[] items, ExamGroup[] groups, Exam_Accounts[] accounts)
         {
+            //当前机构
+            Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
+            if (org != null)
+            {
+                theme.Org_ID = org.Org_ID;
+                theme.Org_Name = org.Org_Name;
+            }
+            //当前编辑的教师
             Song.Entities.Teacher teacher = this.Teacher;
-            Business.Do<IExamination>().ExamAdd(teacher, theme, items, groups);
+            if (teacher != null)
+            {
+                theme.Th_ID = teacher.Th_ID;
+                theme.Th_Name = teacher.Th_Name;
+            }
+            //当前编辑的管理员
+            Song.Entities.EmpAccount admin = this.Admin;
+            if (admin != null) theme.Acc_Id = admin.Acc_Id;
+            //
+            Business.Do<IExamination>().ExamAdd(theme, items, groups, accounts);
             return true;
         }
         /// <summary>
@@ -137,9 +88,10 @@ namespace Song.ViewData.Methods
         /// <param name="theme">考试主题的对象</param>
         /// <param name="items">考试场次的对象数组</param>
         /// <param name="groups">关联的学员组，即可以参加考试的学员组</param>
+        /// <param name="accounts">限定参考的学员关联对象（Exam_Accounts）</param>
         [HttpPost]
         [Admin, Teacher]
-        public bool Modify(Examination theme, Examination[] items, ExamGroup[] groups)
+        public bool Modify(Examination theme, Examination[] items, ExamGroup[] groups, Exam_Accounts[] accounts)
         {
             Song.Entities.Examination old = Business.Do<IExamination>().ExamSingle(theme.Exam_ID);
             if (old == null) throw new Exception("Not found entity for Examination！");
@@ -157,13 +109,264 @@ namespace Song.ViewData.Methods
                     }
                 }
             }
-            //与学员组的关联
-            List<ExamGroup> sorts = null;
-            if (groups != null) sorts = groups.ToList<ExamGroup>();
 
-            Business.Do<IExamination>().ExamSave(old, items, groups);
+            Business.Do<IExamination>().ExamSave(old, items, groups, accounts);
 
             return true;
+        }
+        /// <summary>
+        /// 删除考试
+        /// </summary>
+        /// <param name="id">考试主题的id，可以是多个，用逗号分隔</param>
+        /// <returns></returns>
+        [Admin,Teacher]
+        [HttpDelete]
+        public int ThemeDelete(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<IExamination>().ExamDelete(s);
+            return i;
+        }
+        /// <summary>
+        /// 修改考试的状态
+        /// </summary>
+        /// <param name="id">考试的id，可以是多个，用逗号分隔</param>
+        /// <param name="use">是否启用</param>    
+        /// <returns></returns>
+        [HttpPost]
+        [Admin,Teacher]
+        public int ModifyState(string id, bool use)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<int> list = id.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<IExamination>().ExamUpdate(s,
+                    new WeiSha.Data.Field[] { Song.Entities.Examination._.Exam_IsUse },
+                    new object[] { use });
+            return i;
+        }
+       
+        /// <summary>
+        /// 是否需要人工批阅
+        /// </summary>
+        /// <param name="examid"></param>
+        /// <returns>id:考试id,manual:是否需要人工批阅，true为需要</returns>
+        public JObject Manual4Exam(int examid)
+        {
+            bool manual = false;
+            //考生数，如果没有人考试，则不需要批阅
+            int students = Business.Do<IExamination>().Numbertimes4Exam(examid);
+            if (students > 0)
+            {
+                Song.Entities.Examination exas = Business.Do<IExamination>().ExamSingle(examid);
+                Song.Entities.TestPaper pager = Business.Do<ITestPaper>().PaperSingle(exas.Tp_Id);
+                if (pager != null)
+                {
+                    List<Song.Entities.TestPaperItem> items = Business.Do<ITestPaper>().GetItemForAny(pager);
+                    foreach (Song.Entities.TestPaperItem ti in items)
+                    {
+                        if (ti.TPI_Type == 4)
+                        {
+                            manual = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            JObject jo = new JObject();
+            jo.Add("id", examid);
+            jo.Add("manual", manual);
+            return jo;
+        }
+        /// <summary>
+        /// 获取考试主题
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="start">时间范围查询的开始时间</param>
+        /// <param name="end"></param>
+        /// <param name="search">按考试主题检索</param>
+        /// <param name="size"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public ListResult ThemePager(int orgid, DateTime? start, DateTime? end, string search, int size, int index)
+        {
+            int count;
+            List<Examination> datas = Business.Do<IExamination>().ThemePager(orgid, start, end, true, search, size, index, out count);
+            ListResult result = new ListResult(datas);
+            result.Index = index;
+            result.Size = size;
+            result.Total = count;
+            return result;
+        }
+        /// <summary>
+        /// 获取考试主题
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="use"></param>
+        /// <param name="search"></param>
+        /// <param name="size"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Admin, Teacher]
+        public ListResult ThemeAdminPager(int orgid, DateTime? start, DateTime? end, bool? use, string search, int size, int index)
+        {
+            int count;
+            List<Examination> datas = Business.Do<IExamination>().ThemePager(orgid, start, end, use, search, size, index, out count);
+            ListResult result = new ListResult(datas);
+            result.Index = index;
+            result.Size = size;
+            result.Total = count;
+            return result;
+        }
+        /// <summary>
+        /// 获取考试场次
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="use">是否启用</param>
+        /// <param name="ismanual">是否需要人工批阅</param>
+        /// <param name="search">考试名称的检索</param>
+        /// <param name="size"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Admin, Teacher]
+        public ListResult ExamAdminPager(int orgid, DateTime? start, DateTime? end, bool? use, bool? ismanual, string search, int size, int index)
+        {
+            int count;
+            List<Examination> datas = Business.Do<IExamination>().ExamPager(orgid, start, end, use, ismanual, search, size, index, out count);
+            ListResult result = new ListResult(datas);
+            result.Index = index;
+            result.Size = size;
+            result.Total = count;
+            return result;
+        }
+        /// <summary>
+        /// 某个考试主题下的所有考试场次
+        /// </summary>
+        /// <param name="uid">考试主题的uid</param>
+        /// <returns></returns>
+        public List<Examination> Exams(string uid)
+        {
+            List<Examination> exams = Business.Do<IExamination>().ExamItem(uid);
+            for (int i = 0; i < exams.Count; i++)
+            {
+                DateTime examDate = exams[i].Exam_Date < DateTime.Now.AddYears(-100) ? DateTime.Now : (DateTime)exams[i].Exam_Date;
+                exams[i].Exam_Date = examDate.AddYears(100) < DateTime.Now ? DateTime.Now : examDate;
+            }
+            return exams;
+        }
+        #endregion
+
+        #region 参考人员
+        /// <summary>
+        /// 获取参考人员信息
+        /// </summary>
+        /// <param name="type">类型，1为全体学员，2为分组</param>
+        /// <param name="uid">考试主题的uid</param>
+        /// <returns>返回的是字符串</returns>
+        public string ScopeInfo(string type, string uid)
+        {
+            if (type == "1") return "全体学员";
+            if (type == "2")
+            {
+                List<StudentSort> sts = Business.Do<IExamination>().ScopeForStudentSort(uid);
+                int maxCount = 6;
+                string strDep = "";
+                for (int i = 0; i < sts.Count && i < maxCount; i++)
+                {
+                    strDep += sts[i].Sts_Name;
+                    if (i < sts.Count - 1) strDep += ",";
+                }
+                if (sts.Count > maxCount) strDep += "...";
+                if (string.IsNullOrWhiteSpace(strDep))
+                    strDep = "(没有学员组)";
+                return strDep;
+            }
+            if (type == "3")
+            {
+                int count = Business.Do<IExamination>().ScopeForAccountTotal(uid);
+                return count + "名"; 
+            }
+            return "";
+        }
+        /// <summary>
+        /// 获取允许参加考试的人员数量
+        /// </summary>
+        /// <param name="uid">考试主题的uid/param>
+        /// <returns>如果考试不存在，则返回-1</returns>
+        public int ScopeTotal(string uid)
+        {
+            Entities.Examination theme= Business.Do<IExamination>().ExamTheme(uid);
+            if (theme == null) return -1;
+            //全部学员
+            if (theme.Exam_GroupType == 1) return Business.Do<IAccounts>().Total(theme.Org_ID, true, true);
+            //指定学员组
+            if (theme.Exam_GroupType == 2)
+            {
+                List<StudentSort> sts = Business.Do<IExamination>().ScopeForStudentSort(uid);
+                long[] list = sts.Select(s => s.Sts_ID).ToArray();
+                if (list.Length == 0) return 0;
+                return Business.Do<IStudent>().TotalOfSort(list);
+            }
+            //指定的学员
+            if (theme.Exam_GroupType == 3)
+            {
+                return Business.Do<IExamination>().ScopeForAccountTotal(uid);
+            }
+            return 0;
+        }
+        /// <summary>
+        /// 当考试的参考范围限定为指定学员时，这时是限定的学员数
+        /// </summary>
+        /// <param name="uid">考试主题的uid</param>
+        /// <returns></returns>
+        public int ScopeForAccountTotal(string uid)
+        {
+            return Business.Do<IExamination>().ScopeForAccountTotal(uid);
+        }
+        /// <summary>
+        /// 允许参考的学员组的信息
+        /// </summary>
+        /// <param name="uid">考试主题的uid</param>
+        /// <returns>学员组</returns>
+        public List<StudentSort> ScopeGroups(string uid)
+        {
+            return Business.Do<IExamination>().ScopeForStudentSort(uid);
+        }
+        /// <summary>
+        /// 允许参考的学员信息
+        /// </summary>
+        /// <param name="uid">考试主题的uid</param>
+        /// <returns></returns>
+        public List<Accounts> ScopeAccounts(string uid)
+        {
+            return Business.Do<IExamination>().ScopeForAccounts(uid);
+        }
+        /// <summary>
+        /// 分页获取允许参考的学员信息
+        /// </summary>
+        /// <param name="uid">考试主题的uid</param>
+        /// <param name="index"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        public ListResult ScopeAccountsPager(string uid, int index, int size)
+        {
+            int sum;
+            List<Accounts> list = Business.Do<IExamination>().ScopeForAccounts(uid, index, size, out sum);
+            Song.ViewData.ListResult result = new ListResult(list);
+            result.Index = index;
+            result.Size = size;
+            result.Total = sum;
+            return result;
         }
         #endregion
 
@@ -280,7 +483,7 @@ namespace Song.ViewData.Methods
                 JObject ques = new JObject();
                 int type = Convert.ToInt32(node.Attributes["type"].Value);
                 ques.Add("type", type);
-                float count = 0, number = 0;
+                float count, number;
                 float.TryParse(node.Attributes["count"].Value, out count);
                 float.TryParse(node.Attributes["number"].Value, out number);
                 ques.Add("count", count);
@@ -438,7 +641,7 @@ namespace Song.ViewData.Methods
                 exr.Ac_ID = stid;
                 exr.Ac_Name = stname;
                 exr.Sts_ID = stsid;
-                exr.Ac_Sex = stsex;
+                exr.Ac_Gender = stsex;
                 exr.Ac_IDCardNumber = stcardid;
                 exr.Sbj_ID = sbjid;
                 exr.Sbj_Name = sbjname;
@@ -650,109 +853,10 @@ namespace Song.ViewData.Methods
             return jo;
         }
         #endregion
-
-        #region 增删改查
+        
+        #region 考试人数统计
         /// <summary>
-        /// 根据ID查询考试
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>    
-        public Song.Entities.Examination ForID(int id)
-        {
-            return Business.Do<IExamination>().ExamSingle(id);
-        }        
-        /// <summary>
-        /// 获取考试主题
-        /// </summary>
-        /// <param name="orgid">机构id</param>
-        /// <param name="start">时间范围查询的开始时间</param>
-        /// <param name="end"></param>
-        /// <param name="search">按考试主题检索</param>
-        /// <param name="size"></param>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        public ListResult ThemePager(int orgid, DateTime? start, DateTime? end, string search, int size, int index)
-        {
-            int count = 0;
-            Song.Entities.Examination[] datas = Business.Do<IExamination>().GetPager(orgid, start, end, true, search, size, index, out count);
-            ListResult result = new ListResult(datas);
-            result.Index = index;
-            result.Size = size;
-            result.Total = count;
-            return result;
-        }
-        /// <summary>
-        /// 获取考试主题
-        /// </summary>
-        /// <param name="orgid"></param>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        /// <param name="search"></param>
-        /// <param name="size"></param>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Admin,Teacher]
-        public ListResult ThemeAdminPager(int orgid, DateTime? start, DateTime? end, bool? use, string search, int size, int index)
-        {
-            int count = 0;
-            Song.Entities.Examination[] datas = Business.Do<IExamination>().GetPager(orgid, start, end, use, search, size, index, out count);
-            ListResult result = new ListResult(datas);
-            result.Index = index;
-            result.Size = size;
-            result.Total = count;
-            return result;
-        }
-        /// <summary>
-        /// 某个考试主题下的所有考试场次
-        /// </summary>
-        /// <param name="uid">考试主题的uid</param>
-        /// <returns></returns>
-        public Song.Entities.Examination[] Exams(string uid)
-        {
-            Song.Entities.Examination[] exams = Business.Do<IExamination>().ExamItem(uid);
-            for (int i = 0; i < exams.Length; i++)
-            {
-                DateTime examDate = exams[i].Exam_Date < DateTime.Now.AddYears(-100) ? DateTime.Now : (DateTime)exams[i].Exam_Date;
-                exams[i].Exam_Date = examDate.AddYears(100) < DateTime.Now ? DateTime.Now : examDate;
-            }
-            return exams;
-        }
-        /// <summary>
-        /// 获取参考人员信息
-        /// </summary>
-        /// <param name="type">类型，1为全体学员，2为分组</param>
-        /// <param name="uid">考试主题的uid</param>
-        /// <returns>返回的是字符串</returns>
-        public string GroupType(string type, string uid)
-        {
-            if (type == "1") return "全体学员";
-            if (type == "2")
-            {
-                Song.Entities.StudentSort[] sts = Business.Do<IExamination>().GroupForStudentSort(uid);
-                string strDep = "";
-                for (int i = 0; i < sts.Length; i++)
-                {
-                    strDep += sts[i].Sts_Name;
-                    if (i < sts.Length - 1) strDep += ",";
-                }
-                if(string.IsNullOrWhiteSpace(strDep))
-                    strDep = "(没有学员组)";
-                return strDep;
-            }
-            return "";
-        }
-        /// <summary>
-        /// 获取参考学员组的信息
-        /// </summary>
-        /// <param name="uid">考试主题的uid</param>
-        /// <returns>学员组</returns>
-        public Song.Entities.StudentSort[] Groups(string uid)
-        {
-            return Business.Do<IExamination>().GroupForStudentSort(uid);
-        }
-        /// <summary>
-        /// 某场考试的参考人数
+        /// 某场考试实际参考的人数
         /// </summary>
         /// <param name="examid">考试id</param>
         /// <returns>id:考试id,number:参考人数</returns>
@@ -832,7 +936,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult AttendThemeAccounts(int examid, string name, string idcard, long stsid, int size,int index)
         {
-            int total = 0;
+            int total;
             List<Accounts> datas = Business.Do<IExamination>().AttendThemeAccounts(examid, name, idcard, stsid,size, index, out total);
             ListResult result = new ListResult(datas);
             result.Index = index;
@@ -853,7 +957,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult AbsenceExamAccounts(int examid, string name, string idcard, string phone, long stsid, int size, int index)
         {
-            int total = 0;
+            int total;
             List<Accounts> datas = Business.Do<IExamination>().AbsenceExamAccounts(examid, name, idcard, phone, stsid, size, index, out total);
             for (int i = 0; i < datas.Count; i++)
             {
@@ -865,40 +969,8 @@ namespace Song.ViewData.Methods
             result.Total = total;
             return result;
         }
-        /// <summary>
-        /// 是否需要人工批阅
-        /// </summary>
-        /// <param name="examid"></param>
-        /// <returns>id:考试id,manual:是否需要人工批阅，true为需要</returns>
-        public JObject Manual4Exam(int examid)
-        {
-            bool manual = false;
-            //考生数，如果没有人考试，则不需要批阅
-            int students = Business.Do<IExamination>().Numbertimes4Exam(examid);
-            if (students > 0)
-            {
-                Song.Entities.Examination exas = Business.Do<IExamination>().ExamSingle(examid);
-                Song.Entities.TestPaper pager = Business.Do<ITestPaper>().PaperSingle(exas.Tp_Id);
-                if (pager != null)
-                {
-                    List<Song.Entities.TestPaperItem> items = Business.Do<ITestPaper>().GetItemForAny(pager);
-                    foreach (Song.Entities.TestPaperItem ti in items)
-                    {
-                        if (ti.TPI_Type == 4) {
-                            manual = true;
-                            break;
-                        }
-                    }                    
-                }
-            }
-            JObject jo = new JObject();
-            jo.Add("id", examid);
-            jo.Add("manual", manual);
-            return jo;
-        }
-
-        #endregion
-
+        #endregion      
+    
         #region 得分
         /// <summary>
         /// 某场考试的平均分数
@@ -944,7 +1016,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="examid">考试主题的id</param>
         /// <returns>Sts_Count列为学员组下的参考人员数量</returns>
-        public StudentSort[] Sort4Theme(int examid)
+        public List<StudentSort> Sort4Theme(int examid)
         {
             return Business.Do<IExamination>().StudentSort4Theme(examid);
         }
@@ -983,9 +1055,9 @@ namespace Song.ViewData.Methods
                 //所有学员
                 case 0:
                     //当前考试限定的学生分组
-                    Song.Entities.StudentSort[] sts = Business.Do<IExamination>().GroupForStudentSort(theme.Exam_UID);
+                    List<StudentSort> sts = Business.Do<IExamination>().ScopeForStudentSort(theme.Exam_UID);
                     //如果没有设定分组，则取当前参加考试的学员的分组
-                    if (sts == null || sts.Length < 1) sts = Business.Do<IExamination>().StudentSort4Theme(examid);
+                    if (sts == null || sts.Count < 1) sts = Business.Do<IExamination>().StudentSort4Theme(examid);
                     foreach (Song.Entities.StudentSort ss in sts)
                         stsid += ss.Sts_ID + ",";
                     stsid += "-1";
@@ -1145,7 +1217,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult Result4Exam(int examid, string name, string idcard, long stsid, float min, float max, bool? manual, int size, int index)
         {
-            int count = 0;
+            int count;
             List<ExamResults> datas = Business.Do<IExamination>().ResultsPager(examid, name, idcard, stsid, min, max, manual, size, index, out count);
             ListResult result = new ListResult(datas);
             result.Index = index;
@@ -1165,8 +1237,8 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult Result4Student(int acid, int orgid, long sbjid, string search, int size, int index)
         {
-            int count = 0;
-            Song.Entities.ExamResults[] datas = null;
+            int count;
+            List<ExamResults> datas = null;
             datas = Business.Do<IExamination>().GetAttendPager(acid, sbjid, orgid, search, size, index, out count);
             ListResult result = new ListResult(datas);
             result.Index = index;
@@ -1181,27 +1253,14 @@ namespace Song.ViewData.Methods
         /// <param name="examid">考试id</param>
         /// <returns></returns>
         [HttpDelete]
-        public int ResultDelete4Acc(string acid,int examid)
+        public int ResultDelete4Acc(string acid, int examid)
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(acid)) return i;
-            string[] arr = acid.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IExamination>().ResultDelete(idval, examid);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-            return i; 
+            List<int> list = acid.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<IExamination>().ResultDelete(s, examid);
+            return i;
         }
         /// <summary>
         /// 删除考试成绩，按成绩记录的id
@@ -1213,22 +1272,9 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(exrid)) return i;
-            string[] arr = exrid.Split(',');
-            foreach (string s in arr)
-            {
-                int idval = 0;
-                int.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<IExamination>().ResultDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<int> list = exrid.ToList<int>();
+            foreach (int s in list)
+                i += Business.Do<IExamination>().ResultDelete(s);
             return i;
         }
         /// <summary>
@@ -1324,7 +1370,7 @@ namespace Song.ViewData.Methods
         }
         #endregion
 
-        #region 我的课程
+        #region 我的考试
         /// <summary>
         /// 学员今天以及之后的考试，过期的不再显示
         /// </summary>
@@ -1335,7 +1381,7 @@ namespace Song.ViewData.Methods
         /// <returns>考试场次，而非考试主题</returns>
         public ListResult SelfExam4Todaylate(int acid, string search, int size, int index)
         {
-            int count = 0;
+            int count;
             DateTime start = DateTime.Now.Date;
             List<Song.Entities.Examination> todaylate = Business.Do<IExamination>().GetSelfExam(acid, start, null, search, size, index, out count);
             ListResult result = new ListResult(todaylate);
@@ -1357,12 +1403,7 @@ namespace Song.ViewData.Methods
         [HttpPost]
         public JObject ResultsExport4Eaxm(int examid,string sorts)
         {           
-            List<long> sortsid = new List<long>();
-            foreach (string sts in sorts.Split(','))
-            {
-                long tm = sts.Convert<long>();
-                if (tm > 0) sortsid.Add(tm);
-            }
+            List<long> sortsid = sorts.ToList<long>();
             //导出文件的位置
             string rootpath = WeiSha.Core.Upload.Get["Temp"].Physics + outputPath + "\\" + examid + "\\";
             if (!System.IO.Directory.Exists(rootpath))
@@ -1387,12 +1428,7 @@ namespace Song.ViewData.Methods
         [HttpPost]
         public JObject ResultsExport4Theme(int examid, string sorts)
         {
-            List<long> sortsid = new List<long>();
-            foreach (string sts in sorts.Split(','))
-            {
-                long tm = sts.Convert<long>();
-                if (tm > 0) sortsid.Add(tm);
-            }
+            List<long> sortsid = sorts.ToList<long>();
             //导出文件的位置
             string rootpath = WeiSha.Core.Upload.Get["Temp"].Physics + outputPath + "\\" + examid + "\\";
             if (!System.IO.Directory.Exists(rootpath))

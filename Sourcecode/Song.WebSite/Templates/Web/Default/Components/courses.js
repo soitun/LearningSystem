@@ -22,8 +22,7 @@ Vue.component('courses', {
     },
     computed: {},
     mounted: function () {
-        var css = $dom.path() + 'Components/Styles/courses.css';       
-        $dom.load.css([css]);
+
     },
     methods: {
         //跳转

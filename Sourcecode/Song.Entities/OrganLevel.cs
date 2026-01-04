@@ -20,9 +20,9 @@ namespace Song.Entities {
     		
     		protected String _Olv_Name;
     		
-    		protected String _Olv_Tag;
+    		protected Int32 _Olv_Order;
     		
-    		protected Int32 _Olv_Tax;
+    		protected String _Olv_Tag;
     		
     		protected Int32 _Ps_ID;
     		
@@ -86,6 +86,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32 Olv_Order {
+    			get {
+    				return this._Olv_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Olv_Order, _Olv_Order, value);
+    				this._Olv_Order = value;
+    			}
+    		}
+    		
     		public String Olv_Tag {
     			get {
     				return this._Olv_Tag;
@@ -93,16 +103,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Olv_Tag, _Olv_Tag, value);
     				this._Olv_Tag = value;
-    			}
-    		}
-    		
-    		public Int32 Olv_Tax {
-    			get {
-    				return this._Olv_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Olv_Tax, _Olv_Tax, value);
-    				this._Olv_Tax = value;
     			}
     		}
     		
@@ -149,8 +149,8 @@ namespace Song.Entities {
     					_.Olv_IsUse,
     					_.Olv_Level,
     					_.Olv_Name,
+    					_.Olv_Order,
     					_.Olv_Tag,
-    					_.Olv_Tax,
     					_.Ps_ID};
     		}
     		
@@ -165,8 +165,8 @@ namespace Song.Entities {
     					this._Olv_IsUse,
     					this._Olv_Level,
     					this._Olv_Name,
+    					this._Olv_Order,
     					this._Olv_Tag,
-    					this._Olv_Tax,
     					this._Ps_ID};
     		}
     		
@@ -192,11 +192,11 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Olv_Name))) {
     				this._Olv_Name = reader.GetString(_.Olv_Name);
     			}
+    			if ((false == reader.IsDBNull(_.Olv_Order))) {
+    				this._Olv_Order = reader.GetInt32(_.Olv_Order);
+    			}
     			if ((false == reader.IsDBNull(_.Olv_Tag))) {
     				this._Olv_Tag = reader.GetString(_.Olv_Tag);
-    			}
-    			if ((false == reader.IsDBNull(_.Olv_Tax))) {
-    				this._Olv_Tax = reader.GetInt32(_.Olv_Tax);
     			}
     			if ((false == reader.IsDBNull(_.Ps_ID))) {
     				this._Ps_ID = reader.GetInt32(_.Ps_ID);
@@ -258,14 +258,14 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Olv_Name = new WeiSha.Data.Field<OrganLevel>("Olv_Name");
     			
     			/// <summary>
+    			/// 字段名：Olv_Order - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Olv_Order = new WeiSha.Data.Field<OrganLevel>("Olv_Order");
+    			
+    			/// <summary>
     			/// 字段名：Olv_Tag - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Olv_Tag = new WeiSha.Data.Field<OrganLevel>("Olv_Tag");
-    			
-    			/// <summary>
-    			/// 字段名：Olv_Tax - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field Olv_Tax = new WeiSha.Data.Field<OrganLevel>("Olv_Tax");
     			
     			/// <summary>
     			/// 字段名：Ps_ID - 数据类型：Int32

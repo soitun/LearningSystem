@@ -33,9 +33,9 @@ namespace Song.ServiceImpls
             Gateway.Default.Save<SingleSignOn>(entity); 
         }
 
-        public void Delete(int identify)
+        public int Delete(int identify)
         {
-            Gateway.Default.Delete<SingleSignOn>(SingleSignOn._.SSO_ID == identify);
+            return Gateway.Default.Delete<SingleSignOn>(SingleSignOn._.SSO_ID == identify);
         }
         /// <summary>
         /// 是否已经存在

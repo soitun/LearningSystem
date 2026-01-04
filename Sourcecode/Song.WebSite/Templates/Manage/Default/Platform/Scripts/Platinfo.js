@@ -32,14 +32,16 @@ $ready(function () {
         methods: {
             btnEnter: function (formName) {
                 if (this.loading) return;
+                var th=this;
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         var th = this;
                         th.loading = true;
                         $api.post('Platform/PlatInfoUpdate', this.platinfo).then(function (req) {
                             if (req.data.success) {
-                                var result = req.data.result;
+                                var result = req.data.result;                              
                                 top.window.login.onlayout();
+                                top.window.$settitle(th.platinfo);
                                 th.$message({
                                     type: 'success',
                                     message: '操作成功!',

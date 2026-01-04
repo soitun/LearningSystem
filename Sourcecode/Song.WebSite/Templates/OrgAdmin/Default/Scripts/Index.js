@@ -19,12 +19,11 @@ $ctrljs(function () {
             doc.setAttribute('oncontextmenu', "javascript:return false;");
         });
     });
-    document.title = '管理中心';
     //
     $api.bat(
         $api.cache('Platform/PlatInfo:60'),
         $api.get('Organization/current')
-    ).then(([platinfo, organ]) => {
+    ).then(([platinfo, org]) => {
         //皮肤设置,默认取第一个：'Admin2025', 'Education', 'win10', 'win7'
         window.$skins.setup('', function (skin) {
             if (skin == null) return;
@@ -33,16 +32,31 @@ $ctrljs(function () {
             $dom("#backgroup_iframe").attr("src", skin.bgpage);
         });
         //获取结果    
-        window.$loyout(platinfo.data.result, organ.data.result);
+        window.$loyout(platinfo.data.result, org.data.result);
     }).catch(err => console.error(err))
         .finally(() => { });
 });
+//设置头部标题
+window.$settitle = function (platinfo, org) {
+    //管理界面的头部标题部分
+    $dom("*[platinfo='title']").html(platinfo.title);
+    //管理界面的头部简介部分
+    if (platinfo != null) {
+        document.title = '管理中心 - ' + platinfo.title;
+        let element = $dom("*[platinfo='intro']");
+        if (platinfo.intro != '' && platinfo.intro.length > 0) {
+            element.html(platinfo.intro).show();
+            element.prev().hide();
+        } else {
+            element.hide();
+            element.prev().show();
+        }
+    }
+
+};
 //初始布局
 window.$loyout = function (platinfo, org) {
-    //管理界面的头部标题部分
-    $dom("*[platinfo='title']").html(org.Org_PlatformName);
-    $dom("*[platinfo='intro']").html(platinfo.intro);
-
+    window.$settitle(platinfo, org);
     //创建登录框
     window.login = $login.create({
         target: '#login-area',
@@ -67,10 +81,11 @@ window.$loyout = function (platinfo, org) {
         tips: '请输入4位数字'
     }]);
     window.login.onlayout(function (s, e) {
-        //console.log('布局完成' + e.data);        
+        //console.log('布局完成' + e.data);    
+
     });
     window.login.ondragfinish(function (s, e) {
-        $api.post('Helper/CheckCodeImg', { 'leng': s.vcodelen, 'acc': s.user }).then(function (req) {
+        $api.post('Platform/CheckCodeImg', { 'leng': s.vcodelen, 'acc': s.user }).then(function (req) {
             if (req.data.success) {
                 let result = req.data.result;
                 s.vcodebase64 = result.base64;
@@ -115,16 +130,14 @@ window.$loyout = function (platinfo, org) {
     window.setInterval(function () {
         $api.login.fresh('admin');
     }, 1000 * 60 * 10);
+
     //右上角菜单（即当前登录用户的信息）
     window.usermenu = window.$dropmenu.create({
         target: '#user-area',
-        width: 110,
-        plwidth: 120,
-        level: 30
+        width: 110, plwidth: 120, level: 30
+    }).onmounted(function (s, e) { //加载数据源
+        $dom.get($dom.path() + 'Panel/Datas/usermenu.json', req => s.add(req));
     }).onclick($event.nodeClick);
-    //用户信息的下拉菜单
-    $dom.get($dom.path() + 'Panel/Datas/usermenu.json', req => usermenu.add(req));
-
 };
 //登录成功
 window.$succeeded = function (result) {
@@ -156,6 +169,16 @@ window.$succeeded = function (result) {
         target: '#treemenu-area',
         width: 200,
         taghide: false, query: true, fold: false
+    }).onmounted(function (s, e) { //加载数据源
+        $api.get('ManageMenu/Menus:60').then(function (req) {
+            if (req.data.success) {
+                var result = nodeconvert(req.data.result);
+                s.add(result[0].childs);
+            } else throw req.data.message;
+        }).catch(err => {
+            console.error(err);
+            s.nodata();
+        });
     }).onresize(function (s, e) { //当宽高变更时
         $dom('#tabs-area').width('calc(100% - ' + (e.width + 35) + 'px )');
     }).onfold(function (s, e) { //当右侧树形折叠时
@@ -169,44 +192,32 @@ window.$succeeded = function (result) {
             $dom(".pagebox").css('filter', val ? 'blur(3px)' : 'none');
         }
     });
-    //加载左侧菜单树
-    $api.get('ManageMenu/OrganMarkerMenus', { 'marker': 'organAdmin' }).then(function (req) {
-        if (req.data.success) {
-            var result = nodeconvert(req.data.result);
-            for (var i = 0; i < result.length; i++) {
-                if (i == 0)
-                    tree.add(result[i].childs);
-                else {
-                    tree.add(result[i]);
 
-                }
-            }
-        } else throw req.data.message;
-    }).catch(err => console.error(err));
-/*
+
     //左上角下拉菜单（即系统菜单）
     window.drop = window.$dropmenu.create({
-        target: '#dropmenu-area',
-        width: 280,
-        plwidth: 180,
-        level: 30000,
-        id: 'main_menu'
+        target: '#dropmenu-area', id: 'main_menu',
+        width: 280, plwidth: 180, level: 30000,
+    }).onmounted(function (s, e) { //加载数据源
+        $api.get('ManageMenu/SystemMenuShow:60').then(function (req) {
+            if (req.data.success) {
+                var result = nodeconvert(req.data.result);
+                s.add(result);
+            } else {
+                console.error(req.data.exception);
+                throw req.config.way + ' ' + req.data.message;
+            }
+        }).catch(err => console.error(err));
     }).onclick($event.nodeClick);
-    $api.get('ManageMenu/SystemMenuShow:60').then(function (req) {
-        if (req.data.success) {
-            var result = nodeconvert(req.data.result);
-            drop.add(result);
-        } else {
-            console.error(req.data.exception);
-            throw req.config.way + ' ' + req.data.message;
-        }
-    }).catch(err => console.error(err));*/
+
     //竖形工具条
-    var vbar = $vbar.create({
-        target: '#vbar-area', id: 'rbar-156',
+    $vbar.create({
+        target: '#vbar-area', id: 'rbar-156', level: 30,
         width: 30, height: 'calc(100% - 35px)'
+    }).onmounted((s, e) => {
+        $dom.get($dom.path() + 'Panel/Datas/vbar.json', req => s.add(req));
     }).onclick($event.nodeClick);
-    $dom.get($dom.path() + 'Panel/Datas/vbar.json', req => vbar.add(req));
+
     //选项卡
     window.tabs = $tabs.create({
         target: '#tabs-area',
@@ -217,20 +228,25 @@ window.$succeeded = function (result) {
             url: '/orgadmin/start',
             ico: 'a020'
         }
-    });
-    tabs.onshut($event.tabsShut).onchange($event.tabChange).onfull((s, e) => {
-        //alert(s);
-    });
-    //选项卡的帮助
-    tabs.onhelp(function (s, e) {
-        let url = e.data.help && e.data.help != '' ? e.data.help : '/help/Documents/index.html?page=' + encodeURIComponent(e.data.url);
-        //父id,此处必须设置，用于判断该弹窗属于哪个选项卡
-        $pagebox.create({
-            pid: e.data.id, id: $api.md5(e.data.url),
-            width: '800', height: '80%', ico: 'a026',
-            url: url, title: e.data.title + ' - 帮助说明'
-        }).open();
-    });
+    }).onshut($event.tabsShut).onchange($event.tabChange)
+        .onfull((s, e) => {     //选项卡全屏时，隐藏其它控件
+            window.tree.hide();
+            window.drop.hide();
+            $dom("#pageboxcollect").hide();
+        }).onrestore(function (s, e) {
+            window.tree.show();
+            window.drop.show();
+            $dom("#pageboxcollect").show();
+        }).onhelp(function (s, e) {   //选项卡的帮助
+            let url = e.data.help && e.data.help != '' ? e.data.help : '/help/Documents/index.html?page=' + encodeURIComponent(e.data.url);
+            //父id,此处必须设置，用于判断该弹窗属于哪个选项卡
+            $pagebox.create({
+                pid: e.data.id, id: $api.md5(e.data.url),
+                width: '800', height: '80%', ico: 'a026',
+                url: url, title: e.data.title + ' - 帮助说明'
+            }).open();
+        });
+
     //风格切换事件
     window.$skins.onchange(function (s, e) {
         $dom('#loading').show();
@@ -264,7 +280,7 @@ window.$succeeded = function (result) {
 window.$event = {
     //节点点击事件，tree,drop,统一用这一个
     'nodeClick': function (sender, eventArgs) {
-        var data = $api.clone(eventArgs.data);      
+        var data = $api.clone(eventArgs.data);
         //如果有下级节点，则不响应事件
         if (!!data.childs && data.childs.length > 0) return; //如果有下级节点，则不响应事件
         //处理相对路径

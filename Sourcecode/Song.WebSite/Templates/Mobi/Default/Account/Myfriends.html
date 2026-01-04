@@ -27,12 +27,12 @@
                     <div class="acc_photo" v-if="!!account.Ac_Photo && account.Ac_Photo!=''"
                         :style="'background-image: url('+account.Ac_Photo+');'"></div>
                     <template v-else>
-                        <div class="acc_photo woman" v-if="account.Ac_Sex==2"></div>
+                        <div class="acc_photo woman" v-if="account.Ac_Gender==2"></div>
                         <div class="acc_photo man" v-else></div>
                     </template>
                     <div class="accInfo">
                         <div class="acc-name">
-                            <icon :woman="account.Ac_Sex==2" hide :man="account.Ac_Sex!=2">
+                            <icon :woman="account.Ac_Gender==2" hide :man="account.Ac_Gender!=2">
                                 <span v-html='account.Ac_Name' v-if="account.Ac_Name!=''"></span>
                                 <span v-else class="noname">(没有名字)</span>
                             </icon>
@@ -65,7 +65,7 @@
                         <template #title>
                             <avatar :account="item" circle="true" size="50"></avatar>
                             <div class="account">
-                                <icon :woman="item.Ac_Sex==2" small :man="item.Ac_Sex!=2">
+                                <icon :woman="item.Ac_Gender==2" small :man="item.Ac_Gender!=2">
                                     <span v-html='item.Ac_Name' v-if="item.Ac_Name!=''"></span>
                                     <span v-else class="noname">(没有名字)</span>
                                 </icon>

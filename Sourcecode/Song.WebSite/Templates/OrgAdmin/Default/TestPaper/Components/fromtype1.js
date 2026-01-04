@@ -1,4 +1,4 @@
-﻿//试卷按章节抽题的组件
+﻿//试卷按章节出题的组件
 Vue.component('fromtype1', {
     //total:总分
     props: ['types', 'testpaper', 'total'],
@@ -56,7 +56,7 @@ Vue.component('fromtype1', {
 
     },
     mounted: function () {
-        $dom.load.css([$dom.path() + 'TestPaper/Components/Styles/fromtype1.css']);
+
     },
     methods: {
         //获取章节
@@ -79,7 +79,7 @@ Vue.component('fromtype1', {
                 console.error(err);
             }).finally(() =>  {});
         },
-        //解析试题抽题的设置项
+        //解析试题出题的设置项
         parserPercXML: function () {
             if (!this.testpaper || this.testpaper.Tp_FromConfig == null
                 || this.testpaper.Tp_FromConfig == '') {
@@ -89,7 +89,7 @@ Vue.component('fromtype1', {
             var parser = new DOMParser();
             var xmlDoc = parser.parseFromString(this.testpaper.Tp_FromConfig, "text/xml");
             var nodes = null;
-            //解析按章节抽题时，各题型的占比
+            //解析按章节出题时，各题型的占比
             if (xmlDoc.lastChild.children.length > 1) {
                 nodes = xmlDoc.lastChild.children[1].firstChild.children;
                 var arr = [];
@@ -122,7 +122,7 @@ Vue.component('fromtype1', {
             var xmlDoc = parser.parseFromString(this.testpaper.Tp_FromConfig, "text/xml");
             var nodes = null;
             var steuparr = [];
-            //解析按章节抽题时，各题型的占比
+            //解析按章节出题时，各题型的占比
             if (xmlDoc.lastChild.children.length > 1) {
                 nodes = xmlDoc.lastChild.children[1].lastChild.children;
                 for (var i = 0; i < nodes.length; i++) {

@@ -19,7 +19,6 @@
 #tinymce-app .tinymce-cnt p{text-indent:0;}
 .mce-content-body:not([dir=rtl])[data-mce-placeholder]:not(.mce-visualblocks)::before{top:20px;left: 10px!important}
 .mce-content-body div.mce-resizehandle{ z-index: 9!important;}
-.tox-editor-header{border-bottom:1px solid #ddd!important;}
 #tinymce-app .tinymce-box{color: #000;border:none!important; }
 
 .attachment {

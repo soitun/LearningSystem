@@ -1,5 +1,4 @@
 //专业的级联选择器
-$dom.load.css([$dom.path() + 'Components/Styles/sbj_cascader.css']);
 Vue.component('sbj_cascader', {
     //sbjid:专业id
     props: ['sbjid', 'orgid', 'disabled'],

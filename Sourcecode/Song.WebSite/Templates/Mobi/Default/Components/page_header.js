@@ -24,7 +24,6 @@ Vue.component('page_header', {
         }
     },
     mounted: function () {
-        $dom.load.css([$dom.path() + 'Components/Styles/page_header.css']);
     },
     methods: {
         //刷新页面

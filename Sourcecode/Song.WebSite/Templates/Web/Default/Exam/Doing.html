@@ -41,7 +41,7 @@
                 <div class="account" v-if="islogin">
                     <avatar :account="account" circle="true" size="80"></avatar>
                     <div>
-                        <icon :woman="account.Ac_Sex==2" :man="account.Ac_Sex!=2">
+                        <icon :woman="account.Ac_Gender==2" :man="account.Ac_Gender!=2">
                             <span v-if="!!account.Ac_Name" v-html="account.Ac_Name"></span>
                             <span v-else class="noname">(无名)</span>
                             （{{account.Ac_AccName}})

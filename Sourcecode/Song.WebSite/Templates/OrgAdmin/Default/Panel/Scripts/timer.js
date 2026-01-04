@@ -8,9 +8,9 @@
  * 最后修订：2020年2月28日
  * github开源地址:https://github.com/weishakeji/WebdeskUI
  */
-(function(win) {
-	var timer = function(param) {
-		if (param == null || typeof(param) != 'object') param = {};
+(function (win) {
+	var timer = function (param) {
+		if (param == null || typeof (param) != 'object') param = {};
 		this.attrs = {
 			time: null, //初始时间
 			year: 0, //年
@@ -40,13 +40,21 @@
 		});
 	};
 	var fn = timer.prototype;
-	fn._initialization = function() {
+	fn._initialization = function () {
 		if (!this._id) this._id = 'timer_' + new Date().getTime();
 		this.time = new Date();
 	};
+	//隐藏控件
+	fn.hide = function () {
+		if (this.dom) this.dom.hide();
+	};
+	//显示控件
+	fn.show = function () {
+		if (this.dom) this.dom.show();
+	};
 	//当属性更改时触发相应动作
 	fn._watch = {
-		'time': function(obj, val, old) {
+		'time': function (obj, val, old) {
 			if (val instanceof Date) obj._time = val;
 			if (Object.prototype.toString.call(val) === "[object String]") {
 				obj._time = new Date(val);
@@ -55,7 +63,7 @@
 				time: obj._time
 			});
 		},
-		'second': function(obj, val, old) {
+		'second': function (obj, val, old) {
 			for (var i = 0; i < obj.datas.length; i++) {
 				var plan = obj.datas[i];
 				plan._val = !plan._val ? plan.val - 1 : plan._val - 1;
@@ -72,13 +80,13 @@
 			}
 		}
 	}
-	fn.format = function(fmt) {
+	fn.format = function (fmt) {
 		return timer.format(fmt, this.time);
 	}
 	//重构
-	fn._restructure = function() {
+	fn._restructure = function () {
 		var th = this;
-		$dom('timer').each(function() {
+		$dom('timer').each(function () {
 			var fmt = $dom(this).attr('format');
 			if (fmt == null) return;
 			var ret = th.format(fmt)
@@ -86,8 +94,8 @@
 		});
 	};
 	fn._baseEvents = {
-		interval: function(obj) {
-			obj.interval = window.setInterval(function() {
+		interval: function (obj) {
+			obj.interval = window.setInterval(function () {
 				var mil = obj.time.getTime() + 1000;
 				obj._time = new Date(mil);
 				//
@@ -113,13 +121,13 @@
 			id: 'dd'
 		}
 	*/
-	fn.addplan = function(plan) {
+	fn.addplan = function (plan) {
 		if (arguments.length == 1) {
-			if (plan == null || typeof(plan) != 'object') plan = {};
+			if (plan == null || typeof (plan) != 'object') plan = {};
 			if (!plan.id) plan.id = this.datas.length + '_' + new Date().getTime();
 			if (!plan.unit) plan.unit = 's';
 			if (!plan.loop || !(typeof plan.loop === 'number')) plan.loop = -1;
-			if (!plan.event || typeof(plan.event) != "function") plan.event = null;
+			if (!plan.event || typeof (plan.event) != "function") plan.event = null;
 			//计算间隔时间
 			if (plan.unit == 'm') plan.val = plan.val * 60;
 			if (plan.unit == 'h') plan.val = plan.val * 60 * 60;
@@ -142,7 +150,7 @@
 
 	};
 	//删除执行计划
-	fn.delplan = function(id) {
+	fn.delplan = function (id) {
 		if (id == null) {
 			this.datas = [];
 			return;
@@ -155,19 +163,19 @@
 		}
 	};
 	//输出格式化的当前时间
-	fn.format = function(fmt, date) {
+	fn.format = function (fmt, date) {
 		if (date == null) date = this.time;
 		return timer.format(fmt, date);
 	}
 	/*
 	timer的静态方法
 	*/
-	timer.create = function(param) {
+	timer.create = function (param) {
 		if (param == null) param = {};
 		var tobj = new verticalbar(param);
 		return tobj;
 	};
-	timer.format = function(fmt, date) {
+	timer.format = function (fmt, date) {
 		fmt = fmt.replace(/\Y/g, "y");
 		//24小时制
 		var h24 = date.toLocaleString();
@@ -175,7 +183,7 @@
 			h24 = date.toLocaleString('chinese', {
 				hour12: false
 			});
-		} catch (e) {}
+		} catch (e) { }
 		h24 = h24.substring(h24.indexOf(' ') + 1, h24.indexOf(':'));
 		//12小时制
 		var h12 = date.toLocaleString();
@@ -183,7 +191,7 @@
 			h12 = date.toLocaleString('chinese', {
 				hour12: true
 			});
-		} catch (e) {}
+		} catch (e) { }
 		h12 = h12.substring(h12.indexOf(' ') + 1, h12.indexOf(':'));
 		//星期
 		var week = ['天', '一', '二', '三', '四', '五', '六'];
@@ -210,7 +218,7 @@
 	}
 
 	win.$timer = new timer();
-	window.addEventListener('load', function() {
+	window.addEventListener('load', function () {
 		window.$timer._restructure();
 	}, true);
 })(window);

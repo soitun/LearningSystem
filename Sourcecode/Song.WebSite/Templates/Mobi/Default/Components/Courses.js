@@ -1,5 +1,4 @@
 //课程列表
-$dom.load.css([$dom.path() + 'Components/Styles/courses.css']);
 Vue.component('courses', {
     //sbjid:专业id,小于等于0，取推荐课程
     props: ['sbjid', 'title', 'orgid', 'config', 'count'],

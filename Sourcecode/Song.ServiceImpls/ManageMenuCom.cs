@@ -42,7 +42,7 @@ namespace Song.ServiceImpls
                 entity.MM_Root = entity.MM_Id;
                 id = entity.MM_Id;
             }
-            entity.MM_Tax = this.GetMaxTaxis("0") + 1;
+            entity.MM_Order = this.GetMaxTaxis("0") + 1;
             entity.MM_PatId = "0";
             Gateway.Default.Save<ManageMenu>(entity);
             //执行事件
@@ -108,11 +108,11 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public ManageMenu[] GetRoot(int identify)
         {
-            return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_Root == identify).OrderBy(ManageMenu._.MM_Tax.Asc).ToArray<ManageMenu>();
+            return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_Root == identify).OrderBy(ManageMenu._.MM_Order.Asc).ToArray<ManageMenu>();
         }
         public ManageMenu[] GetRoot(string func)
         {
-            return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_PatId == "0" && ManageMenu._.MM_Func == func).OrderBy(ManageMenu._.MM_Tax.Asc).ToArray<ManageMenu>();
+            return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_PatId == "0" && ManageMenu._.MM_Func == func).OrderBy(ManageMenu._.MM_Order.Asc).ToArray<ManageMenu>();
         }
         public ManageMenu[] GetRoot(bool? isShow)
         {
@@ -120,7 +120,7 @@ namespace Song.ServiceImpls
             {
                 return this.GetRoot("func");
             }
-            return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_PatId == "0" && ManageMenu._.MM_IsShow == isShow).OrderBy(ManageMenu._.MM_Tax.Asc).ToArray<ManageMenu>();
+            return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_PatId == "0" && ManageMenu._.MM_IsShow == isShow).OrderBy(ManageMenu._.MM_Order.Asc).ToArray<ManageMenu>();
         }
         public ManageMenu[] GetRoot(string func, bool? isShow)
         {
@@ -128,7 +128,7 @@ namespace Song.ServiceImpls
             {
                 return this.GetRoot(func);
             }
-            return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_PatId == "0" && ManageMenu._.MM_IsShow == isShow && ManageMenu._.MM_Func == func).OrderBy(ManageMenu._.MM_Tax.Asc).ToArray<ManageMenu>();
+            return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_PatId == "0" && ManageMenu._.MM_IsShow == isShow && ManageMenu._.MM_Func == func).OrderBy(ManageMenu._.MM_Order.Asc).ToArray<ManageMenu>();
         }
         public ManageMenu[] GetRoot(int identify, bool? isShow)
         {
@@ -136,7 +136,7 @@ namespace Song.ServiceImpls
             {
                 return this.GetRoot(identify);
             }
-            return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_Root == identify && ManageMenu._.MM_IsShow == isShow).OrderBy(ManageMenu._.MM_Tax.Asc).ToArray<ManageMenu>();
+            return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_Root == identify && ManageMenu._.MM_IsShow == isShow).OrderBy(ManageMenu._.MM_Order.Asc).ToArray<ManageMenu>();
         }
         /// <summary>
         /// 获取树对象,即所有栏目；
@@ -148,9 +148,9 @@ namespace Song.ServiceImpls
         {
             if (isShow == null)
             {
-                return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_Func == func).OrderBy(ManageMenu._.MM_Tax.Asc).ToArray<ManageMenu>();
+                return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_Func == func).OrderBy(ManageMenu._.MM_Order.Asc).ToArray<ManageMenu>();
             }
-            return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_Func == func && ManageMenu._.MM_IsShow == isShow).OrderBy(ManageMenu._.MM_Tax.Asc).ToArray<ManageMenu>();
+            return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_Func == func && ManageMenu._.MM_IsShow == isShow).OrderBy(ManageMenu._.MM_Order.Asc).ToArray<ManageMenu>();
         }
         public ManageMenu[] GetTree(string func, bool? isShow, bool? isUse)
         {
@@ -160,9 +160,9 @@ namespace Song.ServiceImpls
             }
             if (isShow == null)
             {
-                return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_Func == func && ManageMenu._.MM_IsUse == isUse).OrderBy(ManageMenu._.MM_Tax.Asc).ToArray<ManageMenu>();
+                return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_Func == func && ManageMenu._.MM_IsUse == isUse).OrderBy(ManageMenu._.MM_Order.Asc).ToArray<ManageMenu>();
             }
-            return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_Func == func && ManageMenu._.MM_IsShow == isShow && ManageMenu._.MM_IsUse == isUse).OrderBy(ManageMenu._.MM_Tax.Asc).ToArray<ManageMenu>();
+            return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_Func == func && ManageMenu._.MM_IsShow == isShow && ManageMenu._.MM_IsUse == isUse).OrderBy(ManageMenu._.MM_Order.Asc).ToArray<ManageMenu>();
         }
         #endregion
         /// <summary>
@@ -173,13 +173,13 @@ namespace Song.ServiceImpls
         {
             //if (entity.MM_Id <= 0) entity.MM_Id = WeiSha.Core.Request.SnowID();
             //如果没有排序号，则自动计算
-            if (entity.MM_Tax < 1)
+            if (entity.MM_Order < 1)
             {
-                object obj = Gateway.Default.Max<ManageMenu>(ManageMenu._.MM_Tax, ManageMenu._.MM_PatId == entity.MM_PatId);
-                entity.MM_Tax = obj != null ? Convert.ToInt32(obj) + 1 : 0;
+                object obj = Gateway.Default.Max<ManageMenu>(ManageMenu._.MM_Order, ManageMenu._.MM_PatId == entity.MM_PatId);
+                entity.MM_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
             if (string.IsNullOrWhiteSpace(entity.MM_UID))
-                entity.MM_UID = WeiSha.Core.Request.UniqueID();
+                entity.MM_UID = WeiSha.Core.Request.SnowID().ToString();
             Gateway.Default.Save<ManageMenu>(entity);
             entity = Gateway.Default.From<ManageMenu>().OrderBy(ManageMenu._.MM_Id.Desc).ToFirst<ManageMenu>();
             //执行事件
@@ -201,15 +201,16 @@ namespace Song.ServiceImpls
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void Delete(ManageMenu entity)
+        public int Delete(ManageMenu entity)
         {
             ManageMenu dep = Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_Id == entity.MM_Id).ToFirst<ManageMenu>();
-            if (dep == null) return;
+            if (dep == null) return 0;
+            int i = 0;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
                 {
-                    this._Delete(dep.MM_UID, tran);
+                    i = this._Delete(dep.MM_UID, tran);
                     tran.Commit();
                     //执行事件
                     OnChanged?.Invoke(this, EventArgs.Empty);
@@ -220,27 +221,28 @@ namespace Song.ServiceImpls
                     throw ex;
                 }
             }
-
+            return i;
         }
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        public void Delete(int identify)
+        public int Delete(int identify)
         {
 
             ManageMenu dep = Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_Id == identify).ToFirst<ManageMenu>();
-            if (dep == null) return;
+            if (dep == null) return 0;
             if (dep.MM_IsFixed)
             {
                 string msg = string.Format("菜单项：{0}，不允许被删除", dep.MM_Name);
                 throw new Exception(msg);
             }
+            int i = 0;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
                 {
-                    this._Delete(dep.MM_UID, tran);
+                    i = this._Delete(dep.MM_UID, tran);
                     tran.Commit();
                     //执行事件
                     OnChanged?.Invoke(this, EventArgs.Empty);
@@ -251,6 +253,7 @@ namespace Song.ServiceImpls
                     throw ex;
                 }
             }
+            return i;
         }
         /// <summary>
         /// 删除，按栏目名称
@@ -297,8 +300,8 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public ManageMenu GetRootMarker(string marker)
         {
-            WhereClip wc = ManageMenu._.MM_Marker == marker && ManageMenu._.MM_PatId == 0;
-            return Gateway.Default.From<ManageMenu>().Where(wc).OrderBy(ManageMenu._.MM_Tax.Asc).ToFirst<ManageMenu>();
+            WhereClip wc = ManageMenu._.MM_Marker == marker && ManageMenu._.MM_PatId == "0";
+            return Gateway.Default.From<ManageMenu>().Where(wc).OrderBy(ManageMenu._.MM_Order.Asc).ToFirst<ManageMenu>();
         }
         /// <summary>
         /// 获取同一父级下的最大排序号；
@@ -308,7 +311,7 @@ namespace Song.ServiceImpls
         public int GetMaxTaxis(string parentId)
         {
             //添加对象，并设置排序号
-            object obj = Gateway.Default.Max<ManageMenu>(ManageMenu._.MM_Tax, ManageMenu._.MM_PatId == parentId);
+            object obj = Gateway.Default.Max<ManageMenu>(ManageMenu._.MM_Order, ManageMenu._.MM_PatId == parentId);
             return obj != null ? Convert.ToInt32(obj) + 1 : 0;
         }        
         /// <summary>
@@ -326,15 +329,9 @@ namespace Song.ServiceImpls
         public List<ManageMenu> GetAll(bool? isUse, bool? isShow)
         {
             WhereClip wc = ManageMenu._.MM_Name != "";
-            if (isUse != null)
-            {
-                wc.And(ManageMenu._.MM_IsUse == isUse);
-            }
-            if (isShow != null)
-            {
-                wc.And(ManageMenu._.MM_IsShow == isShow);
-            }
-            return Gateway.Default.From<ManageMenu>().Where(wc).OrderBy(ManageMenu._.MM_Tax.Asc).ToList<ManageMenu>();
+            if (isUse != null)wc.And(ManageMenu._.MM_IsUse == isUse);        
+            if (isShow != null)wc.And(ManageMenu._.MM_IsShow == isShow);
+            return Gateway.Default.From<ManageMenu>().Where(wc).OrderBy(ManageMenu._.MM_Order.Asc).ToList<ManageMenu>();
         }
         /// <summary>
         /// 获取所有对象，功能菜单或系统菜菜
@@ -348,15 +345,9 @@ namespace Song.ServiceImpls
             WhereClip wc = new WhereClip();
             if (isUse != null) wc.And(ManageMenu._.MM_IsUse == isUse);
             if (isShow != null) wc.And(ManageMenu._.MM_IsShow == isShow);
-            if (type == "sys")
-            {
-                wc.And(ManageMenu._.MM_Func == type);
-            }
-            else
-            {
-                wc.And(ManageMenu._.MM_Func == "func");
-            }
-            return Gateway.Default.From<ManageMenu>().Where(wc).OrderBy(ManageMenu._.MM_Tax.Asc).ToList<ManageMenu>();
+            if (type == "sys") wc.And(ManageMenu._.MM_Func == type);
+            else wc.And(ManageMenu._.MM_Func == "func");
+            return Gateway.Default.From<ManageMenu>().Where(wc).OrderBy(ManageMenu._.MM_Order.Asc).ToList<ManageMenu>();
         }
         //public ManageMenu[] GetAll(int rootid, bool? isUse, bool? isShow, string type)
         //{
@@ -373,7 +364,7 @@ namespace Song.ServiceImpls
         //    {
         //        wc.And(ManageMenu._.MM_Func == "func");
         //    }
-        //    return Gateway.Default.From<ManageMenu>().Where(wc).OrderBy(ManageMenu._.MM_Tax.Asc).ToArray<ManageMenu>();
+        //    return Gateway.Default.From<ManageMenu>().Where(wc).OrderBy(ManageMenu._.MM_Order.Asc).ToArray<ManageMenu>();
         //}
         /// <summary>
         /// 获取某一个根菜单下的所有分级
@@ -385,43 +376,53 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public List<ManageMenu> GetFunctionMenu(string uid, bool? isUse, bool? isShow)
         {
-            List<ManageMenu> list = new List<ManageMenu>();
+          
             WhereClip wc = ManageMenu._.MM_Func == "func";          
             if (isUse != null) wc.And(ManageMenu._.MM_IsUse == isUse);
             if (isShow != null) wc.And(ManageMenu._.MM_IsShow == isShow);
-            _GetFunctionMenu(uid, wc, list);
-            return list;
+            // 所有菜单项
+            List<ManageMenu> mms = Gateway.Default.From<ManageMenu>().Where(wc).OrderBy(ManageMenu._.MM_Order.Asc).ToList<ManageMenu>();
+            return _getFunctionMenu(uid, mms);
         }
-        private List<ManageMenu> _GetFunctionMenu(string uid, WhereClip wc, List<ManageMenu> list)
-        {
-            if(list==null)list= new List<ManageMenu>();
-            WhereClip where = new WhereClip();
-            if (!string.IsNullOrWhiteSpace(uid)) where.And(ManageMenu._.MM_PatId == uid);
-            where.And(wc);
-            ManageMenu[] mms = Gateway.Default.From<ManageMenu>().Where(where).OrderBy(ManageMenu._.MM_Tax.Asc).ToArray<ManageMenu>();
-            foreach(ManageMenu m in mms)
+        private List<ManageMenu> _getFunctionMenu(string uid, List<ManageMenu> mms)
+        {        
+            List<ManageMenu> currentLvl = new List<ManageMenu>();
+            List<ManageMenu> tmlist = new List<ManageMenu>();   //临时记录          
+            for (int i = 0; i < mms.Count; i++)
             {
-                list.Add(m);
-                _GetFunctionMenu(m.MM_UID, wc, list);
+                if (mms[i].MM_PatId == uid)
+                {
+                    currentLvl.Add(mms[i]);
+                    tmlist.Add(mms[i]);
+                    mms.RemoveAt(i);
+                    i--;
+                }
             }
-            return list;
+            if (currentLvl.Count > 0)
+            {
+                for (int i = 0; i < currentLvl.Count; i++)
+                {
+                    tmlist.AddRange(_getFunctionMenu(currentLvl[i].MM_UID, mms));
+                }
+            }           
+            return tmlist;
         }
         /// <summary>
         /// 获取当前对象的子级对象；
         /// </summary>
-        /// <param name="identify">当前实体的主键</param>
+        /// <param name="uid">当前菜单项的唯一标识</param>
         /// <returns></returns>
-        public ManageMenu[] GetChilds(int identify)
+        public List<ManageMenu> GetChilds(string uid)
         {
             //仅取当前对象的下一级对象；
-            return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_PatId == identify).OrderBy(ManageMenu._.MM_Tax.Asc).ToArray<ManageMenu>();
+            return Gateway.Default.From<ManageMenu>().Where(ManageMenu._.MM_PatId == uid).OrderBy(ManageMenu._.MM_Order.Asc).ToList<ManageMenu>();
         }
-        public ManageMenu[] GetChilds(int identify, bool? isUse, bool? isShow)
+        public List<ManageMenu> GetChilds(string uid, bool? isUse, bool? isShow)
         {
-            WhereClip wc = ManageMenu._.MM_PatId == identify;
+            WhereClip wc = ManageMenu._.MM_PatId == uid;
             if (isUse != null) wc.And(ManageMenu._.MM_IsUse == isUse);
             if (isShow != null) wc.And(ManageMenu._.MM_IsShow == isShow);
-            return Gateway.Default.From<ManageMenu>().Where(wc).OrderBy(ManageMenu._.MM_Tax.Asc).ToArray<ManageMenu>();
+            return Gateway.Default.From<ManageMenu>().Where(wc).OrderBy(ManageMenu._.MM_Order.Asc).ToList<ManageMenu>();
 
         }
         /// <summary>
@@ -486,8 +487,8 @@ namespace Song.ServiceImpls
                     foreach (ManageMenu item in items)
                     {
                         tran.Update<ManageMenu>(
-                            new Field[] { ManageMenu._.MM_Tax },
-                            new object[] { item.MM_Tax },
+                            new Field[] { ManageMenu._.MM_Order },
+                            new object[] { item.MM_Order },
                             ManageMenu._.MM_Id == item.MM_Id);
                     }
                     tran.Commit();
@@ -579,22 +580,24 @@ namespace Song.ServiceImpls
         /// 私有对象，用于删除对象的子级，以及相关信息
         /// </summary>
         /// <param name="uid"></param>
-        private void _Delete(string uid)
+        private int _Delete(string uid)
         {
-            _Delete(uid, null);
+            return _Delete(uid, null);
         }
-        private void _Delete(string uid, DbTrans tran)
+        private int _Delete(string uid, DbTrans tran)
         {
+            int i = 0;
             ManageMenu[] ws = tran.From<ManageMenu>().Where(ManageMenu._.MM_PatId == uid).ToArray<ManageMenu>();
             //删除子级
             foreach (ManageMenu w in ws)
             {
-                _Delete(w.MM_UID, tran);
+                i += _Delete(w.MM_UID, tran);
             }
             //删除菜单与权限的关联
             tran.Delete<Purview>(Purview._.MM_UID == uid);
             //删除自身
             tran.Delete<ManageMenu>(ManageMenu._.MM_UID == uid);
+            return i;
         }
         private void _Save(ManageMenu entity, int rootid)
         {

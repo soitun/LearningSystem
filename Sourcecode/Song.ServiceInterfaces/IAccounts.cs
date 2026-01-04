@@ -42,24 +42,24 @@ namespace Song.ServiceInterfaces
         /// <param name="entity">账号对象的实体</param>
         /// <param name="fiels">要修改的字段</param>
         /// <param name="objs">fiels对应的值</param>
-        void AccountsUpdate(Accounts entity, Field[] fiels, object[] objs);
+        int AccountsUpdate(Accounts entity, Field[] fiels, object[] objs);
         /// <summary>
         /// 修改账户，按条件修改
         /// </summary>
         /// <param name="acid">账号ID</param>
         /// <param name="fiels">要修改的字段</param>
         /// <param name="objs">fiels对应的值</param>
-        void AccountsUpdate(int acid, Field[] fiels, object[] objs);
+        int AccountsUpdate(int acid, Field[] fiels, object[] objs);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void AccountsDelete(int identify);
+        int AccountsDelete(int identify);
         /// <summary>
         /// 删除账户
         /// </summary>
         /// <param name="entity">账号对象的实体</param>
-        void AccountsDelete(Accounts entity);
+        int AccountsDelete(Accounts entity);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>
@@ -596,17 +596,17 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="ma"></param>
         /// <returns></returns>
-        MoneyAccount MoneyConfirm(MoneyAccount ma);        
+        MoneyAccount MoneyConfirm(MoneyAccount ma);
         /// <summary>
         /// 删除流水
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void MoneyDelete(MoneyAccount entity);
+        int MoneyDelete(MoneyAccount entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void MoneyDelete(int identify);
+        int MoneyDelete(int identify);
         /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>
@@ -716,7 +716,6 @@ namespace Song.ServiceInterfaces
         /// <summary>
         /// 分页获取资金流水；
         /// </summary>
-        /// </summary>
         /// <param name="orgid">机构id</param>
         /// <param name="type">类型，支出为1，转入2</param>
         /// <param name="from">来源，1为管理员，2为充值码，3为在线支付</param>
@@ -754,8 +753,10 @@ namespace Song.ServiceInterfaces
         /// 账号总数
         /// </summary>
         /// <param name="orgid">机构id，小于或等0取所有</param>
+        /// <param name="isuse"></param>
+        /// <param name="ispass"></param>
         /// <returns></returns>
-        int Total(int orgid);        
+        int Total(int orgid, bool? isuse, bool? ispass);      
         /// <summary>
         /// 统计各个年龄段的学员
         /// </summary>

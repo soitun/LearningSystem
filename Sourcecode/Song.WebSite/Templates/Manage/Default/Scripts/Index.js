@@ -30,6 +30,7 @@ window.$ctrljs = function (f) {
     }, '/Utilities/Panel/Scripts/ctrls.js');
 };
 $ctrljs(function () {
+    /*
     window.login = $login.create({
         target: '#login-area',
         ico: 'e79b',
@@ -87,7 +88,7 @@ $ctrljs(function () {
         });
     });
     window.login.ondragfinish(function (s, e) {
-        $api.post('Helper/CheckCodeImg', { 'leng': s.vcodelen, 'acc': s.user }).then(function (req) {
+        $api.post('Platform/CheckCodeImg', { 'leng': s.vcodelen, 'acc': s.user }).then(function (req) {
             if (req.data.success) {
                 var result = req.data.result;
                 s.vcodebase64 = result.base64;
@@ -142,6 +143,8 @@ $ctrljs(function () {
     }, function (err) {
         window.login.loading = false;
     });
+*/
+
     //右上角菜单,用户信息
     window.usermenu = window.$dropmenu.create({
         target: '#user-area',
@@ -228,8 +231,15 @@ function ready(result) {
     } else {
         $api.get('ManageMenu/Menus:60').then(function (req) {
             if (req.data.success) {
-                var result = nodeconvert(req.data.result);
-                window.tree.add(result);
+                var result = nodeconvert(req.data.result);               
+                for (var i = 0; i < result.length; i++) {
+                    if (i == 0)
+                        tree.add(result[i].childs);
+                    else {
+                        tree.add(result[i]);
+                    }
+                }
+                //window.tree.add(result);
                 window.tree.complete = true;
             } else {
                 console.error(req.data.exception);

@@ -1,6 +1,4 @@
 ﻿//答题卡
-console.log($dom.pagepath());
-$dom.load.css([$dom.pagepath() + 'Components/Styles/answercard.css']);
 Vue.component('answercard', {
     props: ['questions', 'types', 'index'],
     data: function () {

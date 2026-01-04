@@ -117,7 +117,7 @@ $ready(function () {
                 obj.Ac_AccName = user.unionid;
                 obj.Ac_Name = user.nickname;             //昵称
                 obj.Ac_Photo = user.headimgurl;      //用户头像
-                obj.Ac_Sex = user.sex == 0 ? 1 : 2;  //性别，1为男，2为女
+                obj.Ac_Gender = user.sex == 0 ? 1 : 2;  //性别，1为男，2为女
                 var th = this;
                 th.loading_crt = true;
                 $api.post('Account/UserCreate', { 'acc': obj, 'openid': user.unionid, 'field': th.tag }).then(function (req) {

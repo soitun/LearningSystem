@@ -51,10 +51,10 @@
         /* 自定义事件 */
         //shown打开，shut关闭，load加载，fail加载失败，
         //click点击，drag拖动,focus得到焦点，blur失去焦点
-        //min最小化，full全屏，restore还原，resize缩放
+        //min最小化，full全屏，restore还原，resize缩放,move移动
         let customEvents = ['shown', 'shut', 'load', 'fail',
             'click', 'drag', 'focus', 'blur',
-            'mini', 'full', 'restore', 'resize'
+            'mini', 'full', 'restore', 'resize', 'move'
         ];
         eval($ctrl.event_generate(customEvents));
         //以下不支持双向绑定
@@ -80,30 +80,33 @@
         this.height = this._method.calcSize(this._height, 'height');
         //最前面的窗体，用于设置当前窗体的位置，以免覆盖之前的
         let topbox = box.gettop();
-        if (topbox != null && topbox.full) topbox = null;
+        if (topbox != null) {
+            if (topbox.full || this.showmask
+                || (topbox.left + topbox.width / 2) < box.availWidth / 3
+                || (topbox.left + topbox.width / 2) > box.availWidth() / 3 * 2
+                || (topbox.top + topbox.height / 2) < box.availHeight() / 3
+                || (topbox.top + topbox.height / 2) > box.availHeight() / 3 * 2
+            ) topbox = null;
+        }
         //如果位置没有设置
         if (!this.top && this.bottom) this.top = box.availHeight() - this.height - this.bottom;
-        if (!this.top && !this.bottom) {
-            if (topbox == null || this.showmask)
-                this.top = (box.availHeight() - document.body.scrollTop - this.height) / 2;
-            else
-                this.top = topbox.dom.offset().top + 30;
-        }
+        if (!this.top && !this.bottom) this.top = topbox != null ? topbox.dom.offset().top + 30
+            : (box.availHeight() - document.body.scrollTop - this.height) / 2;
         if (!this.left && this.right) this.left = box.availWidth() - this.width - this.right;
-        if (!this.left && !this.right) {
-            if (topbox == null || this.showmask)
-                this.left = (box.availWidth() - document.body.scrollLeft - this.width) / 2;
-            else
-                this.left = topbox.dom.offset().left + 30;
-        }
+        if (!this.left && !this.right) this.left = topbox != null ? topbox.dom.offset().left + 30
+            : (box.availWidth() - document.body.scrollLeft - this.width) / 2;
         //
-        $ctrls.add({
-            id: this.id,
-            obj: this,
-            type: 'pagebox'
-        });
+        $ctrls.add({ id: this.id, obj: this, type: 'pagebox' });
         this._isinit = true;
         return this;
+    };
+    //隐藏控件
+    fn.hide = function () {
+        if (this.dom) this.dom.hide();
+    };
+    //显示控件
+    fn.show = function () {
+        if (this.dom) this.dom.show();
     };
     //当属性更改时触发相应动作
     fn._watch = {
@@ -210,9 +213,7 @@
                     if (size == 'height') newval = Math.floor(window.innerHeight * parseInt(val) / 100);
                 }
                 //如果是像素                
-                if (String(val).substring(String(val).length - 2) == 'px') {
-                    newval = parseInt(val);
-                }
+                if (String(val).substring(String(val).length - 2) == 'px') newval = parseInt(val);
             }
             return newval;
         }
@@ -261,6 +262,66 @@
         if (this.showmask) this.showBgMark();
         return this.focus();
     };
+    //打开子窗口 subox:子窗体对象,place:子窗体相对父窗体的位置,如left,right,top,bottom,
+    fn.opensub = function (subox, place) {
+        subox.parent = this;
+        subox._pid = this.id;
+        subox._showmask = true;
+        subox._max = false;
+        subox._min = false;
+        //子窗体标题样式，默认继承父窗体的标题样式
+        subox.attrs.titstyle = this.attrs.titstyle;
+        subox.attrs.iconstyle = this.attrs.iconstyle;
+        //偏移值，例如不要窗体太靠边，留白一部分
+        let space = 6;
+        //计算子窗体的位置
+        var subleft = (box.availWidth() - subox.width) / 2;
+        var subtop = (box.availHeight() - subox.height) / 2;
+        //当前窗体的位置
+        var currleft = this.left;
+        var currtop = this.top;
+        if (place == 'left' || place == 'right') {
+            if (place == 'left') {
+                if (this.left - subox.width < space) {
+                    subleft = space;
+                    this.toPlace(subox.width + space * 2, currtop);
+                }
+                else subleft = this.left - subox.width - space;
+            }
+            if (place == 'right') {
+                if (this.left + this.width + subox.width > box.availWidth()) {
+                    subleft = box.availWidth() - subox.width - space;
+                    this.toPlace(box.availWidth() - subox.width - this.width - space * 2, currtop);
+                } else subleft = this.left + this.width + space;
+            }
+            subtop = currtop;
+            subox.height = this.height;
+        }
+        if (place == 'top' || place == 'bottom') {
+            if (place == 'top') {
+                if (this.top - subox.height < space) {
+                    subtop = space;
+                    this.toPlace(currleft, subox.height + space * 2);
+                } else subtop = this.top - subox.height + space;
+            }
+            if (place == 'bottom') {
+                if (this.top + this.height + subox.height > box.availHeight()) {
+                    subtop = box.availHeight() - subox.height - space;
+                    this.toPlace(currleft, box.availHeight() - subox.height - this.height - space * 2);
+                } else subtop = this.top + this.height + space;
+            }
+            subleft = currleft;
+            subox.width = this._width;
+        }
+        subox.left = subleft;
+        subox.top = subtop;
+        if (place != null && place.length > 0) {
+            //关闭时，还原父窗体位置
+            var th = this;
+            subox.onshut((s, e) => th.toPlace(currleft, currtop));
+        }
+        subox.open();
+    }
     //构建pagebox窗体
     fn._builder = {
         //生成外壳
@@ -646,6 +707,29 @@
     fn.toMinimize = function (smooth) {
         return box.toMinimize(this.id, smooth);
     };
+    //重新设置窗体的大小
+    //smooth:是否平滑过渡，默认为true
+    fn.toSize = function (width, height, smooth) {
+        smooth = smooth == null ? true : smooth;
+        return box.toSize(this.id, width, height, smooth);
+    };
+    //窗体移动，从当前位置移动
+    fn.toMove = function (left, top) {
+        let x = this.left + parseInt(left);
+        let y = this.top + parseInt(top);
+        this.toPlace(x, y);
+    };
+    //设置窗体的位置，相对于浏览可视区域的绝对位置
+    fn.toPlace = function (left, top) {
+        this.dom.smooth();
+        this.left = parseInt(left);
+        this.top = parseInt(top);
+        var th = this;
+        window.setTimeout(function () {
+            th.dom.smooth(false);
+            th.trigger('move', { 'width': th.width, 'height': th.height, 'left': th.left, 'top': th.top });
+        }, 300);
+    };
     //显示背景的遮罩
     fn.showBgMark = function () {
         box.mask.show(this);
@@ -839,7 +923,7 @@
         };
         ctrl.obj.move = ctrl.obj.resize = false;
         //开始全屏放大      
-        if (smooth) ctrl.dom.css('transition', 'width 0.3s,height 0.3s,left 0.3s,top 0.3s');
+        if (smooth) ctrl.dom.smooth(true);
         ctrl.dom.addClass('pagebox_full');
         ctrl.obj.width = window.innerWidth - 3;
         ctrl.obj.height = window.innerHeight - 2;
@@ -877,7 +961,7 @@
             ctrl.dom.removeClass('pagebox_full');
         }
         let obj = ctrl.obj;
-        if (smooth) obj.dom.css('transition', 'width 0.3s,height 0.3s,left 0.3s,top 0.3s');
+        if (smooth) obj.dom.smooth(true);
         obj.dom.addClass('pagebox_min');
         //最小化后的所在区域
         let collect = $dom('.pagebox-collect');
@@ -902,7 +986,7 @@
         let ctrl = $ctrls.get(boxid);
         if (ctrl == null) return;
         if (!(ctrl.dom.hasClass('pagebox_full') || ctrl.dom.hasClass('pagebox_min'))) return ctrl.obj;
-        if (!smooth) ctrl.dom.css('transition', '');
+        if (!smooth) ctrl.dom.smooth(false);
         //从最大化还原
         if (ctrl.dom.hasClass('pagebox_full')) {
             ctrl.dom.removeClass('pagebox_full');
@@ -930,11 +1014,52 @@
             ctrl.obj.move = ctrl.win_state.move;
             ctrl.obj.resize = ctrl.win_state.resize;
             window.setTimeout(function () {
-                ctrl.dom.css('transition', '');
-
+                ctrl.obj.dom.smooth(false);
             }, 300);
         }, 10);
         return ctrl.obj;
+    };
+    //重新设置窗体的大小
+    //smooth:是否平滑过渡，默认为true
+    box.toSize = function (boxid, width, height, smooth) {
+        smooth = smooth == null ? true : smooth;
+        if (typeof width === 'string') {
+            if (width.endsWith('%')) width = parseInt(width.substring(0, width.length - 1)) / 100 * box.availWidth();
+            else width = parseInt(width);
+        }
+        if (typeof height === 'string') {
+            if (height.endsWith('%')) height = parseInt(height.substring(0, height.length - 1)) / 100 * box.availHeight();
+            else height = parseInt(height);
+        }
+        let ctrl = $ctrls.get(boxid);
+        if (ctrl == null) return;
+        //增加平滑过渡效果       
+        if (smooth) ctrl.obj.dom.smooth(true);
+        //如果处于最大化状态，恢复到窗体状态
+        if (ctrl.dom.hasClass('pagebox_full')) {
+            ctrl.dom.removeClass('pagebox_full');
+            ctrl.obj.trigger('restore', {
+                'action': 'from-full'
+            });
+            ctrl.obj.level = $dom('.pagebox').level() + 2;         
+            ctrl.obj.resize = ctrl.win_state.resize;
+            ctrl.obj.move = ctrl.win_state.move;
+            ctrl.obj._full = false;
+        }
+        //设置窗体的位置与宽高
+        let left = ctrl.obj.left - (width - ctrl.obj.width) / 2;
+        let top = ctrl.obj.top - (height - ctrl.obj.height) / 2;
+        ctrl.obj.left = left <= 0 ? 0 : left;
+        ctrl.obj.top = top <= 0 ? 0 : top;
+        ctrl.obj.width = width;
+        ctrl.obj.height = height;        
+
+        window.setTimeout(function () {
+            ctrl.obj.dom.smooth(false);
+            ctrl.obj.trigger('resize', { 'width': width, 'height': height, 'left': left, 'top': top, 'action': 'resize' });
+        }, 300);
+        return ctrl.obj;
+
     };
     //拖动窗体所需的事件
     box.dragRealize = function () {
@@ -967,7 +1092,8 @@
                     box.top = ago.offset.top + eargs.move.y;
                     ctrl.win_offset = ctrl.obj.dom.offset();
                     //触发拖动事件
-                    eargs.offset = ctrl.dom.offset();
+                    eargs.left = ctrl.dom.offset().left;
+                    eargs.top = ctrl.dom.offset().top;
                     box.trigger('drag', eargs);
                 }
             } else {
@@ -987,10 +1113,11 @@
                             box.height = ago.height - eargs.move.y < minHeight ? minHeight : ago.height - eargs.move.y;
                             if (box.height > minHeight) box.top = ago.offset.top + eargs.move.y;
                         }
-                        //触发resize事件                     
-                        eargs.offset = ctrl.dom.offset();
+                        //触发resize事件
                         eargs.width = box.width;
                         eargs.height = box.height;
+                        eargs.left = ctrl.dom.offset().left;
+                        eargs.top = ctrl.dom.offset().top;
                         eargs.action = eargs.target.tagName;
                         ctrl.obj.trigger('resize', eargs);
                     }
@@ -999,13 +1126,21 @@
             //
         });
         document.addEventListener('mouseup', function (e) {
-            //let mouse = $dom.mouse(e);
+            //如果处于拖动中，取消拖动时，触发move事件
+            let boxdom = $dom('div.pagebox_drag');
+            if (boxdom.length < 1) return;
+            let ctrl = $ctrls.get(boxdom.attr('boxid'));
+            let pbox = ctrl.obj;
+            //当鼠标点下时的历史信息，例如位置、宽高    
+            let ago = ctrl.mousedown;
+            if (ago.target == 'pagebox_dragbar') {
+                pbox.trigger('move', { 'width': pbox.width, 'height': pbox.height, 'left': pbox.left, 'top': pbox.top });
+            }
             $ctrls.removeAttr('mousedown');
             let page = $dom('.pagebox_focus');
             page.removeClass('pagebox_drag');
             let obj = box.get(page.attr("boxid"));
-            if (obj != null)
-                obj.hideBgMask();
+            if (obj != null) obj.hideBgMask();
         });
         window.addEventListener('blur', function (e) {
             //document.onmouseup();
@@ -1177,59 +1312,56 @@
         //name:为当前窗体的window.name
         //func:要执行的方法，必须是window下的
         //close:是否关闭当前窗体
-        tab: function (name, func, close) {
+        tab: function (name, func, close, params) {
             name = $dom.trim(name);
             //当前pagebox窗体对象
             let currbox = box.get(name);
             if (currbox == null) return;
             //tabs.js标签页的页面区域
             let iframe = $dom('iframe[name=\'' + currbox.pid + '\']');
+            var result = null;
             if (iframe.length > 0) {
                 let win = iframe[0].contentWindow;
-                //刷新父页面数据
-                if (win && func != null) {
-                    if (func.charAt(func.length - 1) == ')') { eval('win.' + func); }
-                    else {
-                        let f = eval('win.' + func);
-                        if (f != null) f();
-                    }
-                }
+                result = this._emit_func(win, func, params);
             }
             if (close) $pagebox.delayshut(name, 1500);
+            return result;
         },
-        //父级为pagebox
-        box: function (name, func, close) {
+        //父级为pagebox,
+        //name:为当前窗体的window.name
+        //func:要执行方法，必须是window下的，如果vue方法，需要带对象名，如vapp.func
+        //close:是否关闭当前窗体
+        //params:func方法要传递的参数
+        box: function (name, func, close, params) {
             name = $dom.trim(name);
             let pbox = box.parent(name);
             if (pbox == null) return;
-            this._emit_func(pbox, func, close);
+            let result = this._emit_func(pbox.document(), func, params);
             if (close) $pagebox.delayshut(name, 1500);
+            return result;
         },
-        //查找自身
-        self: function (name, func, close) {
-            name = $dom.trim(name);
-            //当前pagebox窗体对象
-            let currbox = box.get(name);
-            if (close) currbox.shut();
-            return currbox;
+        //查找自身,name:为当前窗体的window.name
+        self: function (name) {
+            return box.get($dom.trim(name));
         },
         //顶级窗体
-        top: function (name, func, close) {
+        //name:为当前窗体的window.name
+        top: function (name, func, close, params) {
             name = $dom.trim(name);
             let pbox = box.parent(name);
             while (pbox.parent != null) pbox = box.parent(pbox.attr.pid);
-            this._emit_func(pbox, func);
+            let result = this._emit_func(pbox.document(), func, params);
             if (close) $pagebox.delayshut(name, 1500);
+            return result;
         },
         //执行窗体内页面的js方法
-        _emit_func: function (box, func) {
-            let win = box.document();
+        _emit_func: function (win, func, params) {
             //tabs.js标签页的页面区域
             if (win && func != null) {
-                if (func.charAt(func.length - 1) == ')') eval('win.' + func);
+                if (func.charAt(func.length - 1) == ')') return eval('win.' + func);
                 else {
                     let f = eval('win.' + func);
-                    if (f != null) f();
+                    if (f != null) return f(params);
                 }
             }
         }

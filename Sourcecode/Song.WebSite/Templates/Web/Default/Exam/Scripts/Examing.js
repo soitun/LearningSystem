@@ -431,7 +431,7 @@ $ready(function () {
                     "stid": this.account.Ac_ID,
                     "stname": this.account.Ac_Name,
                     "stsid": this.account.Sts_ID,
-                    "stsex": this.account.Ac_Sex,
+                    "stsex": this.account.Ac_Gender,
                     "stcardid": this.account.Ac_IDCardNumber,
                     "uid": this.exam.Exam_UID,
                     "theme": this.theme.Exam_Title,

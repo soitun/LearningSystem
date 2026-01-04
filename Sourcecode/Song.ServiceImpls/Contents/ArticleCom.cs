@@ -144,10 +144,9 @@ namespace Song.ServiceImpls
         /// <param name="fiels"></param>
         /// <param name="objs"></param>
         /// <returns></returns>
-        public bool ArticleUpdate(long artid, Field[] fiels, object[] objs)
+        public int ArticleUpdate(long artid, Field[] fiels, object[] objs)
         {
-            Gateway.Default.Update<Article>(fiels, objs, Article._.Art_ID == artid);
-            return true;
+            return Gateway.Default.Update<Article>(fiels, objs, Article._.Art_ID == artid);
         }
 
         public int ArticleAddNumber(long id, int addNum)
@@ -163,21 +162,22 @@ namespace Song.ServiceImpls
             return i;
         }
 
-        public void ArticleDelete(Article entity)
+        public int ArticleDelete(Article entity)
         {
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
-                ArticleDelete(entity, null);
+                return ArticleDelete(entity, null);
             }       
         }
-        public void ArticleDelete(Article entity, DbTrans tran)
+        public int ArticleDelete(Article entity, DbTrans tran)
         {
             if (tran == null) tran = Gateway.Default.BeginTrans();
+            int i = 0;
             try
             {
                 //删除附件
                 Business.Do<IAccessory>().Delete(entity.Art_Uid, string.Empty);
-                tran.Delete<Article>(Article._.Art_ID == entity.Art_ID);
+                i=tran.Delete<Article>(Article._.Art_ID == entity.Art_ID);
                 //删除图片文件
                 string img = WeiSha.Core.Upload.Get[_artUppath].Physics + entity.Art_Logo;
                 if (System.IO.File.Exists(img))
@@ -192,33 +192,36 @@ namespace Song.ServiceImpls
                 tran.Rollback();
                 throw ex;
             }
+            return i;
         }
-        public void ArticleDelete(long identify)
+        public int ArticleDelete(long identify)
         {
             Article na = this.ArticleSingle(identify);
-            this.ArticleDelete(na);
+            return this.ArticleDelete(na);
         }
 
-        public void ArticleDeleteAll(int orgid, string coluid)
+        public int ArticleDeleteAll(int orgid, string coluid)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Article._.Org_ID == orgid);
             if (!string.IsNullOrWhiteSpace(coluid)) wc.And(Article._.Col_UID == coluid);
             Song.Entities.Article[] entities = Gateway.Default.From<Article>().Where(wc).ToArray<Article>();
+            int i = 0;
             foreach (Song.Entities.Article entity in entities)
             {
-                ArticleDelete(entity);
+                i += ArticleDelete(entity);
             }
+            return i;
         }
 
-        public void ArticleIsDelete(long identify)
+        public int ArticleIsDelete(long identify)
         {
-            Gateway.Default.Update<Article>(new Field[] { Article._.Art_IsDel }, new object[] { true }, Article._.Art_ID == identify);
+            return Gateway .Default.Update<Article>(new Field[] { Article._.Art_IsDel }, new object[] { true }, Article._.Art_ID == identify);
         }
 
-        public void ArticleRecover(long identify)
+        public int ArticleRecover(long identify)
         {
-            Gateway.Default.Update<Article>(new Field[] { Article._.Art_IsDel }, new object[] { false }, Article._.Art_ID == identify);
+            return Gateway .Default.Update<Article>(new Field[] { Article._.Art_IsDel }, new object[] { false }, Article._.Art_ID == identify);
         }
 
         public void ArticlePassVerify(long identify, string verMan)
@@ -346,7 +349,6 @@ namespace Song.ServiceImpls
             countSum = Gateway.Default.Count<Article>(wc);
             return Gateway.Default.From<Article>().Where(wc).OrderBy(wcOrder).ToArray<Article>(size, (index - 1) * size);
         }
-        /// <summary>
         /// <summary>
         /// 更改新闻文章的顺序
         /// </summary>

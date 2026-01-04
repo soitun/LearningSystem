@@ -71,12 +71,12 @@ namespace Song.ServiceInterfaces
         /// 删除
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void Delete(ManageMenu entity);
+        int Delete(ManageMenu entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
         /// <param name="identify">实体的主键</param>
-        void Delete(int identify);
+        int Delete(int identify);
         /// <summary>
         /// 删除，按栏目名称
         /// </summary>
@@ -139,10 +139,10 @@ namespace Song.ServiceInterfaces
         /// <summary>
         /// 获取当前对象的下一级子对象；
         /// </summary>
-        /// <param name="identify">当前实体的主键</param>
+        /// <param name="uid">当前实体的唯一值</param>
         /// <returns>当前对象的下一级子对象</returns>
-        ManageMenu[] GetChilds(int identify);
-        ManageMenu[] GetChilds(int identify, bool? isUse, bool? isShow);
+        List<ManageMenu> GetChilds(string uid);
+        List<ManageMenu> GetChilds(string uid, bool? isUse, bool? isShow);
         /// <summary>
         /// 当前对象名称是否重名
         /// </summary>

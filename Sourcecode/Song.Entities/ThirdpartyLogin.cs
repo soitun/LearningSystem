@@ -24,13 +24,13 @@ namespace Song.Entities {
     		
     		protected String _Tl_Name;
     		
+    		protected Int32 _Tl_Order;
+    		
     		protected String _Tl_Returl;
     		
     		protected String _Tl_Secret;
     		
     		protected String _Tl_Tag;
-    		
-    		protected Int32 _Tl_Tax;
     		
     		public Int32 Tl_ID {
     			get {
@@ -112,6 +112,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public Int32 Tl_Order {
+    			get {
+    				return this._Tl_Order;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Tl_Order, _Tl_Order, value);
+    				this._Tl_Order = value;
+    			}
+    		}
+    		
     		public String Tl_Returl {
     			get {
     				return this._Tl_Returl;
@@ -139,16 +149,6 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Tl_Tag, _Tl_Tag, value);
     				this._Tl_Tag = value;
-    			}
-    		}
-    		
-    		public Int32 Tl_Tax {
-    			get {
-    				return this._Tl_Tax;
-    			}
-    			set {
-    				this.OnPropertyValueChange(_.Tl_Tax, _Tl_Tax, value);
-    				this._Tl_Tax = value;
     			}
     		}
     		
@@ -187,10 +187,10 @@ namespace Song.Entities {
     					_.Tl_IsRegister,
     					_.Tl_IsUse,
     					_.Tl_Name,
+    					_.Tl_Order,
     					_.Tl_Returl,
     					_.Tl_Secret,
-    					_.Tl_Tag,
-    					_.Tl_Tax};
+    					_.Tl_Tag};
     		}
     		
     		/// <summary>
@@ -206,10 +206,10 @@ namespace Song.Entities {
     					this._Tl_IsRegister,
     					this._Tl_IsUse,
     					this._Tl_Name,
+    					this._Tl_Order,
     					this._Tl_Returl,
     					this._Tl_Secret,
-    					this._Tl_Tag,
-    					this._Tl_Tax};
+    					this._Tl_Tag};
     		}
     		
     		/// <summary>
@@ -240,6 +240,9 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Tl_Name))) {
     				this._Tl_Name = reader.GetString(_.Tl_Name);
     			}
+    			if ((false == reader.IsDBNull(_.Tl_Order))) {
+    				this._Tl_Order = reader.GetInt32(_.Tl_Order);
+    			}
     			if ((false == reader.IsDBNull(_.Tl_Returl))) {
     				this._Tl_Returl = reader.GetString(_.Tl_Returl);
     			}
@@ -248,9 +251,6 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Tl_Tag))) {
     				this._Tl_Tag = reader.GetString(_.Tl_Tag);
-    			}
-    			if ((false == reader.IsDBNull(_.Tl_Tax))) {
-    				this._Tl_Tax = reader.GetInt32(_.Tl_Tax);
     			}
     		}
     		
@@ -319,6 +319,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Tl_Name = new WeiSha.Data.Field<ThirdpartyLogin>("Tl_Name");
     			
     			/// <summary>
+    			/// 字段名：Tl_Order - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Tl_Order = new WeiSha.Data.Field<ThirdpartyLogin>("Tl_Order");
+    			
+    			/// <summary>
     			/// 字段名：Tl_Returl - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Tl_Returl = new WeiSha.Data.Field<ThirdpartyLogin>("Tl_Returl");
@@ -332,11 +337,6 @@ namespace Song.Entities {
     			/// 字段名：Tl_Tag - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Tl_Tag = new WeiSha.Data.Field<ThirdpartyLogin>("Tl_Tag");
-    			
-    			/// <summary>
-    			/// 字段名：Tl_Tax - 数据类型：Int32
-    			/// </summary>
-    			public static WeiSha.Data.Field Tl_Tax = new WeiSha.Data.Field<ThirdpartyLogin>("Tl_Tax");
     		}
     	}
     }

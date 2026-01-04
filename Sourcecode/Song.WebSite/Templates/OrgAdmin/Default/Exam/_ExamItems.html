@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head resource>
+    <meta charset="UTF-8">
+    <include file="../inc/meta.inc" />
+    <title>考试场次</title>
+</head>
+
+<body>
+    <div id="vapp" v-cloak>
+        <el-form ref="exam" :model="exam" label-width="80px" :rules="rules">
+            <el-form-item label="场次名称" prop="Exam_Name">
+                <el-input v-model="exam.Exam_Name"></el-input>
+            </el-form-item>
+            <el-form-item label="分数">
+                <template v-if="ishavepaper">
+                    <el-tag>总分：{{exam.Exam_Total}}</el-tag>
+                    <el-tag type="success">及格分：{{exam.Exam_PassScore}}</el-tag>
+                </template>
+                <help v-else>请先选择考试试卷</help>
+            </el-form-item>
+            <el-form-item label="开始时间" prop="Exam_Date">
+                <span v-if="theme.Exam_DateType==1">
+                    <!--准时开始-->
+                    <el-date-picker v-model="exam.Exam_Date" type="datetime" placeholder="选择日期时间">
+                    </el-date-picker>
+                </span>
+                <span v-else>
+                    <!--区间时间-->
+                    <b>{{theme.Exam_Date|date("yyyy-M-dd HH:mm")}}</b> 至
+                    <b>{{theme.Exam_DateOver|date("yyyy-M-dd HH:mm")}}</b> 之间
+                </span>
+            </el-form-item>
+            <el-form-item label="限时" prop="Exam_Span">
+                <el-input v-model.number="exam.Exam_Span" type="number">
+                    <template slot="append">分钟</template>
+                </el-input>
+            </el-form-item>
+            <el-divider content-position="left">采用的试卷</el-divider>
+            <el-form-item label="">
+                <el-radio-group v-model="papertype" :disabled="exam.Exam_ID!=''">
+                    <el-radio-button :label="1">考试专用试卷</el-radio-button>
+                    <el-radio-button :label="0">课程模拟测试的试卷</el-radio-button>
+                </el-radio-group>
+            </el-form-item>
+            <div v-show="papertype==1">
+                <el-form-item label="选择试卷" prop="paper">
+                    <el-select v-model="exam.Etp_Id" style="width: 100%;" filterable clearable remote
+                        :remote-method="getexampapers" placeholder="-- 考试专用试卷 --">
+                        <el-option v-for="(p,i) in exampapers" :key="p.Etp_Id" :label="p.Etp_Name" :value="p.Etp_Id">
+                            <span>{{i+1}} . {{p.Etp_Name}}</span>
+                            <papertype :type="p.Etp_Type" :showname="false">
+                                题量 {{p.Etp_Count}}
+                            </papertype>
+                    </el-select>
+                </el-form-item>
+            </div>
+            <div v-show="papertype==0">
+                <el-form-item label="专业">
+                    <el-cascader ref="subjects" style="width: 100%;" clearable v-model="sbjids" placeholder="请选择课程专业"
+                        :options="sbjTree" separator="／" :props="defaultSubjectProps" filterable @change="sbjChange">
+                        <template slot-scope="{ node, data }">
+                            <span>{{ data.Sbj_Name }}</span>
+                            <span class="sbj_course" v-if="data.Sbj_CourseCount>0">
+                                <icon>&#xe813</icon>{{ data.Sbj_CourseCount }}
+                            </span>
+                        </template>
+                    </el-cascader>
+                </el-form-item>
+                <el-form-item label="课程">
+                    <el-select v-model="couid" style="width: 100%;" filterable clearable @change="courChange"
+                        placeholder="-- 课程 --">
+                        <el-option v-for="(item,i) in courses" :key="item.Cou_ID" :label="item.Cou_Name"
+                            :value="item.Cou_ID">
+                            <span>{{i+1}} . {{item.Cou_Name}}</span>
+                            <icon test title='试卷数' style="float:right" v-if="item.Cou_TestCount>0">
+                                {{item.Cou_TestCount}}
+                            </icon>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="试卷" prop="paper">
+                    <el-select v-model="exam.Tp_Id" style="width: 100%;" filterable clearable
+                        placeholder="-- 试卷 --">
+                        <el-option v-for="(p,i) in courpapers" :key="p.Tp_Id" :label="p.Tp_Name"
+                            :value="p.Tp_Id">
+                            <span>{{i+1}} . {{p.Tp_Name}}</span>
+                            <span class="quescount">题量 {{p.Tp_Count}} </span>
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </div>
+        </el-form>
+        <div class="footer">
+            <el-button type="primary" define="enter" native-type="submit" :loading="loading" plain
+                @click="btnEnter('exam')">
+                确定
+            </el-button>
+            <el-button type='close'>
+                取消
+            </el-button>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -154,27 +154,14 @@ namespace Song.ViewData.Methods
         /// <param name="id">账户id，可以是多个，用逗号分隔</param>
         /// <returns></returns>
         [Admin]
-        [HttpDelete,HttpGet(Ignore =true)]
+        [HttpDelete, HttpGet(Ignore = true)]
         public int Delete(string id)
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            string[] arr = id.Split(',');
-            foreach (string s in arr)
-            {
-                long idval = 0;
-                long.TryParse(s, out idval);
-                if (idval == 0) continue;
-                try
-                {
-                    Business.Do<ISubject>().SubjectDelete(idval);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
+            List<long> list = id.ToList<long>();
+            foreach (long s in list)
+                i += Business.Do<ISubject>().SubjectDelete(s);
             return i;
         }
         /// <summary>
@@ -218,8 +205,7 @@ namespace Song.ViewData.Methods
         public JArray Tree(int orgid, string search, bool? isuse)
         {
             List<Song.Entities.Subject> sbjs = Business.Do<ISubject>().SubjectCount(orgid, search, isuse, -1, -1);
-            for (int i = 0; i < sbjs.Count; i++)            
-                sbjs[i] = _tran(sbjs[i]);            
+            for (int i = 0; i < sbjs.Count; i++) sbjs[i] = _tran(sbjs[i]);          
             return sbjs.Count > 0 ? _SubjectNode(null, sbjs) : null;
         }
         /// <summary>
@@ -229,25 +215,26 @@ namespace Song.ViewData.Methods
         /// <param name="items">所有菜单项</param>
         /// <returns></returns>
         private JArray _SubjectNode(Song.Entities.Subject item, List<Song.Entities.Subject> items)
-        {
-            JArray jarr = new JArray();
-            foreach (Song.Entities.Subject m in items)
+        {            
+            List<Song.Entities.Subject> childs = new List<Song.Entities.Subject>();
+            for (int i = 0; i < items.Count; i++)
             {
-                if (item == null)
-                {
-                    if (m.Sbj_PID != 0) continue;
-                }
-                else
-                {
-                    if (m.Sbj_PID != item.Sbj_ID) continue;
-                }
-                string j = m.ToJson("", "Sbj_CrtTime");
+                Entities.Subject m = items[i];
+                if (item == null && m.Sbj_PID != 0) continue;
+                if (item != null && m.Sbj_PID != item.Sbj_ID) continue;
+                childs.Add(m);
+                items.RemoveAt(i);
+                i--;
+            }
+            JArray jarr = new JArray();
+            for (int i = 0; i < childs.Count; i++)
+            {
+                string j = childs[i].ToJson("", "Sbj_CrtTime");
                 JObject jo = JObject.Parse(j);
                 jarr.Add(jo);
                 //计算下级
-                JArray charray = _SubjectNode(m, items);
-                if (charray.Count > 0)
-                    jo.Add("children", charray);
+                JArray charray = _SubjectNode(childs[i], items);
+                if (charray.Count > 0) jo.Add("children", charray);
             }
             return jarr;
         }
@@ -283,7 +270,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public ListResult PagerFront(int orgid,long pid,int index, int size)
         {
-            int sum = 0;
+            int sum;
             List<Song.Entities.Subject> list = Business.Do<ISubject>().SubjectPager(orgid, pid, true, string.Empty, size, index, out sum);
             for (int i = 0; i < list.Count; i++)
                 list[i] = _tran(list[i]);

@@ -36,7 +36,7 @@ Vue.component('video_list', {
     },
     computed: {},
     mounted: function () {
-        $dom.load.css([$dom.path() + 'Course/Components/Styles/video_list.css']);
+
     },
     methods: {
         //显示视频文件列表的面板

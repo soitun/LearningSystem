@@ -44,7 +44,7 @@
                 </template>
                 <template slot-scope="scope">
                     <el-tooltip class="item" effect="light" content="点击查看详情" placement="right">
-                        <icon large :woman="scope.row.Th_Sex==2" :man="scope.row.Th_Sex!=2" @click="showteach(scope.row)">
+                        <icon large :woman="scope.row.Th_Gender==2" :man="scope.row.Th_Gender!=2" @click="showteach(scope.row)">
                             <span v-html='showsearch(scope.row.Th_Name,query.search)' class="large"
                                 v-if="scope.row.Th_Name!=''"></span>
                             <span v-else class="noname" class="large">(没有名字)</span>
@@ -132,8 +132,8 @@
             <span slot="title">{{drawerobj.Th_Name}}</span>
             <avatar :teacher="drawerobj" circle="true" size="100"></avatar>
             <dl>
-                <dd :class="drawerobj.Th_Sex==2 ? 'woman' : 'man'">
-                    <icon :woman="drawerobj.Th_Sex==2" :man="drawerobj.Th_Sex!=2"> </icon>姓名：
+                <dd :class="drawerobj.Th_Gender==2 ? 'woman' : 'man'">
+                    <icon :woman="drawerobj.Th_Gender==2" :man="drawerobj.Th_Gender!=2"> </icon>姓名：
                     <span v-html='drawerobj.Th_Name' v-if="drawerobj.Th_Name!=''"></span>
                     <span v-else class="noname">(没有名字)</span>                   
                 </dd>

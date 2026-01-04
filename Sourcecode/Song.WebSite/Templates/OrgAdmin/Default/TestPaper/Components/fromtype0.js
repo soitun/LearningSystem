@@ -1,4 +1,4 @@
-﻿//试卷按课程抽题的组件
+﻿//试卷按课程出题的组件
 Vue.component('fromtype0', {
     //total:总分
     props: ['types', 'testpaper', 'total'],
@@ -49,10 +49,10 @@ Vue.component('fromtype0', {
         },
     },
     mounted: function () {
-        $dom.load.css([$dom.path() + 'TestPaper/Components/Styles/fromtype0.css']);
+  
     },
     methods: {
-        //解析试题抽题的设置项
+        //解析试题出题的设置项
         parserXML: function (tp) {
             if (!this.testpaper || this.testpaper.Tp_FromConfig == null
                 || this.testpaper.Tp_FromConfig == '')

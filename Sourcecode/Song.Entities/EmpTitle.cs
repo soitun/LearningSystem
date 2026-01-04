@@ -20,7 +20,7 @@ namespace Song.Entities {
     		
     		protected String _Title_Name;
     		
-    		protected Int32 _Title_Tax;
+    		protected Int32? _Title_Order;
     		
     		public Int32 Title_Id {
     			get {
@@ -82,13 +82,13 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32 Title_Tax {
+    		public Int32? Title_Order {
     			get {
-    				return this._Title_Tax;
+    				return this._Title_Order;
     			}
     			set {
-    				this.OnPropertyValueChange(_.Title_Tax, _Title_Tax, value);
-    				this._Title_Tax = value;
+    				this.OnPropertyValueChange(_.Title_Order, _Title_Order, value);
+    				this._Title_Order = value;
     			}
     		}
     		
@@ -125,7 +125,7 @@ namespace Song.Entities {
     					_.Title_Intro,
     					_.Title_IsUse,
     					_.Title_Name,
-    					_.Title_Tax};
+    					_.Title_Order};
     		}
     		
     		/// <summary>
@@ -139,7 +139,7 @@ namespace Song.Entities {
     					this._Title_Intro,
     					this._Title_IsUse,
     					this._Title_Name,
-    					this._Title_Tax};
+    					this._Title_Order};
     		}
     		
     		/// <summary>
@@ -164,8 +164,8 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Title_Name))) {
     				this._Title_Name = reader.GetString(_.Title_Name);
     			}
-    			if ((false == reader.IsDBNull(_.Title_Tax))) {
-    				this._Title_Tax = reader.GetInt32(_.Title_Tax);
+    			if ((false == reader.IsDBNull(_.Title_Order))) {
+    				this._Title_Order = reader.GetInt32(_.Title_Order);
     			}
     		}
     		
@@ -224,9 +224,9 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Title_Name = new WeiSha.Data.Field<EmpTitle>("Title_Name");
     			
     			/// <summary>
-    			/// 字段名：Title_Tax - 数据类型：Int32
+    			/// 字段名：Title_Order - 数据类型：Int32(可空)
     			/// </summary>
-    			public static WeiSha.Data.Field Title_Tax = new WeiSha.Data.Field<EmpTitle>("Title_Tax");
+    			public static WeiSha.Data.Field Title_Order = new WeiSha.Data.Field<EmpTitle>("Title_Order");
     		}
     	}
     }
