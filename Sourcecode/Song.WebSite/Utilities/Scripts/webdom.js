@@ -504,14 +504,26 @@
     静态方法
     */
     //当前页面的高度
-    webdom.height = function () {
+    webdom.height = function (win) {
+        win = win || window;
         const viewport = document.documentElement.clientHeight;
-        return viewport <= 0 ? window.innerHeight : viewport;       
+        let height = viewport <= 0 ? win.innerHeight : viewport;
+        if (height <= 0) {
+            if (win.parent != window.self)
+                height = webdom.height(win.parent);
+        }
+        return height;
     };
-     //当前页面的度度
-     webdom.width = function () {
+    //当前页面的度度
+    webdom.width = function (win) {
+        win = win || window;
         const viewport = document.documentElement.clientWidth;
-        return viewport <= 0 ? window.innerWidth : viewport;       
+        let width = viewport <= 0 ? window.innerWidth : viewport;
+        if (width <= 0) {
+            if (win.parent != window.self)
+                width = webdom.width(win.parent);
+        }
+        return width;
     };
     //是否是webdom对象
     webdom.isdom = function (obj) {

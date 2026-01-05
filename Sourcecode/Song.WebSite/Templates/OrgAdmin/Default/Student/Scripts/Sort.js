@@ -37,7 +37,7 @@ $ready(function () {
                 if (index != null) this.form.index = index;
                 var th = this;
                 //每页多少条，通过界面高度自动计算        
-                var maxheight = document.documentElement.clientHeight;
+                var maxheight = $dom.height();
                 maxheight = maxheight < 1 ? window.screen.availHeight - 200 : maxheight;
                 var area = maxheight - 100;
                 th.form.size = Math.floor(area / 42);

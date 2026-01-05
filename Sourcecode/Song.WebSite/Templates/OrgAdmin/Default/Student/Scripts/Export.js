@@ -74,7 +74,7 @@ $ready(function () {
                 if (index != null) this.form.index = index;
                 var th = this;
                 //每页多少条，通过界面高度自动计算
-                var area = document.documentElement.clientHeight - 115;
+                let area = $dom.height() - 115;
                 th.form.size = Math.floor(area / 25);
                 th.form.size = th.form.size <= 2 ? 2 : th.form.size;
                 th.form.size = th.form.size >= 50 ? 50 : th.form.size;

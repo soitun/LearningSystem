@@ -41,7 +41,7 @@ $ready(function () {
             //加载数据页
             loadDatas: function () {
                 var th = this;
-                var area = document.documentElement.clientHeight - 100;
+                let area = $dom.height() - 100;
                 $api.post("Position/all").then(function (d) {
                     if (d.data.success) {
                         th.datas = d.data.result;

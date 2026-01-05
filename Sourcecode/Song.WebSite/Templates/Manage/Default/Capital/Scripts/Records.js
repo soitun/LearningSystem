@@ -87,7 +87,7 @@
                 var th = this;
                 th.loading = true;
                 //每页多少条，通过界面高度自动计算
-                var area = document.documentElement.clientHeight - 105;
+                let area = $dom.height() - 105;
                 th.form.size = Math.round(area / 43);
                 $api.get('Money/Pager', th.form).then(function (d) {
                     if (d.data.success) {

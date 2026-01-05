@@ -58,7 +58,7 @@ $ready([],
                     if (index != null) this.form.index = index;
                     var th = this;
                     //每页多少条，通过界面高度自动计算
-                    var area = document.documentElement.clientHeight - 120;
+                    let area = $dom.height() - 120;
                     th.form.size = Math.floor(area / 65);
                     $api.get("Student/SortCoursePager", th.form).then(function (d) {
                         if (d.data.success) {
@@ -189,7 +189,7 @@ $ready([],
                     var th = this;
                     //每页多少条，通过界面高度自动计算                
                     var maxhg = $dom('#courses_list').height();
-                    maxhg = maxhg <= 0 ? document.documentElement.clientHeight - 160 : maxhg;
+                    maxhg = maxhg <= 0 ? $dom.height() - 160 : maxhg;
                     //console.log(maxhg);
                     th.form.size = Math.floor(maxhg / 70);
                     $api.get("Course/Pager", th.form).then(function (d) {

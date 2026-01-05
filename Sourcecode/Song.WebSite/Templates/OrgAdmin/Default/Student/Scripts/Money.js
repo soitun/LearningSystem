@@ -59,7 +59,7 @@ $ready(function () {
                 if (index != null) this.query.index = index;
                 var th = this;
                 //每页多少条，通过界面高度自动计算
-                var area = document.documentElement.clientHeight - 40;
+                let area = $dom.height() - 40;
                 th.query.size = Math.floor(area / 42);
                 th.loading = true;
                 $api.get('Money/PagerForAccount', th.query).then(function (req) {
