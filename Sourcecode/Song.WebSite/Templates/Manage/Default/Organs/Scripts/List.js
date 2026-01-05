@@ -96,7 +96,7 @@
                 if (obj != null) row[column] = obj;
                 let exclude = '';
                 for (let key in row) if (key != column) exclude += key + ',';
-                $api.post('Organization/Modify', { 'entity': row, 'exclude': exclude }).then(function (req) {
+                $api.post('', { 'entity': row, 'exclude': exclude }).then(function (req) {
                     if (req.data.success) {
                         th.$notify({
                             type: 'success',

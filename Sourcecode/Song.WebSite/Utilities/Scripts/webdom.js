@@ -87,9 +87,7 @@
         if (res instanceof Array) {
             for (var i = 0; i < res.length; i++)
                 nodes.push(res[i]);
-        } else {
-            nodes = res;
-        }
+        } else nodes = res;
         return new webdom(nodes);
     };
     //获取第n个元素,如果为负，则倒序取，例如-1为最后一个
@@ -505,14 +503,22 @@
     /*
     静态方法
     */
+    //当前页面的高度
+    webdom.height = function () {
+        const viewport = document.documentElement.clientHeight;
+        return viewport <= 0 ? window.innerHeight : viewport;       
+    };
+     //当前页面的度度
+     webdom.width = function () {
+        const viewport = document.documentElement.clientWidth;
+        return viewport <= 0 ? window.innerWidth : viewport;       
+    };
     //是否是webdom对象
     webdom.isdom = function (obj) {
         return typeof (obj) == 'object' && obj.typeof == 'webui.element';
     };
     //去除两端空格
-    webdom.trim = function (str) {
-        return str.replace(/^\s*|\s*$/g, '').replace(/^\n+|\n+$/g, "");
-    };
+    webdom.trim = str => str.replace(/^\s*|\s*$/g, '').replace(/^\n+|\n+$/g, "");
     //当前页面的文件名，不包括路径和后缀名
     webdom.file = function () {
         var href = window.location.href;
