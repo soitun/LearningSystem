@@ -4,7 +4,7 @@ Vue.component('student_select', {
     data: function () {
         return {
             examaccounts: [],        //当前考试已经关联的所有学员
-            loading: false
+            loading: true
         }
     },
     watch: {
@@ -37,7 +37,7 @@ Vue.component('student_select', {
                         throw req.config.way + ' ' + req.data.message;
                     }
                 }).catch(err => console.error(err))
-                .finally(() => th.loading = false);
+                .finally(() => th.$nextTick(() => th.loading = false));
         },
         //选中事件
         //accounts:参数为选中的学员数组
@@ -80,16 +80,25 @@ Vue.component('student_select', {
                 });
             }
             this.$emit('selected', accids, this.examaccounts, relationships);
+        },
+        //移除所有
+        removeAll: function () {
+            this.examaccounts = [];
+            this.$emit('selected', [], [], []);
         }
     },
     template: `<div class="student_select">
         <accountselect :orgid="org.Org_ID" @select="select_event" :accounts="examaccounts"></accountselect>
-        <div class="examaccounts">
-            <header>
-               
-            </header>
+        <el-card shadow="never" class="examaccounts">
+            <template slot="header">
+               <icon student>已选择的学员</icon>
+               <el-popconfirm title="是否移除所有？" @confirm="removeAll">
+                    <el-link type="danger"  slot="reference" :disabled="loading" title="移除所有">移除所有</el-link>
+                </el-popconfirm>              
+            </template>
             <loading v-if="loading">加载中...</loading>
-            <dl class="list" v-else-if="examaccounts.length>0">
+            <el-empty v-else-if="examaccounts.length<1" description="没有指定参加考试的学员"></el-empty>  
+            <dl class="list" v-else>
                 <dd v-for="(item,i) in examaccounts" :index="i+1"> 
                     <icon class="name" size="large" :woman="item.Ac_Gender==2" :man="item.Ac_Gender==1" v-html='item.Ac_Name'></icon>                      
                     <span class="phone"  v-html='item.Ac_MobiTel1'></span>   
@@ -97,7 +106,7 @@ Vue.component('student_select', {
                     <el-link class="btn" type="warning" @click="remove(item)" title="移除">移除</el-link>
                 </dd>
             </dl>
-            <el-empty v-else description="没有指定参加考试的学员"></el-empty>            
-        </div>
+            
+        </el-card>       
     </div>`
 });
