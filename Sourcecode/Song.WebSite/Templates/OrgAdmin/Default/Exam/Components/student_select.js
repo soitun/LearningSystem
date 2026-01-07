@@ -44,7 +44,7 @@ Vue.component('student_select', {
         select_event: function (accounts) {
             for (let j = 0; j < accounts.length; j++) {
                 const exists = this.examaccounts.some(user => user.Ac_ID === accounts[j].Ac_ID);
-                if (!exists) this.examaccounts.push(accounts[j]);
+                if (!exists) this.examaccounts.unshift(accounts[j]);
             }
             //生成学员账号ID的数组
             let accids = [];
