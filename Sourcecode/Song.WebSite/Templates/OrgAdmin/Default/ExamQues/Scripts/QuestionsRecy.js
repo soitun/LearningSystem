@@ -30,6 +30,9 @@ $ready([
             },
             loadingid: 0,
         },
+        updated: function () {
+            this.$mathjax();
+        },
         mounted: function () {
             this.$refs.btngroup.addbtn([{
                 text: '全选/取消', tips: '选择标签',
