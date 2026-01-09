@@ -12,31 +12,38 @@
         var arr2 = new Array();
         //加载ElementUI
         arr2.push('/Utilities/ElementUi/index.js');
-        arr2.push('/Utilities/Components/btngroup.js');
         //编辑器
         arr2.push('/Utilities/TinyMCE/tinymce.js');
         arr2.push('/Utilities/TinyMCE/tinymce.vue.js');
         //加载Sortable拖动
         arr2.push('/Utilities/Scripts/Sortable.min.js');
         arr2.push('/Utilities/Scripts/vuedraggable.min.js');
-        //加载图标选择组件
-        arr2.push('/Utilities/Components/icons.js');
-        //图片上传组件
-        arr2.push('/Utilities/Components/upload-img.js');
-        arr2.push('/Utilities/Components/upload-file.js');
-        //头像组件
-        arr2.push('/Utilities/Components/avatar.js');
-        //加载状态组件
-        arr2.push('/Utilities/Components/useicon.js');
         //mathjax，解析latex公式
         arr2.push('/Utilities/MathJax/tex-mml-chtml.js');
         arr2.push('/Utilities/MathJax/globalVariable.js');
-        //查询面板与控件面板
-        arr2.push('/Utilities/Components/query_panel.js');
-        arr2.push('/Utilities/Components/panel.js');
-        //日期区间选择器
-        arr2.push('/Utilities/Components/date_range.js');
+
         window.$dom.componentjs(arr2, f);
+    };
+    window.$customize_componentjs = function (jsfile) {
+        let arr = [];
+        let webpath = $dom.path();    //
+        arr.push('/Utilities/Components/btngroup.js');
+        //页面的头部和底部
+        //加载图标选择组件
+        arr.push('/Utilities/Components/icons.js');
+        //图片上传组件
+        arr.push('/Utilities/Components/upload-img.js');
+        arr.push('/Utilities/Components/upload-file.js');
+        //头像组件
+        arr.push('/Utilities/Components/avatar.js');
+        //加载状态组件
+        arr.push('/Utilities/Components/useicon.js');
+        //查询面板与控件面板
+        arr.push('/Utilities/Components/query_panel.js');
+        arr.push('/Utilities/Components/panel.js');
+        //日期区间选择器
+        arr.push('/Utilities/Components/date_range.js');
+        return jsfile.concat(arr);
     };
     //加载组件所需的javascript文件
     $dom.ctrljs = function (f) {
@@ -63,8 +70,8 @@
         $dom.ready(function () {
             $dom.corejs(function () {
                 $components(function () {
+                    window.$init_load(() => $dom.componentjs(window.$customize_componentjs(jsfile), func));
                     window.$init_func();
-                    $dom.componentjs(jsfile, func);
                 });
             });
         });
@@ -114,5 +121,19 @@
                 return '<red>' + p1 + '</red>';
             });
         };
+    };
+    //初始加载
+    window.$init_load = function (func) {
+        $api.bat(
+            $api.cache('Platform/PlatInfo:60'),
+            $api.get('Organization/Current')
+        ).then(([platinfo, org]) => {
+            //平台信息
+            window.platinfo = platinfo.data.result;
+            //机构信息与机构配置
+            window.org = org.data.result;
+            window.config = $api.organ(window.org).config;
+            document.title += ' - ' + window.org.Org_PlatformName;
+        }).catch(err => console.error(err)).finally(() => func());
     };
 })();

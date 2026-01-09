@@ -13,11 +13,18 @@
     window.$components = function (f) {
         var arr2 = [];
         //加载ElementUI
-        arr2.push('/Utilities/ElementUi/index.js');
-        arr2.push('/Utilities/Components/btngroup.js');
+        arr2.push('/Utilities/ElementUi/index.js');       
         //加载Sortable拖动
         arr2.push('/Utilities/Scripts/Sortable.min.js');
-        arr2.push('/Utilities/Scripts/vuedraggable.min.js');
+        arr2.push('/Utilities/Scripts/vuedraggable.min.js');       
+        window.$dom.componentjs(arr2, f);
+    };
+     //一些自定义组件
+     window.$customize_componentjs = function (jsfile) {
+        let arr2 = [];
+        let webpath = $dom.path();
+        //
+        arr2.push('/Utilities/Components/btngroup.js');
         //加载图标选择组件
         arr2.push('/Utilities/Components/icons.js');
         //图片上传组件
@@ -40,7 +47,7 @@
         arr2.push('/Utilities/Components/sbj_cascader.js');
         //日期区间选择器
         arr2.push('/Utilities/Components/date_range.js');
-        window.$dom.componentjs(arr2, f);
+        return jsfile.concat(arr2);
     };
     //加载组件所需的javascript文件
     window.$ctrljs = function (f) {
@@ -67,7 +74,7 @@
         $dom.ready(function () {
             $dom.corejs(function () {
                 $components(function () {
-                    window.$init_load(() => $dom.componentjs(jsfile, func));
+                    window.$init_load(() => $dom.componentjs(window.$customize_componentjs(jsfile), func));
                     window.$init_func();
                 });
             });
@@ -127,15 +134,16 @@
     };
     //初始加载
     window.$init_load = function (func) {
-        $api.get('Organization/Current').then(function (req) {
-            if (req.data.success) {
-                window.org = req.data.result;
-                window.config = $api.organ(window.org).config;
-            } else {
-                console.error(req.data.exception);
-                throw req.data.message;
-            }
-        }).catch(err => console.error(err))
-            .finally(() => func());
-    }
+        $api.bat(
+            $api.cache('Platform/PlatInfo:60'),
+            $api.get('Organization/Current')
+        ).then(([platinfo, org]) => {
+            //平台信息
+            window.platinfo = platinfo.data.result;
+            //机构信息与机构配置
+            window.org = org.data.result;
+            window.config = $api.organ(window.org).config;
+            document.title += ' - ' + window.org.Org_PlatformName;
+        }).catch(err => console.error(err)).finally(() => func());
+    };
 })();

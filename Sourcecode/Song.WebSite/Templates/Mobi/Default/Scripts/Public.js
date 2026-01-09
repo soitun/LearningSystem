@@ -10,18 +10,8 @@
     //加载相关组件
     window.$components = function (f) {
         var arr = [];
-        let webpath = $dom.path();    //
         //加载Vant
         arr.push('/Utilities/Vant/vant.min.js');
-        //加载vue组件
-        arr.push(webpath + 'Components/footer_menu.js');
-        arr.push(webpath + 'Components/aside_menu.js');
-          //头像组件
-          arr.push('/Utilities/Components/avatar.js');
-        //通用组件，用于获取学员登录，机构信息等
-        arr.push(webpath + 'Components/generic.js');
-         //未登录的样式
-         arr.push(webpath + 'Components/nologin.js');
         //增加试题相关组件
         let arr2 = window.$quesjs();
         for (let i = 0; i < arr2.length; i++)
@@ -36,6 +26,21 @@
         arr.push('/Utilities/MathJax/globalVariable.js');
         arr.push('/Utilities/MathJax/tex-mml-chtml.js');
         return arr;
+    };
+    //一些自定义组件
+    window.$customize_componentjs = function (jsfile) {
+        let arr = [];
+        let webpath = $dom.path();
+        //
+        arr.push(webpath + 'Components/footer_menu.js');
+        arr.push(webpath + 'Components/aside_menu.js');
+        //头像组件
+        arr.push('/Utilities/Components/avatar.js');
+        //通用组件，用于获取学员登录，机构信息等
+        arr.push(webpath + 'Components/generic.js');
+        //未登录的样式
+        arr.push(webpath + 'Components/nologin.js');
+        return jsfile.concat(arr);
     };
     //加载必要的资源完成
     //f:加载完成要执行的方法
@@ -64,8 +69,8 @@
         $dom.ready(function () {
             $dom.corejs(function () {
                 $components(function () {
+                    window.$init_load(() => $dom.componentjs(window.$customize_componentjs(jsfile), func));
                     window.$init_func();
-                    $dom.componentjs(jsfile, func);
                 });
             });
         });
@@ -118,6 +123,20 @@
             });
         };
 
+    };
+    //初始加载
+    window.$init_load = function (func) {
+        $api.bat(
+            $api.cache('Platform/PlatInfo:60'),
+            $api.get('Organization/Current')
+        ).then(([platinfo, org]) => {
+            //平台信息
+            window.platinfo = platinfo.data.result;
+            //机构信息与机构配置
+            window.org = org.data.result;
+            window.config = $api.organ(window.org).config;
+            document.title += ' - ' + window.org.Org_PlatformName;
+        }).catch(err => console.error(err)).finally(() => func());
     };
     //重构一些方法
     //页面跳转

@@ -1,5 +1,5 @@
 //专业的级联选择器
-$dom.load.css(['/Utilities/Components/Styles/sbj_cascader.css']);
+
 //事件：
 //change:选择变更时,参数:当前专业id,当前专业对象，专业名称的路径数组，专业对象的路径数组
 //load:加载数据完成，参数:专业数据

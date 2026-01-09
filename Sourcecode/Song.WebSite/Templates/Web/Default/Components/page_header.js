@@ -102,22 +102,11 @@ Vue.component('page_header', {
     },
     methods: {
         init: function () {
-            var th = this;
-            th.loading = true;
-            $api.bat(
-                $api.cache('Platform/PlatInfo:60'),
-                $api.get('Organization/Current')
-            ).then(([platinfo, org]) => {
-                //获取结果             
-                th.platinfo = platinfo.data.result;
-                th.organ = org.data.result;
-                document.title += ' - ' + th.organ.Org_PlatformName;
-                //机构配置信息
-                th.config = $api.organ(th.organ).config;
-                //加载成功的事件
-                th.$emit('load', th.organ, th.config, th.platinfo);
-            }).catch(err => console.error(err))
-                .finally(() => th.loading = false);
+            this.platinfo = window.platinfo;
+            this.organ = window.org;
+            this.config = window.config;
+            //加载成功的事件
+            this.$emit('load', this.organ, this.config, this.platinfo);
         },
         //获取导航菜单
         getnavi: function () {

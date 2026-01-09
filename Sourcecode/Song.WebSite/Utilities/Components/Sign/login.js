@@ -1,5 +1,4 @@
 ﻿// 登录控件
-$dom.load.css(['/Utilities/Components/sign/Styles/login.css']);
 Vue.component('login', {
     //config：机构配置项
     props: ['config'],
@@ -294,7 +293,7 @@ Vue.component('login', {
         getvcode: function () {
             var th = this;
             th.acc_vcode.loading = true;
-            $api.post('Helper/CheckCodeImg', { 'leng': 4, 'acc': th.acc_form.acc }).then(function (req) {
+            $api.post('Platform/CheckCodeImg', { 'leng': 4, 'acc': th.acc_form.acc }).then(function (req) {
                 if (req.data.success) {
                     var result = req.data.result;
                     th.acc_vcode.base64 = result.base64;

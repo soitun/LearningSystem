@@ -1,6 +1,6 @@
 ﻿(function () {
     //加载主要的Css文件
-    $dom.load.css([
+    window.$dom.load.css([
         '/Utilities/Vant/Vant.css',
         '/Utilities/styles/public.css',
         $dom.path() + 'styles/public.css',
@@ -9,18 +9,33 @@
     ], $dom.selfresource);
     //加载相关组件
     window.$components = function (f) {
-        var arr2 = new Array();
+        var arr = [];
+        let webpath = $dom.path();    //
         //加载Vant
-        arr2.push('/Utilities/Vant/vant.min.js');
-        //mathjax，解析latex公式
-        arr2.push('/Utilities/MathJax/globalVariable.js');
-        arr2.push('/Utilities/MathJax/tex-mml-chtml.js');
+        arr.push('/Utilities/Vant/vant.min.js');
         //加载vue组件
-        //arr2.push($dom.path() + 'Components/footer_menu.js');
-        //arr2.push($dom.path() + 'Components/aside_menu.js');
+        arr.push(webpath + 'Components/footer_menu.js');
+        arr.push(webpath + 'Components/aside_menu.js');
+        //头像组件
+        arr.push('/Utilities/Components/avatar.js');
         //通用组件，用于获取学员登录，机构信息等
-        //arr2.push($dom.path() + 'Components/generic.js');
-        window.$dom.componentjs(arr2, f);
+        arr.push(webpath + 'Components/generic.js');
+        //未登录的样式
+        arr.push(webpath + 'Components/nologin.js');
+        //增加试题相关组件
+        let arr2 = window.$quesjs();
+        for (let i = 0; i < arr2.length; i++)
+            arr.push(arr2[i]);
+        $dom.load.js(arr, f);
+    };
+    //试题所有的js
+    window.$quesjs = function () {
+        var arr = ['hammer.min', 'vue-touch'];
+        for (var t in arr) arr[t] = '/Utilities/Scripts/' + arr[t] + '.js';
+        //mathjax，解析latex公式
+        arr.push('/Utilities/MathJax/globalVariable.js');
+        arr.push('/Utilities/MathJax/tex-mml-chtml.js');
+        return arr;
     };
     //加载必要的资源完成
     //f:加载完成要执行的方法
@@ -49,8 +64,8 @@
         $dom.ready(function () {
             $dom.corejs(function () {
                 $components(function () {
-                    window.$init_func();
-                    $dom.componentjs(jsfile, func);
+                    window.$init_load(() => $dom.componentjs(jsfile, func));
+                    window.$init_func();                   
                 });
             });
         });
@@ -87,7 +102,7 @@
             if (txt == null || txt == '') return '';
             if (search == null || search == '') return txt;
             var regExp = new RegExp('(' + search + ')', 'ig');
-            return txt.replace(regExp, function(match, p1) {
+            return txt.replace(regExp, function (match, p1) {
                 return '<red>' + p1 + '</red>';
             });
         };
@@ -95,13 +110,28 @@
         Vue.prototype.commonaddr = function (key) {
             var urls = {
                 'signin': '/mobi/sign/in',      //登录地址
-                'myself': '/mobi/account/myself'        //个人中心
+                'myself': '/mobi/account/index'        //个人中心
             };
             if (urls[key] == undefined) return '';
             return $api.url.set(urls[key], {
                 'referrer': encodeURIComponent(location.href)
             });
         };
+
+    };
+    //初始加载
+    window.$init_load = function (func) {
+        $api.bat(
+            $api.cache('Platform/PlatInfo:60'),
+            $api.get('Organization/Current')
+        ).then(([platinfo, org]) => {
+            //平台信息
+            window.platinfo = platinfo.data.result;
+            //机构信息与机构配置
+            window.org = org.data.result;
+            window.config = $api.organ(window.org).config;
+            document.title += ' - ' + window.org.Org_PlatformName;
+        }).catch(err => console.error(err)).finally(() => func());
     };
     //重构一些方法
     //页面跳转
@@ -116,7 +146,5 @@
             window.location.href = url;
         }
     }
-
 })();
-
 

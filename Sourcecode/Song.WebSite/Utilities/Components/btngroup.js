@@ -326,4 +326,4 @@ Vue.component('btngroup', {
         </el-button-group>
     </div>`
 });
-$dom.load.css(['/Utilities/Components/Styles/btngroup.css']);
+

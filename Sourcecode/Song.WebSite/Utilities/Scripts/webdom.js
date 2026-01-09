@@ -932,10 +932,7 @@
                     let path = element.split('/').slice(0, -1).join('/');
                     let css = path + '/Styles/' + file + '.css';
                     cssfile.push(css);
-                    //console.error(file);
-                    //console.error(css);
                 }
-
             }
             window.$dom.load.js(jsfile, func);
             window.$dom.load.css(cssfile);

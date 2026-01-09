@@ -42,6 +42,8 @@ namespace Song.Entities {
     		
     		protected String _Ac_Intro;
     		
+    		protected Boolean _Ac_IsDeleted;
+    		
     		protected Boolean _Ac_IsOpenMobile;
     		
     		protected Boolean _Ac_IsOpenTel;
@@ -293,6 +295,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Ac_Intro, _Ac_Intro, value);
     				this._Ac_Intro = value;
+    			}
+    		}
+    		
+    		public Boolean Ac_IsDeleted {
+    			get {
+    				return this._Ac_IsDeleted;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Ac_IsDeleted, _Ac_IsDeleted, value);
+    				this._Ac_IsDeleted = value;
     			}
     		}
     		
@@ -760,6 +772,7 @@ namespace Song.Entities {
     					_.Ac_Gender,
     					_.Ac_IDCardNumber,
     					_.Ac_Intro,
+    					_.Ac_IsDeleted,
     					_.Ac_IsOpenMobile,
     					_.Ac_IsOpenTel,
     					_.Ac_IsPass,
@@ -826,6 +839,7 @@ namespace Song.Entities {
     					this._Ac_Gender,
     					this._Ac_IDCardNumber,
     					this._Ac_Intro,
+    					this._Ac_IsDeleted,
     					this._Ac_IsOpenMobile,
     					this._Ac_IsOpenTel,
     					this._Ac_IsPass,
@@ -924,6 +938,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Ac_Intro))) {
     				this._Ac_Intro = reader.GetString(_.Ac_Intro);
+    			}
+    			if ((false == reader.IsDBNull(_.Ac_IsDeleted))) {
+    				this._Ac_IsDeleted = reader.GetBoolean(_.Ac_IsDeleted);
     			}
     			if ((false == reader.IsDBNull(_.Ac_IsOpenMobile))) {
     				this._Ac_IsOpenMobile = reader.GetBoolean(_.Ac_IsOpenMobile);
@@ -1163,6 +1180,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Ac_Intro = new WeiSha.Data.Field<Accounts>("Ac_Intro");
     			
     			/// <summary>
+    			/// 字段名：Ac_IsDeleted - 数据类型：Boolean
+    			/// </summary>
+    			public static WeiSha.Data.Field Ac_IsDeleted = new WeiSha.Data.Field<Accounts>("Ac_IsDeleted");
+    			
+    			/// <summary>
     			/// 字段名：Ac_IsOpenMobile - 数据类型：Boolean
     			/// </summary>
     			public static WeiSha.Data.Field Ac_IsOpenMobile = new WeiSha.Data.Field<Accounts>("Ac_IsOpenMobile");
@@ -1374,4 +1396,3 @@ namespace Song.Entities {
     		}
     	}
     }
-    

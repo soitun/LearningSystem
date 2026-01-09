@@ -431,4 +431,6 @@ CREATE INDEX "Exam_Accounts_IX_Ac_ID" ON "public"."Exam_Accounts" USING btree (
 CREATE INDEX "aaaaaExam_Accounts_PK" ON "public"."Exam_Accounts" USING btree (
   "Ea_ID" "pg_catalog"."int4_ops" ASC NULLS LAST
 );
-
+/*增加学员账号的是否删除字段*/
+ALTER TABLE "Accounts" ADD COLUMN "Ac_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
+CREATE INDEX  IF NOT EXISTS "Accounts_IX_IsDeleted" ON "Accounts"("Ac_IsDeleted");

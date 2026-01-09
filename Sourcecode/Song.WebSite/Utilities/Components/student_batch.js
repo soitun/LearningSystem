@@ -1,5 +1,4 @@
 ﻿//学员的批量处理
-$dom.load.css(['/Utilities/Components/Styles/student_batch.css']);
 //事件:
 //addsingle:单个学员的添加事件
 Vue.component('student_batch', {

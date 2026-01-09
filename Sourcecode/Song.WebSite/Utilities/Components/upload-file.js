@@ -27,7 +27,7 @@ Vue.component('upload-file', {
         }
     },
     created: function () {
-        $dom.load.css(['/Utilities/Components/Styles/upload-file.css']);
+  
         var th = this;
         th.loading = true;
         //控件id

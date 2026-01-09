@@ -1,5 +1,4 @@
 ﻿//试题的展示
-$dom.load.css(['/Utilities/Components/Question/Styles/exam.css']);
 Vue.component('question', {
     //exam:当前考试
     //account:当前登录的学员账号

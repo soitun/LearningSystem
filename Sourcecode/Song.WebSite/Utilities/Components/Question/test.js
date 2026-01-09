@@ -1,5 +1,4 @@
 ﻿//试题的在测试与考试中的展现
-$dom.load.css(['/Utilities/Components/Question/Styles/test.css']);
 Vue.component('question', {
     //ques:当前试题
     //groups:试题按题型分类的试题组

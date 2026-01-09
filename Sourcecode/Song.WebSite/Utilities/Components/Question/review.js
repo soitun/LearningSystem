@@ -1,5 +1,5 @@
 ﻿//试题的展示,用于回顾
-$dom.load.css(['/Utilities/Components/Question/Styles/review.css']);
+
 Vue.component('question', {
     //exam:当前考试
     //stid:当前考试的学员id

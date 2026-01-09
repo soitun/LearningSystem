@@ -1,5 +1,5 @@
 ﻿//控件面板
-$dom.load.css(['/Utilities/Components/Styles/panel.css']);
+
 Vue.component('panel', {
     //disabled: 是否禁用 
     props: ['disabled'],
