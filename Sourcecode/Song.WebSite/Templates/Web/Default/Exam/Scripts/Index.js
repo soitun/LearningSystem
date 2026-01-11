@@ -197,12 +197,18 @@ $ready(function () {
                 loading: false
             }
         },
-        watch: {},
-        computed: {},
-        mounted: function () {
-            this.getgroup();
-            this.onload();
+        watch: {
+            //主题变化时，这里用于初次加载
+            theme: {
+                handler: function (newval, oldval) {
+                    if (newval == null) return;
+                    this.getgroup();
+                    this.onload();
+                }, immediate: true
+            }
         },
+        computed: {},
+        mounted: function () { },
         methods: {
             //参考人员
             getgroup: function () {
@@ -215,18 +221,13 @@ $ready(function () {
                     .then(function (req) {
                         if (req.data.success) {
                             th.group = req.data.result;
-                        } else {
-                            console.error(req.data.exception);
-                            throw req.data.message;
-                        }
-                    }).catch(function (err) {
-                        alert(err);
-                        console.error(err);
-                    });
+                        } else throw req.data.message;
+                    }).catch(err => console.error(err));
             },
             //获取“考试场次”
             onload: function () {
                 var th = this;
+                th.loading = true;
                 $api.get('Exam/Exams', { 'uid': this.theme.Exam_UID }).then(function (req) {
                     if (req.data.success) {
                         th.exams = req.data.result;
@@ -234,17 +235,15 @@ $ready(function () {
                         console.error(req.data.exception);
                         throw req.data.message;
                     }
-                }).catch(function (err) {
-                    alert(err);
-                    console.error(err);
-                });
+                }).catch(err => console.error(err))
+                    .finally(() => th.loading = false);
             }
         },
         template: `<card class="theme"  shadow="hover">
         <card-title>{{index+1}}.《{{theme.Exam_Title}}》 </card-title>
         <card-content>
         <div class="item">参考人员：{{group}} </div>     
-        <theme_item v-for="(e,index) in exams" :exam="e" :index="index" :account="account"></exam_data>
+            <theme_item v-for="(e,index) in exams" :exam="e" :index="index" :account="account"></exam_data>
         </card-content>
       </card>`
     });
@@ -259,12 +258,17 @@ $ready(function () {
             }
         },
         watch: {
+            //考试信息变化时，这里用于初次加载
+            exam: {
+                handler: function (newval, oldval) {
+                    if (newval == null) return;
+                    this.onload();
+                }, immediate: true
+            }
         },
         computed: {
         },
-        mounted: function () {
-            this.onload();
-        },
+        mounted: function () {},
         methods: {
             //获取“试卷详情”
             onload: function () {

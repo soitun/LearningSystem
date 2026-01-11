@@ -35,12 +35,8 @@
     $api.get('Account/Current').then(req=>{
         if(req.data.success){
             let result=req.data.result;
-            //...业务代码
-        }else{
-            throw req.data.message;
-        }
-    }).catch(err=>console.error(err))
-        .finally(()=>{}); 
+        }else throw req.data.message;        
+    }).catch(err=>alert(err)).finally(()=>{}); 
         </code></pre>
             <p>以下是按账号查询账号为例，带参数调用API。</p>
             <pre class="line-numbers"><code class="language-javascript">
@@ -53,7 +49,7 @@
             console.error(req.data.exception);
             throw req.config.way + ' ' + req.data.message;
         }
-    }).catch(err=>console.error(err))
+    }).catch(err=>alert(err))
         .finally(()=>{});
     </code></pre>
             <p>分页数据获取，以下是以课程分页数据获取为例</p>
@@ -72,7 +68,7 @@
             console.error(req.data.exception);
             throw req.config.way + ' ' + req.data.message;
         }
-    }).catch(err=>console.error(err))
+    }).catch(err=>alert(err))
         .finally(()=>{});
             </code></pre>
 
@@ -86,7 +82,7 @@
         }else{
             throw req.data.message;
         }
-    }).catch(err=>console.error(err))
+    }).catch(err=>alert(err))
         .finally(()=>{});
         
  </code></pre>
