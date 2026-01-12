@@ -136,6 +136,8 @@ card-title .search::before {
 
 .theme card-title {
 	padding: 15px;
+	display: flex;
+	justify-content: space-between;
 }
 
 card-title a {

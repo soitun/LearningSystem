@@ -190,7 +190,7 @@ namespace Song.ServiceImpls
         /// <param name="objs">fiels对应的值</param>
         public int ExamUpdate(int examid, Field[] fiels, object[] objs)
         {
-            return Gateway.Default.Update<Examination>(fiels, objs, Examination._.Exam_GroupType == examid);
+            return Gateway.Default.Update<Examination>(fiels, objs, Examination._.Exam_ID == examid);
         }
         public int ExamDelete(int identify)
         {

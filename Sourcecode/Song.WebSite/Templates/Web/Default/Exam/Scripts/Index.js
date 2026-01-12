@@ -192,7 +192,7 @@ $ready(function () {
         props: ['theme', 'index', 'account'],
         data: function () {
             return {
-                group: '',
+                accounttotal: 0,    //参考学员的数
                 exams: [],     //考试场次
                 loading: false
             }
@@ -202,27 +202,23 @@ $ready(function () {
             theme: {
                 handler: function (newval, oldval) {
                     if (newval == null) return;
-                    this.getgroup();
+                    this.getaccounttotal();
                     this.onload();
                 }, immediate: true
             }
         },
         computed: {},
         mounted: function () { },
-        methods: {
-            //参考人员
-            getgroup: function () {
+        methods: {           
+            //获取参考学员的总数
+            getaccounttotal: function () {
                 var th = this;
-                if (this.theme.Exam_GroupType == 1) {
-                    th.group = '全体学员';
-                    return;
-                }
-                $api.cache('Exam/ScopeInfo', { 'type': this.theme.Exam_GroupType, 'uid': this.theme.Exam_UID })
-                    .then(function (req) {
-                        if (req.data.success) {
-                            th.group = req.data.result;
-                        } else throw req.data.message;
-                    }).catch(err => console.error(err));
+                $api.cache('Exam/ScopeTotal', { 'uid': this.theme.Exam_UID })
+                .then(function (req) {
+                    if (req.data.success) {
+                        th.accounttotal = req.data.result;
+                    } else throw req.data.message;
+                }).catch(err => console.error(err));
             },
             //获取“考试场次”
             onload: function () {
@@ -240,49 +236,27 @@ $ready(function () {
             }
         },
         template: `<card class="theme"  shadow="hover">
-        <card-title>{{index+1}}.《{{theme.Exam_Title}}》 </card-title>
-        <card-content>
-        <div class="item">参考人员：{{group}} </div>     
-            <theme_item v-for="(e,index) in exams" :exam="e" :index="index" :account="account"></exam_data>
+        <card-title>
+            <span>{{index+1}}.《{{theme.Exam_Title}}》 </span>
+            <el-tag v-if="theme.Exam_GroupType == 1">全体学员</el-tag>
+            <el-tag type="success" v-if="theme.Exam_GroupType == 2">限定学员组</el-tag>
+            <el-tag type="warning" v-if="theme.Exam_GroupType == 3">指定学员</el-tag>
+        </card-title>
+        <card-content>        
+            <theme_item v-for="(e,index) in exams" :exam="e" :theme="theme" :index="index" :account="account"></exam_data>
         </card-content>
       </card>`
     });
     //考试主题中的详情（用于所有考试）
     Vue.component('theme_item', {
-        props: ['exam', 'index', 'account'],
+        props: ['exam', 'theme','index', 'account'],
         data: function () {
             return {
                 paper: {},       //试卷
                 subject: {},     //专业
                 loading: false
             }
-        },
-        watch: {
-            //考试信息变化时，这里用于初次加载
-            exam: {
-                handler: function (newval, oldval) {
-                    if (newval == null) return;
-                    this.onload();
-                }, immediate: true
-            }
-        },
-        computed: {
-        },
-        mounted: function () {},
-        methods: {
-            //获取“试卷详情”
-            onload: function () {
-                var th = this;
-                $api.bat(
-                    $api.cache('TestPaper/ForID', { 'id': this.exam.Tp_Id }),
-                    $api.cache('Subject/ForID', { 'id': this.exam.Sbj_ID })
-                ).then(([paper, subject]) => {
-                    //获取结果
-                    th.paper = paper.data.result;
-                    th.subject = subject.data.result;
-                }).catch(err => console.error(err));
-            }
-        },
+        },    
         template: `<div>
         <div class="item"><b>第（{{index+1}}）场.《{{exam.Exam_Name}}》   </b>    
         </div>           
@@ -298,10 +272,7 @@ $ready(function () {
             </span>
           </div>
           <div class="item" v-if="paper">限时：{{exam.Exam_Span}}分钟 &nbsp; 题量：{{paper.Tp_Count}}道</div>
-          <div class="item" v-if="paper">总分：{{exam.Exam_Total}}分（{{exam.Exam_PassScore}}分及格）</div>        
-          <div class="item">专业：{{subject.Sbj_Name}} </div>
-          <div class="item" v-if="paper">课程：{{paper.Cou_Name}}</div>        
-       
+          <div class="item" v-if="paper">总分：{{exam.Exam_Total}}分（{{exam.Exam_PassScore}}分及格）</div>
       </div>`
     });
     //成绩查看的考试项（用于成绩回顾）

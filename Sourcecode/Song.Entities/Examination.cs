@@ -48,7 +48,7 @@ namespace Song.Entities {
     		
     		protected Int32 _Exam_PassScore;
     		
-    		protected Int64 _Exam_Purpose;
+    		protected Int32 _Exam_Purpose;
     		
     		protected Int32 _Exam_Span;
     		
@@ -272,7 +272,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int64 Exam_Purpose {
+    		public Int32 Exam_Purpose {
     			get {
     				return this._Exam_Purpose;
     			}
@@ -557,7 +557,7 @@ namespace Song.Entities {
     				this._Exam_PassScore = reader.GetInt32(_.Exam_PassScore);
     			}
     			if ((false == reader.IsDBNull(_.Exam_Purpose))) {
-    				this._Exam_Purpose = reader.GetInt64(_.Exam_Purpose);
+    				this._Exam_Purpose = reader.GetInt32(_.Exam_Purpose);
     			}
     			if ((false == reader.IsDBNull(_.Exam_Span))) {
     				this._Exam_Span = reader.GetInt32(_.Exam_Span);
@@ -719,7 +719,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Exam_PassScore = new WeiSha.Data.Field<Examination>("Exam_PassScore");
     			
     			/// <summary>
-    			/// 字段名：Exam_Purpose - 数据类型：Int64
+    			/// 字段名：Exam_Purpose - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Exam_Purpose = new WeiSha.Data.Field<Examination>("Exam_Purpose");
     			
@@ -780,4 +780,3 @@ namespace Song.Entities {
     		}
     	}
     }
-    
