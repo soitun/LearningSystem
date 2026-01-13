@@ -12,7 +12,7 @@ $ready(["Components/group_select.js",
             tabs: [
                 { title: '基本信息', name: 'general', icon: 'e6b0' },
                 { title: '参考人员', name: 'range', icon: 'e67d' }],
-            activeName: 'range',     //选项卡
+            activeName: 'general',     //选项卡
 
             //当前数据实体
             entity: {

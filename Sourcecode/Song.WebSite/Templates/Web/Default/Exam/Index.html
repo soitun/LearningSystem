@@ -9,13 +9,13 @@
 
 <body>
     <div id="vapp" v-cloak>
-        <page_header ref="header" :organ="organ" @login="(acc,login)=>{account = acc;loading_login=login;}">loading ...
+        <page_header ref="header" @load="(o,c,p)=>{org=o,config=c,platinfo=p}" @login="(acc,login)=>{account = acc;loading_login=login;}">loading ...
         </page_header>
         <div id="bodyTop">&nbsp;</div>
         <context>
             <aside>
                 <el-divider content-position="left">课程推荐</el-divider>
-                <courses :sbjid="0" :org="organ" :count="4">
+                <courses :sbjid="0" :org="org" :count="4">
                     <template slot="item" slot-scope="item">
                         <course :item="item.data" :class="{'fourth':(item.index+1)%4==0}"></course>
                     </template>
@@ -28,8 +28,8 @@
                 <loading v-if="loading" size="24px" type="spinner">加载中...</loading>
                 <template v-else>
                     <template v-if="tabmenu=='my_exam'" remark="我的考试">
-                        <exam_data v-for="(e,index) in myexam" :exam="e" :index="(form.index - 1) * form.size + index"
-                            :account="account"></exam_data>
+                        <my_exam v-for="(e,index) in myexam" :exam="e" :index="(form.index - 1) * form.size + index"
+                            :account="account"></my_exam>
                         <div v-if="myexam.length<=0" class="noexam">
                             <icon>&#xe723</icon>好嗨哟，没有考试
                         </div>
@@ -71,7 +71,7 @@
                 </template>
             </section>
         </context>
-        <page_footer :organ="organ" :account="account">loading ...</page_footer>
+        <page_footer :organ="org" :account="account">loading ...</page_footer>
     </div>
 
 

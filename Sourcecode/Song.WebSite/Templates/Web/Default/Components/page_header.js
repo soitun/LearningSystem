@@ -21,7 +21,7 @@ Vue.component('page_header', {
             //平台信息
             platinfo: {},           //平台信息
             config: {},             //当前机构的配置项
-            organ: {},        //当前机构
+            org: {},        //当前机构
 
             visible_userdrop: false,     //用户登录后的菜单面板的显示与隐藏
 
@@ -31,7 +31,7 @@ Vue.component('page_header', {
         }
     },
     watch: {
-        'organ': {
+        'org': {
             handler: function (nv, ov) {
                 this.$nextTick(function () {
                     $dom("header img.logo").bind('load,error', function (event) {
@@ -103,17 +103,17 @@ Vue.component('page_header', {
     methods: {
         init: function () {
             this.platinfo = window.platinfo;
-            this.organ = window.org;
+            this.org = window.org;
             this.config = window.config;
             //加载成功的事件
-            this.$emit('load', this.organ, this.config, this.platinfo);
+            this.$emit('load', this.org, this.config, this.platinfo);
         },
         //获取导航菜单
         getnavi: function () {
-            if (!(this.organ && this.organ.Org_ID)) return;
+            if (!(this.org && this.org.Org_ID)) return;
             var th = this;
             th.loading_menu = true;
-            $api.get('Navig/web', { 'orgid': this.organ.Org_ID, 'type': 'main' }).then(function (req) {
+            $api.get('Navig/web', { 'orgid': this.org.Org_ID, 'type': 'main' }).then(function (req) {
                 if (req.data.success) {
                     th.menus = req.data.result;
                     //console.log(th.menus);
@@ -194,9 +194,9 @@ Vue.component('page_header', {
     // 
     template: `<weisha_header_navi>
         <header v-if="loading"> <loading>... </loading></header>
-        <header v-else-if="organ && JSON.stringify(organ) != '{}'">
+        <header v-else-if="org && JSON.stringify(org) != '{}'">
             <a href="/" class="logo">
-                <img :src="organ.Org_Logo" v-if="organ.Org_Logo!=''" />
+                <img :src="org.Org_Logo" v-if="org.Org_Logo!=''" />
                 <img src="/Utilities/Images/def_logo.jpg" v-else />
             </a>          
             <search>

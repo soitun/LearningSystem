@@ -15,6 +15,7 @@ Vue.component('student_select', {
         },
         'theme': {
             handler: function (nv, ov) {
+                if (!nv) return;
                 this.getSelectedStudent();
             }, immediate: true
         },
@@ -32,6 +33,7 @@ Vue.component('student_select', {
                 .then(req => {
                     if (req.data.success) {
                         th.examaccounts = req.data.result;
+                        th.select_event( th.examaccounts);
                     } else {
                         console.error(req.data.exception);
                         throw req.config.way + ' ' + req.data.message;

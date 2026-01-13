@@ -36,7 +36,7 @@ namespace Song.ViewData.Methods
         public Song.Entities.ExamTestPaper ForID(long id)
         {
             Song.Entities.ExamTestPaper tp = Business.Do<IExamTestPaper>().PaperSingle(id);
-            if (tp == null) throw new Exception("试卷不存在！");
+            if (tp == null) throw new Exception("考试专用试卷不存在！");
             return _tran(tp);
         }
         /// <summary>
@@ -48,7 +48,7 @@ namespace Song.ViewData.Methods
         public JObject ForDetails1(long id)
         {
             Song.Entities.ExamTestPaper tp = Business.Do<IExamTestPaper>().PaperSingle(id);
-            if (tp == null) throw new Exception("试卷不存在！");
+            if (tp == null) throw new Exception("考试专用试卷不存在！");
             JObject jo = new JObject();
             jo.Add("paper", _tran(tp).ToJObject());
             XmlDocument xmldoc = new XmlDocument();
@@ -96,7 +96,7 @@ namespace Song.ViewData.Methods
         public JObject ForDetails2(long id)
         {
             Song.Entities.ExamTestPaper tp = Business.Do<IExamTestPaper>().PaperSingle(id);
-            if (tp == null) throw new Exception("试卷不存在！");
+            if (tp == null) throw new Exception("考试专用试卷不存在！");
             JObject jo = new JObject();
             jo.Add("paper", _tran(tp).ToJObject());
 

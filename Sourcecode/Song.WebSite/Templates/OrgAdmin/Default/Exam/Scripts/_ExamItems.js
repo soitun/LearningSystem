@@ -1,6 +1,6 @@
 $ready([
     "../ExamTestPaper/Components/papertype.js"  //试卷类型
-],function () {
+], function () {
     window.vapp = new Vue({
         el: '#vapp',
         data: {
@@ -184,6 +184,7 @@ $ready([
                         } else this.exam = $api.clone(exam);
                         if (this.exam.Etp_Id != '' && this.exam.Etp_Id != '0') this.papertype = 1;
                         else if (this.exam.Tp_Id != '' && this.exam.Tp_Id != '0') this.papertype = 0;
+                        this.exam.Exam_Purpose = this.papertype;
                         resolve(this.exam);
                     }
                 });
@@ -305,8 +306,7 @@ $ready([
                                 console.error(req.data.exception);
                                 throw req.config.way + ' ' + req.data.message;
                             }
-                        }).catch(err => console.error(err))
-                        .finally(() => { });
+                        }).catch(err => console.error(err)).finally(() => { });
                 });
             },
 
@@ -315,6 +315,7 @@ $ready([
                 var th = this;
                 this.$refs[formName].validate((valid, fields) => {
                     if (valid) {
+                        th.exam.Exam_Purpose = th.papertype;                      
                         //像主窗体传值，当前实体，图片对象
                         var pagebox = window.top.$pagebox;
                         if (pagebox && pagebox.source.box) {
