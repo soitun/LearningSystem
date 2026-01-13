@@ -14,7 +14,7 @@ $ready(["Components/group_select.js",
                 { title: '参考人员', name: 'range', icon: 'e67d' }],
             activeName: 'general',     //选项卡
 
-            //当前数据实体
+            //当前数据实体，这里是考试主题
             entity: {
                 Exam_ID: 0,
                 Exam_IsTheme: true,
@@ -208,7 +208,7 @@ $ready(["Components/group_select.js",
             //relationships: 学员组与考试的关系对象数组，Exam_Accounts对象
             studentselected: function (accid, accounts, relationships) {
                 if (accid == null) accid = [];
-                this.examaccounts = relationships;              
+                this.examaccounts = relationships;
                 this.getaccounttotal();
             },
             //获取参考学员的总数
@@ -294,6 +294,74 @@ $ready(["Components/group_select.js",
                 }
             }
         },
+        components: {
+            //考试试卷
+            'testpaper': {
+                props: ['exam'],
+                data: function () {
+                    return {
+                        paper: {},
+                        loading: false,
+                    }
+                },
+                watch: {
+                    //主题变化时，这里用于初次加载
+                    exam: {
+                        handler: function (newval, oldval) {
+                            if (newval == null) return;
+                            this.getpaper();
+                        }, immediate: true
+                    }
+                },
+                computed: {
+                    //题量
+                    tpcount: function () {
+                        if ($api.isnull(this.paper)) return 0;
+                        return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Count : this.paper.Etp_Count;
+                    },
+                    //试卷类型
+                    tptype: function () {
+                        if ($api.isnull(this.paper)) return 0;
+                        return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Type : this.paper.Etp_Type;
+                    },
+                    tpname: function () {
+                        if ($api.isnull(this.paper)) return '';
+                        return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Name : this.paper.Etp_Name;
+                    },
+                },
+                methods: {
+                    //获取试卷
+                    getpaper: function () {
+                        var th = this;
+                        th.loading = true;
+                        let apiget = th.exam.Exam_Purpose == 0 ?
+                            $api.get('TestPaper/ForID', { 'id': th.exam.Tp_Id }) :
+                            $api.get('ExamTestPaper/ForID', { 'id': th.exam.Etp_Id });
+                        apiget.then(function (req) {
+                            if (req.data.success) {
+                                th.paper = req.data.result;
+                                console.error(req.data.result);
+                            } else {
+                                console.error(req.data.exception);
+                                console.error(th.exam);
+                                throw req.data.message;
+                            }
+                        }).catch(err => console.error(err))
+                            .finally(() => th.loading = false);
+                    },
+                },
+                template: `<div>
+                    <el-tag type="info" v-if="false">
+                        <span v-if="exam.Exam_Purpose == 0">课程试卷</span>
+                        <span v-else>考试试卷</span>
+                    </el-tag>
+                        <papertype :type="tptype" :showname="false">
+                            试卷：{{tpname}}
+                        </papertype>
+
+                    </div>`
+            }
+        }
     });
 
 });

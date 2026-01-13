@@ -1,3 +1,4 @@
+$dom.load.css([$dom.path() + 'styles/pagebox.css']);
 $ready(["../Components/courses.js",
     "../Components/course.js",
     '../scripts/pagebox.js',
@@ -30,7 +31,7 @@ $ready(["../Components/courses.js",
 
             },
             created: function () {
-                $dom.load.css([$dom.path() + 'styles/pagebox.css']);
+                
             },
             computed: {
                 //是否登录
@@ -270,7 +271,7 @@ $ready(["../Components/courses.js",
             },
             template: `<card class="theme"  shadow="hover">
         <card-title>
-            <span>{{index+1}}.<a :href='builderurl()'>《{{theme.Exam_Title}}》 </a> </span>
+            <span>{{index+1}}.<a :href='builderurl()' target="_blank">《{{theme.Exam_Title}}》 </a> </span>
             <el-tag v-if="theme.Exam_GroupType == 1">全体学员</el-tag>
             <el-tag type="success" v-if="theme.Exam_GroupType == 2">限定学员组</el-tag>
             <el-tag type="warning" v-if="theme.Exam_GroupType == 3">指定学员</el-tag>

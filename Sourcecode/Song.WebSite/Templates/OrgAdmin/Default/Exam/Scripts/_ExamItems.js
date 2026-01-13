@@ -19,7 +19,7 @@ $ready([
             papertype: 1,          //试卷类型,默认是考试专用试卷
             //考试专用试卷
             exampapers: [],
-            currpaper: {},      //当前卷
+            currpaper: {},      //当前试卷
 
             sbjTree: [],        //专业树
             sbjids: [],      //选择中的专业
@@ -315,7 +315,11 @@ $ready([
                 var th = this;
                 this.$refs[formName].validate((valid, fields) => {
                     if (valid) {
-                        th.exam.Exam_Purpose = th.papertype;                      
+                        //试卷类型，0为课程试卷，1为考试试卷
+                        th.exam.Exam_Purpose = th.papertype;
+                        //题量
+                        th.exam.Exam_QuesCount = th.iscoursepaper ?
+                            th.currpaper.Tp_Count : th.currpaper.Etp_Count;
                         //像主窗体传值，当前实体，图片对象
                         var pagebox = window.top.$pagebox;
                         if (pagebox && pagebox.source.box) {

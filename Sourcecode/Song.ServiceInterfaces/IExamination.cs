@@ -55,7 +55,7 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         Examination ExamTheme(string uid);
         /// <summary>
-        /// 获取单一实体对象，取最近一次考试；此处获取的是考试主题或场次
+        /// 获取单一实体对象，取最近一次考试；此处获取的是考试场次
         /// </summary>
         /// <returns></returns>
         Examination ExamLast();

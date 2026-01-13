@@ -105,13 +105,15 @@
                                     <el-tag>总分：{{item.Exam_Total}} 分</el-tag>
                                     <el-tag type="success">及格分：{{item.Exam_PassScore}} 分</el-tag>
                                     <el-tag type="warning">限时：{{item.Exam_Span}}分钟</el-tag>
+                                    <el-tag type="primary">试题：{{item.Exam_QuesCount}} 道</el-tag>
                                 </div>
                                 <div class="row" v-if="entity.Exam_DateType==1">时间：
                                     <span>
                                         <!--准时开始-->
                                         {{item.Exam_Date|date("yyyy-M-dd HH:mm")}} （准时开始）
                                     </span>
-                                </div>                               
+                                </div>
+                                <testpaper :exam="item"></testpaper>                               
                             </section>
                         </el-card>
                     </section>
