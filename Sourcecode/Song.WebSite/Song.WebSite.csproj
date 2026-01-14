@@ -1065,6 +1065,7 @@
     <Content Include="Templates\OrgAdmin\Default\Student\Components\ExerciseState.js" />
     <Content Include="Templates\OrgAdmin\Default\Student\Components\OutlineList.js" />
     <Content Include="Templates\OrgAdmin\Default\Student\Components\Styles\OutlineList.css" />
+    <Content Include="Templates\OrgAdmin\Default\Student\Components\Styles\outline_progress.css" />
     <Content Include="Templates\OrgAdmin\Default\Student\Outcomes.html" />
     <Content Include="Templates\OrgAdmin\Default\Student\Outcomes4Sort.html" />
     <Content Include="Templates\OrgAdmin\Default\Student\QuestionProgress.html" />

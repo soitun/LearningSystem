@@ -22,7 +22,7 @@ Vue.component('papertype', {
     },
     template: `<span class="papertype" :type="type">
         <el-tooltip v-if="type==2" content="试卷类型：随机出题" placement="bottom">
-            <span><icon large>&#xe6cc</icon> <template v-if="showname==null || showname==true">随机出题</template></span>
+            <span><icon medium>&#xe6cc</icon> <template v-if="showname==null || showname==true">随机出题</template></span>
         </el-tooltip>
         <el-tooltip v-if="type==1" content="试卷类型：固定试题" placement="bottom">
             <span><icon large>&#xe6cb</icon> <template v-if="showname==null || showname==true">固定试题</template></span>

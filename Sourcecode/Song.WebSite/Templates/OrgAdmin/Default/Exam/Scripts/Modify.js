@@ -339,8 +339,7 @@ $ready(["Components/group_select.js",
                             $api.get('ExamTestPaper/ForID', { 'id': th.exam.Etp_Id });
                         apiget.then(function (req) {
                             if (req.data.success) {
-                                th.paper = req.data.result;
-                                console.error(req.data.result);
+                                th.paper = req.data.result;                              
                             } else {
                                 console.error(req.data.exception);
                                 console.error(th.exam);
