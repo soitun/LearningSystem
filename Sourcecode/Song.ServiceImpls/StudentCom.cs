@@ -1240,6 +1240,7 @@ namespace Song.ServiceImpls
                 catch (Exception ex)
                 {
                     tran.Rollback();
+                    WeiSha.Core.Log.Error(this.GetType().Name, ex);
                     throw ex;
                 }
             }

@@ -117,6 +117,7 @@ video::-webkit-media-controls-panel {
 	height: 100%;
 	position: relative;
 	box-sizing: border-box;
+	text-align: left;
 }
 
 

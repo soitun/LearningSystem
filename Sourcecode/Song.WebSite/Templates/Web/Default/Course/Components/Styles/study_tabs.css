@@ -18,6 +18,7 @@
 
 #study_tabs dl {
 	display: flex;
+	justify-content: flex-start;
 	box-sizing: border-box;
 	padding: 0px 0px 0px 0px;
 	width: 100%;
@@ -27,15 +28,15 @@
 	background-repeat: no-repeat;
 	background-position: left bottom;
 	height: 25px;
+	padding: 0px 15px;
 	text-align: center;
 	color: #999;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-	font-weight: bold;
-	float: left;
+	font-weight: bold;	
 	box-shadow: 1px -1px 3px #888888;
-	width: 100px;
+	box-sizing: border-box;
 	line-height: 25px;
 	text-decoration: none;
 	display: block;
@@ -53,7 +54,7 @@
 	background-color: #999999;
 	height: 30px;
 	margin-top: 0px;
-	padding-top: 2px;
+	padding-top: 4px;
 	transform: scale(1.1);
 }
 #study_tabs dl dd.tabCurrent icon{

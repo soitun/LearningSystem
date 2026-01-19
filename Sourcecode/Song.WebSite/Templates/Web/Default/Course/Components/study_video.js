@@ -9,7 +9,7 @@ Vue.component('study_video', {
             //当前章节的视频信息
             video: {
                 url: '', //视频路径
-                total: 0, //总时长      
+                total: 0, //总时长，单位秒   
                 playTime: 0, //当前播放时间，单位：毫秒     
                 playhistime: 0, //历史播放时间
                 studytime: 0, //累计学习时间
@@ -221,14 +221,11 @@ Vue.component('study_video', {
             var th = this;
             if (per > 0 && per < (100 + interval) && per % interval == 0) {
                 if (!this.outline) return;
+                th.studylogUpdate = true;
                 $api.post("Course/StudyLog", {
                     couid: th.outline.Cou_ID, olid: th.outline.Ol_ID,
                     playTime: th.playtime, studyTime: th.video.studytime,
                     totalTime: th.video.total
-                }, function () {
-                    th.studylogUpdate = true;
-                }, function () {
-                    th.studylogUpdate = false;
                 }).then(function (req) {
                     if (!req.data.success) {
                         if (th.playready()) {
@@ -258,7 +255,7 @@ Vue.component('study_video', {
                     window.setTimeout(function () {
                         th.studylogState = 0;
                     }, 2000);
-                });
+                }).finally(()=>th.studylogUpdate = false); 
             }
         },
     },
