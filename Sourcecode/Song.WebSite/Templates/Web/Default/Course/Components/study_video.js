@@ -55,17 +55,30 @@ Vue.component('study_video', {
         'video.total': {
             handler: function (nv, ov) {
                 if (nv <= 0) return;
+                 //如果视频时长与之前记录的不同
+                 if (nv != this.state.Duration) {
+                    this.state.Duration = nv;
+                    let per = Math.floor(this.video.studytime <= 0 ? 0 : this.video.studytime / this.video.total * 100);
+                    this.videoRecord(per);
+                }
+                //如果视频时长与之前记录的不同
+                if (nv != this.state.Duration) {
+                    this.state.Duration = nv;
+                    let per = Math.floor(this.video.studytime <= 0 ? 0 : this.video.studytime / this.video.total * 100);
+                    this.videoRecord(per);
+                }
                 //计算需要暂停的时间点
                 if (this.config.random_pause_setup)
                     this.pausevalue = this.buildrandom(this.config.random_pause_value, nv);
-                console.log(this.pausevalue);
+                //console.log(this.pausevalue);
             }, immediate: true
         },
         //播放进度时间变化
         playtime: function (val) {
             this.video.studytime++;
             //当前视频播放进度百分比
-            var per = Math.floor(this.video.studytime <= 0 ? 0 : this.video.studytime / this.video.total * 100);
+            let per = Math.floor(this.video.studytime <= 0 ? 0 : this.video.studytime / this.video.total * 100);
+            //if (this.state.Complete < per) per = this.state.Complete;
             this.playpercent = per;
             //播放前进的事件，三个参数：当前播放的时秒进度（单位：秒），累计学习计时（单位：秒），完成度的百分比，
             this.$emit('playing', val, this.video.studytime, per);
@@ -88,7 +101,7 @@ Vue.component('study_video', {
         },
         //播放进度百分比变化，
         playpercent: function (val, oldval) {
-            //console.log('当前播放进度百分比：'+val);
+            //console.log('当前播放进度百分比：' + val);
             //学习记录提交
             if (val <= 100) this.videoRecord(val);
         }
@@ -219,6 +232,7 @@ Vue.component('study_video', {
             else if (this.video.total <= 10 * 60) interval = 5; //10分钟的视频，5%递交一次      
             else if (this.video.total <= 30 * 60) interval = 2; //30分钟的视频，2%递交一次    
             var th = this;
+            //if (th.state.Complete < per) per = th.state.Complete;
             if (per > 0 && per < (100 + interval) && per % interval == 0) {
                 if (!this.outline) return;
                 th.studylogUpdate = true;
@@ -257,7 +271,7 @@ Vue.component('study_video', {
                     window.setTimeout(function () {
                         th.studylogState = 0;
                     }, 2000);
-                }).finally(()=>th.studylogUpdate = false); 
+                }).finally(() => th.studylogUpdate = false);
             }
         },
     },
@@ -272,7 +286,7 @@ Vue.component('study_video', {
             </span>
             <span>
                 <span v-if="video.total>0">视频时长：{{video.total}}秒，播放进度：{{playtime}}秒，</span>
-                <span>累计学习{{video.studytime}}秒，完成{{video.percent}}%，</span>
+                <span>累计学习{{video.studytime}}秒，完成{{playpercent}}%，</span>
                 <span style="cursor: pointer" v-on:click="seek(video.playhistime)">上次播放到{{video.playhistime}}秒</span>     
             </span>       
         </div>

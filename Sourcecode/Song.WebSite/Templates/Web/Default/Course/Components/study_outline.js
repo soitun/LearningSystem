@@ -150,13 +150,15 @@ Vue.component('study_outline', {
             //获取章节相关信息
             $api.bat(
                 $api.get('Outline/State', { 'olid': olid, 'acid': th.account.Ac_ID }),
-                $api.cache("Outline/Info", { 'olid': olid })
+                $api.get("Outline/Info", { 'olid': olid })
             ).then(([state, info]) => {
                 //获取结果
                 var result = info.data.result;
                 for (let key in state.data.result) {
                     result[key] = state.data.result[key];
                 }
+                result['StudyTime'] = Math.round(result['Duration'] * result['Complete'] / 100 / 1000);
+ 
                 th.state = result;
                 if (!th.state.canStudy) {
                     th.$confirm('当前章节需要购买后学习, 是否继续?', '提示', {

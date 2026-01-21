@@ -1211,8 +1211,7 @@ namespace Song.ServiceImpls
                         log.Ac_ID = st.Ac_ID;
                         log.Ac_AccName = st.Ac_AccName;
                         log.Ac_Name = st.Ac_Name;
-                        //视频长度
-                        log.Lss_Duration = totalTime;
+                       
                     }
                     if (log.Cou_ID == 0)
                         log.Cou_ID = couid;
@@ -1220,7 +1219,8 @@ namespace Song.ServiceImpls
                     log.Lss_LastTime = DateTime.Now;
                     log.Lss_PlayTime = playTime;
                     log.Lss_StudyTime = studyTime;
-                    if (log.Lss_Duration < totalTime) log.Lss_Duration = totalTime;
+                    //视频长度
+                    log.Lss_Duration = totalTime;
                     //登录信息
                     log.Lss_IP = ip;
                     log.Lss_OS = os;

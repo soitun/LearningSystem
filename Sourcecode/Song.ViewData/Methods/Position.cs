@@ -192,6 +192,7 @@ namespace Song.ViewData.Methods
         /// <param name="id">岗位id</param>
         /// <returns></returns>
         [HttpGet]
+        [Admin]
         public List<EmpAccount> Emplyees(int id)
         {
             List<EmpAccount> list = Business.Do<IPosition>().GetAllEmplyee(id);
