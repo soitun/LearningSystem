@@ -70,7 +70,7 @@
             $dom.corejs(function () {
                 $components(function () {
                     window.$init_load(() => $dom.componentjs(window.$customize_componentjs(jsfile), func));
-                    window.$init_func();
+                    window.$init_func();                   
                 });
             });
         });
