@@ -1222,7 +1222,7 @@ namespace Song.ServiceImpls
                     log.Lss_PlayTime = playTime;
                     log.Lss_StudyTime = studyTime;
                     //视频长度
-                    log.Lss_Duration = totalTime;
+                    if (totalTime > 0) log.Lss_Duration = totalTime;
                     //登录信息
                     log.Lss_IP = ip;
                     log.Lss_OS = os;
