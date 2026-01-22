@@ -23,7 +23,7 @@ $ready(function () {
             th.loading_init = true;
             $api.bat(
                 $api.get('Account/ForID', { 'id': th.stid }),
-                $api.cache('Outline/TreeList', { 'couid': th.couid })
+                $api.get('Outline/TreeList', { 'couid': th.couid })
             ).then(([account, outlines]) => {
                 //获取结果
                 th.account = account.data.result;

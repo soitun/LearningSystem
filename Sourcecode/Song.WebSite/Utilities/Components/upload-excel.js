@@ -1,4 +1,5 @@
 ﻿// excel导入数据的组件
+$dom.load.css(['/Utilities/Components/Styles/upload-excel.css']);
 Vue.component('upload-excel', {
     //template: 模板文件的地址
     //config: 配置文件的地址

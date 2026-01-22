@@ -242,7 +242,7 @@ Vue.component('study_video', {
                         th.studylogState = 0;
                     }, 2000);
                 }).catch(function (err) {
-                    th.studylogState = -1;  
+                    th.studylogState = -1;   
                     th.pause();
                     if (window.video_player != null) window.video_player.destroy();
                     var msg = "当前学员状态为“未登录”，请确认是否失效，还是存在多处登录的现像？";

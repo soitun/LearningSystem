@@ -1,4 +1,5 @@
 //视频点播
+$dom.load.css([$dom.pagepath() + 'Components/Styles/study_video.css']);
 //事件:
 //completed:播放完成，参数：当前章节
 //playing:播放中，每播一秒触发一次，参数：当前进度（单位秒），累计学习计时（单位：秒），完成度的百分比，
@@ -64,7 +65,7 @@ Vue.component('study_video', {
         playtime: function (val) {
             this.video.studytime++;
             //当前视频播放进度百分比
-            var per = Math.floor(this.video.studytime <= 0 ? 0 : this.video.studytime / this.video.total * 100);
+            let per = Math.floor(this.video.studytime <= 0 ? 0 : this.video.studytime / this.video.total * 100);
             this.playpercent = per;
             //播放前进的事件，三个参数：当前播放的时秒进度（单位：秒），累计学习计时（单位：秒），完成度的百分比，
             this.$emit('playing', val, this.video.studytime, per);
@@ -251,7 +252,7 @@ Vue.component('study_video', {
                     }).then(() => {
                         th.account = {};
                         window.navigateTo('/mobi/sign/in');
-                    });
+                    });                   
                     window.setTimeout(function () {
                         th.studylogState = 0;
                     }, 2000);

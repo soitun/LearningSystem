@@ -39,6 +39,8 @@
  * 企培云学院-打造学习型组织 ： [ jkdz.weisha100.net ]( http://jkdz.weisha100.net) 
  * 技能培训鉴定平台-人人持证上岗 ： [ jnpx.weisha100.net ]( http://jnpx.weisha100.net) 
 
+### Web首页
+![image](https://gitee.com/weishakeji/LearningSystem/raw/master/Document/Images/webhome.jpg)
 
 ### 手机端
 ![image](https://gitee.com/weishakeji/LearningSystem/raw/master/Document/Images/mobi_home.jpg)
@@ -56,10 +58,10 @@
 ![image](https://gitee.com/weishakeji/LearningSystem/raw/master/Document/Images/%E5%AD%A6%E5%91%98%E4%B8%AD%E5%BF%83-web.png)
 ### 后台管理
 ![image](https://gitee.com/weishakeji/LearningSystem/raw/master/Document/Images/%E6%9C%BA%E6%9E%84%E7%AE%A1%E7%90%8601.png)
+![image](https://gitee.com/weishakeji/LearningSystem/raw/master/Document/Images/%E6%9C%BA%E6%9E%84%E7%AE%A1%E7%90%8605.png)
 ![image](https://gitee.com/weishakeji/LearningSystem/raw/master/Document/Images/%E6%9C%BA%E6%9E%84%E7%AE%A1%E7%90%8606.jpg)
 ![image](https://gitee.com/weishakeji/LearningSystem/raw/master/Document/Images/%E5%AD%A6%E5%91%98%E4%BD%8D%E7%BD%AE.png)
 ![image](https://gitee.com/weishakeji/LearningSystem/raw/master/Document/Images/%E6%9C%BA%E6%9E%84%E7%AE%A1%E7%90%8603.png)
-![image](https://gitee.com/weishakeji/LearningSystem/raw/master/Document/Images/%E6%9C%BA%E6%9E%84%E7%AE%A1%E7%90%8605.png)
 ![image](https://gitee.com/weishakeji/LearningSystem/raw/master/Document/Images/%E6%9C%BA%E6%9E%84%E7%AE%A1%E7%90%8607.png)
 ![image](https://gitee.com/weishakeji/LearningSystem/raw/master/Document/Images/help1.png)
 ![image](https://gitee.com/weishakeji/LearningSystem/raw/master/Document/Images/help2.png)
