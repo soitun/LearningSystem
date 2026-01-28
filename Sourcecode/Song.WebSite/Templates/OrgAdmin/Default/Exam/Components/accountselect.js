@@ -128,7 +128,7 @@ Vue.component('student_add', {
     //
     template: `<div class="student_add">
             <header>
-                <el-input v-model="form.name" placeholder="姓名" clearable @input="getdatas(1)"></el-input>                    
+                <el-input v-model="form.name" placeholder="姓名/账号" clearable @input="getdatas(1)"></el-input> 
                 <el-input v-model="form.idcard" placeholder="身份证" clearable @input="getdatas(1)"></el-input> 
                 <el-input v-model="form.phone" placeholder="电话" clearable @input="getdatas(1)"></el-input> 
             </header>

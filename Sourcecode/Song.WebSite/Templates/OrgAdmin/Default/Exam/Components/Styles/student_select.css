@@ -33,12 +33,23 @@
     justify-content: space-between;
 }
 .examaccounts dl dd .name{
-    margin-right: auto;
+  
 }
 .examaccounts dl dd, .examaccounts dl dd *{
     line-height: 30px;
 }
 .examaccounts dl dd>*:not(.name){
     margin-left: 20px;
-
+}
+/*账号*/
+.examaccounts dl dd .accname::before{
+    content: '(';
+}
+.examaccounts dl dd .accname::after{
+    content: ')';
+}
+.examaccounts dl dd .accname{
+    margin-right: auto;
+    margin-left: 5px;
+    color: #777;
 }

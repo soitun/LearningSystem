@@ -102,8 +102,9 @@ Vue.component('student_select', {
             <el-empty v-else-if="examaccounts.length<1" description="没有指定参加考试的学员"></el-empty>  
             <dl class="list" v-else>
                 <dd v-for="(item,i) in examaccounts" :index="i+1"> 
-                    <icon class="name" size="large" :woman="item.Ac_Gender==2" :man="item.Ac_Gender==1" v-html='item.Ac_Name'></icon>                      
-                    <span class="phone"  v-html='item.Ac_MobiTel1'></span>   
+                    <icon class="name" size="large" :woman="item.Ac_Gender==2" :man="item.Ac_Gender==1" v-html='item.Ac_Name'></icon>  
+                    <span class="accname" small v-html='item.Ac_AccName'></span>                    
+                    <span class="phone"  v-html='item.Ac_MobiTel1'></span>
                     <span class="idcard"  v-html='item.Ac_IDCardNumber'></span>                  
                     <el-link class="btn" type="warning" @click="remove(item)" title="移除">移除</el-link>
                 </dd>
