@@ -26,22 +26,9 @@
 
 
             <div class="intro" v-html="org.Org_Intro" v-if="org.Org_Intro && org.Org_Intro.length>0">
-            </div>
-            <card class="browser">
-                <card-title icon="&#xa030">设备信息</card-title>
-                <card-content>
-                    <div>
-                        <span class="key">doman:</span>
-                        <span class="val" v-html="window.location.host"></span>
-                    </div>
-                    <div v-for="(v,k) in browser">
-                        <span class="key">{{k}}:</span>
-                        <span class="val">{{v}}</span>
-                    </div>
-                </card-content>
-            </card>
+            </div>          
 
-            <card class="version">
+            <card class="version"  shadow="hover">
                 <card-title icon="&#xa037">版本<span v-html="editon.Edition" class="editon"></span></card-title>
                 <card-content>
                     <div>
@@ -59,6 +46,19 @@
                     <div>
                         <span class="key">Release date:</span>
                         <span class="val nowrap" v-html="version.release"></span>
+                    </div>
+                </card-content>
+            </card>
+            <card class="browser" shadow="hover">
+                <card-title icon="&#xa030">设备信息</card-title>
+                <card-content>
+                    <div>
+                        <span class="key">doman:</span>
+                        <span class="val" v-html="window.location.host"></span>
+                    </div>
+                    <div v-for="(v,k) in browser">
+                        <span class="key">{{k}}:</span>
+                        <span class="val">{{v}}</span>
                     </div>
                 </card-content>
             </card>

@@ -157,6 +157,22 @@ $ready(["Components/group_select.js",
                     }
                 });
             },
+            //打开试卷的预览
+            paperpreview: function (examid, examname) {
+                let file = 'PaperPreview';
+                let url = $api.url.set(file, { 'examid': examid });
+                var boxid = file + "_" + examid;
+                //创建
+                var box = window.top.$pagebox.create({
+                    width: '80%', height: '80%',
+                    resize: true, full: true,
+                    id: boxid, pid: window.name,
+                    ico: 'e810', url: url
+                });
+                //parent.full = true;
+                box.title = '考试试卷预览“' + examname + "”";
+                box.open();
+            },
             //打开选择试题的子窗体
             openitems: function (examid) {
                 if (!window.top.$pagebox) return;
@@ -339,7 +355,7 @@ $ready(["Components/group_select.js",
                             $api.get('ExamTestPaper/ForID', { 'id': th.exam.Etp_Id });
                         apiget.then(function (req) {
                             if (req.data.success) {
-                                th.paper = req.data.result;                              
+                                th.paper = req.data.result;
                             } else {
                                 console.error(req.data.exception);
                                 console.error(th.exam);
