@@ -109,6 +109,7 @@ section.exams>* {
 
 .exams .exam_name .btns {
     margin-left: auto;
+    cursor: default;
 }
 
 .el-form>div[tab="range"] {

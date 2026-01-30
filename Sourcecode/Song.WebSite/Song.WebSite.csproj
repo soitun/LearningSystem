@@ -748,6 +748,7 @@
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\ModifyTestpaper1.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\ModifyTestpaper2.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\MyTestPaper.html" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\PaperPreview.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Recycle.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\Index.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\Modify.js" />
@@ -756,6 +757,7 @@
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\ModifyTestpaper2.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\ModifyTestpaper2.xml" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\MyTestPaper.js" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\PaperPreview.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\Recycle.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\SelectKnl.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\SelectParts.js" />
@@ -774,6 +776,7 @@
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\ModifyTestpaper1.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\ModifyTestpaper2.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\MyTestPaper.css" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\PaperPreview.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\Recycle.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\SelectKnl.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\SelectParts.css" />

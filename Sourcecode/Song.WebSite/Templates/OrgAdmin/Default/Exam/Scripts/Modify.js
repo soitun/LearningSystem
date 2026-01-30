@@ -157,6 +157,18 @@ $ready(["Components/group_select.js",
                     }
                 });
             },
+            //场次管理的下拉菜单的事件
+            dropdownHandle:function(command,row){ 
+                //获取el-dropdown组件中的行数据的id
+                let examid = row.$attrs?.examid;
+                while (!examid && row.$parent) {
+                    row = row.$parent;
+                    examid = row.$attrs?.examid;
+                }
+                //当前行数据的对象
+                const obj = this.exams.find(item => item.Exam_ID === examid);
+                console.error(obj);
+            },
             //打开试卷的预览
             paperpreview: function (examid, examname) {
                 let file = 'PaperPreview';

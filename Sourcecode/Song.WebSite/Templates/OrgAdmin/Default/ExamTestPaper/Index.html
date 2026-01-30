@@ -58,7 +58,7 @@
             </el-table-column>
             <el-table-column label="副标题">
                 <template slot-scope="scope">
-                    <span v-html="showsearch(scope.row.Etp_SubName,form.search)"></span>                   
+                    <span v-html="showsearch(scope.row.Etp_SubName,form.search)"></span>
                 </template>
             </el-table-column>
             <el-table-column label="分数" align="center" width="120">
@@ -109,27 +109,20 @@
             </el-table-column>
             <el-table-column label="操作" width="100">
                 <template slot-scope="scope">
-
-                    <el-dropdown>
+                    <el-dropdown @command="handleCommand" :tpid="scope.row.Etp_Id">
                         <span class="el-dropdown-link">
                             <icon>&#xa030</icon><span style="font-size: 12px">管理</span><i
                                 class="el-icon-arrow-down el-icon--right"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item>
-
+                            <el-dropdown-item command="preview">
+                                <el-link type="info" plain icon="el-icon-document" :underline="false">预览</el-link>
                             </el-dropdown-item>
-                            <el-dropdown-item divided>
-                                <el-link type="primary" plain icon="el-icon-edit" @click='rowdblclick(scope.row)'>
-                                    修改
-                                </el-link>
+                            <el-dropdown-item divided command="modify">
+                                <el-link type="primary" plain icon="el-icon-edit" :underline="false"> 修改 </el-link>
                             </el-dropdown-item>
-                            <el-dropdown-item>
-                                <el-popconfirm confirm-button-text='是的' cancel-button-text='不用' icon="el-icon-info"
-                                    icon-color="red" title="确定删除吗？" @confirm="$refs.btngroup.delete(scope.row.Etp_Id)">
-                                    <el-link type="danger" plain icon="el-icon-delete" slot="reference">删除
-                                    </el-link>
-                                </el-popconfirm>
+                            <el-dropdown-item command="delete">
+                                <el-link type="danger" plain icon="el-icon-delete" :underline="false">删除 </el-link>
                             </el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>

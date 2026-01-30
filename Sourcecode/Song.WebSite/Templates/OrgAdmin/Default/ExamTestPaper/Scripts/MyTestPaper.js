@@ -78,6 +78,45 @@ $ready(['Components/papertype.js'],
                         });
                     });
                 },
+                //操作下拉菜单的事件
+                handleCommand: function (command, row) {
+                    //获取el-dropdown组件中的行数据的id
+                    let tpid = row.$attrs?.tpid;
+                    while (!tpid && row.$parent) {
+                        row = row.$parent;
+                        tpid = row.$attrs?.tpid;
+                    }
+                    //当前行数据的对象
+                    const obj = this.datas.find(item => item.Etp_Id === tpid);
+                    //试卷预览
+                    if (command == 'preview') {
+                        let file = 'PaperPreview';
+                        let url = $api.url.set($dom.routepath() + file, { 'etpid': tpid });
+                        let boxid = file + "_" + tpid; 
+                        //创建
+                        var box = window.top.$pagebox.create({
+                            width: '80%', height: '80%', ico: 'e810',
+                            resize: true, full: true, id: boxid, pid: window.name,
+                            url: url
+                        });
+                        box.title = '试卷预览“' + obj.Etp_Name + "”";
+                        box.open();
+                    }
+                    //编辑
+                    if (command == 'modify') this.rowdblclick(obj);
+                    //删除
+                    if (command == 'delete') {
+                        this.$confirm('确定要删除当前试卷吗？<br/>试卷：《' + obj.Etp_Name + '》', '提示', {
+                            dangerouslyUseHTMLString: true,
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(t => {
+                            console.error(t);
+                            this.deleteData(obj.Etp_Id);
+                        }).catch(action => { });
+                    }                    
+                },
                 //双击事件
                 rowdblclick: function (row, column, event) {
                     this.$refs.btngroup.modify(row[this.$refs.btngroup.idkey], null, {

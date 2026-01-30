@@ -88,17 +88,16 @@
                                     <span v-if="item.Exam_Name!=''">{{item.Exam_Name}}</span>
                                     <span v-else class="null">(没有设置名称)</span>
                                     <div class="btns">
-                                        <el-dropdown>
+                                        <el-dropdown @command="dropdownHandle" :examid="item.Exam_ID">
                                             <span primary>
                                                 <icon>&#xa030</icon>操作<i class="el-icon-arrow-down el-icon--right"></i>
                                             </span>
                                             <el-dropdown-menu slot="dropdown">
-                                                <el-dropdown-item>
-                                                    <el-link type="info" plain icon="el-icon-view"
-                                                        @click="paperpreview(item.Exam_ID,item.Exam_Name)">预览</el-link>
+                                                <el-dropdown-item command="preview">
+                                                    <el-link type="info" plain icon="el-icon-document" :underline="false">预览</el-link>
                                                 </el-dropdown-item>
                                                 <el-dropdown-item divided>
-                                                    <el-link type="primary" plain icon="el-icon-edit"
+                                                    <el-link type="primary" plain icon="el-icon-edit"  :underline="false"
                                                         @click="openitems(item.Exam_ID)">
                                                         修改
                                                     </el-link>
@@ -107,7 +106,7 @@
                                                     <el-popconfirm confirm-button-text='是的' cancel-button-text='不用'
                                                         icon="el-icon-info" icon-color="red" title="确定移除吗？"
                                                         @confirm="exams.splice(i, 1)">
-                                                        <el-link type="danger" plain icon="el-icon-delete"
+                                                        <el-link type="danger" plain icon="el-icon-delete"  :underline="false"
                                                             slot="reference" @click.native.stop>移除
                                                         </el-link>
                                                     </el-popconfirm>
