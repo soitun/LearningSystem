@@ -91,7 +91,7 @@ $ready(['Components/papertype.js'],
                     //试卷预览
                     if (command == 'preview') {
                         let file = 'PaperPreview';
-                        let url = $api.url.set($dom.routepath() + file, { 'etpid': tpid });
+                        let url = $api.url.set($dom.routepath() + file, { 'tpid': tpid });
                         let boxid = file + "_" + tpid; 
                         //创建
                         var box = window.top.$pagebox.create({

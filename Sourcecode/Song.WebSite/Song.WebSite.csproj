@@ -1101,7 +1101,10 @@
     <Content Include="Templates\OrgAdmin\Default\Teacher\Styles\Import.css" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Components\ques_count.js" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Components\Styles\ques_count.css" />
+    <Content Include="Templates\OrgAdmin\Default\TestPaper\PaperPreview.html" />
+    <Content Include="Templates\OrgAdmin\Default\TestPaper\Scripts\PaperPreview.js" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Scripts\Results.js" />
+    <Content Include="Templates\OrgAdmin\Default\TestPaper\Styles\PaperPreview.css" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Styles\Results.css" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Results.html" />
     <Content Include="Templates\OrgAdmin\Default\Viewport\Components\courses_hot.js" />

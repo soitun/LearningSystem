@@ -158,7 +158,7 @@ $ready(["Components/group_select.js",
                 });
             },
             //场次管理的下拉菜单的事件
-            dropdownHandle:function(command,row){ 
+            dropdownHandle: function (command, row) {
                 //获取el-dropdown组件中的行数据的id
                 let examid = row.$attrs?.examid;
                 while (!examid && row.$parent) {
@@ -167,23 +167,38 @@ $ready(["Components/group_select.js",
                 }
                 //当前行数据的对象
                 const obj = this.exams.find(item => item.Exam_ID === examid);
-                console.error(obj);
-            },
-            //打开试卷的预览
-            paperpreview: function (examid, examname) {
-                let file = 'PaperPreview';
-                let url = $api.url.set(file, { 'examid': examid });
-                var boxid = file + "_" + examid;
-                //创建
-                var box = window.top.$pagebox.create({
-                    width: '80%', height: '80%',
-                    resize: true, full: true,
-                    id: boxid, pid: window.name,
-                    ico: 'e810', url: url
-                });
-                //parent.full = true;
-                box.title = '考试试卷预览“' + examname + "”";
-                box.open();
+
+                //试卷预览
+                if (command == 'preview') {
+                    let file = 'PaperPreview'; //判断是课程试卷还是考试试卷
+                    if (obj.Etp_Id == '0') file = '../TestPaper/PaperPreview';
+                    else file = '../ExamTestPaper/PaperPreview';
+                    let tpid = obj.Etp_Id != '0' ? obj.Etp_Id : obj.Tp_Id;                  
+                    let url = $api.url.set($dom.routepath() + file, { 'tpid': tpid });
+                    let boxid = file + "_" + tpid;
+                    //创建
+                    var box = window.top.$pagebox.create({
+                        width: '80%', height: '80%', ico: 'e810',
+                        resize: true, full: true, id: boxid, pid: window.name,
+                        url: url
+                    });
+                    box.title = '考试试卷预览“' + obj.Exam_Name + "”";
+                    box.open();
+                }
+                 //编辑
+                 if (command == 'modify') this.openitems(examid);
+                 //删除
+                 if (command == 'delete') {
+                    this.$confirm('确定移除当前场次的考试吗？<br/>场次：《' + obj.Exam_Name + '》', '提示', {
+                        dangerouslyUseHTMLString: true,
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(t => {
+                        const idx = this.exams.findIndex(item => item.Exam_ID === examid);
+                        this.exams.splice(idx, 1);
+                    }).catch(action => { });
+                }      
             },
             //打开选择试题的子窗体
             openitems: function (examid) {
