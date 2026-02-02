@@ -24,6 +24,13 @@ $ready(function () {
                             callback();
                         }
                     }, trigger: 'blur'
+                }],
+                'limittime': [{
+                    validator: function (rule, value, callback) {
+                        if (vapp.formdata.start == '' || vapp.formdata.end == '')
+                            return callback(new Error('请选择时间区间'));
+                        return callback();
+                    }
                 }]
             },
             //专业树形下拉选择器的配置项
@@ -148,7 +155,7 @@ $ready(function () {
                                 console.error(req.data.exception);
                                 throw req.config.way + ' ' + req.data.message;
                             }
-                        }).catch(err => console.error(err))
+                        }).catch(err => alert(err))
                             .finally(() => th.uploading(false));
                     } else {
                         console.log('error submit!!');
