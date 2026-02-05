@@ -26,7 +26,11 @@
         height: auto;
        
     }
+    .quesarea>div{
+        margin: 0px 0px 40px 0px;
+    }
 }
+
 .paper_preview {
     width: 100%;
     height: calc(100% - 50px);
@@ -69,8 +73,8 @@ header .tpremind {
     flex: 1;
     line-height: 1.5;
 }
-.quesarea{
-    margin-bottom: 40px;
+.quesarea>div{
+    margin: 0px 20px 40px 40px;
 }
 .paper_preview section.quesarea {
     display: block;
