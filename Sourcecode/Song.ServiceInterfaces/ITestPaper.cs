@@ -114,6 +114,12 @@ namespace Song.ServiceInterfaces
 
         #region 试卷的试题项
         /// <summary>
+        /// 试题数量
+        /// </summary>
+        /// <param name="identify"></param>
+        /// <returns></returns>
+        int QuesCount(long identify);
+        /// <summary>
         /// 按课程抽题时，试卷各题型占比与分数
         /// </summary>
         /// <param name="tp">试卷对象</param>

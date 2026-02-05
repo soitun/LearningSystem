@@ -69,7 +69,10 @@ namespace Song.ServiceImpls
                             it.Exam_IsRightClick = theme.Exam_IsRightClick;
                             it.Exam_IsShowBtn = theme.Exam_IsShowBtn;
                             it.Exam_IsToggle = theme.Exam_IsToggle;
-                            it.Exam_Purpose = it.Tp_Id == 0 ? 1 : 0;        //是否为考试专用试卷                           
+                            it.Exam_Purpose = it.Tp_Id == 0 ? 1 : 0;        //是否为考试专用试卷
+                            //试题数量
+                            if (it.Exam_Purpose == 0) it.Exam_QuesCount = Business.Do<ITestPaper>().QuesCount(it.Tp_Id);
+                            else it.Exam_QuesCount = Business.Do<IExamTestPaper>().QuesCount(it.Etp_Id);
                             tran.Save<Examination>(it);
                         }
                         if (theme.Exam_DateType == 1)
@@ -77,6 +80,7 @@ namespace Song.ServiceImpls
                             theme.Exam_Date = examDate;
                             theme.Exam_DateOver = examDate;
                         }
+                       
                     }
                     tran.Save<Examination>(theme);
                     //保存学员组与考试的关联
@@ -157,6 +161,9 @@ namespace Song.ServiceImpls
                             else
                                 tran.Update<ExamResults>(new Field[] { ExamResults._.Exam_Name },
                               new object[] { it.Exam_Name }, ExamResults._.Exam_ID == it.Exam_ID);
+                            //试题数量
+                            if (it.Exam_Purpose == 0) it.Exam_QuesCount = Business.Do<ITestPaper>().QuesCount(it.Tp_Id);
+                            else it.Exam_QuesCount = Business.Do<IExamTestPaper>().QuesCount(it.Etp_Id);
                             tran.Save<Examination>(it);
 
                         }

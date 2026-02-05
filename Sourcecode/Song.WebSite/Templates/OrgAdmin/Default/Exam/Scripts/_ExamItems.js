@@ -119,11 +119,11 @@ $ready([
             },
             //是否是考试专用试卷
             isexampaper: function () {
-                return this.exam.Etp_Id != '' && this.exam.Etp_Id != '0';
+                return this.exam.Exam_Purpose == 1 || (this.exam.Etp_Id != '' && this.exam.Etp_Id != '0');
             },
             //是否是课程试卷
             iscoursepaper: function () {
-                return this.exam.Tp_Id != '' && this.exam.Tp_Id != '0';
+                return this.exam.Exam_Purpose == 0 || (this.exam.Tp_Id != '' && this.exam.Tp_Id != '0');
             },
         },
         watch: {

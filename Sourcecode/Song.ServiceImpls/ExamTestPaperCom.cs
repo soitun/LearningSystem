@@ -58,8 +58,22 @@ namespace Song.ServiceImpls
             entity.Etp_Lasttime = DateTime.Now;
             //判断是否有简答题
             entity.Etp_IsManual = this.PaperIsManual(entity);
-
-            Gateway.Default.Save<ExamTestPaper>(entity);
+            using (DbTrans tran = Gateway.Default.BeginTrans())
+            {
+                try
+                {
+                    tran.Save<ExamTestPaper>(entity);                 
+                   
+                    tran.Update<Examination>(new Field[] { Examination._.Exam_PassScore, Examination._.Exam_Total, Examination._.Exam_IsManual, Examination._.Exam_QuesCount },
+                        new object[] { entity.Etp_PassScore, entity.Etp_Total, entity.Etp_IsManual, entity.Etp_Count }, Examination._.Etp_Id == entity.Etp_Id);
+                    tran.Commit();
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                    throw ex;
+                }
+            }          
         }
         /// <summary>
         /// 修改试卷的某些项
@@ -252,6 +266,19 @@ namespace Song.ServiceImpls
             return Gateway.Default.From<ExamTestPaper>().Where(wc).OrderBy(ExamTestPaper._.Etp_Id.Desc).ToList<ExamTestPaper>(size, (index - 1) * size);
         }
 
+        #endregion
+
+        #region 试卷的试题项
+        /// <summary>
+        /// 试题数量
+        /// </summary>
+        /// <param name="identify"></param>
+        /// <returns></returns>
+        public int QuesCount(long identify)
+        {
+            object obj = Gateway.Default.From<ExamTestPaper>().Where(ExamTestPaper._.Etp_Id == identify).Select(ExamTestPaper._.Etp_Count).ToScalar();
+            return obj == null ? 0 : Convert.ToInt32(obj);
+        }
         #endregion
     }
 }

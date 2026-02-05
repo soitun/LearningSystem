@@ -113,5 +113,14 @@ namespace Song.ServiceInterfaces
 
         #endregion
 
+        #region 试卷的试题项
+        /// <summary>
+        /// 试题数量
+        /// </summary>
+        /// <param name="identify"></param>
+        /// <returns></returns>
+        int QuesCount(long identify);
+        #endregion
+
     }
 }
