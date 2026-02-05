@@ -1099,7 +1099,9 @@
     <Content Include="Templates\OrgAdmin\Default\Teacher\Scripts\Import.js" />
     <Content Include="Templates\OrgAdmin\Default\Teacher\Styles\Export.css" />
     <Content Include="Templates\OrgAdmin\Default\Teacher\Styles\Import.css" />
+    <Content Include="Templates\OrgAdmin\Default\TestPaper\Components\group.js" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Components\ques_count.js" />
+    <Content Include="Templates\OrgAdmin\Default\TestPaper\Components\Styles\group.css" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Components\Styles\ques_count.css" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\PaperPreview.html" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Scripts\PaperPreview.js" />
@@ -1983,9 +1985,11 @@
     <Content Include="Utilities\Components\btngroup.js" />
     <Content Include="Utilities\Components\panel.js" />
     <Content Include="Utilities\Components\Question\exam.js" />
+    <Content Include="Utilities\Components\Question\preview.js" />
     <Content Include="Utilities\Components\Question\Styles\exam.css" />
     <Content Include="Utilities\Components\date_range.js" />
     <Content Include="Utilities\Components\Question\Styles\function.css" />
+    <Content Include="Utilities\Components\Question\Styles\preview.css" />
     <Content Include="Utilities\Components\Sign\login.js" />
     <Content Include="Utilities\Components\Sign\Styles\login.css" />
     <Content Include="Utilities\Components\Question\Styles\exercise.css" />

@@ -1,0 +1,46 @@
+.preview {
+	text-align: left;
+	font-size: 1rem;
+	margin-bottom: 20px;
+}
+
+.preview>header {
+	margin-bottom: 10px;
+}
+.preview>article{
+	margin-left: 25px;
+}
+/*判断题*/
+.preview>article[questype='3']{
+	display: flex;
+}
+.preview>article[questype='3']>div{
+	margin-right: 20px;
+	padding: 4px 18px;
+	border: solid 1px #ccc;
+	border-radius: 6px;
+	font-size: 14px;
+}
+/*填空题*/
+.preview>article[questype='5']>div{
+	line-height: 40px;
+	margin-bottom: 10px;
+	border-bottom: solid 1px #ccc;
+}
+
+/*简答题*/
+.preview>article[questype='4']>textarea{
+	width: calc(100% - 50px);
+	box-sizing: border-box;
+}
+
+@media print {
+	.preview>article[questype='4']>textarea{
+		line-height: 40px;
+		margin-bottom: 10px;
+		border:none;
+	}
+	*::-webkit-scrollbar{
+		display: none;
+	}
+}
