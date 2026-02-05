@@ -62,6 +62,7 @@
         <el-table ref="datatables" :data="datas" border resizable :stripe="true" style="width: 100%" v-loading="loading"
             @selection-change="val=>selects=val" @row-dblclick="row=>$refs.btngroup.modify(row)" row-key="Cou_ID"
             :row-class-name="data=>{return data.row.Cou_IsUse ? 'enable' : 'disabled';}" cell-class-name="tdcell">
+            <div slot="empty" v-html="table_empty">  </div>
             <el-table-column type="selection" width="35">
             </el-table-column>
             <el-table-column type="index" label="#" width="50" align="center">
