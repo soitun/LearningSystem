@@ -8,19 +8,24 @@
 .preview>header {
 	margin-bottom: 10px;
 }
-
-.preview>header p:first-child, .preview>header div:first-child, .preview>header table:first-child  {
-	display: inline-block;
+.preview>header::before{
+	content: attr(index)  ".";
+	margin-right: 10px;
+	float: left;
+}
+.preview>header::after{
+	content: "(" attr(num) "分)";
+	margin-left: 10px;
+	font-size: 14px;
+	color: #444;
+}
+.preview>header>*:first-child {
+	display: inline;
 	padding: 0px !important;
 	margin: 0px !important;
 }
 
-.preview>header>i:first-child {
-	float: left;
-	margin-right: 10px;
-	padding-top: 3px;
-}
-
+/*选项区*/
 .preview>article {
 	margin-left: 25px;
 }
@@ -35,7 +40,8 @@
 	margin: 0px !important;
 }
 
-.preview>article>div>i:first-child {
+.preview>article>div::before {
+	content: attr(index)  ".";
 	float: left;
 	margin-right: 10px;
 	padding-top: 3px;
@@ -55,7 +61,11 @@
 	font-size: 14px;
 	min-height: 20px;
 }
-
+.preview>article[questype='3']>div::before{
+	content: "";
+	margin-right: 0px;
+	padding-top: 0px;
+}
 /*填空题*/
 .preview>article[questype='5']>div {
 	line-height: 40px;

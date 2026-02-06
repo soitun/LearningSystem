@@ -20,11 +20,10 @@ Vue.component('question', {
         'ques': {
             handler(nv, ov) {
                 this.$nextTick(function () {
-                    var dom = $dom("card[qid='" + this.ques.Qus_ID + "']");
-                    //console.error(dom);
+                    var dom = $dom(".preview[qid='" + this.ques.Qus_ID + "']");
                     //清理空元素                
-                    window.ques.clearempty(dom.find('card-title'));
-                    window.ques.clearempty(dom.find('.ans_area'));
+                    window.ques.clearempty(dom.find('header'));
+                    window.ques.clearempty(dom.find('article>div'));
                     //公式渲染
                     this.$mathjax([dom[0]]);
                 });
@@ -57,16 +56,14 @@ Vue.component('question', {
 
     },
     template: `<div :qid="ques.Qus_ID" class="preview">        
-        <header :index="calcIndex(index+1)" :num="ques.Qus_Number">    
-            <i>{{calcIndex(index+1)}}.   </i>    
+        <header :index="calcIndex(index+1)" :num="ques.Qus_Number" v-html="ques.Qus_Title">   
+          
             <span v-html="ques.Qus_Title"></span>
             <span>（{{ques.Qus_Number}} 分）</span>   
         </header>      
         
         <article v-if="ques.Qus_Type==1 || ques.Qus_Type==2" :questype="ques.Qus_Type">
-            <div v-for="(ans,i) in ques.Qus_Items">
-                <i>{{toletter(i)}} .</i>            
-                <span v-html="ans.Ans_Context"></span>
+            <div v-for="(ans,i) in ques.Qus_Items" :index="toletter(i)" v-html="ans.Ans_Context">               
             </div>
         </article>           
         <article  v-if="ques.Qus_Type==3" :questype="ques.Qus_Type">
@@ -76,8 +73,7 @@ Vue.component('question', {
             <textarea rows="10"></textarea>
         </article>
         <article v-if="ques.Qus_Type==5" :questype="ques.Qus_Type">
-            <div v-for="(ans,i) in ques.Qus_Items">
-                <i>{{toletter(i)}} .</i> 
+            <div v-for="(ans,i) in ques.Qus_Items" :index="toletter(i)">              
             </div>
         </article> 
       </div>`
