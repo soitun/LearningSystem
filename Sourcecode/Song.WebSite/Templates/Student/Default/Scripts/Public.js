@@ -13,9 +13,7 @@
         //电脑端拖动与手式拖动的js库,以及其它
         var arr2 = ['Sortable.min', 'vuedraggable.min', 'hammer.min', 'vue-touch'];
         for (var t in arr2) arr2[t] = '/Utilities/Scripts/' + arr2[t] + '.js';
-        //加载相关组件；图标、上传组件，头像组件
-        var comp = ['icons', 'upload-img', 'upload-file', 'avatar', 'btngroup'];
-        for (var c in comp) arr2.push('/Utilities/Components/' + comp[c] + '.js');
+
         //加载ElementUI
         arr2.push('/Utilities/ElementUi/index.js');
         //mathjax，解析latex公式
@@ -25,12 +23,21 @@
         //编辑器
         arr2.push('/Utilities/TinyMCE/tinymce.js');
         arr2.push('/Utilities/TinyMCE/tinymce.vue.js');
-        //查询面板与控件面板
-        arr2.push('/Utilities/Components/query_panel.js');
-        arr2.push('/Utilities/Components/panel.js');
-        //日期区间选择器
-        arr2.push('/Utilities/Components/date_range.js');
+
         window.$dom.componentjs(arr2, f);
+    };
+    window.$customize_componentjs = function (jsfile) {
+        let arr = [];
+        let webpath = $dom.path();    //
+        //加载相关组件；图标、上传组件，头像组件
+        var comp = ['icons', 'upload-img', 'upload-file', 'avatar', 'btngroup'];
+        for (var c in comp) arr.push('/Utilities/Components/' + comp[c] + '.js');
+        //查询面板与控件面板
+        arr.push('/Utilities/Components/query_panel.js');
+        arr.push('/Utilities/Components/panel.js');
+        //日期区间选择器
+        arr.push('/Utilities/Components/date_range.js');
+        return jsfile.concat(arr);
     };
     //加载组件所需的javascript文件
     $dom.ctrljs = function (f) {
@@ -56,9 +63,9 @@
         }
         $dom.ready(function () {
             $dom.corejs(function () {
-                $components(function () {
+                $components(function () {                    
+                    window.$init_load(() => $dom.componentjs(window.$customize_componentjs(jsfile), func));
                     window.$init_func();
-                    $dom.componentjs(jsfile, func);
                 });
             });
         });
@@ -104,12 +111,12 @@
             if (txt == null || txt == '') return '';
             if (search == null || search == '') return txt;
             var regExp = new RegExp('(' + search + ')', 'ig');
-            return txt.replace(regExp, function(match, p1) {
+            return txt.replace(regExp, function (match, p1) {
                 return '<red>' + p1 + '</red>';
             });
         };
-         //常用地址
-         Vue.prototype.commonaddr = function (key) {
+        //常用地址
+        Vue.prototype.commonaddr = function (key) {
             var urls = {
                 'signin': '/mobi/sign/in',      //登录地址
                 'myself': '/mobi/account/myself'        //个人中心
@@ -119,5 +126,19 @@
                 'referrer': encodeURIComponent(location.href)
             });
         };
+    };
+    //初始加载
+    window.$init_load = function (func) {
+        $api.bat(
+            $api.cache('Platform/PlatInfo:60'),
+            $api.get('Organization/Current')
+        ).then(([platinfo, org]) => {
+            //平台信息
+            window.platinfo = platinfo.data.result;
+            //机构信息与机构配置
+            window.org = org.data.result;
+            window.config = $api.organ(window.org).config;
+            document.title += ' - ' + window.org.Org_PlatformName;
+        }).catch(err => console.error(err)).finally(() => func());
     };
 })();

@@ -22,17 +22,11 @@ $ready(function () {
         },
         mounted: function () {
             var th = this;
-            $api.bat(
-                $api.get('Organization/Current')
-            ).then(([organ]) => {
-                //获取结果             
-                th.organ = organ.data.result;
-                th.form.orgid = th.organ.Org_ID;
-                //机构配置信息
-                th.config = $api.organ(th.organ).config;
-                th.handleCurrentChange(1);
-            }).catch(err => console.error(err))
-                .finally(() => { });
+            //机构配置信息         
+            th.organ = window.org;
+            th.config = window.config;
+            th.form.orgid = th.organ.Org_ID;
+            th.handleCurrentChange(1);           
         },
         methods: {
             //选择时间区间
@@ -53,7 +47,7 @@ $ready(function () {
                 if (index != null) this.form.index = index;
                 var th = this;
                 //每页多少条，通过界面高度自动计算
-                var area = document.documentElement.clientHeight - 115;
+                let area = $dom.height() - 115;
                 th.form.size = Math.floor(area / 41);
                 th.loading = true;
                 $api.get("Account/purchasepager", th.form).then(function (d) {

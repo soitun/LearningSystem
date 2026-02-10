@@ -16,6 +16,10 @@
         arr.push('/Utilities/ElementUi/index.js');
         $dom.load.js(arr, f);
     };
+    window.$customize_componentjs = function (jsfile) {
+        let arr = [];       
+        return jsfile.concat(arr);
+    };
     //加载必要的资源完成
     //f:加载完成要执行的方法
     //source:要加载的资源
@@ -33,8 +37,8 @@
         $dom.ready(function () {
             $dom.corejs(function () {
                 $components(function () {
-                    window.$init_func();
-                    $dom.componentjs(jsfile, func);
+                    window.$init_load(() => $dom.componentjs(window.$customize_componentjs(jsfile), func));
+                    window.$init_func();                    
                 });
             });
         });
@@ -49,6 +53,20 @@
                 if (window.top.$pagebox) window.top.$pagebox.shut($dom.trim(window.name));
             });
         }, 300);
+    };
+    //初始加载
+    window.$init_load = function (func) {
+        $api.bat(
+            $api.cache('Platform/PlatInfo:60'),
+            $api.get('Organization/Current')
+        ).then(([platinfo, org]) => {
+            //平台信息
+            window.platinfo = platinfo.data.result;
+            //机构信息与机构配置
+            window.org = org.data.result;
+            window.config = $api.organ(window.org).config;
+            document.title += ' - ' + window.org.Org_PlatformName;
+        }).catch(err => console.error(err)).finally(() => func());
     };
 })();
 

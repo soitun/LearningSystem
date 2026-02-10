@@ -52,7 +52,7 @@ Vue.component('avatar', {
 
     },
     created: function () {
-        $dom.load.css(['/Utilities/Components/Styles/avatar.css']);
+      
     },
     methods: {
         //头像的url路径

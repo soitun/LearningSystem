@@ -43,7 +43,7 @@ $ready(function () {
                 if (index != null) this.form.index = index;
                 var th = this;
                 //每页多少条，通过界面高度自动计算
-                var area = document.documentElement.clientHeight - 110;
+                let area = $dom.height() - 110;
                 th.form.size = Math.floor(area / 40);
                 th.loadstate.get = true;
                 $api.get("ExamQues/KnlPager", th.form).then(function (d) {

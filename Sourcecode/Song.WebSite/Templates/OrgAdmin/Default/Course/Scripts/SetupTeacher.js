@@ -90,7 +90,7 @@ $ready(function () {
                 if (index != null) this.query.index = index;
                 var th = this;
                 //每页多少条，通过界面高度自动计算
-                var area = document.documentElement.clientHeight - 180;
+                let area = $dom.height() - 180;
                 th.query.size = Math.floor(area / 42);
                 th.loading = true;
                 $api.get("Teacher/Pager", th.query).then(function (d) {

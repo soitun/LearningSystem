@@ -49,7 +49,7 @@ $ready(function () {
                 if (index != null) this.form.index = index;
                 var th = this;
                 //每页多少条，通过界面高度自动计算
-                var area = document.documentElement.clientHeight - 100;
+                let area = $dom.height() - 100;
                 th.form.size = Math.floor(area / 142);
                 th.loading = true;
                 $api.get("Question/ErrorCourse", th.form).then(function (d) {

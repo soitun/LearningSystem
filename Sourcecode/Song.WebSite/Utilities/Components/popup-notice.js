@@ -38,7 +38,7 @@ Vue.component('popup-notice', {
         }
     },
     created: function () {
-        $dom.load.css(['/Utilities/Components/Styles/popup-notice.css']);
+
     },
     mounted: function () {
         var th = this;

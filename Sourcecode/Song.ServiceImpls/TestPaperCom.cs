@@ -108,8 +108,8 @@ namespace Song.ServiceImpls
                         tran.Update<TestPaper>(new Field[] { TestPaper._.Tp_IsFinal },
                       new object[] { false }, TestPaper._.Cou_ID == entity.Cou_ID && TestPaper._.Tp_Id != entity.Tp_Id);
                     }
-                    tran.Update<Examination>(new Field[] { Examination._.Exam_PassScore, Examination._.Exam_Total, Examination._.Exam_IsManual },
-                        new object[] { entity.Tp_PassScore, entity.Tp_Total, entity.Tp_IsManual }, Examination._.Tp_Id == entity.Tp_Id);
+                    tran.Update<Examination>(new Field[] { Examination._.Exam_PassScore, Examination._.Exam_Total, Examination._.Exam_IsManual, Examination._.Exam_QuesCount },
+                        new object[] { entity.Tp_PassScore, entity.Tp_Total, entity.Tp_IsManual, entity.Tp_Count }, Examination._.Tp_Id == entity.Tp_Id);
                     tran.Commit();
                 }
                 catch (Exception ex)
@@ -283,6 +283,16 @@ namespace Song.ServiceImpls
             return Gateway.Default.From<TestPaper>().Where(wc).OrderBy(TestPaper._.Tp_CrtTime.Desc).ToList<TestPaper>(size, (index - 1) * size);
         }
 
+        /// <summary>
+        /// 试题数量
+        /// </summary>
+        /// <param name="identify"></param>
+        /// <returns></returns>
+        public int QuesCount(long identify)
+        {
+            object obj= Gateway.Default.From<TestPaper>().Where(TestPaper._.Tp_Id == identify).Select(TestPaper._.Tp_Count).ToScalar();
+            return obj == null ? 0 : Convert.ToInt32(obj);
+        }
         public List<TestPaperItem> GetItemForAll(TestPaper tp)
         {
             List<TestPaperItem> tpi = new List<TestPaperItem>();

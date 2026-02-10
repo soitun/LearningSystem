@@ -1,5 +1,5 @@
 ﻿//试题练习的模式，练习模式与背题模式
-$dom.load.css(['/Utilities/Components/Question/Styles/learnmode.css']);
+
 Vue.component('learnmode', {
     //state:当前的状态值，偶数为答题模式，奇数为背景模式
     props: ['state'],

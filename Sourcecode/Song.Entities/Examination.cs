@@ -48,7 +48,9 @@ namespace Song.Entities {
     		
     		protected Int32 _Exam_PassScore;
     		
-    		protected Int64 _Exam_Purpose;
+    		protected Int32 _Exam_Purpose;
+    		
+    		protected Int32 _Exam_QuesCount;
     		
     		protected Int32 _Exam_Span;
     		
@@ -272,13 +274,23 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int64 Exam_Purpose {
+    		public Int32 Exam_Purpose {
     			get {
     				return this._Exam_Purpose;
     			}
     			set {
     				this.OnPropertyValueChange(_.Exam_Purpose, _Exam_Purpose, value);
     				this._Exam_Purpose = value;
+    			}
+    		}
+    		
+    		public Int32 Exam_QuesCount {
+    			get {
+    				return this._Exam_QuesCount;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Exam_QuesCount, _Exam_QuesCount, value);
+    				this._Exam_QuesCount = value;
     			}
     		}
     		
@@ -440,6 +452,7 @@ namespace Song.Entities {
     					_.Exam_Order,
     					_.Exam_PassScore,
     					_.Exam_Purpose,
+    					_.Exam_QuesCount,
     					_.Exam_Span,
     					_.Exam_Title,
     					_.Exam_Total,
@@ -479,6 +492,7 @@ namespace Song.Entities {
     					this._Exam_Order,
     					this._Exam_PassScore,
     					this._Exam_Purpose,
+    					this._Exam_QuesCount,
     					this._Exam_Span,
     					this._Exam_Title,
     					this._Exam_Total,
@@ -557,7 +571,10 @@ namespace Song.Entities {
     				this._Exam_PassScore = reader.GetInt32(_.Exam_PassScore);
     			}
     			if ((false == reader.IsDBNull(_.Exam_Purpose))) {
-    				this._Exam_Purpose = reader.GetInt64(_.Exam_Purpose);
+    				this._Exam_Purpose = reader.GetInt32(_.Exam_Purpose);
+    			}
+    			if ((false == reader.IsDBNull(_.Exam_QuesCount))) {
+    				this._Exam_QuesCount = reader.GetInt32(_.Exam_QuesCount);
     			}
     			if ((false == reader.IsDBNull(_.Exam_Span))) {
     				this._Exam_Span = reader.GetInt32(_.Exam_Span);
@@ -719,9 +736,14 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Exam_PassScore = new WeiSha.Data.Field<Examination>("Exam_PassScore");
     			
     			/// <summary>
-    			/// 字段名：Exam_Purpose - 数据类型：Int64
+    			/// 字段名：Exam_Purpose - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Exam_Purpose = new WeiSha.Data.Field<Examination>("Exam_Purpose");
+    			
+    			/// <summary>
+    			/// 字段名：Exam_QuesCount - 数据类型：Int32
+    			/// </summary>
+    			public static WeiSha.Data.Field Exam_QuesCount = new WeiSha.Data.Field<Examination>("Exam_QuesCount");
     			
     			/// <summary>
     			/// 字段名：Exam_Span - 数据类型：Int32
@@ -780,4 +802,3 @@ namespace Song.Entities {
     		}
     	}
     }
-    

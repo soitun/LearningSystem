@@ -3,17 +3,12 @@ $ready(function () {
     window.vapp = new Vue({
         el: '#vapp',
         data: {
-            organ: {},
+            org: {},
             config: {},      //当前机构配置项 
 
             form: {
-                orgid: -1,
-                start: '',
-                end: '',
-                use: null,
-                search: '',
-                size: 8,
-                index: 1
+                orgid: -1, start: '', end: '',
+                use: null, search: '', size: 8, index: 1
             },
             total: 1, //总记录数
             totalpages: 1, //总页数
@@ -21,23 +16,15 @@ $ready(function () {
 
             loading: false,
             loadingid: false,
-            loading_init: true,
 
         },
         mounted: function () {
-            var th = this;
-            $api.bat(
-                $api.get('Organization/Current')
-            ).then(([organ]) => {
-                //获取结果             
-                th.organ = organ.data.result;
-                //机构配置信息
-                th.config = $api.organ(th.organ).config;
-            }).catch(err => console.error(err))
-                .finally(() => th.loading_init = false);
+            this.org = window.org;
+            this.config = window.config;
+            this.handleCurrentChange();
         },
         created: function () {
-            this.handleCurrentChange();
+           
         },
         computed: {
 
@@ -58,7 +45,7 @@ $ready(function () {
                 var loading = this.$fulloading();
                 th.loading = true;
                 //每页多少条，通过界面高度自动计算
-                var area = document.documentElement.clientHeight - 100;
+                let area = $dom.height() - 100;
                 th.form.size = Math.floor(area / 49);
                 $api.post('Exam/ThemeAdminPager', this.form).then(function (req) {
                     if (req.data.success) {
@@ -137,12 +124,12 @@ $ready(function () {
                 watch: {
                     'exam': {
                         handler: function (nv, ov) {
-                            this.gettotal();                          
+                            this.gettotal();
                         }, immediate: true, deep: true
                     }
                 },
                 methods: {
-                    gettotal: function () { 
+                    gettotal: function () {
                         var th = this;
                         $api.cache('Exam/StudentTotalTheme', { 'examid': this.exam.Exam_ID }).then(function (req) {
                             if (req.data.success) {
@@ -156,7 +143,7 @@ $ready(function () {
                     },
                 },
                 created: function () {
-                   
+
                 },
                 template: '<span><span class="el-icon-loading" v-if="num==-1"></span><span v-else>{{num}}</span></span>'
             },

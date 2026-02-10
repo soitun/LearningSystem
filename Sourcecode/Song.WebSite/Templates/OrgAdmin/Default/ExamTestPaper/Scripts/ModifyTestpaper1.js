@@ -78,6 +78,9 @@ $ready([
                 del: false          //删除数据
             }
         },
+        updated: function () {
+            this.$mathjax();
+        },
         mounted: function () {
             var th = this;
             th.org = window.org;

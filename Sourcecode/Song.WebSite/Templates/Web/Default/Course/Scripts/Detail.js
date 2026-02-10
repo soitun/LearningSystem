@@ -133,7 +133,7 @@ $ready(function () {
                 //课程章节，价格，购买人数,通知，教师，是否购买,购买的记录，是否可以学习（如果课程免费不购买也可以）     
                 th.getPrices(th.course);//获取价格          
                 $api.bat(
-                    $api.cache('Outline/TreeList', { 'couid': th.couid }),
+                    $api.get('Outline/TreeList', { 'couid': th.couid }),
                     $api.get('TestPaper/ShowPager', { 'couid': th.couid, 'search': '', 'diff': '', 'size': 999999, 'index': 1 }),
                     $api.get('Course/StudentSum', { 'couid': th.couid }),
                     $api.get('Guide/ColumnsTree', { 'couid': th.couid, 'search': '', 'isuse': '' }),

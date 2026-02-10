@@ -23,7 +23,7 @@
             ],
 
 
-            organ: {},
+            org: {},
             config: {},      //当前机构配置项      
 
             teachers: [],        //教师
@@ -32,6 +32,7 @@
             total: 1, //总记录数
             totalpages: 1, //总页数
             selects: [], //数据表中选中的行
+            exception: '',
 
             drawer: false,   //显示滑出的课程详情
             curr: {},        //当前要展示的项       
@@ -55,24 +56,17 @@
         },
         created: function () {
             var th = this;
-            th.loading_init = true;
-            $api.get('Organization/Current').then(function (req) {
-                if (req.data.success) {
-                    th.organ = req.data.result;
-                    th.form.orgid = th.organ.Org_ID;
-                    //机构配置信息
-                    th.config = $api.organ(th.organ).config;
-                    th.handleCurrentChange(1);
-                    th.teacher_query('');
-                } else {
-                    console.error(req.data.exception);
-                    throw req.data.message;
-                }
-            }).catch(err => console.error(err))
-                .finally(() => th.loading_init = false);
+            th.org = window.org;
+            th.config = window.config;
+            th.form.orgid = th.org.Org_ID;
+            th.handleCurrentChange(1);
+            th.teacher_query('');
         },
         computed: {
-
+            //列表数据为空时显示提示
+            'table_empty': function () {
+                return this.exception != '' ? this.exception : '暂无数据';                
+            },
         },
         watch: {
             //当前要展示综述的课程
@@ -88,9 +82,10 @@
                 if (index != null) this.form.index = index;
                 var th = this;
                 //每页多少条，通过界面高度自动计算
-                var area = document.documentElement.clientHeight - 100;
+                let area = $dom.height() - 100;
                 th.form.size = Math.floor(area / 57);
                 th.loading = true;
+                th.exception='';
                 $api.get("Course/Pager", th.form).then(function (d) {
                     if (d.data.success) {
                         th.datas = d.data.result;
@@ -99,6 +94,7 @@
                         th.total = d.data.total;
                     } else {
                         console.error(d.data.exception);
+                        th.exception = d.data.message;
                         throw d.data.message;
                     }
                 }).catch(err => console.error(err))
@@ -114,7 +110,7 @@
                 var th = this;
                 th.loading_teach = true;
                 let query = {
-                    orgid: th.organ.Org_ID, titid: '', gender: '-1', isuse: '',
+                    orgid: th.org.Org_ID, titid: '', gender: '-1', isuse: '',
                     search: search, phone: '', acc: '', idcard: '',
                     order: 'pinyin', size: 9999999, index: 1
                 };
@@ -312,7 +308,7 @@
                 }).then(() => {
                     var th = this;
                     var loading = this.$fulloading();
-                    $api.post('Course/updatestatisticaldata', { 'orgid': th.organ.Org_ID, 'couid': '', 'asyn': asyn }).then(req => {
+                    $api.post('Course/updatestatisticaldata', { 'orgid': th.org.Org_ID, 'couid': '', 'asyn': asyn }).then(req => {
                         if (req.data.success) {
                             var result = req.data.result;
                             if (!asyn) th.handleCurrentChange();
@@ -335,7 +331,7 @@
             },
             //打开学习记录的面板
             openlog: function (btn) {
-                this.$refs.btngroup.pagebox('StudyLogExport?orgid=' + this.organ.Org_ID,
+                this.$refs.btngroup.pagebox('StudyLogExport?orgid=' + this.org.Org_ID,
                     '学习记录导出', window.name + '[studylog]', 800, 500);
             },
             //打开课程的学员管理

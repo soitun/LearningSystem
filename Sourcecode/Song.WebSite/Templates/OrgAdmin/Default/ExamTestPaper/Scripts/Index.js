@@ -49,7 +49,7 @@ $ready(['Components/papertype.js'],
                     if (index != null) this.form.index = index;
                     var th = this;
                     //每页多少条，通过界面高度自动计算
-                    var area = document.documentElement.clientHeight - 100;
+                    let area = $dom.height() - 100;
                     th.form.size = Math.floor(area / 64);
                     th.loading = true;
                     var loading = this.$fulloading();
@@ -71,6 +71,44 @@ $ready(['Components/papertype.js'],
                             loading.close();
                         });
                     });
+                },
+                //操作下拉菜单的事件
+                handleCommand: function (command, row) {
+                    //获取el-dropdown组件中的行数据的id
+                    let tpid = row.$attrs?.tpid;
+                    while (!tpid && row.$parent) {
+                        row = row.$parent;
+                        tpid = row.$attrs?.tpid;
+                    }
+                    //当前行数据的对象
+                    const obj = this.datas.find(item => item.Etp_Id === tpid);
+                    //试卷预览
+                    if (command == 'preview') {
+                        let file = 'PaperPreview';
+                        let url = $api.url.set($dom.routepath() + file, { 'tpid': tpid });
+                        let boxid = file + "_" + tpid; 
+                        //创建
+                        var box = window.top.$pagebox.create({
+                            width: 1000, height: '80%', ico: 'e810',
+                            resize: true, full: false, id: boxid, pid: window.name,
+                            url: url
+                        });
+                        box.title = '试卷预览“' + obj.Etp_Name + "”";
+                        box.open();
+                    }
+                    //编辑
+                    if (command == 'modify') this.rowdblclick(obj);
+                    //删除
+                    if (command == 'delete') {
+                        this.$confirm('确定要删除当前试卷吗？<br/>试卷：《' + obj.Etp_Name + '》', '提示', {
+                            dangerouslyUseHTMLString: true,
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(t => {                          
+                            this.deleteData(obj.Etp_Id);
+                        }).catch(action => { });
+                    }                    
                 },
                 //双击事件
                 rowdblclick: function (row, column, event) {
@@ -137,7 +175,7 @@ $ready(['Components/papertype.js'],
                 deleteData: function (datas) {
                     var th = this;
                     th.loading = true;
-                    $api.delete('ExamTestPaper/Remove', { 'id': datas }).then(function (req) {
+                    $api.delete('ExamTestPaper/Delete', { 'id': datas }).then(function (req) {
                         if (req.data.success) {
                             var result = req.data.result;
                             th.$notify({

@@ -214,6 +214,7 @@ namespace Song.ServiceImpls
                             if (item.Nav_Logo.IndexOf("/") > -1)
                                 item.Nav_Logo = item.Nav_Logo.Substring(item.Nav_Logo.LastIndexOf("/")+1);
                         }
+                        //item.Attach();
                         tran.Save<Navigation>(item);
                     }
                     tran.Commit();

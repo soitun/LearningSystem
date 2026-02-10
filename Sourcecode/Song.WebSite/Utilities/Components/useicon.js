@@ -15,7 +15,7 @@ Vue.component('useicon', {
 
     },
     created: function () {
-        $dom.load.css(['/Utilities/Components/Styles/useicon.css']);
+
     },
     methods: {
         clickEvent: function () {

@@ -133,15 +133,15 @@ Vue.component('outline_progress', {
         <template v-if="data!=null">
             <span class="lastTime" title="最后学习时间">{{data.lastTime|date('yyyy-MM-dd HH:mm')}}</span>
             <span class="studyTime" title="累计学习时间">{{studyTime(data.studyTime)}}</span>
-            <span class="playTime" v-if="studyTime(data.playTime)!=''">
+            <span class="playTime" v-show="studyTime(data.playTime)!=''">
                 <span title="播放进度">{{studyTime(Math.floor(data.playTime/1000))}}</span>
                 <span class="slant"> / </span>
                 <span title="视频时长">{{studyTime(Math.floor(data.totalTime/1000))}}</span>
             </span>
         </template>
-        <el-tag type="primary" :type="state(percentage)" plain v-if="!loading" @dblclick.native="updatePercentConfirm">
+        <el-tag type="primary" :type="state(percentage)" plain v-show="!loading" @dblclick.native="updatePercentConfirm">
             {{percentage}} %
         </el-tag>
-        <el-tag type="info" v-else><loading asterisk></loading></el-tag>
+        <el-tag type="info" v-show="loading"><loading asterisk></loading></el-tag>
     </div> `
 });

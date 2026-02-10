@@ -1,6 +1,6 @@
 $ready([
     "../ExamTestPaper/Components/papertype.js"  //试卷类型
-],function () {
+], function () {
     window.vapp = new Vue({
         el: '#vapp',
         data: {
@@ -19,7 +19,7 @@ $ready([
             papertype: 1,          //试卷类型,默认是考试专用试卷
             //考试专用试卷
             exampapers: [],
-            currpaper: {},      //当前卷
+            currpaper: {},      //当前试卷
 
             sbjTree: [],        //专业树
             sbjids: [],      //选择中的专业
@@ -119,11 +119,11 @@ $ready([
             },
             //是否是考试专用试卷
             isexampaper: function () {
-                return this.exam.Etp_Id != '' && this.exam.Etp_Id != '0';
+                return this.exam.Exam_Purpose == 1 || (this.exam.Etp_Id != '' && this.exam.Etp_Id != '0');
             },
             //是否是课程试卷
             iscoursepaper: function () {
-                return this.exam.Tp_Id != '' && this.exam.Tp_Id != '0';
+                return this.exam.Exam_Purpose == 0 || (this.exam.Tp_Id != '' && this.exam.Tp_Id != '0');
             },
         },
         watch: {
@@ -184,6 +184,7 @@ $ready([
                         } else this.exam = $api.clone(exam);
                         if (this.exam.Etp_Id != '' && this.exam.Etp_Id != '0') this.papertype = 1;
                         else if (this.exam.Tp_Id != '' && this.exam.Tp_Id != '0') this.papertype = 0;
+                        this.exam.Exam_Purpose = this.papertype;
                         resolve(this.exam);
                     }
                 });
@@ -305,8 +306,7 @@ $ready([
                                 console.error(req.data.exception);
                                 throw req.config.way + ' ' + req.data.message;
                             }
-                        }).catch(err => console.error(err))
-                        .finally(() => { });
+                        }).catch(err => console.error(err)).finally(() => { });
                 });
             },
 
@@ -315,6 +315,11 @@ $ready([
                 var th = this;
                 this.$refs[formName].validate((valid, fields) => {
                     if (valid) {
+                        //试卷类型，0为课程试卷，1为考试试卷
+                        th.exam.Exam_Purpose = th.papertype;
+                        //题量
+                        th.exam.Exam_QuesCount = th.iscoursepaper ?
+                            th.currpaper.Tp_Count : th.currpaper.Etp_Count;
                         //像主窗体传值，当前实体，图片对象
                         var pagebox = window.top.$pagebox;
                         if (pagebox && pagebox.source.box) {

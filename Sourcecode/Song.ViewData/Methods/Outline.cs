@@ -291,6 +291,7 @@ namespace Song.ViewData.Methods
             dic.Add("StudyTime", studyLog != null ? studyLog.Lss_StudyTime : 0);
             dic.Add("PlayTime", studyLog != null ? studyLog.Lss_PlayTime : 0);
             dic.Add("Complete", studyLog != null ? studyLog.Lss_Complete : 0);
+            dic.Add("Duration", studyLog?.Lss_Duration);
 
             dic.Add("isStudy", isStudy);
             //dic.Add("isBuy", isBuy);

@@ -14,7 +14,7 @@ $ready(["Components/group_select.js",
                 { title: '参考人员', name: 'range', icon: 'e67d' }],
             activeName: 'general',     //选项卡
 
-            //当前数据实体
+            //当前数据实体，这里是考试主题
             entity: {
                 Exam_ID: 0,
                 Exam_IsTheme: true,
@@ -157,6 +157,49 @@ $ready(["Components/group_select.js",
                     }
                 });
             },
+            //场次管理的下拉菜单的事件
+            dropdownHandle: function (command, row) {
+                //获取el-dropdown组件中的行数据的id
+                let examid = row.$attrs?.examid;
+                while (!examid && row.$parent) {
+                    row = row.$parent;
+                    examid = row.$attrs?.examid;
+                }
+                //当前行数据的对象
+                const obj = this.exams.find(item => item.Exam_ID === examid);
+
+                //试卷预览
+                if (command == 'preview') {
+                    let file = 'PaperPreview'; //判断是课程试卷还是考试试卷
+                    if (obj.Etp_Id == '0') file = '../TestPaper/PaperPreview';
+                    else file = '../ExamTestPaper/PaperPreview';
+                    let tpid = obj.Etp_Id != '0' ? obj.Etp_Id : obj.Tp_Id;                  
+                    let url = $api.url.set($dom.routepath() + file, { 'tpid': tpid });
+                    let boxid = file + "_" + tpid;
+                    //创建
+                    var box = window.top.$pagebox.create({
+                        width: '80%', height: '80%', ico: 'e810',
+                        resize: true, full: true, id: boxid, pid: window.name,
+                        url: url
+                    });
+                    box.title = '考试试卷预览“' + obj.Exam_Name + "”";
+                    box.open();
+                }
+                 //编辑
+                 if (command == 'modify') this.openitems(examid);
+                 //删除
+                 if (command == 'delete') {
+                    this.$confirm('确定移除当前场次的考试吗？<br/>场次：《' + obj.Exam_Name + '》', '提示', {
+                        dangerouslyUseHTMLString: true,
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(t => {
+                        const idx = this.exams.findIndex(item => item.Exam_ID === examid);
+                        this.exams.splice(idx, 1);
+                    }).catch(action => { });
+                }      
+            },
             //打开选择试题的子窗体
             openitems: function (examid) {
                 if (!window.top.$pagebox) return;
@@ -208,7 +251,7 @@ $ready(["Components/group_select.js",
             //relationships: 学员组与考试的关系对象数组，Exam_Accounts对象
             studentselected: function (accid, accounts, relationships) {
                 if (accid == null) accid = [];
-                this.examaccounts = relationships;              
+                this.examaccounts = relationships;
                 this.getaccounttotal();
             },
             //获取参考学员的总数
@@ -294,6 +337,73 @@ $ready(["Components/group_select.js",
                 }
             }
         },
+        components: {
+            //考试试卷
+            'testpaper': {
+                props: ['exam'],
+                data: function () {
+                    return {
+                        paper: {},
+                        loading: false,
+                    }
+                },
+                watch: {
+                    //主题变化时，这里用于初次加载
+                    exam: {
+                        handler: function (newval, oldval) {
+                            if (newval == null) return;
+                            this.getpaper();
+                        }, immediate: true
+                    }
+                },
+                computed: {
+                    //题量
+                    tpcount: function () {
+                        if ($api.isnull(this.paper)) return 0;
+                        return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Count : this.paper.Etp_Count;
+                    },
+                    //试卷类型
+                    tptype: function () {
+                        if ($api.isnull(this.paper)) return 0;
+                        return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Type : this.paper.Etp_Type;
+                    },
+                    tpname: function () {
+                        if ($api.isnull(this.paper)) return '';
+                        return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Name : this.paper.Etp_Name;
+                    },
+                },
+                methods: {
+                    //获取试卷
+                    getpaper: function () {
+                        var th = this;
+                        th.loading = true;
+                        let apiget = th.exam.Exam_Purpose == 0 ?
+                            $api.get('TestPaper/ForID', { 'id': th.exam.Tp_Id }) :
+                            $api.get('ExamTestPaper/ForID', { 'id': th.exam.Etp_Id });
+                        apiget.then(function (req) {
+                            if (req.data.success) {
+                                th.paper = req.data.result;
+                            } else {
+                                console.error(req.data.exception);
+                                console.error(th.exam);
+                                throw req.data.message;
+                            }
+                        }).catch(err => console.error(err))
+                            .finally(() => th.loading = false);
+                    },
+                },
+                template: `<div>
+                    <el-tag type="info" v-if="false">
+                        <span v-if="exam.Exam_Purpose == 0">课程试卷</span>
+                        <span v-else>考试试卷</span>
+                    </el-tag>
+                        <papertype :type="tptype" :showname="false">
+                            试卷：{{tpname}}
+                        </papertype>
+
+                    </div>`
+            }
+        }
     });
 
 });

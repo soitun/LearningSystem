@@ -1,7 +1,5 @@
 ﻿
 //查询面板
-$dom.load.css(['/Utilities/Components/Styles/query_panel.css']);
-//事件
 //search:触发查询,如果引用组件时不添加这个事件，查询按钮也不会显示出来
 //reset:重置表单
 Vue.component('query_panel', {

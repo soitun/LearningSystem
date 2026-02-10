@@ -25,7 +25,7 @@ Vue.component('upload-chunked', {
 
     },
     created: function () {
-        $dom.load.css(['/Utilities/Components/Styles/upload-chunked.css']);
+
     },
     methods: {
         //上传文件

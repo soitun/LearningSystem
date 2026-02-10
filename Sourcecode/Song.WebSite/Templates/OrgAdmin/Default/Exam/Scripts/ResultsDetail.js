@@ -127,7 +127,7 @@ $ready(['Components/setscore.js'],
                     //console.log('最大值' + th.form.max);
                     th.loading = true;
                     //每页多少条，通过界面高度自动计算
-                    var area = document.documentElement.clientHeight - 105;
+                    let area = $dom.height() - 105;
                     th.form.size = Math.floor(area / 40);
                     $api.get("Exam/Result4Exam", th.form).then(function (d) {
                         if (d.data.success) {

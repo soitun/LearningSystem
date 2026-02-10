@@ -242,7 +242,9 @@ Vue.component('study_video', {
                         th.studylogState = 0;
                     }, 2000);
                 }).catch(function (err) {
-                    th.studylogState = -1;
+                    th.studylogState = -1;   
+                    th.pause();
+                    if (window.video_player != null) window.video_player.destroy();
                     var msg = "当前学员状态为“未登录”，请确认是否失效，还是存在多处登录的现像？";
                     msg += "<br/>提示：同一账号不可以同时登录多个设备或浏览器。"
                     th.$alert(msg, '登录状态失效', {
@@ -250,7 +252,8 @@ Vue.component('study_video', {
                         dangerouslyUseHTMLString: true,
                         callback: action => {
                             th.account = {};
-                            console.log(th.account);
+                            window.navigateTo('/web/sign/in');
+                            //console.log(th.account);
                         }
                     });
                     window.setTimeout(function () {

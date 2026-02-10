@@ -73,6 +73,9 @@ $ready([
                 collect: false          //我的收藏
             }
         },
+        updated: function () {
+            this.$mathjax();
+        },
         mounted: function () {
             var th = this;
             this.partsform.orgid = window.org.Org_ID;

@@ -4,7 +4,7 @@
         '/Utilities/ElementUi/index.css',
         '/Utilities/styles/public.css',
         $dom.path() + 'styles/public.css',
-        $dom.path() + 'styles/dropmenu.css',  
+        $dom.path() + 'styles/dropmenu.css',
         '/Utilities/Fonts/icon.css',
         '/Utilities/Fonts/SvgIcons/svg.css',
     ], $dom.selfresource);
@@ -16,19 +16,26 @@
         let webpath = $dom.path();    //
         //加载ElementUI
         arr2.push('/Utilities/ElementUi/index.js');
-        arr2.push('/Utilities/Components/btngroup.js');
         arr2.push(webpath + 'scripts/dropmenu.js');
-        arr2.push('/Utilities/TinyMCE/tinymce.js');
-        //页面的头部和底部
-        arr2.push(webpath + 'Components/page_header.js');
-        arr2.push(webpath + 'Components/page_footer.js');
-        arr2.push(webpath + 'Components/course.js');
+        //arr2.push('/Utilities/TinyMCE/tinymce.js');
+
         //mathjax，解析latex公式
         arr2.push('/Utilities/MathJax/tex-mml-chtml.js');
         arr2.push('/Utilities/MathJax/globalVariable.js');
-        //未登录的样式
-        arr2.push(webpath + 'Components/nologin.js');
+
         window.$dom.componentjs(arr2, f);
+    };
+    window.$customize_componentjs = function (jsfile) {
+        let arr = [];
+        let webpath = $dom.path();    //
+        arr.push('/Utilities/Components/btngroup.js');
+        //页面的头部和底部
+        arr.push(webpath + 'Components/page_header.js');
+        arr.push(webpath + 'Components/page_footer.js');
+        arr.push(webpath + 'Components/course.js');
+        //未登录的样式
+        arr.push(webpath + 'Components/nologin.js');
+        return jsfile.concat(arr);
     };
     //加载组件所需的javascript文件
     $dom.ctrljs = function (f) {
@@ -63,14 +70,14 @@
             if (typeof arguments[i] === 'string') jsfile.push(arguments[i]);
         }
         $dom.ready(function () {
-            // $dom.corejs(function () {
+            //$dom.corejs(function () {
             $dom.ctrljs(function () {
                 $components(function () {
+                    window.$init_load(() => $dom.componentjs(window.$customize_componentjs(jsfile), func));
                     window.$init_func();
-                    $dom.componentjs(jsfile, func);
                 });
             });
-            // });
+            //});
         });
     };
     //加载完成后的初始化方法
@@ -114,7 +121,7 @@
             if (txt == null || txt == '') return '';
             if (search == null || search == '') return txt;
             var regExp = new RegExp('(' + search + ')', 'ig');
-            return txt.replace(regExp, function(match, p1) {
+            return txt.replace(regExp, function (match, p1) {
                 return '<red>' + p1 + '</red>';
             });
         };
@@ -130,4 +137,31 @@
             });
         };
     };
+    //初始加载
+    window.$init_load = function (func) {
+        $api.bat(
+            $api.cache('Platform/PlatInfo:60'),
+            $api.get('Organization/Current')
+        ).then(([platinfo, org]) => {
+            //平台信息
+            window.platinfo = platinfo.data.result;
+            //机构信息与机构配置
+            window.org = org.data.result;
+            window.config = $api.organ(window.org).config;
+            document.title += ' - ' + window.org.Org_PlatformName;
+        }).catch(err => console.error(err)).finally(() => func());
+    };
+    //重构一些方法
+    //页面跳转
+    window.navigateTo = function (url) {
+        if (url == null || url == '' || window.location.href == url) return;
+        //如果处在微信小程序中
+        if ($dom.isWeixinApp()) {
+            //alert(wx);
+            //wx.navigateTo({ url: url });
+            window.location.href = url;
+        } else {
+            window.location.href = url;
+        }
+    }
 })();

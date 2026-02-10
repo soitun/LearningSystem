@@ -1,5 +1,4 @@
 ﻿//试题的练习
-$dom.load.css(['/Utilities/Components/Question/Styles/exercise.css']);
 //事件：
 //answer:当答题状态变化时触发，返回答题状态与试题
 Vue.component('question', {

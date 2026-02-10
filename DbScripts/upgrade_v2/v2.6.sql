@@ -23,6 +23,8 @@ ALTER TABLE IF EXISTS  "Examination" ADD COLUMN "Exam_IsManual" BOOLEAN  NOT NUL
 ALTER TABLE IF EXISTS  "TestPaper" ADD COLUMN "Tp_IsManual" BOOLEAN  NOT NULL DEFAULT FALSE;
 CREATE INDEX IF NOT EXISTS "Examination_Exam_IsManual" ON "Examination" ("Exam_IsManual" ASC);
 CREATE INDEX IF NOT EXISTS "TestPaper_Tp_IsManual" ON "TestPaper" ("Tp_IsManual" ASC);
+/*修订，考试表中增加试题量的值*/
+ALTER TABLE IF EXISTS  "Examination" ADD COLUMN "Exam_QuesCount" INT NOT null DEFAULT 0;
 
 /*修订一些其它字段，也许不用修订*/
 UPDATE "SingleSignOn" set "SSO_IsAddSort"=FALSE WHERE "SSO_IsAddSort" ISNULL;
@@ -431,4 +433,6 @@ CREATE INDEX "Exam_Accounts_IX_Ac_ID" ON "public"."Exam_Accounts" USING btree (
 CREATE INDEX "aaaaaExam_Accounts_PK" ON "public"."Exam_Accounts" USING btree (
   "Ea_ID" "pg_catalog"."int4_ops" ASC NULLS LAST
 );
-
+/*增加学员账号的是否删除字段*/
+ALTER TABLE "Accounts" ADD COLUMN "Ac_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
+CREATE INDEX  IF NOT EXISTS "Accounts_IX_IsDeleted" ON "Accounts"("Ac_IsDeleted");

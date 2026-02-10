@@ -11,6 +11,7 @@ Vue.component('study_tabs', {
                 { 'name': '内容', 'tag': 'isContext', 'icon': 'e6cb', 'show': false },
                 { 'name': '附件', 'tag': 'isAccess', 'icon': 'e853', 'show': false },
                 { 'name': '习题', 'tag': 'isQues', 'icon': 'e75e', 'show': false }],
+
             tabActive: 'existVideo',
             tabindex: -1,
             show: false     //是否显示,只要有一个tabs是show，此处即为false
@@ -24,7 +25,8 @@ Vue.component('study_tabs', {
             this.tabindex = -1;
             for (let i = 0; i < this.tabs.length; i++) {
                 const item = this.tabs[i];
-                item.show = val[item.tag];
+                //如果后端会设置，则默认采用原设定的值
+                if (val[item.tag] != null) item.show = val[item.tag];
                 if (item.tag == 'isLive') {
                     //item.show = true;
                 }

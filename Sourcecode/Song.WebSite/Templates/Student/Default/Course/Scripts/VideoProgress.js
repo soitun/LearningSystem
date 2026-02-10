@@ -21,7 +21,7 @@ $ready(function () {
                 if (th.islogin) th.getlogs();
             });
             th.loading_init = true;
-            $api.cache('Outline/TreeList', { 'couid': th.couid }).then(function (req) {
+            $api.get('Outline/TreeList', { 'couid': th.couid }).then(function (req) {
                 if (req.data.success) {
                     th.outlines = req.data.result;
                     console.log(th.outlines);
@@ -66,7 +66,7 @@ $ready(function () {
                 var th = this;
                 th.loading = true;
                 var acid = th.account.Ac_ID;
-                $api.cache('Course/LogForOutlineVideo:10', { 'stid': acid, 'couid': th.couid }).then(function (req) {
+                $api.get('Course/LogForOutlineVideo:10', { 'stid': acid, 'couid': th.couid }).then(function (req) {
                     if (req.data.success) {
                         th.logdatas = req.data.result;
                         th.$message({

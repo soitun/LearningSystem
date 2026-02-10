@@ -52,7 +52,7 @@ $ready(function () {
                 //console.error(this.form);
                 var th = this;
                 //每页多少条，通过界面高度自动计算
-                var area = document.documentElement.clientHeight - 105;
+                let area = $dom.height() - 105;
                 th.form.size = Math.floor(area / 41);
                 th.loading = true;
                 $api.get("Account/LoginLogs", th.form).then(function (d) {

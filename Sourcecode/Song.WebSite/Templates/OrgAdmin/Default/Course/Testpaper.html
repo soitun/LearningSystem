@@ -36,7 +36,6 @@
 
             <el-table-column label="试卷">
                 <template slot-scope="scope">
-                    <useicon :state="scope.row.Tp_IsUse"> </useicon>
                     <span v-html="showsearch(scope.row.Tp_Name,form.search)" class="large"></span>
                     <br />
                     <el-tag type="info" title="难度等级"> {{scope.row.Tp_Diff}} - {{scope.row.Tp_Diff2}}</el-tag>
@@ -45,6 +44,10 @@
                     <el-tag type="primary" v-if="scope.row.Tp_IsFinal">
                         <icon>&#xe816</icon>结课考试
                     </el-tag>
+                    <el-switch v-model="scope.row.Tp_IsUse" @change="changeState(scope.row)" active-color="#13ce66"
+                        inactive-color="#ff4949" v-show="loadingid!=scope.row.Tp_Id"
+                        :active-text="scope.row.Tp_IsUse ? '启用' : '禁用'">
+                    </el-switch>
                 </template>
             </el-table-column>
             <el-table-column label="类型" align="center" width="120">
@@ -100,30 +103,20 @@
                                 :index="scope.$index"></result_count>
                         </el-link>
                     </div>
-                    <el-dropdown>
+                    <el-dropdown @command="handleCommand" :tpid="scope.row.Tp_Id">
                         <span class="el-dropdown-link">
                             <icon>&#xa030</icon><span style="font-size: 12px">管理</span><i
                                 class="el-icon-arrow-down el-icon--right"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item>
-                                <el-switch v-model="scope.row.Tp_IsUse" @change="changeState(scope.row)"
-                                    active-color="#13ce66" inactive-color="#ff4949" v-show="loadingid!=scope.row.Tp_Id"
-                                    :active-text="scope.row.Tp_IsUse ? '启用' : '禁用'">
-
-                                </el-switch>
+                            <el-dropdown-item command="preview">
+                                <el-link type="info" plain icon="el-icon-document" :underline="false">预览</el-link>
                             </el-dropdown-item>
-                            <el-dropdown-item divided>
-                                <el-link type="primary" plain icon="el-icon-edit" @click='rowdblclick(scope.row)'>
-                                    修改
-                                </el-link>
+                            <el-dropdown-item divided command="modify">
+                                <el-link type="primary" plain icon="el-icon-edit" :underline="false"> 修改 </el-link>
                             </el-dropdown-item>
-                            <el-dropdown-item>
-                                <el-popconfirm confirm-button-text='是的' cancel-button-text='不用' icon="el-icon-info"
-                                    icon-color="red" title="确定删除吗？" @confirm="$refs.btngroup.delete(scope.row.Tp_Id)">
-                                    <el-link type="danger" plain icon="el-icon-delete" slot="reference">删除
-                                    </el-link>
-                                </el-popconfirm>
+                            <el-dropdown-item command="delete">
+                                <el-link type="danger" plain icon="el-icon-delete" :underline="false">删除 </el-link>
                             </el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
@@ -133,8 +126,8 @@
 
 
         <div id="pager-box">
-            <el-pagination v-on:current-change="handleCurrentChange" :current-page="form.index" 
-                :page-size="form.size" :pager-count="12" layout="total, prev, pager, next, jumper" :total="total">
+            <el-pagination v-on:current-change="handleCurrentChange" :current-page="form.index" :page-size="form.size"
+                :pager-count="12" layout="total, prev, pager, next, jumper" :total="total">
             </el-pagination>
         </div>
     </div>

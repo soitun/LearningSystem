@@ -87,9 +87,7 @@
         if (res instanceof Array) {
             for (var i = 0; i < res.length; i++)
                 nodes.push(res[i]);
-        } else {
-            nodes = res;
-        }
+        } else nodes = res;
         return new webdom(nodes);
     };
     //获取第n个元素,如果为负，则倒序取，例如-1为最后一个
@@ -505,14 +503,34 @@
     /*
     静态方法
     */
+    //当前页面的高度
+    webdom.height = function (win) {
+        win = win || window;
+        const viewport = document.documentElement.clientHeight;
+        let height = viewport <= 0 ? win.innerHeight : viewport;
+        if (height <= 0) {
+            if (win.parent != window.self)
+                height = webdom.height(win.parent);
+        }
+        return height;
+    };
+    //当前页面的度度
+    webdom.width = function (win) {
+        win = win || window;
+        const viewport = document.documentElement.clientWidth;
+        let width = viewport <= 0 ? window.innerWidth : viewport;
+        if (width <= 0) {
+            if (win.parent != window.self)
+                width = webdom.width(win.parent);
+        }
+        return width;
+    };
     //是否是webdom对象
     webdom.isdom = function (obj) {
         return typeof (obj) == 'object' && obj.typeof == 'webui.element';
     };
     //去除两端空格
-    webdom.trim = function (str) {
-        return str.replace(/^\s*|\s*$/g, '').replace(/^\n+|\n+$/g, "");
-    };
+    webdom.trim = str => str.replace(/^\s*|\s*$/g, '').replace(/^\n+|\n+$/g, "");
     //当前页面的文件名，不包括路径和后缀名
     webdom.file = function () {
         var href = window.location.href;
@@ -914,10 +932,7 @@
                     let path = element.split('/').slice(0, -1).join('/');
                     let css = path + '/Styles/' + file + '.css';
                     cssfile.push(css);
-                    //console.error(file);
-                    //console.error(css);
                 }
-
             }
             window.$dom.load.js(jsfile, func);
             window.$dom.load.css(cssfile);

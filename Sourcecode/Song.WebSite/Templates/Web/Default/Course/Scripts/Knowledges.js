@@ -48,7 +48,7 @@ $ready(function () {
                 var th = this;
                 th.form.couid = this.couid;
                 //每页多少条，通过界面高度自动计算
-                var area = document.documentElement.clientHeight - 100;
+                let area = $dom.height() - 100;
                 th.form.size = Math.floor(area / 41);
                 if ($api.getType(th.form.uid) == "Array" && th.form.uid.length > 0) {
                     th.form.uid = th.form.uid[th.form.uid.length - 1];

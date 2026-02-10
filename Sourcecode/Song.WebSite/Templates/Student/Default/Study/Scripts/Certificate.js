@@ -60,7 +60,7 @@ $ready(function () {
                 //if (th.query.acid === undefined || th.query.acid == -1) return;
                 var query = $api.clone(this.query);
                 //每页多少条，通过界面高度自动计算
-                var area = document.documentElement.clientHeight - 100;
+                let area = $dom.height() - 100;
                 th.query.size = Math.floor(area / 213);
                 $api.get("Course/ForStudent", query).then(function (req) {
                     if (req.data.success) {

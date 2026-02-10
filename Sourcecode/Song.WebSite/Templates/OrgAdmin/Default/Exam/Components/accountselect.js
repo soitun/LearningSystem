@@ -101,7 +101,7 @@ Vue.component('student_add', {
         //加载数据页
         getdatas: function (index) {
             if (index != null) this.form.index = index;
-            var th = this;
+            var th = this;           
             th.loading = true;
             $api.get("Account/Pager", th.form).then(function (d) {
                 if (d.data.success) {
@@ -128,7 +128,8 @@ Vue.component('student_add', {
     //
     template: `<div class="student_add">
             <header>
-                <el-input v-model="form.name" placeholder="姓名" clearable @input="getdatas(1)"></el-input>                    
+                <el-input v-model="form.name" placeholder="姓名" clearable @input="getdatas(1)"></el-input> 
+                <el-input v-model="form.acc" placeholder="账号" clearable @input="getdatas(1)"></el-input> 
                 <el-input v-model="form.idcard" placeholder="身份证" clearable @input="getdatas(1)"></el-input> 
                 <el-input v-model="form.phone" placeholder="电话" clearable @input="getdatas(1)"></el-input> 
             </header>

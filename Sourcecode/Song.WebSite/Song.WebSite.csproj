@@ -219,6 +219,7 @@
     <Compile Include="Controllers\API\V2Controller.cs" />
     <Compile Include="Controllers\API\V1Controller.cs" />
     <Compile Include="Controllers\DownController.cs" />
+    <Compile Include="Controllers\View\AdminController.cs" />
     <Compile Include="Controllers\View\PadController.cs" />
     <Compile Include="Controllers\View\PayController.cs" />
     <Compile Include="Controllers\View\SSOController.cs" />
@@ -747,6 +748,7 @@
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\ModifyTestpaper1.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\ModifyTestpaper2.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\MyTestPaper.html" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\PaperPreview.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Recycle.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\Index.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\Modify.js" />
@@ -755,6 +757,7 @@
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\ModifyTestpaper2.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\ModifyTestpaper2.xml" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\MyTestPaper.js" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\PaperPreview.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\Recycle.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\SelectKnl.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Scripts\SelectParts.js" />
@@ -773,6 +776,7 @@
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\ModifyTestpaper1.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\ModifyTestpaper2.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\MyTestPaper.css" />
+    <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\PaperPreview.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\Recycle.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\SelectKnl.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\SelectParts.css" />
@@ -1065,6 +1069,7 @@
     <Content Include="Templates\OrgAdmin\Default\Student\Components\ExerciseState.js" />
     <Content Include="Templates\OrgAdmin\Default\Student\Components\OutlineList.js" />
     <Content Include="Templates\OrgAdmin\Default\Student\Components\Styles\OutlineList.css" />
+    <Content Include="Templates\OrgAdmin\Default\Student\Components\Styles\outline_progress.css" />
     <Content Include="Templates\OrgAdmin\Default\Student\Outcomes.html" />
     <Content Include="Templates\OrgAdmin\Default\Student\Outcomes4Sort.html" />
     <Content Include="Templates\OrgAdmin\Default\Student\QuestionProgress.html" />
@@ -1094,9 +1099,14 @@
     <Content Include="Templates\OrgAdmin\Default\Teacher\Scripts\Import.js" />
     <Content Include="Templates\OrgAdmin\Default\Teacher\Styles\Export.css" />
     <Content Include="Templates\OrgAdmin\Default\Teacher\Styles\Import.css" />
+    <Content Include="Templates\OrgAdmin\Default\TestPaper\Components\group.js" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Components\ques_count.js" />
+    <Content Include="Templates\OrgAdmin\Default\TestPaper\Components\Styles\group.css" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Components\Styles\ques_count.css" />
+    <Content Include="Templates\OrgAdmin\Default\TestPaper\PaperPreview.html" />
+    <Content Include="Templates\OrgAdmin\Default\TestPaper\Scripts\PaperPreview.js" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Scripts\Results.js" />
+    <Content Include="Templates\OrgAdmin\Default\TestPaper\Styles\PaperPreview.css" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Styles\Results.css" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Results.html" />
     <Content Include="Templates\OrgAdmin\Default\Viewport\Components\courses_hot.js" />
@@ -1820,6 +1830,9 @@
     <Content Include="Templates\Web\Default\Course\Scripts\AIAgent.js" />
     <Content Include="Templates\Web\Default\Course\Styles\AIAgent.css" />
     <Content Include="Templates\Web\Default\Exam\Components\exam_tabs.js" />
+    <Content Include="Templates\Web\Default\Exam\Scripts\Theme.js" />
+    <Content Include="Templates\Web\Default\Exam\Styles\Theme.css" />
+    <Content Include="Templates\Web\Default\Exam\Theme.html" />
     <Content Include="Templates\Web\Default\LLM\Index.html" />
     <Content Include="Templates\Web\Default\LLM\Scripts\Index.js" />
     <Content Include="Templates\Web\Default\LLM\Styles\Index.css" />
@@ -1972,9 +1985,11 @@
     <Content Include="Utilities\Components\btngroup.js" />
     <Content Include="Utilities\Components\panel.js" />
     <Content Include="Utilities\Components\Question\exam.js" />
+    <Content Include="Utilities\Components\Question\preview.js" />
     <Content Include="Utilities\Components\Question\Styles\exam.css" />
     <Content Include="Utilities\Components\date_range.js" />
     <Content Include="Utilities\Components\Question\Styles\function.css" />
+    <Content Include="Utilities\Components\Question\Styles\preview.css" />
     <Content Include="Utilities\Components\Sign\login.js" />
     <Content Include="Utilities\Components\Sign\Styles\login.css" />
     <Content Include="Utilities\Components\Question\Styles\exercise.css" />

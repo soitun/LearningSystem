@@ -69,6 +69,10 @@ namespace Song.ServiceImpls
                             it.Exam_IsRightClick = theme.Exam_IsRightClick;
                             it.Exam_IsShowBtn = theme.Exam_IsShowBtn;
                             it.Exam_IsToggle = theme.Exam_IsToggle;
+                            it.Exam_Purpose = it.Tp_Id == 0 ? 1 : 0;        //是否为考试专用试卷
+                            //试题数量
+                            if (it.Exam_Purpose == 0) it.Exam_QuesCount = Business.Do<ITestPaper>().QuesCount(it.Tp_Id);
+                            else it.Exam_QuesCount = Business.Do<IExamTestPaper>().QuesCount(it.Etp_Id);
                             tran.Save<Examination>(it);
                         }
                         if (theme.Exam_DateType == 1)
@@ -76,6 +80,7 @@ namespace Song.ServiceImpls
                             theme.Exam_Date = examDate;
                             theme.Exam_DateOver = examDate;
                         }
+                       
                     }
                     tran.Save<Examination>(theme);
                     //保存学员组与考试的关联
@@ -127,6 +132,7 @@ namespace Song.ServiceImpls
 
                         //考试主题时间
                         DateTime examDate = DateTime.MaxValue;
+                        //保存场次
                         foreach (Song.Entities.Examination it in items)
                         {
                             it.Exam_DateType = theme.Exam_DateType;
@@ -141,21 +147,25 @@ namespace Song.ServiceImpls
                                 it.Exam_DateOver = theme.Exam_DateOver;
                             }
 
-                                it.Org_ID= theme.Org_ID;
-                                it.Exam_Title = theme.Exam_Title;
-                                it.Exam_GroupType = theme.Exam_GroupType;
-                                it.Exam_IsUse = theme.Exam_IsUse;
-                                it.Exam_IsRightClick = theme.Exam_IsRightClick;
-                                it.Exam_IsShowBtn = theme.Exam_IsShowBtn;
-                                it.Exam_IsToggle = theme.Exam_IsToggle;
-                                if (it.Exam_IsTheme)
-                                    tran.Update<ExamResults>(new Field[] { ExamResults._.Exam_Title },
-                                    new object[] { it.Exam_Title }, ExamResults._.Exam_UID == it.Exam_UID);
-                                else
-                                    tran.Update<ExamResults>(new Field[] { ExamResults._.Exam_Name },
-                                  new object[] { it.Exam_Name }, ExamResults._.Exam_ID == it.Exam_ID);
-                                tran.Save<Examination>(it);
-                            
+                            it.Org_ID = theme.Org_ID;
+                            it.Exam_Title = theme.Exam_Title;
+                            it.Exam_GroupType = theme.Exam_GroupType;
+                            it.Exam_IsUse = theme.Exam_IsUse;
+                            it.Exam_IsRightClick = theme.Exam_IsRightClick;
+                            it.Exam_IsShowBtn = theme.Exam_IsShowBtn;
+                            it.Exam_IsToggle = theme.Exam_IsToggle;
+                            it.Exam_Purpose = it.Tp_Id == 0 ? 1 : 0;        //是否为考试专用试卷
+                            if (it.Exam_IsTheme)
+                                tran.Update<ExamResults>(new Field[] { ExamResults._.Exam_Title },
+                                new object[] { it.Exam_Title }, ExamResults._.Exam_UID == it.Exam_UID);
+                            else
+                                tran.Update<ExamResults>(new Field[] { ExamResults._.Exam_Name },
+                              new object[] { it.Exam_Name }, ExamResults._.Exam_ID == it.Exam_ID);
+                            //试题数量
+                            if (it.Exam_Purpose == 0) it.Exam_QuesCount = Business.Do<ITestPaper>().QuesCount(it.Tp_Id);
+                            else it.Exam_QuesCount = Business.Do<IExamTestPaper>().QuesCount(it.Etp_Id);
+                            tran.Save<Examination>(it);
+
                         }
                         if (theme.Exam_DateType == 1)
                         {
@@ -190,7 +200,7 @@ namespace Song.ServiceImpls
         /// <param name="objs">fiels对应的值</param>
         public int ExamUpdate(int examid, Field[] fiels, object[] objs)
         {
-            return Gateway.Default.Update<Examination>(fiels, objs, Examination._.Exam_GroupType == examid);
+            return Gateway.Default.Update<Examination>(fiels, objs, Examination._.Exam_ID == examid);
         }
         public int ExamDelete(int identify)
         {
@@ -242,7 +252,7 @@ namespace Song.ServiceImpls
             return Gateway.Default.From<Examination>().Where(Examination._.Exam_UID == uid && Examination._.Exam_IsTheme == true).ToFirst<Examination>();
         }
         /// <summary>
-        /// 获取单一实体对象，取最近一次考试；此处获取的是考试主题或场次
+        /// 获取单一实体对象，取最近一次考试；此处获取的是考试场次
         /// </summary>
         /// <returns></returns>
         public Examination ExamLast()

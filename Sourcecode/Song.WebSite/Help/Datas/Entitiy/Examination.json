@@ -158,5 +158,10 @@
     "mark": "管理员id",
     "intro": "如果是管理员编辑考试时，这里是管理员的ID",
     "relation": "EmpAccount"
+  },
+  "Exam_QuesCount": {
+    "mark": "试题数",
+    "intro": "当选择试卷时，来自试卷的Tp_Count",
+    "relation": ""
   }
 }
