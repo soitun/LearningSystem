@@ -193,7 +193,7 @@
             }
         },
         cookie: function (name, value, options) {
-            if (typeof value != 'undefined') { // name and value given, set cookie 
+            if (typeof value != 'undefined') {
                 options = options || {};
                 if (value === null) { value = ''; options.expires = -1; }
                 var expires = '';
@@ -210,16 +210,21 @@
                 var path = options.path ? '; path=' + options.path : '; path=/';
                 var domain = options.domain ? '; domain=' + options.domain : '';
                 var secure = options.secure ? '; secure' : '';
-                document.cookie = [name, '=', encodeURIComponent(value), expires, path, domain, secure].join('');
+                let v = typeof value == 'object' ? 'obj-' + this.toJson(value) : 'str-' + value;
+                document.cookie = [name, '=', encodeURIComponent(v), expires, path, domain, secure].join('');
             } else { // only name given, get cookie 
                 var cookieValue = null;
                 if (document.cookie && document.cookie != '') {
                     var cookies = document.cookie.split(';');
                     for (let i = 0; i < cookies.length; i++) {
                         var cookie = methods.trim(cookies[i]);
-                        // Does this cookie string begin with the name we want? 
                         if (cookie.substring(0, name.length + 1) == (name + '=')) {
                             cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            if (cookieValue.indexOf('obj-') === 0) {
+                                cookieValue = cookieValue.slice(4);
+                                return this.parseJson(cookieValue);
+                            } else if (cookieValue.indexOf('str-') === 0)
+                                return cookieValue.slice(4);
                             break;
                         }
                     }
@@ -615,6 +620,7 @@
         //id:登录对象的id
         tokens: function (key, code, id, dura) {
             let status = methods.storage(this.storagename);
+            if (status == null || status == '') status = methods.cookie(this.storagename);
             //读取登录状态
             if (arguments.length <= 1) {
                 if (status == null || !(status instanceof Array)) return '';
@@ -639,6 +645,7 @@
                 if (index < 0) status.push(item);
                 //将登录信息写入storage
                 methods.storage(this.storagename, status);
+                methods.cookie(this.storagename, status);
                 return status;
             }
         },
