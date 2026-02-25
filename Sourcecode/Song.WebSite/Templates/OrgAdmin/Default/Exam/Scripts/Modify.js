@@ -178,8 +178,8 @@ $ready(["Components/group_select.js",
                     let boxid = file + "_" + tpid;
                     //创建
                     var box = window.top.$pagebox.create({
-                        width: '80%', height: '80%', ico: 'e810',
-                        resize: true, full: true, id: boxid, pid: window.name,
+                        width: 1000, height: '80%', ico: 'e810',
+                        resize: true, full: false, id: boxid, pid: window.name,
                         url: url
                     });
                     box.title = '考试试卷预览“' + obj.Exam_Name + "”";

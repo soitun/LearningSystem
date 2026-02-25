@@ -161,6 +161,72 @@ namespace Song.ServiceImpls
             }
         }
         /// <summary>
+        /// 获取随机试题
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="qpid">分类id</param>
+        /// <param name="tagid">标签id</param>
+        /// <param name="knlid">知识点id</param> 
+        /// <param name="type">试题类型</param>
+        /// <param name="diff1">难度范围</param>
+        /// <param name="diff2">难度范围</param>
+        /// <param name="isUse">是否允许</param>
+        /// <param name="count">取的数量</param>
+        /// <returns></returns>
+        public List<Questions> QuesRandom(int orgid, long[] qpid, long[] tagid, long[] knlid, int type, int diff1, int diff2, bool? isUse, int count)
+        {  
+            //用于考试的试题
+            WhereClip wc = Questions._.Qus_Purpose == 1 && Questions._.Qus_IsDeleted == false;  
+            if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
+
+            if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
+            //题型
+            //试题类型
+            string[] types = Business.Do<IQuestions>().QuestionTypes();
+            if (type < 1 || type > types.Length) type = -1;
+            if (type > 0) wc.And(Questions._.Qus_Type == type);
+            //难度 
+            diff1 = diff1 < 1 ? 1 : diff1;
+            diff2 = diff2 < 1 || diff2 > 5 ? 5 : diff2;
+            if (diff1 > 0) wc.And(Questions._.Qus_Diff >= diff1);  //最小难度等级
+            if (diff2 > 0) wc.And(Questions._.Qus_Diff <= diff2);  //最大难度
+            FromSection<Questions> section = Gateway.Default.From<Questions>();
+            //试题范围
+            WhereClip wcrange = new WhereClip();
+            //试题分类
+            if (qpid != null && qpid.Length > 0)
+            {
+                section.LeftJoin<Questions_QPart>(Questions_QPart._.Qus_ID == Questions._.Qus_ID);
+                WhereClip wcqp = new WhereClip();
+                List<long> list = this.PartTreeID(qpid, orgid);
+                foreach (long d in list) wcqp |= Questions_QPart._.Qp_ID == d;
+                wcrange.Or(wcqp);
+            }
+            //试题关键字
+            if (tagid != null && tagid.Length > 0)
+            {
+                section.LeftJoin<Questions_QTags>(Questions_QTags._.Qus_ID == Questions._.Qus_ID);
+                WhereClip wcqp = new WhereClip();
+                foreach (long t in tagid) wcqp |= Questions_QTags._.Qtag_ID == t;
+                wcrange.Or(wcqp);
+            }
+            //关联知识点
+            if (knlid != null && knlid.Length > 0)
+            {
+                section.LeftJoin<Questions_QKnl>(Questions_QKnl._.Qus_ID == Questions._.Qus_ID);
+                WhereClip wcqp = new WhereClip();
+                List<long> list = this.KnlTreeID(knlid, orgid);
+                foreach (long k in list) wcqp |= Questions_QKnl._.Qk_ID == k;
+                wcrange.Or(wcqp);
+            }
+            wc.And(wcrange);
+            //随机排序
+            OrderByClip order;
+            if (Gateway.Default.DbType != DbProviderType.SQLServer) order = new OrderByClip("RANDOM()");
+            else order = new OrderByClip("NEWID()");
+            return section.Where(wc).OrderBy(order).ToList<Questions>(count);
+        }
+        /// <summary>
         /// 获取试题
         /// </summary>
         /// <param name="orgid">机构id</param>

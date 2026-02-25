@@ -553,7 +553,8 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public List<Questions> QuesRandom(int orgid, long sbjid, long couid, long olid, int type, int diff1, int diff2, bool? isUse, int count)
         {
-            WhereClip wc = Questions._.Qus_IsError == false;
+            WhereClip wc = Questions._.Qus_Purpose == 0 && Questions._.Qus_IsError == false && Questions._.Qus_IsDeleted == false;
+            if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
             //机构
             if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
             //试题类型
@@ -577,10 +578,8 @@ namespace Song.ServiceImpls
             else if(sbjid>0) wc.And(Questions._.Sbj_ID == sbjid);   //专业id
             //随机排序
             OrderByClip order;
-            if (Gateway.Default.DbType != DbProviderType.SQLServer)
-                order= new OrderByClip("RANDOM()");
-            else
-                order = new OrderByClip("NEWID()");
+            if (Gateway.Default.DbType != DbProviderType.SQLServer) order = new OrderByClip("RANDOM()");
+            else order = new OrderByClip("NEWID()");
             return Gateway.Default.From<Questions>().Where(wc).OrderBy(order).ToList<Questions>(count);
         }
 

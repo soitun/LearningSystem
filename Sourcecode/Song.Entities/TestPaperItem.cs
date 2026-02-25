@@ -22,6 +22,8 @@ namespace Song.Entities {
     		
     		protected Int32 _TPI_Type;
     		
+    		protected String _TPI_TypeName;
+    		
     		protected Int64 _Tp_Id;
     		
     		public Int32 TPI_ID {
@@ -94,6 +96,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public String TPI_TypeName {
+    			get {
+    				return this._TPI_TypeName;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.TPI_TypeName, _TPI_TypeName, value);
+    				this._TPI_TypeName = value;
+    			}
+    		}
+    		
     		public Int64 Tp_Id {
     			get {
     				return this._Tp_Id;
@@ -138,6 +150,7 @@ namespace Song.Entities {
     					_.TPI_Number,
     					_.TPI_Percent,
     					_.TPI_Type,
+    					_.TPI_TypeName,
     					_.Tp_Id};
     		}
     		
@@ -153,6 +166,7 @@ namespace Song.Entities {
     					this._TPI_Number,
     					this._TPI_Percent,
     					this._TPI_Type,
+    					this._TPI_TypeName,
     					this._Tp_Id};
     		}
     		
@@ -180,6 +194,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.TPI_Type))) {
     				this._TPI_Type = reader.GetInt32(_.TPI_Type);
+    			}
+    			if ((false == reader.IsDBNull(_.TPI_TypeName))) {
+    				this._TPI_TypeName = reader.GetString(_.TPI_TypeName);
     			}
     			if ((false == reader.IsDBNull(_.Tp_Id))) {
     				this._Tp_Id = reader.GetInt64(_.Tp_Id);
@@ -246,10 +263,14 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field TPI_Type = new WeiSha.Data.Field<TestPaperItem>("TPI_Type");
     			
     			/// <summary>
+    			/// 字段名：TPI_TypeName - 数据类型：String
+    			/// </summary>
+    			public static WeiSha.Data.Field TPI_TypeName = new WeiSha.Data.Field<TestPaperItem>("TPI_TypeName");
+    			
+    			/// <summary>
     			/// 字段名：Tp_Id - 数据类型：Int64
     			/// </summary>
     			public static WeiSha.Data.Field Tp_Id = new WeiSha.Data.Field<TestPaperItem>("Tp_Id");
     		}
     	}
     }
-    

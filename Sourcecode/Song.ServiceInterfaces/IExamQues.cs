@@ -54,6 +54,20 @@ namespace Song.ServiceInterfaces
         /// <param name="id">实体的主键</param>
         int QuesRemove(long id);
         /// <summary>
+        /// 获取随机试题
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="qpid">分类id</param>
+        /// <param name="tagid">标签id</param>
+        /// <param name="knlid">知识点id</param> 
+        /// <param name="type">试题类型</param>
+        /// <param name="diff1">难度范围</param>
+        /// <param name="diff2">难度范围</param>
+        /// <param name="isUse">是否允许</param>
+        /// <param name="count">取的数量</param>
+        /// <returns></returns>
+        List<Questions> QuesRandom(int orgid, long[] qpid, long[] tagid, long[] knlid, int type, int diff1, int diff2, bool? isUse, int count);
+        /// <summary>
         /// 获取试题
         /// </summary>
         /// <param name="orgid">机构id</param>
