@@ -86,7 +86,7 @@ $ready([
             },
             //刷新
             btnfresh: function () {
-                this.generatePaper();
+                this.getentity();
             },
         },
         filters: {
