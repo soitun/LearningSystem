@@ -574,8 +574,11 @@ namespace Song.ViewData.Methods
             int count = 0;
             List<Song.Entities.Course> eas = null;
             eas = Business.Do<ICourse>().CoursePager(orgid, sbjids, thid, use, live, free, search, order, size, index, out count);
-            for (int i = 0; i < eas.Count; i++)          
+            for (int i = 0; i < eas.Count; i++)
+            {
                 eas[i] = _tran(eas[i]);
+                eas[i].Cou_Intro = string.Empty;
+            }
             //ListResult result = new ListResult(eas.ToArray<Song.Entities.Course>());
             ListResult result = new ListResult(eas);
             result.Index = index;
