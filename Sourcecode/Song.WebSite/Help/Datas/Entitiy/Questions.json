@@ -21,7 +21,7 @@
   },
   "Qus_Type": {
     "mark": "题型",
-    "intro": "",
+    "intro": "数值从1到5，依次代表：单选, 多选, 判断, 简答, 填空",
     "relation": ""
   },
   "Qus_Explain": {

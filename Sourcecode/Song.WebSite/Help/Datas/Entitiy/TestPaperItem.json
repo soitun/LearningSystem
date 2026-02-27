@@ -6,7 +6,7 @@
   },
   "TPI_Type": {
     "mark": "试题类型",
-    "intro": "",
+    "intro": "数值从1到5，依次代表：单选, 多选, 判断, 简答, 填空",
     "relation": ""
   },
   "TPI_Percent": {
@@ -38,5 +38,10 @@
     "mark": "试卷ID",
     "intro": "",
     "relation": "TestPaper"
+  },
+  "TPI_TypeName": {
+    "mark": "题型别名",
+    "intro": "例如单选，用户设置为“单项选择题”。这里是字符，TPI_Type中是数值",
+    "relation": ""
   }
 }

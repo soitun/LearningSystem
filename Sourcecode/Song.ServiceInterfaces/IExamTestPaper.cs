@@ -4,6 +4,7 @@ using System.Text;
 using System.Data;
 using Song.Entities;
 using WeiSha.Data;
+using System.Xml;
 
 namespace Song.ServiceInterfaces
 {
@@ -120,6 +121,34 @@ namespace Song.ServiceInterfaces
         /// <param name="identify"></param>
         /// <returns></returns>
         int QuesCount(long identify);
+        #endregion
+
+        #region 出卷
+        /// <summary>
+        /// 出卷，输出试卷内容
+        /// </summary>
+        /// <param name="tpid">试卷id</param>
+        /// <param name="isanswer">试题是否带答案，模拟考试一般带答案，方便前端计算成绩</param>
+        /// <returns></returns>
+        Dictionary<TestPaperItem, List<Questions>> Putout(long tpid, bool isanswer);
+        /// <summary>
+        /// 出卷，输出试卷内容
+        /// </summary>
+        /// <param name="tp">试卷对象</param>
+        /// <param name="isanswer">试题是否带答案，模拟考试一般带答案，方便前端计算成绩</param>
+        /// <returns></returns>
+        Dictionary<TestPaperItem, List<Questions>> Putout(ExamTestPaper tp, bool isanswer);
+        /// <summary>
+        /// 出卷，按历史答题内容生成试卷
+        /// </summary>
+        /// <param name="results">学员答题的xml记录</param>
+        /// <param name="isanswer">试题是否带答案，模拟考试一般带答案，方便前端计算成绩</param>
+        /// <returns></returns>
+        Dictionary<TestPaperItem, List<Questions>> Putout(string results, bool isanswer);
+        /// <summary>
+        /// 出卷，按历史答题内容生成试卷
+        /// </summary>
+        Dictionary<TestPaperItem, List<Questions>> Putout(XmlDocument resxml, bool isanswer);
         #endregion
 
     }

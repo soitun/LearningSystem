@@ -381,5 +381,58 @@ namespace Song.ViewData.Methods
         }
 
         #endregion 增删改查
+
+        #region 出卷相关
+
+        /// <summary>
+        /// 获取试题的大项
+        /// </summary>
+        /// <returns></returns>
+        public List<TestPaperItem> Types(long tpid)
+        {
+            Song.Entities.TestPaper tp = Business.Do<ITestPaper>().PaperSingle(tpid);
+            return Business.Do<ITestPaper>().GetItemForAny(tp);
+        }
+
+        /// <summary>
+        /// 生成随机试卷，试题随机抽取
+        /// </summary>
+        /// <param name="tpid">试卷id</param>
+        /// <returns></returns>
+        public JArray Generate(long tpid)
+        {
+            //取果是第一次打开，则随机生成试题，此为获取试卷
+            Song.Entities.ExamTestPaper paper = Business.Do<IExamTestPaper>().PaperSingle(tpid);
+            if (paper == null) return null;
+            //生成试卷
+            Dictionary<TestPaperItem, List<Questions>> dics = Business.Do<IExamTestPaper>().Putout(paper, true);
+            JArray jarr = new JArray();
+            foreach (var di in dics)
+            {
+                //按题型输出
+                Song.Entities.TestPaperItem pi = (Song.Entities.TestPaperItem)di.Key;   //试题类型
+                List<Questions> questions = (List<Questions>)di.Value;   //当前类型的试题
+                int type = (int)pi.TPI_Type;    //试题类型
+                int count = questions.Count;  //试题数目
+                float num = (float)pi.TPI_Number;   //占用多少分
+                if (count < 1) continue;
+                JObject jo = new JObject();
+                jo.Add("type", type);
+                jo.Add("byname", pi.TPI_TypeName);
+                jo.Add("count", count);
+                jo.Add("number", num);
+                JArray ques = new JArray();
+                foreach (Song.Entities.Questions q in questions)
+                {
+                    string json = q.ToJson("", "Qus_CrtTime,Qus_LastTime");
+                    ques.Add(JObject.Parse(json));
+                }
+                jo.Add("ques", ques);
+                jarr.Add(jo);
+            }
+            return jarr;
+        }
+
+        #endregion 出卷相关
     }
 }

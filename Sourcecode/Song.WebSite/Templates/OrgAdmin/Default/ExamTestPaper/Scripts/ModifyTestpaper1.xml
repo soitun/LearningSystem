@@ -28,7 +28,7 @@
             <!--
                 属性依次为：
                 id:试题ID
-                num:试题分数
+                number:试题分数
                 ans:试题答案
                 sucess:是否答题正确
                 score:试题得分

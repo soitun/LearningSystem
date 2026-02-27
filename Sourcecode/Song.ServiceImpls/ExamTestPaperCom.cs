@@ -280,5 +280,263 @@ namespace Song.ServiceImpls
             return obj == null ? 0 : Convert.ToInt32(obj);
         }
         #endregion
+
+        #region 出卷
+        /// <summary>
+        /// 出卷，输出试卷内容
+        /// </summary>
+        /// <param name="tpid">试卷id</param>
+        /// <param name="isanswer">试题是否带答案，模拟考试一般带答案，方便前端计算成绩</param>
+        /// <returns></returns>
+        public Dictionary<TestPaperItem, List<Questions>> Putout(long tpid, bool isanswer)
+        {
+            ExamTestPaper paper = this.PaperSingle(tpid);
+            return Putout(paper, isanswer);
+        }
+        /// <summary>
+        /// 出卷，输出试卷内容
+        /// </summary>
+        /// <param name="tp">试卷对象</param>
+        /// <param name="isanswer">试题是否带答案，模拟考试一般带答案，方便前端计算成绩</param>
+        /// <returns></returns>
+        public Dictionary<TestPaperItem, List<Questions>> Putout(ExamTestPaper tp, bool isanswer)
+        {
+            if (tp.Etp_Type == 1) return _putout_1(tp, isanswer);
+            else return _putout_2(tp, isanswer);
+        }
+        /// <summary>
+        /// 静态试卷的出卷
+        /// </summary>
+        /// <param name="tp"></param>
+        /// <param name="isanswer"></param>
+        /// <returns></returns>
+        private Dictionary<TestPaperItem, List<Questions>> _putout_1(ExamTestPaper tp, bool isanswer)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(tp.Etp_FromConfig);
+            //
+            XmlNode rootnode=doc.SelectSingleNode("/testpaper");
+            if (rootnode == null) throw new Exception("试卷配置文件有误");
+            //试卷类型
+            int type = rootnode.Attributes["type"].Value.Convert<int>();
+            Dictionary<TestPaperItem, List<Questions>> dic=new Dictionary<TestPaperItem, List<Questions>>();
+            //试题大项
+            foreach (XmlNode quesnode in rootnode.SelectNodes("questions/ques"))
+            {
+                TestPaperItem item = new TestPaperItem();
+                item.TPI_Type = quesnode.Attributes["type"].Value.Convert<int>();       //试题类型，数值
+                item.TPI_TypeName = quesnode.Attributes["byname"].Value;        //试题类型的别名，中文
+                //item.TPI_Count = quesnode.Attributes["count"].Value.Convert<int>();     //试题数量，这是xml中记录的数量，不是实际数量
+                item.TPI_Percent = quesnode.Attributes["percent"].Value.Convert<int>();     //当前题型的分数占比
+                item.TPI_Number = quesnode.Attributes["number"].Value.Convert<int>();              
+                //
+                List<Questions> queslist=new List<Questions>();
+                foreach (XmlNode qnode in quesnode.SelectNodes("q"))
+                { 
+                    long qid = qnode.Attributes["id"].Value.Convert<long>();
+                    Questions ques = Gateway.Default.From<Questions>().Where(Questions._.Qus_ID == qid).ToFirst<Questions>();
+                    if (ques != null)queslist.Add(ques);
+                }
+                item.TPI_Count = queslist.Count;
+                dic.Add(item, queslist);
+            }
+            //计算每道试题的分数
+            foreach (KeyValuePair<Song.Entities.TestPaperItem, List<Questions>>  item in dic)
+            {
+                float num = (float)item.Key.TPI_Number;    //当前题型占的分数
+                List<Questions> qusTm = item.Value;
+                _clacQuesScore(qusTm, num, isanswer);               
+            }
+            return dic;
+        }
+        /// <summary>
+        ///动态试卷的出卷
+        /// </summary>
+        /// <param name="tp"></param>
+        /// <param name="isanswer"></param>
+        /// <returns></returns>
+        private Dictionary<TestPaperItem, List<Questions>> _putout_2(ExamTestPaper tp, bool isanswer)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(tp.Etp_FromConfig);
+            //
+            XmlNode rootnode = doc.SelectSingleNode("/testpaper");
+            if (rootnode == null) throw new Exception("试卷配置文件有误");
+            //试卷类型
+            int type = rootnode.Attributes["type"].Value.Convert<int>();
+            //试卷关联的分类、标签、知识点
+            long[] qpid = null, tagid = null, knlid = null;
+            XmlNode rangenode=rootnode.SelectSingleNode("range");
+            if (rangenode != null)
+            {
+                XmlNode parts=rangenode.SelectSingleNode("parts");
+                if (parts != null) qpid = string.IsNullOrWhiteSpace(parts.InnerText) ? new long[] { } : parts.InnerText.ToArray<long>();
+                XmlNode knls = rangenode.SelectSingleNode("knls");
+                if (knls != null) knlid = string.IsNullOrWhiteSpace(knls.InnerText) ? new long[] { } : knls.InnerText.ToArray<long>();
+                XmlNode tags = rangenode.SelectSingleNode("tags");
+                if (tags != null) tagid = string.IsNullOrWhiteSpace(tags.InnerText) ? new long[] { } : tags.InnerText.ToArray<long>();
+            }
+
+            Dictionary<TestPaperItem, List<Questions>> dic = new Dictionary<TestPaperItem, List<Questions>>();
+            //试题大项
+            foreach (XmlNode quesnode in rootnode.SelectNodes("questions/ques"))
+            {
+                TestPaperItem item = new TestPaperItem();
+                item.TPI_Type = quesnode.Attributes["type"].Value.Convert<int>();       //试题类型，数值
+                item.TPI_TypeName = quesnode.Attributes["byname"].Value;        //试题类型的别名，中文
+                item.TPI_Count = quesnode.Attributes["count"].Value.Convert<int>();     //试题数量，这是xml中记录的数量，不是实际数量
+                item.TPI_Percent = quesnode.Attributes["percent"].Value.Convert<int>();     //当前题型的分数占比
+                item.TPI_Number = quesnode.Attributes["number"].Value.Convert<int>();
+                //
+                List<Questions> queslist = Business.Do<IExamQues>().QuesRandom(0, qpid, tagid, knlid, item.TPI_Type, tp.Etp_Diff, tp.Etp_Diff2, true, item.TPI_Count);
+               
+                item.TPI_Count = queslist.Count;
+                dic.Add(item, queslist);
+            }
+            //计算每道试题的分数
+            foreach (KeyValuePair<Song.Entities.TestPaperItem, List<Questions>> item in dic)
+            {
+                float num = (float)item.Key.TPI_Number;    //当前题型占的分数
+                List<Questions> qusTm = item.Value;
+                _clacQuesScore(qusTm, num, isanswer);
+            }
+            return dic;
+        }
+        /// <summary>
+        /// 计算每道试题的分数
+        /// </summary>
+        /// <param name="ques">试题</param>
+        /// <param name="total">试题的总分</param>
+        /// <param name="isanswer"></param>
+        /// <returns></returns>
+        private List<Questions> _clacQuesScore(List<Questions> ques, float total, bool isanswer)
+        {
+            if (ques.Count < 1) return ques;
+            //分配模式，1为按试题数分配总分; 2为按难度值分配总分
+            int distribution_model = 1;
+
+            //总分数（当前试题类型）
+            decimal surplus = (decimal)total;
+            //最难的题，用于放置多余分数，默认是最后一道
+            Song.Entities.Questions diffMax = ques[ques.Count - 1];
+            for (int i = ques.Count - 1; i >= 0; i--)
+            {
+                //试题解析、错误信息，不向外输出
+                ques[i].Qus_Explain = ques[i].Qus_ErrorInfo = string.Empty;
+                if (!isanswer) ques[i] = _clearAnswer(ques[i]);
+
+                if (ques[i].Qus_Diff > diffMax.Qus_Diff)
+                    diffMax = ques[i];
+            }
+            //按题数分配分数
+            if (distribution_model == 1)
+            {
+                decimal quesAvg = Math.Floor(surplus / ques.Count * 100) / 100;
+                for (int j = 0; j < ques.Count; j++)
+                {
+                    ques[j].Qus_Number = (float)quesAvg;
+                    surplus = surplus - quesAvg;
+                }
+                //将分不完的分数，添加到最难的题上
+                if (surplus > 0) diffMax.Qus_Number += (float)surplus;
+            }
+            //按难度计算每道题的分数
+            if (distribution_model == 2)
+            {
+                decimal diffSum = 0, diffAvg = 0;
+                for (int i = ques.Count - 1; i >= 0; i--)
+                    diffSum += ques[i].Qus_Diff;
+                //每一个难度点，占用多少分数
+                diffAvg = (decimal)total / diffSum;
+                //计算每一道题的分数，用难度值乘以diffAvg
+                for (int j = 0; j < ques.Count; j++)
+                {
+                    decimal curr = ques[j].Qus_Diff * diffAvg;
+                    curr = ((decimal)Math.Floor(curr * 100)) / 100;
+                    ques[j].Qus_Number = (float)curr;
+                    surplus = surplus - curr;
+                }
+                //将分不完的分数，添加到最难的题上
+                if (surplus > 0) diffMax.Qus_Number += (float)surplus;
+            }
+            return ques;
+        }
+        /// <summary>
+        /// 清除答案
+        /// </summary>
+        /// <param name="q"></param>
+        /// <returns></returns>
+        private Questions _clearAnswer(Questions q)
+        {
+            if (q.Qus_Type == 1 || q.Qus_Type == 2)
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(q.Qus_Items);
+                foreach (XmlElement n in doc.SelectNodes("Items/item"))
+                    n.SelectSingleNode("Ans_IsCorrect").InnerText = string.Empty;
+                q.Qus_Items = doc.OuterXml;
+            }
+            if (q.Qus_Type == 3) q.Qus_IsCorrect = false;
+            //简答题，答案清空
+            if (q.Qus_Type == 4) q.Qus_Answer = string.Empty;
+            //填空题
+            if (q.Qus_Type == 5)
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(q.Qus_Items);
+                foreach (XmlElement n in doc.SelectNodes("Items/item"))
+                    n.SelectSingleNode("Ans_Context").InnerText = string.Empty;
+                q.Qus_Items = doc.OuterXml;
+            }
+            return q;
+        }
+        /// <summary>
+        /// 出卷，按历史答题内容生成试卷
+        /// </summary>
+        /// <param name="results">学员答题的xml记录</param>
+        /// <param name="isanswer">试题是否带答案，模拟考试一般带答案，方便前端计算成绩</param>
+        /// <returns></returns>
+        public Dictionary<TestPaperItem, List<Questions>> Putout(string results, bool isanswer)
+        {
+            XmlDocument docxml = new XmlDocument();
+            docxml.XmlResolver = null;
+            docxml.LoadXml(results, false);
+            return Putout(docxml, isanswer);
+        }
+        /// <summary>
+        /// 出卷，按历史答题内容生成试卷
+        /// </summary>
+        public Dictionary<TestPaperItem, List<Questions>> Putout(XmlDocument resxml, bool isanswer)
+        {
+            Dictionary<TestPaperItem, List<Questions>> dic = new Dictionary<TestPaperItem, List<Questions>>();
+            XmlNodeList quesnodes = resxml.GetElementsByTagName("ques");
+            foreach (XmlNode xn in quesnodes)
+            {
+                TestPaperItem item = new TestPaperItem();
+                item.TPI_Type = xn.GetAttr<int>("type");
+                item.TPI_Count = xn.GetAttr<int>("count");
+                item.TPI_Number = xn.GetAttr<int>("number");
+                item.TPI_TypeName = xn.GetAttr<string>("typename");
+                //
+                List<Questions> qlist = new List<Questions>();
+                for (int n = 0; n < xn.ChildNodes.Count; n++)
+                {
+                    XmlNode qn = xn.ChildNodes[n];
+                    long qid = qn.GetAttr<long>("id");       //试题id                 
+                    if (qid <= 0) continue;
+                    Song.Entities.Questions q = questionsCom.QuesSingle(qid);
+                    if (q == null) continue;
+
+                    //试题分数
+                    q.Qus_Number = qn.GetAttr<float>("num");
+                    q.Qus_Explain = q.Qus_Answer = "";
+                    if (!isanswer) q = _clearAnswer(q);
+                    qlist.Add(q);
+                }
+                dic.Add(item, qlist);
+            }
+            return dic;
+        }
+        #endregion
     }
 }

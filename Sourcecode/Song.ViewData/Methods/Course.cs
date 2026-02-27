@@ -537,9 +537,11 @@ namespace Song.ViewData.Methods
             size = size <= 0 ? int.MaxValue : size;
             int count;
             List<Song.Entities.Course> eas = Business.Do<ICourse>().CoursePager(orgid, sbjids, thid, use, live, free, search, order, size, index, out count);
-            for (int i = 0; i < eas.Count; i++)          
+            for (int i = 0; i < eas.Count; i++)
+            {
                 eas[i] = _tran(eas[i]);
-            //ListResult result = new ListResult(eas.ToArray<Song.Entities.Course>());
+                eas[i].Cou_Intro = eas[i].Cou_Target = eas[i].Cou_Content = string.Empty;
+            }
             ListResult result = new ListResult(eas);
             result.Index = index;
             result.Size = size;
@@ -771,7 +773,10 @@ namespace Song.ViewData.Methods
             int countsum = 0;
             List<Song.Entities.Course>  list = Business.Do<ICourse>().RankHot(orgid, sbjid, start, end, size,index,out countsum);
             for (int i = 0; i < list.Count; i++)
+            {
                 list[i] = _tran(list[i]);
+                list[i].Cou_Intro = list[i].Cou_Target = list[i].Cou_Content = string.Empty;
+            }
             ListResult result = new ListResult(list);
             result.Index = index;
             result.Size = size;
@@ -793,7 +798,10 @@ namespace Song.ViewData.Methods
             int countsum = 0;
             List<Song.Entities.Course> list = Business.Do<ICourse>().RankIncome(orgid, sbjid, start, end, size, index, out countsum);
             for (int i = 0; i < list.Count; i++)
+            {
                 list[i] = _tran(list[i]);
+                list[i].Cou_Intro = list[i].Cou_Target = list[i].Cou_Content = string.Empty;              
+            }
             ListResult result = new ListResult(list);
             result.Index = index;
             result.Size = size;

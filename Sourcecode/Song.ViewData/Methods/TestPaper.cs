@@ -283,6 +283,7 @@ namespace Song.ViewData.Methods
                 if (count < 1) continue;
                 JObject jo = new JObject();
                 jo.Add("type", type);
+                jo.Add("byname", pi.TPI_TypeName);
                 jo.Add("count", count);
                 jo.Add("number", num);
                 JArray ques = new JArray();
