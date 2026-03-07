@@ -124,6 +124,8 @@ namespace Song.ViewData
             bool isRange = RangeAttribute.Verify(method, letter);
             //----如果有文件上传，则验证文件
             UploadAttribute.Verify(method, letter);
+            //----验证SQL注入
+            SQLValidatorAttribute.Verify(method, letter);
             //----验证是否需要登录
             LoginAttribute loginattr = LoginAttribute.Verify(method, letter);
             //----验证API请求的所在页面，是否拥有操作权限,(本机访问时不验证)
