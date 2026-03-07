@@ -11,7 +11,7 @@ $ready(function () {
                 { name: '字段', tag: 'field', icon: 'e6cb', size: 'large'  },
                 { name: '校验', tag: 'check', icon: 'e634', size: 'medium'  },
                 { name: '导出', tag: 'export', icon: 'e73e', size: 'medium'  },                        
-                { name: '数据迁移', tag: 'migration', icon: 'e79e', size: 'large' },
+                //{ name: '数据迁移', tag: 'migration', icon: 'e79e', size: 'large' },
                 { name: '其它', tag: 'other', icon: 'e67e', size: 'medium'  },
                 { name: '升级脚本', tag: 'upgradesql', icon: 'a058', size: 'huge' },
             ]
