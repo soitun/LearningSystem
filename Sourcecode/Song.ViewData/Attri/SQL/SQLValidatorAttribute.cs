@@ -27,33 +27,23 @@ namespace Song.ViewData.Attri
         /// <param name="method">执行的方法</param>
         /// <param name="letter">客户端传来的信息</param>
         /// <returns></returns>
-        public static SQLValidatorAttribute Clear(MemberInfo method, Letter letter)
+        public static SQLValidatorAttribute Clear(MethodInfo method, Letter letter)
         {
-            SQLValidatorAttribute attr = null;
-            attr = WeishaAttr.GetAttr<SQLValidatorAttribute>(method);
-            if (attr != null)
+            SQLValidatorAttribute attr = WeishaAttr.GetAttr<SQLValidatorAttribute>(method);
+            string[] nots = new string[] { };
+            if (attr != null) nots = attr.Not.Split(',');
+
+            foreach (ParameterInfo param in method.GetParameters())
             {
-                letter.Params = letter.Params.ToDictionary(x => x.Key, (x) => {
-                    string[] nots = attr.Not.Split(',');
-                    bool isexist = false;
-                    foreach (string s in nots)
-                    {
-                        if (string.IsNullOrWhiteSpace(s)) continue;
-                        if (s.Equals(x.Key, StringComparison.CurrentCultureIgnoreCase))
-                        {
-                            isexist = true;
-                            break;
-                        }
-                    }
-                    if (isexist) return _isSqlClear(x.Value);
-                    return _isSqlClear(x.Value);
-                });
+                if (param.ParameterType != typeof(string)) continue;    //不是字符串类型的跳过
+                                                                        //明确不检测的跳过
+                bool exists = nots.Any(s => s.IndexOf(param.Name, StringComparison.OrdinalIgnoreCase) >= 0);
+                if (exists) continue;
+                //清理危险字符
+                string val = _sqlClear(letter.GetParameter(param.Name).Value);
+                letter.SetParameter(param.Name, val);
             }
-            else
-            {
-                letter.Params = letter.Params.ToDictionary(x => x.Key, x => _isSqlClear(x.Value));
-            }
-            return attr;
+            return attr;           
         }
         /// <summary>
         /// 校验
@@ -116,7 +106,7 @@ namespace Song.ViewData.Attri
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        private static string _isSqlClear(string input)
+        private static string _sqlClear(string input)
         {
             if (string.IsNullOrEmpty(input)) return input;
             foreach (string pattern in sqlInjectionPatterns)
