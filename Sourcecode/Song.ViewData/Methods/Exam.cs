@@ -388,9 +388,17 @@ namespace Song.ViewData.Methods
             Song.Entities.Examination exam = Business.Do<IExamination>().ExamSingle(examid);
             jo.Add("exist", !(exam == null || !exam.Exam_IsUse || exam.Exam_IsTheme));
             if (exam == null) return jo;
+            long tpid = exam.Exam_Purpose != 0 ? exam.Etp_Id : exam.Tp_Id;
             jo.Add("uid", exam.Exam_UID);               //考试主题的uid
+            jo.Add("exam", exam.ToJObject());
+            //考试主题
+            Examination theme = Business.Do<IExamination>().ExamTheme(exam.Exam_UID);
+            jo.Add("theme", theme.ToJObject());
             jo.Add("subject", exam.Sbj_ID.ToString());  //专业id
-            jo.Add("paper", exam.Tp_Id.ToString());     //试卷id
+            jo.Add("paperid", tpid);     //试卷id
+            //默认是0，表示关联的试卷来自课程，如果是1，则表示关联的试卷来自考试专用试卷
+            jo.Add("purpose", exam.Exam_Purpose);       //
+
             jo.Add("timespan", exam.Exam_Span);         //考试限时 
 
             //1为固定时间开始，2为限定时间区间考试
@@ -403,7 +411,7 @@ namespace Song.ViewData.Methods
             bool isStart, isOver, isSubmit;
             DateTime startTime, overTime;
             //答题记录
-            Song.Entities.ExamResults exr = Business.Do<IExamination>().ResultForCache(examid, exam.Tp_Id, acc.Ac_ID);
+            Song.Entities.ExamResults exr = Business.Do<IExamination>().ResultForCache(examid, tpid, acc.Ac_ID);
             if (exr != null) jo.Add("exrid", exr.Exr_ID);
             //判断是否已经开始、是否已经结束
             if (exam.Exam_DateType == 1)
@@ -525,14 +533,26 @@ namespace Song.ViewData.Methods
         [HttpGet]
         public JArray MakeoutPaper(int examid, long tpid,int stid)
         {
+            Examination exam = Business.Do<IExamination>().ExamSingle(examid);
+            if (exam == null || (exam.Exam_IsUse == false || exam.Exam_IsDeleted)) throw new Exception("当前考试不存在");
             //获取答题信息
             Song.Entities.ExamResults exr = Business.Do<IExamination>().ResultForCache(examid, tpid, stid);           
             if (exr != null && exr.Exr_IsSubmit) throw new Exception("已经交过卷");
 
             //试卷的试题，如果已经答题，则从答题信息中生成；如果没有答题，则随机生成
             Dictionary<TestPaperItem, List<Questions>> dics = null;
-            if (exr != null) dics = Business.Do<ITestPaper>().Putout(exr.Exr_Results, false);
-            else dics = Business.Do<ITestPaper>().Putout(tpid, false);
+            if (exam.Exam_Purpose == 0)
+            {
+                //课程试卷
+                if (exr != null) dics = Business.Do<ITestPaper>().Putout(exr.Exr_Results, false);
+                else dics = Business.Do<ITestPaper>().Putout(tpid, false);
+            }
+            else
+            {
+                //考试试卷
+                if (exr != null) dics = Business.Do<IExamTestPaper>().Putout(exr.Exr_Results, false);
+                else dics = Business.Do<IExamTestPaper>().Putout(tpid, false);
+            }
             //
             JArray jarr = new JArray();
             foreach (var di in dics)
@@ -543,6 +563,7 @@ namespace Song.ViewData.Methods
                 if (questions.Count < 1) continue;
                 JObject jo = new JObject();
                 jo.Add("type", (int)pi.TPI_Type);       //试题类型
+                jo.Add("byname", pi.TPI_TypeName);
                 jo.Add("count", questions.Count);       //试题数目
                 jo.Add("number", (float)pi.TPI_Number); //占用多少分
                 JArray ques = new JArray();
