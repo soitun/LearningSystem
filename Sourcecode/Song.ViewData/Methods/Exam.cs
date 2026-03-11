@@ -605,44 +605,16 @@ namespace Song.ViewData.Methods
                 }
             }
             XmlNode xn = getAttrBase64(resXml.SelectSingleNode("results"));
-            //试卷id，考试id
-            long tpid;
-            long.TryParse(xn.Attributes["tpid"].Value, out tpid);
-            int examid;
-            int.TryParse(xn.Attributes["examid"].Value, out examid);
+            //试卷id，考试id      
+            int examid = xn.GetAttr<int>("examid");
 
             DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
-            //考试开始时间
-            long begin;
-            long.TryParse(xn.Attributes["begin"].Value, out begin);
-            DateTime beginTime = dtStart.Add(new TimeSpan(begin * 10000));
-            //考试结束时间
-            long over;
-            long.TryParse(xn.Attributes["overtime"].Value, out over);
-            DateTime overTime = dtStart.Add(new TimeSpan(over * 10000));
-            //学员开始考试时间
-            long start;
-            long.TryParse(xn.Attributes["starttime"].Value, out start);
-            DateTime startTime = dtStart.Add(new TimeSpan(start * 10000));
-            //学生Id,学生名称
-            int stid;
-            int.TryParse(xn.Attributes["stid"].Value, out stid);
-            string stname = xn.Attributes["stname"].Value.ToString();
-            //学生性别，分组，身份证号
-            int stsex;
-            int.TryParse(xn.Attributes["stsex"].Value, out stsex);
-            long stsid;
-            long.TryParse(xn.Attributes["stsid"].Value, out stsid);
-            string stcardid = xn.Attributes["stcardid"].Value.ToString();
-            //学科Id,学科名称
-            long sbjid;
-            long.TryParse(xn.Attributes["sbjid"].Value, out sbjid);
-            string sbjname = xn.Attributes["sbjname"].Value.ToString();
-            //UID与考试主题
-            string uid = xn.Attributes["uid"].Value.ToString();
-            string theme = xn.Attributes["theme"].Value.ToString();
+            ////考试开始时间,结束时间
+            //DateTime beginTime = xn.Attributes["begin"]?.Value?.ConvertNullable<DateTime>() ?? dtStart;
+            //DateTime overTime = xn.Attributes["overtime"]?.Value?.ConvertNullable<DateTime>() ?? dtStart;           
+
             //提交方式，1为自动提交，2为交卷
-            int patter = Convert.ToInt32(xn.Attributes["patter"].Value);
+            int patter = xn.GetAttr<int>("patter", 1);
 
             //
             Song.Entities.Examination exam = Business.Do<IExamination>().ExamSingle(examid);
@@ -650,67 +622,62 @@ namespace Song.ViewData.Methods
             if (exam == null) throw new Exception("当前考试不存在！");
             //如果考试已经结束
             int span = (int)exam.Exam_Span;
-            //if (DateTime.Now > ((DateTime)exam.Exam_Date).AddMinutes(span + 5)) return 0;  
 
-            try
-            {               
-                Song.Entities.ExamResults exr = new ExamResults();
-                exr.Exr_IsSubmit = patter == 2;
-                exr.Exam_ID = examid;
-                exr.Exam_Name = exam.Exam_Name;
-                exr.Tp_Id = tpid;
-                exr.Ac_ID = stid;
-                exr.Ac_Name = stname;
-                exr.Sts_ID = stsid;
-                exr.Ac_Gender = stsex;
-                exr.Ac_IDCardNumber = stcardid;
-                exr.Sbj_ID = sbjid;
-                exr.Sbj_Name = sbjname;
-                exr.Exr_IP = WeiSha.Core.Browser.IP;
-                exr.Exr_Mac = WeiSha.Core.Request.UniqueID();   //原本是网卡的mac地址,此处不再记录
-                exr.Exr_Results = resXml.OuterXml;
-                exr.Exam_UID = uid;
-                exr.Exam_Title = theme;
-                //exr.Exr_IsSubmit = patter == 2;
-                if (exr.Exr_IsSubmit) exr.Exr_SubmitTime = DateTime.Now;
-                exr.Exr_OverTime = overTime;
-                exr.Exr_CrtTime = startTime;
-                exr.Exr_LastTime = DateTime.Now;
 
-                //缓存当前答题信息
-                Business.Do<IExamination>().ResultCacheUpdate(exr, -1);
-                if (patter == 1) return jo;
-                exr = Business.Do<IExamination>().ResultSubmit(exr);
-                //是否重复提交
-                jo.Add("resubmit", exr.Exr_IsCalc);
-                //如果是手动提交，且没有计算成绩的，此处计算成绩
-                double score = -1;
-                if (exr.Exr_IsSubmit && !exr.Exr_IsCalc)
-                {
-                    //异步计算成绩
-                    if (async)
-                    {
-                        //后台异步计算
-                        Exam_Calc handler = new Exam_Calc(exr);
-                        System.Threading.Tasks.Task task = new System.Threading.Tasks.Task(handler.Calc);
-                        task.Start();
-                    }
-                    else
-                    {
-                        //实时计算成绩
-                        Business.Do<IExamination>().ResultClacScore(exr);
-                    }
-                }
-                if (exr.Exr_IsCalc) score = exr.Exr_ScoreFinal;
-                jo.Add("examid", exr.Exam_ID);
-                jo.Add("exrid", exr.Exr_ID);
-                jo.Add("score", score);
-                jo.Add("async", async);
-            }
-            catch(Exception ex)
+            Song.Entities.ExamResults exr = new ExamResults();
+            exr.Exr_IsSubmit = patter == 2;
+            exr.Exam_ID = xn.GetAttr<int>("examid");    //考试id
+            exr.Exam_Name = exam.Exam_Name;
+            exr.Tp_Id = xn.GetAttr<long>("tpid");       //试卷id
+            exr.Ac_ID = xn.GetAttr<int>("stid");        //学员id
+            exr.Ac_Name = xn.GetAttr("stname");         //学员名称
+            exr.Sts_ID = xn.GetAttr<long>("stsid");     //学员分组id
+            exr.Ac_Gender = xn.GetAttr<int>("stsex");   //性别
+            exr.Ac_IDCardNumber = xn.GetAttr("stcardid");   //学员身份证号
+            exr.Sbj_ID = xn.GetAttr<long>("sbjid", 0);     //专业id
+            exr.Sbj_Name = xn.GetAttr("sbjname");
+            exr.Exr_IP = WeiSha.Core.Browser.IP;
+            exr.Exr_Mac = WeiSha.Core.Request.UniqueID();   //原本是网卡的mac地址,此处不再记录
+            exr.Exr_Results = resXml.OuterXml;
+            //UID与考试主题
+            exr.Exam_UID = xn.GetAttr("uid");
+            exr.Exam_Title = xn.GetAttr("theme");
+            //exr.Exr_IsSubmit = patter == 2;
+            if (exr.Exr_IsSubmit) exr.Exr_SubmitTime = DateTime.Now;
+            exr.Exr_OverTime = xn.GetAttr<DateTime>("overtime");
+            exr.Exr_CrtTime = xn.GetAttr<DateTime>("starttime");
+            exr.Exr_LastTime = DateTime.Now;
+
+            //缓存当前答题信息
+            Business.Do<IExamination>().ResultCacheUpdate(exr, -1);
+            if (patter == 1) return jo;
+            exr = Business.Do<IExamination>().ResultSubmit(exr);
+            //是否重复提交
+            jo.Add("resubmit", exr.Exr_IsCalc);
+            //如果是手动提交，且没有计算成绩的，此处计算成绩
+            double score = -1;
+            if (exr.Exr_IsSubmit && !exr.Exr_IsCalc)
             {
-                throw ex;
+                //异步计算成绩
+                if (async)
+                {
+                    //后台异步计算
+                    Exam_Calc handler = new Exam_Calc(exr);
+                    System.Threading.Tasks.Task task = new System.Threading.Tasks.Task(handler.Calc);
+                    task.Start();
+                }
+                else
+                {
+                    //实时计算成绩
+                    Business.Do<IExamination>().ResultClacScore(exr);
+                }
             }
+            if (exr.Exr_IsCalc) score = exr.Exr_ScoreFinal;
+            jo.Add("examid", exr.Exam_ID);
+            jo.Add("exrid", exr.Exr_ID);
+            jo.Add("score", score);
+            jo.Add("async", async);
+
             return jo;
         }
         /// <summary>

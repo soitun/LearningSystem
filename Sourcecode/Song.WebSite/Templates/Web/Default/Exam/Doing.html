@@ -186,8 +186,8 @@
                         <section :style="'width:'+questotal*100+'%'" v-swiperight="swipe" v-swipeleft="swipe"
                             remark="试题区域">
                             <dl v-for="(group,i) in paperQues" v-show="!loading.ques"
-                                :style="'width:'+group.count*parseInt($dom('section').parent().width())+'px'">
-                                <question v-for="(q,n) in group.ques" :ques="q" :index="n" :groupindex="i"
+                                :style="'width:'+group.count*parseInt($dom('section').parent().width())+'px'"> 
+                                <question v-for="(q,n) in group.ques" :ques="q" :index="n" :groupindex="i" :group="group"
                                     :account="account" :total="questotal" :types="types" :exam="exam">
                                 </question>
                             </dl>

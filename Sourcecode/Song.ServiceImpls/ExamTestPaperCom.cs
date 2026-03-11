@@ -283,6 +283,29 @@ namespace Song.ServiceImpls
 
         #region 出卷
         /// <summary>
+        /// 获取试卷的试题项
+        /// </summary>
+        public List<TestPaperItem> PaperItems(ExamTestPaper tp)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(tp.Etp_FromConfig);
+            //
+            XmlNode rootnode = doc.SelectSingleNode("/testpaper");
+            if (rootnode == null) throw new Exception("试卷配置文件有误");
+            List<TestPaperItem> list = new List<TestPaperItem>();
+            //试题大项
+            foreach (XmlNode quesnode in rootnode.SelectNodes("questions/ques"))
+            {
+                TestPaperItem item = new TestPaperItem();
+                item.TPI_Type = quesnode.GetAttr<int>("type");       //试题类型，数值
+                item.TPI_TypeName = quesnode.GetAttr("byname");        //试题类型的别名，中文               
+                item.TPI_Percent = quesnode.GetAttr<int>("percent");     //当前题型的分数占比
+                item.TPI_Number = quesnode.GetAttr<int>("number");
+                list.Add(item);
+            }
+            return list;
+        }
+        /// <summary>
         /// 出卷，输出试卷内容
         /// </summary>
         /// <param name="tpid">试卷id</param>
@@ -317,9 +340,8 @@ namespace Song.ServiceImpls
             //
             XmlNode rootnode=doc.SelectSingleNode("/testpaper");
             if (rootnode == null) throw new Exception("试卷配置文件有误");
-            //试卷类型
-            int type = rootnode.Attributes["type"].Value.Convert<int>();
-            Dictionary<TestPaperItem, List<Questions>> dic=new Dictionary<TestPaperItem, List<Questions>>();
+        
+            Dictionary<TestPaperItem, List<Questions>> dic = new Dictionary<TestPaperItem, List<Questions>>();
             //试题大项
             foreach (XmlNode quesnode in rootnode.SelectNodes("questions/ques"))
             {
@@ -508,16 +530,16 @@ namespace Song.ServiceImpls
         /// </summary>
         public Dictionary<TestPaperItem, List<Questions>> Putout(XmlDocument resxml, bool isanswer)
         {
+            XmlNode results = resxml.SelectSingleNode("results");
+            long tpid = results.GetAttr<long>("tpid");  //试卷id
+            ExamTestPaper tp = this.PaperSingle(tpid);
+            if (tp == null) return null;
+            List<TestPaperItem> items = this.PaperItems(tp);
             Dictionary<TestPaperItem, List<Questions>> dic = new Dictionary<TestPaperItem, List<Questions>>();
-            XmlNodeList quesnodes = resxml.GetElementsByTagName("ques");
-            foreach (XmlNode xn in quesnodes)
+            foreach (TestPaperItem item in items)
             {
-                TestPaperItem item = new TestPaperItem();
-                item.TPI_Type = xn.GetAttr<int>("type");
-                item.TPI_Count = xn.GetAttr<int>("count");
-                item.TPI_Number = xn.GetAttr<int>("number");
-                item.TPI_TypeName = xn.GetAttr<string>("typename");
-                //
+                XmlNode xn= results.SelectSingleNode($"ques[@type='{item.TPI_Type}']");
+                if (xn == null) continue;
                 List<Questions> qlist = new List<Questions>();
                 for (int n = 0; n < xn.ChildNodes.Count; n++)
                 {
@@ -534,7 +556,7 @@ namespace Song.ServiceImpls
                     qlist.Add(q);
                 }
                 dic.Add(item, qlist);
-            }
+            }           
             return dic;
         }
         #endregion

@@ -125,6 +125,10 @@ namespace Song.ServiceInterfaces
 
         #region 出卷
         /// <summary>
+        /// 获取试卷的试题项
+        /// </summary>
+        List<TestPaperItem> PaperItems(ExamTestPaper tp);
+        /// <summary>
         /// 出卷，输出试卷内容
         /// </summary>
         /// <param name="tpid">试卷id</param>

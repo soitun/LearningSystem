@@ -212,8 +212,7 @@
                     },
                 },
                 template: `<div><el-row :gutter="20" class="row_title">
-                <el-col :span="8">考试场次</el-col>
-                <el-col :span="6">专业</el-col>
+                <el-col :span="14">考试场次</el-col>             
                 <el-col :span="2">及格/满分</el-col>              
                 <el-col :span="2">平均分</el-col>
                 <el-col :span="2">参考人次</el-col>
@@ -221,10 +220,9 @@
                 <el-col :span="2"></el-col>
               </el-row>
               <el-row :gutter="20" v-for="(item,index) in examlist"  :key="index">
-                <el-col :span="8" class='exam_name'>
+                <el-col :span="14" class='exam_name'>
                 （{{index+1}}） {{item.Exam_Name}}                                 
-                </el-col>
-                <el-col :span="6">{{item.Sbj_Name}}</el-col>
+                </el-col>             
                 <el-col :span="2">{{item.Exam_PassScore}}/{{item.Exam_Total}}</el-col>             
                 <el-col :span="2"><loading asterisk v-if="item.avg==-1"></loading><span v-else>{{item.avg}}</span></el-col>
                 <el-col :span="2" remark="参考人数"><loading asterisk v-if="item.number==-1"></loading>

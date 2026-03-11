@@ -2,10 +2,12 @@
 Vue.component('question', {
     //exam:当前考试
     //account:当前登录的学员账号
+    //ques:试题
+    //group:题型的分组，例如单选题
     //index:索引号
     //groupindex:试题题型的分组，用于排序号
     //total: 试题总数
-    props: ['exam', 'account', 'ques', 'index', 'groupindex', 'types', 'total'],
+    props: ['exam', 'account', 'ques', 'group', 'index', 'groupindex', 'types', 'total'],
     data: function () {
         return {
             ext_limit: "png,jpg,gif,heif,heic,zip,rar,pdf,ppt,pptx,doc,docx,xls,xlsx",
@@ -44,6 +46,12 @@ Vue.component('question', {
                 gindex--;
             };
             return initIndex + index;
+        },
+        //题型
+        typename: function (type) {
+            let defname = this.types[this.ques.Qus_Type - 1] + '题';   //默认题型名称
+            if (this.group.byname && this.group.byname != '') return this.group.byname;
+            return defname;
         },
         //选项的序号转字母
         showIndex: function (index) {
@@ -184,8 +192,8 @@ Vue.component('question', {
     },
     template: `<dd :qid="ques.Qus_ID">
         <info>
-            {{calcIndex(index+1)}}/{{total}}
-            [ {{this.types[ques.Qus_Type - 1]}}题 ] 
+            {{calcIndex(index+1)}}/{{total}}        
+            {{typename()}} 
             <span>（{{ques.Qus_Number}} 分）</span>
         </info>
         <card shadow="hover">   

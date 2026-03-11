@@ -661,6 +661,7 @@ namespace Song.ServiceImpls
                 item.TPI_Type = xn.GetAttr<int>("type");
                 item.TPI_Count = xn.GetAttr<int>("count");
                 item.TPI_Number = xn.GetAttr<int>("number");
+                item.TPI_TypeName= xn.GetAttr<string>("byname");
                 //
                 List<Questions> qlist = new List<Questions>();
                 for (int n = 0; n < xn.ChildNodes.Count; n++)
