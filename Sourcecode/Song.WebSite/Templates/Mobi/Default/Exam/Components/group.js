@@ -23,8 +23,10 @@ Vue.component('group', {
             return changeNum[this.index + 1];
         },
         //显示题型
-        showType: function () {
-            return this.types[this.item.type - 1];
+        showType: function () {          
+            if (this.item.byname && this.item.byname != '') return this.item.byname;
+            let defname = this.types[this.item.type - 1] + '题';   //默认题型名称
+            return defname;
         },
         //计算得分
         score: function () {

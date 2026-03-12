@@ -62,7 +62,7 @@
                             </template>
                         </el-tab-pane>
                     </el-tabs>
-                    <span class="score" v-if="paper">（满分{{paper.Tp_Total}}分，{{paper.Tp_PassScore}}分及格）</span>
+                    <span class="score" v-if="paper">（满分{{totalScore}}分，{{passScore}}分及格）</span>
                     <alert v-else>试卷不存在</alert>
                 </div>
             </template>
