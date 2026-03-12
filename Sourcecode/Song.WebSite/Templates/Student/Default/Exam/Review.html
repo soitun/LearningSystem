@@ -39,8 +39,8 @@
         </div>
         <context v-if="!loading">
             <template v-if="error==''">
-                <div class="tp_name" v-if="exam && !!exam.Exam_Title">
-                    《 <span v-html="exam.Exam_Title"></span>》
+                <div class="tp_name" v-if="exam && !!exam.Exam_Name">
+                    《 <span v-html="exam.Exam_Name"></span>》
                 </div>
                 <div class="sticky">
                     <el-tabs v-model="tabactive">

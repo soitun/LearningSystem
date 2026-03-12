@@ -1,12 +1,4 @@
 $ready(function () {
-    //禁用鼠标右键
-    document.addEventListener('contextmenu', function (e) {
-        e.preventDefault();
-    });
-    //禁止选择文本
-    document.addEventListener('selectstart', function (e) {
-        e.preventDefault();
-    });
     window.vapp = new Vue({
         el: '#vapp',
         data: {
@@ -34,20 +26,21 @@ $ready(function () {
             loading: false
         },
         mounted: function () {
-            window.addEventListener('scroll', this.handleScroll, true);
+            //window.addEventListener('scroll', this.handleScroll, true);
             var th = this;
+            th.organ = window.org;
+            th.config = window.config;
+
             th.loading = true;
             $api.bat(
                 $api.cache('Question/Types:9999'),
                 $api.cache('Platform/PlatInfo:60'),
-                $api.get('Organization/Current'),
                 $api.cache('Exam/ForID', { 'id': th.examid }),
                 $api.get('Exam/ResultReview', { 'id': th.exrid })
-            ).then(([types, plat, org, exam, result]) => {
+            ).then(([types, plat, exam, result]) => {
                 //获取结果           
                 th.types = types.data.result;
                 th.platinfo = plat.data.result;
-                th.organ = org.data.result;
                 th.config = $api.organ(th.organ).config;
                 th.exam = exam.data.result;
                 th.result = result.data.result;
@@ -57,9 +50,10 @@ $ready(function () {
                 //console.log('答题信息：');
                 //console.log(th.exrxml);
                 th.loading = true;
+                let paperapi = th.exam.Exam_Purpose == 0 ? 'TestPaper/ForID' : 'ExamTestPaper//ForID';
                 $api.bat(
                     $api.cache('Account/ForID', { 'id': th.result.Ac_ID }),
-                    $api.cache('TestPaper/ForID', { 'id': th.result.Tp_Id })
+                    $api.cache(paperapi, { 'id': th.result.Tp_Id })
                 ).then(([student, paper]) => {
                     //获取结果
                     th.student = student.data.result;
@@ -94,9 +88,10 @@ $ready(function () {
                 for (var i = 0; i < elements.length; i++) {
                     var gruop = $dom(elements[i]);
                     //题型,题量，总分
-                    var type = Number(gruop.attr('type'));
-                    var count = Number(gruop.attr('count'));
-                    var number = Number(gruop.attr('number'));
+                    let type = Number(gruop.attr('type'));
+                    let count = Number(gruop.attr('count'));
+                    let number = Number(gruop.attr('number'));
+                    let byname = gruop.attr('byname');
                     //试题
                     var qarr = [];
                     var list = gruop.find('q');
@@ -115,7 +110,7 @@ $ready(function () {
                         });
                     }
                     arr.push({
-                        'type': type, 'count': count, 'number': number, 'ques': qarr
+                        'type': type, 'byname': byname, 'count': count, 'number': number, 'ques': qarr
                     });
                 }
                 return arr;
@@ -126,6 +121,16 @@ $ready(function () {
                 for (var i = 0; i < this.questions.length; i++)
                     count += this.questions[i].ques.length;
                 return count;
+            },
+            //试卷满分
+            totalScore: function () {
+                if (this.paper == null) return 0;
+                return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Total : this.paper.Etp_Total;
+            },
+            //及格分
+            passScore: function () {
+                if (this.paper == null) return 0;
+                return this.exam.Exam_Purpose == 0 ? this.paper.Tp_PassScore : this.paper.Etp_PassScore;
             },
             //答对的题数
             ques_success_count: function () {

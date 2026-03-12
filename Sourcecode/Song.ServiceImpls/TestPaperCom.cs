@@ -65,7 +65,7 @@ namespace Song.ServiceImpls
               new object[] { false }, TestPaper._.Cou_ID == entity.Cou_ID);
             }
             //判断是否有简答题
-            List<TestPaperItem> items = this.GetItemForAny(entity);
+            List<TestPaperItem> items = this.PaperItems(entity);
             foreach (TestPaperItem ti in items) if (ti.TPI_Type == 4) entity.Tp_IsManual = true;
             //
             Gateway.Default.Save<TestPaper>(entity);
@@ -94,7 +94,7 @@ namespace Song.ServiceImpls
             }
             //判断是否有简答题
             entity.Tp_IsManual = false;
-            List<TestPaperItem> items = this.GetItemForAny(entity);
+            List<TestPaperItem> items = this.PaperItems(entity);
             foreach (TestPaperItem ti in items) if (ti.TPI_Type == 4) entity.Tp_IsManual = true;
             //
             using (DbTrans tran = Gateway.Default.BeginTrans())
@@ -368,8 +368,19 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="tp"></param>
         /// <returns></returns>
-        public List<TestPaperItem> GetItemForAny(TestPaper tp)
+        public List<TestPaperItem> PaperItems(long tpid)
         {
+            TestPaper paper=this.PaperSingle(tpid);
+            return this.PaperItems(paper);
+        }
+        /// <summary>
+        /// 返回试卷的大项，不管是按课程，还是按章节
+        /// </summary>
+        /// <param name="tp"></param>
+        /// <returns></returns>
+        public List<TestPaperItem> PaperItems(TestPaper tp)
+        {
+            if (tp == null) return null;
             List<TestPaperItem> tpi = null;
             List<TestPaperItem> list = new List<TestPaperItem>();
             if (tp.Tp_FromType == 0)

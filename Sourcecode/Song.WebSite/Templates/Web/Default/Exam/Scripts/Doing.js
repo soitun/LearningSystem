@@ -484,7 +484,7 @@ $ready(function () {
                 //记录答题信息
                 for (let i = 0; i < paper.length; i++) {
                     const group = paper[i];
-                    let ques = { "type": group.type, "count": group.count, "number": group.number, "q": [] }
+                    let ques = { "type": group.type,"byname": group.byname, "count": group.count, "number": group.number, "q": [] }
                     for (let j = 0; j < group.ques.length; j++) {
                         const qus = group.ques[j];
                         ques.q.push({

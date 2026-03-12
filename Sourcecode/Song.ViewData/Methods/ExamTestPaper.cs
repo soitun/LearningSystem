@@ -391,7 +391,7 @@ namespace Song.ViewData.Methods
         public List<TestPaperItem> Types(long tpid)
         {
             Song.Entities.TestPaper tp = Business.Do<ITestPaper>().PaperSingle(tpid);
-            return Business.Do<ITestPaper>().GetItemForAny(tp);
+            return Business.Do<ITestPaper>().PaperItems(tp);
         }
 
         /// <summary>

@@ -182,16 +182,7 @@ $ready(function () {
                     th.subject = sbj.data.result;
                     th.paper = paper.data.result;
                     //是否已经交过卷
-                    let result = exr.data.result;
-                    //禁用鼠标右键 //禁止选择文本
-                    if (th.theme && th.theme.Exam_IsRightClick) {
-                        document.addEventListener('contextmenu', function (e) {
-                            e.preventDefault();
-                        });
-                        document.addEventListener('selectstart', function (e) {
-                            e.preventDefault();
-                        });
-                    }
+                    let result = exr.data.result;  
                 }).catch(err => console.error(err))
                     .finally(() => th.loading.paper = false);
             },
@@ -499,7 +490,7 @@ $ready(function () {
                 //记录答题信息
                 for (let i = 0; i < paper.length; i++) {
                     const group = paper[i];
-                    let ques = { "type": group.type, "count": group.count, "number": group.number, "q": [] }
+                    let ques = { "type": group.type,"byname": group.byname, "count": group.count, "number": group.number, "q": [] }
                     for (let j = 0; j < group.ques.length; j++) {
                         const qus = group.ques[j];
                         ques.q.push({

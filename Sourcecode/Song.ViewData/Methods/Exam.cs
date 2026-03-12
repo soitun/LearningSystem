@@ -166,7 +166,7 @@ namespace Song.ViewData.Methods
                 Song.Entities.TestPaper pager = Business.Do<ITestPaper>().PaperSingle(exas.Tp_Id);
                 if (pager != null)
                 {
-                    List<Song.Entities.TestPaperItem> items = Business.Do<ITestPaper>().GetItemForAny(pager);
+                    List<Song.Entities.TestPaperItem> items = Business.Do<ITestPaper>().PaperItems(pager);
                     foreach (Song.Entities.TestPaperItem ti in items)
                     {
                         if (ti.TPI_Type == 4)
@@ -594,8 +594,7 @@ namespace Song.ViewData.Methods
             XmlNodeList quesnodes = resXml.GetElementsByTagName("ques");
             foreach (XmlNode ques in quesnodes)
             {
-                int type = 0;
-                int.TryParse(ques.Attributes["type"].Value, out type);
+                int type = ques.GetAttr<int>("type");            
                 //填空和简答,清理冗余html标签
                 if (type == 4 || type == 5)
                 {
@@ -615,14 +614,12 @@ namespace Song.ViewData.Methods
 
             //提交方式，1为自动提交，2为交卷
             int patter = xn.GetAttr<int>("patter", 1);
-
             //
             Song.Entities.Examination exam = Business.Do<IExamination>().ExamSingle(examid);
             //如果考试不存在
             if (exam == null) throw new Exception("当前考试不存在！");
             //如果考试已经结束
             int span = (int)exam.Exam_Span;
-
 
             Song.Entities.ExamResults exr = new ExamResults();
             exr.Exr_IsSubmit = patter == 2;
@@ -1140,25 +1137,22 @@ namespace Song.ViewData.Methods
             XmlDocument resXml = new XmlDocument();
             //考试信息
             Song.Entities.Examination exam = Business.Do<IExamination>().ExamSingle(result.Exam_ID);
-            if (exam == null) return result;          
-            //试卷
-            Song.Entities.TestPaper tp = Business.Do<ITestPaper>().PaperSingle(result.Tp_Id);
-            if (tp == null) throw new Exception("考试所用试卷不存在");
-            
+            if (exam == null) return result;
+            List<TestPaperItem> paperitems = exam.Exam_Purpose == 0 ? Business.Do<ITestPaper>().PaperItems(exam.Tp_Id) : Business.Do<IExamTestPaper>().PaperItems(exam.Etp_Id);
             resXml.LoadXml(result.Exr_Results, false);
-            //遍历试题答题内容
-            XmlNodeList quesnodes = resXml.GetElementsByTagName("ques");
-            foreach (XmlNode ques in quesnodes)
+            XmlNode results = resXml.SelectSingleNode("results");
+            foreach (TestPaperItem item in paperitems)
             {
-                int type = 0;
-                int.TryParse(ques.Attributes["type"].Value, out type);
+                XmlNode xn = results.SelectSingleNode($"ques[@type='{item.TPI_Type}']");
+                if (xn == null) continue;
                 //填空和简答,清理冗余html标签
-                if (type == 4 || type == 5)
+                if (item.TPI_Type == 4 || item.TPI_Type == 5)
                 {
-                    foreach(XmlNode q in ques.ChildNodes)                  
+                    foreach (XmlNode q in xn.ChildNodes)
                         q.InnerText = Html.ClearHTML(q.InnerText);
-                   
-                }               
+
+                }
+                xn.SetAttr("byname", item.TPI_TypeName);
             }
             result.Exr_Results = resXml.InnerXml;
             //判断开始时间与结束时间，是否考试结束等

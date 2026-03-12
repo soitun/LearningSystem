@@ -127,6 +127,10 @@ namespace Song.ServiceInterfaces
         /// <summary>
         /// 获取试卷的试题项
         /// </summary>
+        List<TestPaperItem> PaperItems(long tpid);
+        /// <summary>
+        /// 获取试卷的试题项
+        /// </summary>
         List<TestPaperItem> PaperItems(ExamTestPaper tp);
         /// <summary>
         /// 出卷，输出试卷内容

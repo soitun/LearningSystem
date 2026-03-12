@@ -285,8 +285,17 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 获取试卷的试题项
         /// </summary>
+        public List<TestPaperItem> PaperItems(long tpid)
+        {
+            ExamTestPaper paper = this.PaperSingle(tpid);
+            return this.PaperItems(paper);
+        }
+        /// <summary>
+        /// 获取试卷的试题项
+        /// </summary>
         public List<TestPaperItem> PaperItems(ExamTestPaper tp)
         {
+            if (tp == null) return null;
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(tp.Etp_FromConfig);
             //

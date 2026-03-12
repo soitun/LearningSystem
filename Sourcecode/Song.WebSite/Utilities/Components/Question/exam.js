@@ -48,9 +48,9 @@ Vue.component('question', {
             return initIndex + index;
         },
         //题型
-        typename: function (type) {
-            let defname = this.types[this.ques.Qus_Type - 1] + '题';   //默认题型名称
+        typename: function (type) {           
             if (this.group.byname && this.group.byname != '') return this.group.byname;
+            let defname = this.types[this.ques.Qus_Type - 1] + '题';   //默认题型名称
             return defname;
         },
         //选项的序号转字母
