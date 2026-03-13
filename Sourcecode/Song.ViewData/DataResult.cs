@@ -270,7 +270,7 @@ namespace Song.ViewData
                 long timeStamp = (long)(time - startTime).TotalMilliseconds; // 相差毫秒数
                 //if (timeStamp < 0) timeStamp = 0;
                 //将C#时间转换成JS时间字符串    
-                return string.Format("eval('new ' + eval('/Date({0})/').source)", timeStamp);
+                return  string.Format("\"/Date({0})/\"", timeStamp);             
             }
 
             if (obj is System.Exception)

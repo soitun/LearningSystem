@@ -152,11 +152,11 @@ $ready(function () {
                 th.loading.state = true;
                 $api.get('Exam/State', { 'examid': th.examid }).then(req => {
                     let state = req.data.result;
-                    for (let k in state) th.examstate[k] = state[k];               
+                    for (let k in state) th.examstate[k] = state[k];
                     th.time.span = th.examstate.timespan; //考试限时
                     th.paperAnswer = th.examstate.result;     //答题详情，也许不存在    
                     th.calcTime();
-                    th.exam = th.examstate.exam;     //考试
+                    th.exam = th.examstate.exam;     //考试                   
                     th.theme = th.examstate.theme;     //考试主题
                     //获取考试试卷
                     if (th.examstate.purpose == 0)
@@ -484,7 +484,7 @@ $ready(function () {
                 //记录答题信息
                 for (let i = 0; i < paper.length; i++) {
                     const group = paper[i];
-                    let ques = { "type": group.type,"byname": group.byname, "count": group.count, "number": group.number, "q": [] }
+                    let ques = { "type": group.type, "byname": group.byname, "count": group.count, "number": group.number, "q": [] }
                     for (let j = 0; j < group.ques.length; j++) {
                         const qus = group.ques[j];
                         ques.q.push({

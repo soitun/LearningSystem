@@ -160,6 +160,7 @@ $ready(function () {
         computed: {},
         mounted: function () {
             var th = this;
+            if (th.exam.Exam_Purpose != 0) return;
             //获取“试卷详情”
             $api.bat(
                 $api.cache('TestPaper/ForID', { 'id': this.exam.Tp_Id }),
@@ -168,9 +169,7 @@ $ready(function () {
                 //获取结果
                 th.paper = paper.data.result;
                 th.subject = subject.data.result;
-            }).catch(function (err) {
-                console.error(err);
-            });
+            }).catch(err => console.error(err));
         },
         methods: {
             goexaming: function (exam) {
@@ -195,10 +194,12 @@ $ready(function () {
               {{exam.Exam_DateOver|date("yyyy-M-dd HH:mm")}} 之间
             </span>
           </div>
-          <div class="item" v-if="paper">限时：{{exam.Exam_Span}}分钟 &nbsp; 题量：{{paper.Tp_Count}}道</div>
-          <div class="item">总分：{{exam.Exam_Total}}分（{{paper.Exam_PassScore}}分及格）</div>        
-          <div class="item">专业：{{subject.Sbj_Name}} </div>
-          <div class="item">课程：{{paper.Cou_Name}}</div>        
+          <div class="item" v-if="paper">限时：{{exam.Exam_Span}}分钟 &nbsp; 题量：{{exam.Exam_QuesCount}}道</div>
+          <div class="item">总分：{{exam.Exam_Total}}分（{{paper.Exam_PassScore}}分及格）</div>   
+          <template v-if="exam.Exam_Purpose==0">     
+            <div class="item">专业：{{subject.Sbj_Name}} </div>
+            <div class="item">课程：{{paper.Cou_Name}}</div>    
+          </template>    
         </card-content>
       </card>`
     });
@@ -259,7 +260,7 @@ $ready(function () {
         <card-title>{{index+1}}.《{{theme.Exam_Title}}》 </card-title>
         <card-content>
         <div class="item">参考人员：{{group}} </div>     
-        <theme_item v-for="(e,index) in exams" :exam="e" :index="index" :account="account"></exam_data>
+            <theme_item v-for="(e,index) in exams" :exam="e" :index="index" :account="account"></exam_data>
         </card-content>
       </card>`
     });
@@ -284,6 +285,7 @@ $ready(function () {
             //获取“试卷详情”
             onload: function () {
                 var th = this;
+                if (th.exam.Exam_Purpose != 0) return;
                 $api.bat(
                     $api.cache('TestPaper/ForID', { 'id': this.exam.Tp_Id }),
                     $api.cache('Subject/ForID', { 'id': this.exam.Sbj_ID })
@@ -310,11 +312,12 @@ $ready(function () {
               {{exam.Exam_DateOver|date("yyyy-M-dd HH:mm")}} 之间
             </span>
           </div>
-          <div class="item" v-if="paper">限时：{{exam.Exam_Span}}分钟 &nbsp; 题量：{{paper.Tp_Count}}道</div>
-          <div class="item" v-if="paper">总分：{{exam.Exam_Total}}分（{{paper.Tp_PassScore}}分及格）</div>        
-          <div class="item">专业：{{subject.Sbj_Name}} </div>
-          <div class="item"  v-if="paper">课程：{{paper.Cou_Name}}</div>        
-       
+          <div class="item" v-if="paper">限时：{{exam.Exam_Span}}分钟 &nbsp; 题量：{{exam.Exam_QuesCount}}道</div>
+          <div class="item" v-if="paper">总分：{{exam.Exam_Total}}分（{{exam.Exam_PassScore}}分及格）</div>  
+          <template v-if="exam.Exam_Purpose==0">     
+            <div class="item">专业：{{subject.Sbj_Name}} </div>
+            <div class="item" v-if="paper">课程：{{paper.Cou_Name}}</div>    
+        </template> 
       </div>`
     });
     //成绩查看的考试项（用于成绩回顾）
@@ -332,26 +335,14 @@ $ready(function () {
         computed: {},
         mounted: function () {
             var th = this;
-            //获取“试卷详情”
-            $api.bat(
-                $api.cache('Exam/ForID', { 'id': this.result.Exam_ID }),
-                $api.cache('TestPaper/ForID', { 'id': this.result.Tp_Id }),
-                $api.cache('Subject/ForID', { 'id': this.result.Sbj_ID })
-            ).then(([exam, paper, subject]) => {
-                //获取结果
-                th.exam = exam.data.result;
-                th.paper = paper.data.result;
-                th.subject = subject.data.result;
-            }).catch(function (err) {
-                console.error(err);
-            });
+            $api.cache('Exam/ForID', { 'id': this.result.Exam_ID }).then(req => th.exam = req.data.result);           
         },
         methods: {
             //得分样式
             scoreStyle: function (score) {
                 //总分和及格分
                 var total = this.exam ? this.exam.Exam_Total : -1;
-                var passscore = this.paper ? this.paper.Tp_PassScore : -1;
+                var passscore = this.exam ? this.exam.Exam_PassScore : -1;
                 if (score == total) return "praise";
                 if (score < passscore) return "nopass";
                 if (score < total * 0.8) return "general";
@@ -373,7 +364,7 @@ $ready(function () {
         </card-title>
         <card-content>
         <div class="item" v-if="exam"> {{exam.Exam_Title}}</div>          
-          <div class="item" v-if="exam">限时：{{exam.Exam_Span}}分钟 &nbsp; 题量：{{paper.Tp_Count}}道</div>
+          <div class="item" v-if="exam">限时：{{exam.Exam_Span}}分钟 &nbsp; 题量：{{exam.Exam_QuesCount}}道</div>
           <div class="item">交卷时间：{{result.Exr_SubmitTime|date("yyyy-MM-dd HH:mm:ss")}}</div>
           <div class="item">得分：{{result.Exr_ScoreFinal}} 分
           <template v-if="exam">

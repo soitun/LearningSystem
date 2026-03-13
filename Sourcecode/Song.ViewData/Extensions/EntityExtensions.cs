@@ -37,6 +37,7 @@ namespace Song.ViewData
         /// <summary>
         /// 将实体生成为Json对象，每个属性为json的属性
         /// </summary>
+        /// <param name="entity"></param>
         /// <param name="only">仅输出指定的属性，用逗号分隔，注意大小写</param>
         /// <param name="wipe">限定不输出的属性，用逗号分隔，注意大小写</param>
         /// <param name="addParas">要增加的输出项</param>
@@ -69,14 +70,10 @@ namespace Song.ViewData
             {
                 foreach (KeyValuePair<string, object> e in addParas)
                 {
-                    if (e.Value != null)
-                    {
-                        str += _tojson_property(e.Value.GetType().Name, e.Key, e.Value, false) + ",";
-                    }
-                    else
-                    {
-                        str += _tojson_property("String", e.Key, e.Value, false) + ",";
-                    }
+                    if (e.Value != null)                 
+                        str += _tojson_property(e.Value.GetType().Name, e.Key, e.Value, false) + ",";                  
+                    else                   
+                        str += _tojson_property("String", e.Key, e.Value, false) + ",";                    
                 }
             }
             if (str.Length > 0 && str.Substring(str.Length - 1, 1) == ",") str = str.Substring(0, str.Length - 1);
@@ -89,22 +86,7 @@ namespace Song.ViewData
         /// <param name="piname">属性名</param>
         /// <param name="arr">数组</param>
         /// <returns></returns>
-        private static bool _tojson_isExist(string piname, string[] arr)
-        {
-            bool isExist = false;
-            if (arr != null && arr.Length > 0)
-            {
-                foreach (string w in arr)
-                {
-                    if (w.Trim() == piname)
-                    {
-                        isExist = true;
-                        break;
-                    }
-                }
-            }
-            return isExist;
-        }
+        private static bool _tojson_isExist(string piname, string[] arr) => arr != null && arr.Any(w => w.Trim() == piname);
         /// <summary>
         /// 为json输出字段
         /// </summary>
@@ -126,9 +108,9 @@ namespace Song.ViewData
                     long timeStamp = (long)(time - startTime).TotalMilliseconds; // 相差毫秒数
                     if (dateeval)
                     {   
-                        //将C#时间转换成JS时间字符串    
-                        string JSstring = string.Format("eval('new ' + eval('/Date({0})/').source)", timeStamp);
-                        str += name + "\":" + JSstring + "";
+                        //将C#时间转换成JS时间字符串                       
+                        string JSstring = string.Format("/Date({0})/", timeStamp);
+                        str += name + "\":\"" + JSstring + "\"";
                     }
                     else
                     {
@@ -173,14 +155,7 @@ namespace Song.ViewData
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
         /// <returns></returns>
-        public static JArray ToJArray<T>(this List<T> list) where T : WeiSha.Data.Entity
-        {
-            JArray array = new JArray();
-            foreach (T item in list)
-            {
-                array.Add(item.ToJObject());
-            }
-            return array;
-        }
+        public static JArray ToJArray<T>(this List<T> list) where T : WeiSha.Data.Entity =>
+            list == null ? new JArray() : new JArray(list.Select(item => item.ToJObject()));
     }
 }
