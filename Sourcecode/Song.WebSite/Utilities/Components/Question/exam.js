@@ -48,7 +48,7 @@ Vue.component('question', {
             return initIndex + index;
         },
         //题型
-        typename: function (type) {           
+        typename: function (type) {        
             if (this.group.byname && this.group.byname != '') return this.group.byname;
             let defname = this.types[this.ques.Qus_Type - 1] + '题';   //默认题型名称
             return defname;
@@ -193,7 +193,7 @@ Vue.component('question', {
     template: `<dd :qid="ques.Qus_ID">
         <info>
             {{calcIndex(index+1)}}/{{total}}        
-            {{typename()}} 
+            {{typename()}}
             <span>（{{ques.Qus_Number}} 分）</span>
         </info>
         <card shadow="hover">   

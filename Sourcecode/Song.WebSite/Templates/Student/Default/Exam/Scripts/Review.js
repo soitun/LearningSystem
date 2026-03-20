@@ -52,7 +52,7 @@ $ready(['/Utilities/Components/question/review.js',
                     //console.log('答题信息：');
                     //console.log(th.exrxml);
                     th.loading = true;
-                    let paperapi = th.exam.Exam_Purpose == 0 ? 'TestPaper/ForID' : 'ExamTestPaper//ForID';
+                    let paperapi = th.exam.Exam_Purpose == 0 ? 'TestPaper/ForID' : 'ExamTestPaper/ForID';
                     $api.bat(
                         $api.cache('Account/ForID', { 'id': th.result.Ac_ID }),
                         $api.cache(paperapi, { 'id': th.result.Tp_Id })

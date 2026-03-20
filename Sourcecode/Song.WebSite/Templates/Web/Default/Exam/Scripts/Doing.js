@@ -152,7 +152,7 @@ $ready(function () {
                 th.loading.state = true;
                 $api.get('Exam/State', { 'examid': th.examid }).then(req => {
                     let state = req.data.result;
-                    for (let k in state) th.examstate[k] = state[k];
+                    for (let k in state) th.$set(th.examstate, k, state[k]);
                     th.time.span = th.examstate.timespan; //考试限时
                     th.paperAnswer = th.examstate.result;     //答题详情，也许不存在    
                     th.calcTime();
@@ -375,8 +375,7 @@ $ready(function () {
                 if (!this.isexaming()) return;    //没有处于考试中，则不提交
                 if ($api.isnull(this.paperAnswer)) return;
                 if (this.nowtime < new Date(Number(this.examstate.startTime))) return;
-                if (this.examstate.issubmit || this.submitState.loading) return;
-                if (this.paper.Tp_Count < 1) return;
+                if (this.examstate.issubmit || this.submitState.loading) return;              
 
                 if (patter == null) patter = 1;
                 var th = this;

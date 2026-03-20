@@ -24,9 +24,9 @@
                     <span class="acc-money"> ... </span>
                 </div>
             </card-content>
-        </card>
+        </card> 
         <card v-else-if="!examstate.exist">
-            <card-title>
+            <card-title>{{examstate.exist}}
                 <span icon="&#xe748" @click="navigateTo('index')"></span>
                 当前考试不存在，或考试被禁！
             </card-title>
@@ -63,8 +63,8 @@
                             {{exam.Exam_DateOver|date("yyyy-M-dd HH:mm")}} 之间
                         </span>
                     </row>
-                    <row v-if="paper">限时：{{exam.Exam_Span}}分钟 （共 {{paper.Tp_Count}} 道试题）</row>
-                    <row>总分：{{exam.Exam_Total}}分（{{paper.Tp_PassScore}}分及格）</row>
+                    <row v-if="paper">限时：{{exam.Exam_Span}}分钟 （共 {{exam.Exam_QuesCount}} 道试题）</row>
+                    <row>总分：{{exam.Exam_Total}}分（{{exam.Exam_PassScore}}分及格）</row>
                     <row>专业：{{subject.Sbj_Name}} </row>
                     <row>课程：{{paper.Cou_Name}}</row>
                 </card-content>
@@ -128,7 +128,7 @@
             <div loading="p4" v-if="!examstate.record && questotal<=0"></div>
             <section :style="'width:'+questotal*screenWidth+'px'" v-swiperight="swipe" v-swipeleft="swipe" remark="试题区域">
                 <dl v-for="(group,i) in paperQues" :style="'width:'+group.count*screenWidth+'px'" v-show="!loading.ques">
-                    <question v-for="(q,n) in group.ques" :ques="q" :index="n" :groupindex="i" :account="account"
+                    <question v-for="(q,n) in group.ques" :ques="q" :index="n" :groupindex="i" :account="account"  :group="group"
                         :total="questotal" :types="types" :exam="exam">
                     </question>
                 </dl>
@@ -178,10 +178,12 @@
                             </span>
                         </row>
                         <row v-if="paper">限时：{{exam.Exam_Span}}分钟</row>
-                        <row>题量：{{paper.Tp_Count}}道</row>
-                        <row>总分：{{exam.Exam_Total}}分（{{paper.Tp_PassScore}}分及格）</row>
-                        <row>专业：{{subject.Sbj_Name}} </row>
-                        <row>课程：{{paper.Cou_Name}}</row>
+                        <row>题量：{{exam.Exam_QuesCount}}道</row>
+                        <row>总分：{{exam.Exam_Total}}分（{{exam.Exam_PassScore}}分及格）</row>
+                        <template v-if="exam.Exam_Purpose==0">
+                            <row>专业：{{subject.Sbj_Name}} </row>
+                            <row>课程：{{paper.Cou_Name}}</row>
+                        </template>
                     </card-content>
                 </card>
             </van-popup>

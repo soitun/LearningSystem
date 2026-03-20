@@ -42,9 +42,10 @@ $ready(function () {
                     th.exrxml = $api.loadxml(th.result.Exr_Results);
                     th.scoreFinal = th.result.Exr_ScoreFinal;
                     //获取学员与试卷
+                    let paperapi = th.exam.Exam_Purpose == 0 ? 'TestPaper/ForID' : 'ExamTestPaper/ForID';
                     $api.bat(
                         $api.cache('Account/ForID', { 'id': th.result.Ac_ID }),
-                        $api.cache('TestPaper/ForID', { 'id': th.result.Tp_Id })
+                        $api.cache(paperapi, { 'id': th.result.Tp_Id })
                     ).then(([student, paper]) => {
                         //获取结果
                         th.student = student.data.result;
@@ -108,6 +109,16 @@ $ready(function () {
                 for (var i = 0; i < this.questions.length; i++)
                     count += this.questions[i].ques.length;
                 return count;
+            },
+             //试卷满分
+             totalScore: function () {
+                if (this.paper == null) return 0;
+                return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Total : this.paper.Etp_Total;
+            },
+            //及格分
+            passScore: function () {
+                if (this.paper == null) return 0;
+                return this.exam.Exam_Purpose == 0 ? this.paper.Tp_PassScore : this.paper.Etp_PassScore;
             },
             //答对的题数
             ques_success_count: function () {

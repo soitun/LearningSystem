@@ -46,7 +46,7 @@
                     </div>
                     <div> 得分：
                         <score :class="scoreStyle(result.Exr_ScoreFinal)">{{result.Exr_ScoreFinal}} 分</score>
-                        <span v-if="paper" class="scoreinfo">（满分{{paper.Tp_Total}}分，{{paper.Tp_PassScore}}分及格）</span>
+                        <span v-if="paper" class="scoreinfo">（满分{{totalScore}}分，{{passScore}}分及格）</span>
                         <alert v-else>试卷不存在</alert>
                     </div>
                 </card-content>
