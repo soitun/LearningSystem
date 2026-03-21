@@ -1536,7 +1536,7 @@ namespace Song.ServiceImpls
             //if (items.Length < 1) return null;
             string exam_id = string.Empty;
             for (int i = 0; items != null && i < items.Count; i++)
-                exam_id += @"""Exam_ID""=" + items[0].Exam_ID + (i < items.Count - 1 ? " or " : "");
+                exam_id += @"""Exam_ID""=" + items[i].Exam_ID + (i < items.Count - 1 ? " or " : "");
             sql = sql.Replace("{examid}", string.IsNullOrWhiteSpace(exam_id) ? "1=0" : exam_id);
 
             //查询条件
