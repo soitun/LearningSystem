@@ -548,7 +548,6 @@ $ready(function () {
             restoreAnswer: function (paper) {
                 var record = $api.storage(this.recordname);
                 if ($api.isnull(record)) record = this.paperAnswer;
-                record = this.paperAnswer;
                 if (record == null || JSON.stringify(record) == '{}' || !record.ques) {
                     //固定时间开始
                     if (this.examstate.type == 1) {
