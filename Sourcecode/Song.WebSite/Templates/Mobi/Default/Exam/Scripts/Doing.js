@@ -376,7 +376,8 @@ $ready(function () {
                 if ($api.isnull(this.paperAnswer)) return;
                 if (this.nowtime < new Date(Number(this.examstate.startTime))) return;
                 if (this.examstate.issubmit || this.submitState.loading) return;            
-
+                if (this.paperQues == null || this.paperQues.length < 1) return;
+                
                 if (patter == null) patter = 1;
                 var th = this;
                 if (patter == 2) th.submitState.show = true;

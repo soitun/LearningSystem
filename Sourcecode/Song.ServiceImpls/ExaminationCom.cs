@@ -755,7 +755,7 @@ namespace Song.ServiceImpls
         public ExamResults ResultForCache(int examid, long tpid, int acid)
         {
             ExamResults r = Cache.ExamResultsCache.GetResults(examid, tpid, acid);
-            if (r == null || r.Exr_IsSubmit || r.Exr_OverTime > DateTime.Now) r = this.ResultSingle(examid, tpid, acid);
+            if (r == null) r = this.ResultSingle(examid, tpid, acid);
             return r;
         }
         /// <summary>

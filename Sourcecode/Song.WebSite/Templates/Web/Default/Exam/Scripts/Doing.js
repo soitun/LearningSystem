@@ -69,7 +69,7 @@ $ready(function () {
                 th.time.client = new Date();
                 window.setInterval(function () {
                     th.time.now = new Date().getTime();
-                    if (th.paperAnswer) th.paperAnswer.now = th.nowtime.getTime();
+                    if (th.paperAnswer) th.$set(th.paperAnswer, 'now', th.nowtime.getTime());
                 }, 1000);
             }).catch(err => console.error(err))
                 .finally(() => th.loading.init = false);
@@ -154,7 +154,7 @@ $ready(function () {
                     let state = req.data.result;
                     for (let k in state) th.$set(th.examstate, k, state[k]);
                     th.time.span = th.examstate.timespan; //考试限时
-                    th.paperAnswer = th.examstate.result;     //答题详情，也许不存在    
+                    th.paperAnswer = th.examstate.result;     //答题详情，也许不存在                      
                     th.calcTime();
                     th.exam = th.examstate.exam;     //考试                   
                     th.theme = th.examstate.theme;     //考试主题
@@ -206,7 +206,7 @@ $ready(function () {
             },
             //答题信息变更时
             'paperAnswer': {
-                handler: function (nv, ov) {
+                handler: function (nv, ov) {                 
                     if (JSON.stringify(nv) == JSON.stringify(ov)) return;
                     //记录到本地
                     if (this.examstate.exist && !this.examstate.issubmit)
@@ -272,7 +272,6 @@ $ready(function () {
                             let ques = req.data.result;
                             if (ques.length < 1) throw '没有加载到试题！';
                             var paper = th.parseAnswer(ques);
-                            //th.calcTime();
                             //将本地记录的答题信息还原到界面
                             paper = th.restoreAnswer(paper);
                             th.paperQues = paper;
@@ -375,7 +374,8 @@ $ready(function () {
                 if (!this.isexaming()) return;    //没有处于考试中，则不提交
                 if ($api.isnull(this.paperAnswer)) return;
                 if (this.nowtime < new Date(Number(this.examstate.startTime))) return;
-                if (this.examstate.issubmit || this.submitState.loading) return;              
+                if (this.examstate.issubmit || this.submitState.loading) return;
+                if (this.paperQues == null || this.paperQues.length < 1) return;
 
                 if (patter == null) patter = 1;
                 var th = this;
@@ -488,7 +488,6 @@ $ready(function () {
                         const qus = group.ques[j];
                         ques.q.push({
                             "id": qus.Qus_ID,
-                            //"class": "level1",
                             "num": qus.Qus_Number,
                             "ans": questionAnswer(qus),
                             "file": qus.Qus_Explain
@@ -549,6 +548,7 @@ $ready(function () {
             restoreAnswer: function (paper) {
                 var record = $api.storage(this.recordname);
                 if ($api.isnull(record)) record = this.paperAnswer;
+                record = this.paperAnswer;
                 if (record == null || JSON.stringify(record) == '{}' || !record.ques) {
                     //固定时间开始
                     if (this.examstate.type == 1) {

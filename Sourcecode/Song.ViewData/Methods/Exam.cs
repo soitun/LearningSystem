@@ -489,32 +489,26 @@ namespace Song.ViewData.Methods
             {
                 XmlNode node = quesGroupNodes[i];
                 JObject ques = new JObject();
-                int type = Convert.ToInt32(node.Attributes["type"].Value);
+                int type = node.GetAttr<int>("type");
                 ques.Add("type", type);
-                float count, number;
-                float.TryParse(node.Attributes["count"].Value, out count);
-                float.TryParse(node.Attributes["number"].Value, out number);
-                ques.Add("count", count);
-                ques.Add("number", number);
+                ques.Add("byname", node.GetAttr("byname"));
+                ques.Add("count", node.GetAttr<float>("count"));
+                ques.Add("number", node.GetAttr<float>("number"));
                 JArray qarray = new JArray();
                 for (int n = 0; n < node.ChildNodes.Count; n++)
                 {
                     JObject jq = new JObject();
                     XmlNode q = node.ChildNodes[n];
-                    jq.Add("id", q.Attributes["id"].Value);
-
+                    jq.Add("id", q.GetAttr("id"));
                     string ans = string.Empty, file = string.Empty;
                     //如果是单选、多选、判断
-                    if (type == 1 || type == 2 || type == 3)
-                        ans = q.Attributes["ans"].Value;
+                    if (type == 1 || type == 2 || type == 3) ans = q.GetAttr("ans");
                     if (type == 4 || type == 5) ans = q.InnerText;
-                    if (type == 5) file = q.Attributes["file"] != null ? q.Attributes["file"].Value : "";
+                    if (type == 5) file = q.GetAttr("file");
                     ans = Html.ClearHTML(ans);
                     jq.Add("ans", ans);
                     if (q.Attributes["file"] != null) jq.Add("file", file);
-
-                    if (q.Attributes["class"] != null) jq.Add("cls", q.Attributes["class"].Value);                   
-                    if (q.Attributes["num"] != null) jq.Add("num", q.Attributes["num"].Value);
+                    jq.Add("num", q.GetAttr("num"));
                     qarray.Add(jq);
                 }
                 ques.Add("q", qarray);
@@ -592,9 +586,10 @@ namespace Song.ViewData.Methods
             resXml.LoadXml(xml, false);
             //遍历试题答题内容
             XmlNodeList quesnodes = resXml.GetElementsByTagName("ques");
+            if (quesnodes.Count < 1) return jo;
             foreach (XmlNode ques in quesnodes)
             {
-                int type = ques.GetAttr<int>("type");            
+                int type = ques.GetAttr<int>("type");
                 //填空和简答,清理冗余html标签
                 if (type == 4 || type == 5)
                 {
@@ -646,8 +641,9 @@ namespace Song.ViewData.Methods
             exr.Exr_LastTime = DateTime.Now;
 
             //缓存当前答题信息
+
             Business.Do<IExamination>().ResultCacheUpdate(exr, -1);
-            if (patter == 1) return jo;
+            //if (patter == 1) return jo;
             exr = Business.Do<IExamination>().ResultSubmit(exr);
             //是否重复提交
             jo.Add("resubmit", exr.Exr_IsCalc);
