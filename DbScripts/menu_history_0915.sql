@@ -1,5 +1,3 @@
-﻿
-
 -- 创建表 ManageMenu --
 DROP TABLE IF EXISTS public."ManageMenu" CASCADE;
 CREATE TABLE IF NOT EXISTS public."ManageMenu"
