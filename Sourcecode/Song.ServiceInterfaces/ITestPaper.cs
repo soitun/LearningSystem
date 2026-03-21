@@ -138,15 +138,21 @@ namespace Song.ServiceInterfaces
         /// <param name="olid">章节id，如果小于1，则取所有</param>
         /// <returns></returns>
         List<TestPaperItem> GetItemForOlCount(TestPaper tp, long olid);
+        #endregion
+
+        #region 出卷
         /// <summary>
         /// 返回试卷的大项，不管是按课程，还是按章节
         /// </summary>
         /// <param name="tp"></param>
         /// <returns></returns>
-        List<TestPaperItem> GetItemForAny(TestPaper tp);
-        #endregion
-
-        #region 出卷
+        List<TestPaperItem> PaperItems(long tpid);
+        /// <summary>
+        /// 返回试卷的大项，不管是按课程，还是按章节
+        /// </summary>
+        /// <param name="tp"></param>
+        /// <returns></returns>
+        List<TestPaperItem> PaperItems(TestPaper tp);
         /// <summary>
         /// 出卷，输出试卷内容
         /// </summary>

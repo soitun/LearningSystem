@@ -70,9 +70,23 @@ namespace Song.ServiceImpls
                             it.Exam_IsShowBtn = theme.Exam_IsShowBtn;
                             it.Exam_IsToggle = theme.Exam_IsToggle;
                             it.Exam_Purpose = it.Tp_Id == 0 ? 1 : 0;        //是否为考试专用试卷
-                            //试题数量
-                            if (it.Exam_Purpose == 0) it.Exam_QuesCount = Business.Do<ITestPaper>().QuesCount(it.Tp_Id);
-                            else it.Exam_QuesCount = Business.Do<IExamTestPaper>().QuesCount(it.Etp_Id);
+                                                                            //试题数量，及格分等
+                            if (it.Exam_Purpose == 0)
+                            {
+                                TestPaper testPaper = Business.Do<ITestPaper>().PaperSingle(it.Tp_Id);
+                                it.Exam_QuesCount = testPaper.Tp_Count;
+                                it.Exam_Total = testPaper.Tp_Total;
+                                it.Exam_PassScore = testPaper.Tp_PassScore;
+                                it.Exam_IsManual = testPaper.Tp_IsManual;
+                            }
+                            else
+                            {
+                                ExamTestPaper examPaper = Business.Do<IExamTestPaper>().PaperSingle(it.Etp_Id);
+                                it.Exam_QuesCount = examPaper.Etp_Count;
+                                it.Exam_Total = examPaper.Etp_Total;
+                                it.Exam_PassScore = examPaper.Etp_PassScore;
+                                it.Exam_IsManual = examPaper.Etp_IsManual;
+                            }
                             tran.Save<Examination>(it);
                         }
                         if (theme.Exam_DateType == 1)
@@ -161,9 +175,23 @@ namespace Song.ServiceImpls
                             else
                                 tran.Update<ExamResults>(new Field[] { ExamResults._.Exam_Name },
                               new object[] { it.Exam_Name }, ExamResults._.Exam_ID == it.Exam_ID);
-                            //试题数量
-                            if (it.Exam_Purpose == 0) it.Exam_QuesCount = Business.Do<ITestPaper>().QuesCount(it.Tp_Id);
-                            else it.Exam_QuesCount = Business.Do<IExamTestPaper>().QuesCount(it.Etp_Id);
+                            //试题数量，及格分等
+                            if (it.Exam_Purpose == 0)
+                            {
+                                TestPaper testPaper = Business.Do<ITestPaper>().PaperSingle(it.Tp_Id);
+                                it.Exam_QuesCount = testPaper.Tp_Count;
+                                it.Exam_Total = testPaper.Tp_Total;
+                                it.Exam_PassScore = testPaper.Tp_PassScore;
+                                it.Exam_IsManual = testPaper.Tp_IsManual;
+                            }
+                            else
+                            {
+                                ExamTestPaper examPaper = Business.Do<IExamTestPaper>().PaperSingle(it.Etp_Id);
+                                it.Exam_QuesCount = examPaper.Etp_Count;
+                                it.Exam_Total = examPaper.Etp_Total;
+                                it.Exam_PassScore = examPaper.Etp_PassScore;
+                                it.Exam_IsManual = examPaper.Etp_IsManual;
+                            }
                             tran.Save<Examination>(it);
 
                         }
@@ -727,7 +755,7 @@ namespace Song.ServiceImpls
         public ExamResults ResultForCache(int examid, long tpid, int acid)
         {
             ExamResults r = Cache.ExamResultsCache.GetResults(examid, tpid, acid);
-            if (r == null || r.Exr_IsSubmit || r.Exr_OverTime > DateTime.Now) r = this.ResultSingle(examid, tpid, acid);
+            if (r == null) r = this.ResultSingle(examid, tpid, acid);
             return r;
         }
         /// <summary>
@@ -1508,7 +1536,7 @@ namespace Song.ServiceImpls
             //if (items.Length < 1) return null;
             string exam_id = string.Empty;
             for (int i = 0; items != null && i < items.Count; i++)
-                exam_id += @"""Exam_ID""=" + items[0].Exam_ID + (i < items.Count - 1 ? " or " : "");
+                exam_id += @"""Exam_ID""=" + items[i].Exam_ID + (i < items.Count - 1 ? " or " : "");
             sql = sql.Replace("{examid}", string.IsNullOrWhiteSpace(exam_id) ? "1=0" : exam_id);
 
             //查询条件

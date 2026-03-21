@@ -90,8 +90,16 @@
         },
         //将数据url解码
         unescape: function (data) {
-            var typeName = methods.getType(data);
-            if (typeName == 'String') return unescape(data);
+            let typeName = methods.getType(data);
+            if (typeName == 'String') {
+                //如果是日期格式
+                const regex = /^\d{4}-\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}$/;
+                if (regex.test(data)) return new Date(data);
+                //另一种日期格式，"/Date(1534480914000)/"
+                const match = data.match(/\/Date\((\d+)\)\//);
+                if (match)  return new Date(parseInt(match[1]));               
+                return unescape(data);
+            }
             if (typeName == 'Object') return handleObject(data);
             if (typeName == 'Array') return handleArray(data);
             //反常时间的处理，如果时间处于一百年前，则返回空值

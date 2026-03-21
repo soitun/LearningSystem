@@ -47,7 +47,8 @@ $ready(function () {
 
             //加载中的状态
             loading: {
-                init: true,             //初始化主要参数  
+                init: true,             //初始化主要参数     
+                state: true,         //初始化考试状态             
                 exam: true,               //加载考试信息中           
                 paper: false,             //试卷加载中
                 ques: false,              //加载试题中
@@ -68,8 +69,7 @@ $ready(function () {
                 th.time.client = new Date();
                 window.setInterval(function () {
                     th.time.now = new Date().getTime();
-                    if (th.paperAnswer)
-                        th.paperAnswer.now = th.nowtime.getTime();
+                    if (th.paperAnswer) th.$set(th.paperAnswer, 'now', th.nowtime.getTime());
                 }, 1000);
             }).catch(err => console.error(err))
                 .finally(() => th.loading.init = false);
@@ -85,7 +85,7 @@ $ready(function () {
         computed: {
             islogin: t => !$api.isnull(t.account),      //学员是否登录
             isexam: t => !$api.isnull(t.exam),          //是否存在考试
-            isgenerate: t => t.paperQues.length > 0,     //是否已经出卷
+            isgenerate: t => t.paperQues.length > 0,     //是否已经出卷         
             //试题总数
             questotal: function () {
                 let total = 0;
@@ -118,8 +118,7 @@ $ready(function () {
             },
             //考试开始时间
             starttime: function () {
-                if (this.examstate.startTime)
-                    return new Date(this.examstate.startTime);
+                if (this.examstate.startTime) return new Date(this.examstate.startTime);
                 return new Date();
             },
             //离开始考试还有多少时间
@@ -141,7 +140,7 @@ $ready(function () {
             recordname: function () {
                 let acid = this.account.Ac_ID;
                 let examid = this.exam.Exam_ID;
-                let tpid = this.paper.Tp_Id;
+                let tpid = this.examstate.paperid;
                 return "exam_answer_record:[stid=" + acid + "][examid=" + examid + "][tpid=" + tpid + "]";
             },
         },
@@ -150,49 +149,21 @@ $ready(function () {
             'islogin': function (nv, ov) {
                 if (!nv) return;    //如果未登录，则退出
                 var th = this;
-                th.loading.exam = true;
-                $api.bat(
-                    $api.get('Exam/State', { 'examid': th.examid }),
-                    $api.get('Exam/ForID', { 'id': th.examid })
-                ).then(([state, exam]) => {
-                    th.examstate = state.data.result;
+                th.loading.state = true;
+                $api.get('Exam/State', { 'examid': th.examid }).then(req => {
+                    let state = req.data.result;
+                    for (let k in state) th.$set(th.examstate, k, state[k]);
                     th.time.span = th.examstate.timespan; //考试限时
-                    th.examstate.loading = false;
-                    th.paperAnswer = th.examstate.result;     //答题详情，也许不存在                  
+                    th.paperAnswer = th.examstate.result;     //答题详情，也许不存在                      
                     th.calcTime();
-                    th.exam = exam.data.result;
-                }).catch(err => console.error(err))
-                    .finally(() => th.loading.exam = false);
+                    th.exam = th.examstate.exam;     //考试                   
+                    th.theme = th.examstate.theme;     //考试主题
+                    //获取考试试卷
+                    if (th.examstate.purpose == 0)
+                        th.getcoursepaper();
+                });
             },
-            //考试对象加载后，加载试卷
-            'exam': function (nv, ov) {
-                if ($api.isnull(nv)) return;
-                var th = this;
-                th.time.span = nv.Exam_Span;
-                th.loading.paper = true;
-                $api.bat(
-                    $api.cache('Exam/ThemeForUID', { 'uid': th.examstate.uid }),
-                    $api.cache('Subject/ForID', { 'id': th.examstate.subject }),
-                    $api.get('TestPaper/ForID', { 'id': th.examstate.paper }),
-                    $api.get('Exam/Result', { 'examid': th.examid, 'tpid': th.examstate.paper, 'stid': th.account.Ac_ID })
-                ).then(([theme, sbj, paper, exr]) => {
-                    th.theme = theme.data.result;
-                    th.subject = sbj.data.result;
-                    th.paper = paper.data.result;
-                    //是否已经交过卷
-                    let result = exr.data.result;
-                    //禁用鼠标右键 //禁止选择文本
-                    if (th.theme && th.theme.Exam_IsRightClick) {
-                        document.addEventListener('contextmenu', function (e) {
-                            e.preventDefault();
-                        });
-                        document.addEventListener('selectstart', function (e) {
-                            e.preventDefault();
-                        });
-                    }
-                }).catch(err => console.error(err))
-                    .finally(() => th.loading.paper = false);
-            },
+
             //当前时间
             'nowtime': function (nv, ov) {
                 //离考试还有多久
@@ -223,7 +194,7 @@ $ready(function () {
             },
             'paperQues': {
                 handler: function (nv, ov) {
-                    if ($api.isnull(this.exam) || $api.isnull(this.paper)) return;
+                    if ($api.isnull(this.exam)) return;
                     //第一次加载
                     if ($api.isnull(ov) || ov.length < 1) {
                         this.examstate.record = true;
@@ -235,7 +206,7 @@ $ready(function () {
             },
             //答题信息变更时
             'paperAnswer': {
-                handler: function (nv, ov) {
+                handler: function (nv, ov) {                 
                     if (JSON.stringify(nv) == JSON.stringify(ov)) return;
                     //记录到本地
                     if (this.examstate.exist && !this.examstate.issubmit)
@@ -247,6 +218,23 @@ $ready(function () {
             }
         },
         methods: {
+            //获取课程试卷相关
+            getcoursepaper: function (exam) {
+                var th = this;
+                th.loading.paper = true;
+                $api.bat(
+                    $api.cache('Subject/ForID', { 'id': th.examstate.subject }),
+                    $api.get('TestPaper/ForID', { 'id': th.examstate.paperid }),
+                ).then(([sbj, paper]) => {
+                    th.subject = sbj.data.result;
+                    th.paper = paper.data.result;
+                }).catch(err => console.error(err))
+                    .finally(() => th.loading.paper = false);
+            },
+            //获取考试试卷相关
+            getexampaper: function (exam) {
+
+            },
             //当窗体失去焦点
             lostFocus: function () {
                 var vapp = window.vapp;
@@ -270,7 +258,7 @@ $ready(function () {
             //生成试卷内容
             generatePaper: function () {
                 if (this.loading.ques) return;      //如果正在加载中
-                if ($api.isnull(this.paper)) return;
+                //if ($api.isnull(this.paper)) return;
                 if (this.paperQues.length > 0) return;
                 if (this.examstate.iserror || this.examstate.issubmit) return;
                 var th = this;
@@ -278,13 +266,12 @@ $ready(function () {
                 //试卷缓存过期时间
                 var span = th.exam.Exam_Span + 5;
                 $api.get('Exam/MakeoutPaper:' + span,
-                    { 'examid': th.exam.Exam_ID, 'tpid': th.paper.Tp_Id, 'stid': th.account.Ac_ID })
+                    { 'examid': th.exam.Exam_ID, 'tpid': th.examstate.paperid, 'stid': th.account.Ac_ID })
                     .then(function (req) {
                         if (req.data.success) {
                             let ques = req.data.result;
                             if (ques.length < 1) throw '没有加载到试题！';
                             var paper = th.parseAnswer(ques);
-                            //th.calcTime();
                             //将本地记录的答题信息还原到界面
                             paper = th.restoreAnswer(paper);
                             th.paperQues = paper;
@@ -307,7 +294,7 @@ $ready(function () {
             },
             //是否处于考试中
             isexaming: function () {
-                if ($api.isnull(this.exam) || $api.isnull(this.paper)) return false;
+                if ($api.isnull(this.exam)) return false;
                 //如果已经交卷
                 if ($api.isnull(this.examstate) || this.examstate.issubmit) return false;
                 //如果不在考试人群中
@@ -332,7 +319,6 @@ $ready(function () {
                             }
                             continue;
                         }
-                        group[key] = Number(group[key]);
                     }
                 }
                 return ques;
@@ -389,7 +375,7 @@ $ready(function () {
                 if ($api.isnull(this.paperAnswer)) return;
                 if (this.nowtime < new Date(Number(this.examstate.startTime))) return;
                 if (this.examstate.issubmit || this.submitState.loading) return;
-                if (this.paper.Tp_Count < 1) return;
+                if (this.paperQues == null || this.paperQues.length < 1) return;
 
                 if (patter == null) patter = 1;
                 var th = this;
@@ -409,7 +395,7 @@ $ready(function () {
                             th.examstate.issubmit = true;       //状态为提交
                             $api.storage(th.recordname, null);
                             $api.storage('exam_blur_num_' + th.examid, null);
-                            $api.cache('Exam/MakeoutPaper:clear', { 'examid': th.exam.Exam_ID, 'tpid': th.paper.Tp_Id, 'stid': th.account.Ac_ID });
+                            $api.cache('Exam/MakeoutPaper:clear', { 'examid': th.exam.Exam_ID, 'tpid': th.examstate.paperid, 'stid': th.account.Ac_ID });
                         }
                     } else {
                         console.error(req.data.exception);
@@ -453,11 +439,11 @@ $ready(function () {
             },
             //生成答题信息
             generateAnswerJson: function (paper) {
-                 //考试开始时间
+                //考试开始时间
                 let startTime = new Date(Number(this.examstate.startTime));
                 let results = {
                     "examid": this.exam.Exam_ID,
-                    "tpid": this.paper.Tp_Id,
+                    "tpid": this.examstate.paperid,
                     //"now": this.nowtime.getTime(),
                     "begin": this.time.begin.getTime(),
                     "overtime": this.time.over.getTime(),
@@ -497,12 +483,11 @@ $ready(function () {
                 //记录答题信息
                 for (let i = 0; i < paper.length; i++) {
                     const group = paper[i];
-                    let ques = { "type": group.type, "count": group.count, "number": group.number, "q": [] }
+                    let ques = { "type": group.type, "byname": group.byname, "count": group.count, "number": group.number, "q": [] }
                     for (let j = 0; j < group.ques.length; j++) {
                         const qus = group.ques[j];
                         ques.q.push({
                             "id": qus.Qus_ID,
-                            //"class": "level1",
                             "num": qus.Qus_Number,
                             "ans": questionAnswer(qus),
                             "file": qus.Qus_Explain

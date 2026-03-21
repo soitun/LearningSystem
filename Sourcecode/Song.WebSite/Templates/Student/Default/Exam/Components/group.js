@@ -24,8 +24,10 @@
             return changeNum[this.index + 1];
         },
         //显示题型
-        showType: function () {
-            return this.types[this.item.type - 1];
+        showType: function () {          
+            if (this.item.byname && this.item.byname != '') return this.item.byname;
+            let defname = this.types[this.item.type - 1] + '题';   //默认题型名称
+            return defname;
         },
         //计算得分
         score: function () {
@@ -37,7 +39,7 @@
             return Math.floor(num * 100) / 100;
         }
     },
-    template: `<div> 
+    template: `<div>
     <div class="type_title">{{showIndex()}}、 {{showType()}}   
         <div class="type_info">               
             <el-tag type="warning">{{item.count}}道题，共{{item.number}}分</el-tag>    

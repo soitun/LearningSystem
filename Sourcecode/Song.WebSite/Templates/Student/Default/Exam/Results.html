@@ -9,7 +9,6 @@
 
 <body>
     <div id="vapp" v-cloak>
-
         <div class="toolsbar">
             <el-tag>
                 <icon>&#xe634</icon>专项考试的成绩回顾
@@ -42,7 +41,8 @@
                                 </score>
                             </div>
                             <div class="items">
-                                <div>
+                                {{item.Exam_Purpose}}
+                                <div v-if="item.exam.Exam_Purpose==0">
                                     <span title="专业" v-if="item.subject">
                                         <icon>&#xe750</icon>{{item.subject.Sbj_Name}}
                                     </span>
@@ -62,7 +62,7 @@
                                         限时：{{item.exam.Exam_Span}}分钟
                                     </span>
                                     <span title="总共多少道题" v-if="item.paper">
-                                        <icon>&#xe75e</icon>题量：{{item.paper.Tp_Count}}道
+                                        <icon>&#xe75e</icon>题量：{{item.exam.Exam_QuesCount}}道
                                     </span>
                                     <span>
                                         <icon>&#xe70c</icon>交卷时间：

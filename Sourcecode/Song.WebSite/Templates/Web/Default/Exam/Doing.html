@@ -31,8 +31,8 @@
                 <div class="title" @click="showExam=true" v-if="isexam">
                     <icon>&#xe810</icon>{{exam.Exam_Name}}
                     <div class="info"><span v-if="paper">限时：{{exam.Exam_Span}}分钟</span>
-                        <span>题量：{{paper.Tp_Count}}道</span>
-                        <span>总分：{{exam.Exam_Total}}分（{{paper.Tp_PassScore}}分及格）</span>
+                        <span>题量：{{exam.Exam_QuesCount}}道</span>
+                        <span>总分：{{exam.Exam_Total}}分（{{exam.Exam_PassScore}}分及格）</span>
                     </div>
                 </div>
                 <div class="title" v-else>
@@ -94,8 +94,10 @@
                                             {{exam.Exam_DateOver|date("yyyy-M-dd HH:mm")}} 之间
                                         </span>
                                     </row>
-                                    <row>专业：{{subject.Sbj_Name}} </row>
-                                    <row>课程：{{paper.Cou_Name}}</row>
+                                    <template v-if="exam.Exam_Purpose==0">
+                                        <row>专业：{{subject.Sbj_Name}} </row>
+                                        <row>课程：{{paper.Cou_Name}}</row>
+                                    </template>
                                 </card-content>
                             </card>
                             <template v-if="!examstate.allow">
@@ -173,16 +175,14 @@
                     </div>
 
                     <template v-if="!loading.init && examstate.doing" mark="允许考试时，才输出">
-                        <div class="move_btn">
-                            <div loading="p4" v-if="questotal<=0"></div>
-                            <template v-else>
-                                <span @click="swipe({ 'direction': 4 })">
-                                    <icon>&#xe803</icon>上一题
-                                </span>
-                                <span @click="swipe({ 'direction': 2 })">
-                                    <icon>&#xe802</icon>下一题
-                                </span>
-                            </template>
+                        <div loading="p4" v-if="questotal<=0"></div>
+                        <div class="move_btn" v-else>
+                            <span @click="swipe({ 'direction': 4 })">
+                                <icon>&#xe803</icon>上一题
+                            </span>
+                            <span @click="swipe({ 'direction': 2 })">
+                                <icon>&#xe802</icon>下一题
+                            </span>
                         </div>
 
                         <section :style="'width:'+questotal*100+'%'" v-swiperight="swipe" v-swipeleft="swipe"
@@ -190,7 +190,7 @@
                             <dl v-for="(group,i) in paperQues" v-show="!loading.ques"
                                 :style="'width:'+group.count*parseInt($dom('section').parent().width())+'px'">
                                 <question v-for="(q,n) in group.ques" :ques="q" :index="n" :groupindex="i"
-                                    :account="account" :total="questotal" :types="types" :exam="exam">
+                                    :group="group" :account="account" :total="questotal" :types="types" :exam="exam">
                                 </question>
                             </dl>
                             <loading class="loading_paper" v-if="loading.ques">试题加载中...</loading>
@@ -204,6 +204,7 @@
                         <span>完成<b>{{answertotal}}</b>道 / 共<b>{{questotal}}</b>道</span>
                     </div>
                     <div class="cardBox" v-if="examstate.doing">
+                        <loading v-if="!paperAnswer.ques || paperAnswer.ques.length<1"></loading>
                         <dl v-for="(group,i) in paperAnswer.ques">
                             <dt icon="&#xe6bd"> [ {{types[group.type - 1]}}题 ]
                                 <span>每题{{Math.floor(group.number/group.count*100)/100}}分/共{{group.number}}分</span>
@@ -253,10 +254,12 @@
                         </span>
                     </row>
                     <row v-if="paper">限时：{{exam.Exam_Span}}分钟</row>
-                    <row>题量：{{paper.Tp_Count}}道</row>
-                    <row>总分：{{exam.Exam_Total}}分（{{paper.Tp_PassScore}}分及格）</row>
-                    <row>专业：{{subject.Sbj_Name}} </row>
-                    <row>课程：{{paper.Cou_Name}}</row>
+                    <row>题量：{{exam.Exam_QuesCount}}道</row>
+                    <row>总分：{{exam.Exam_Total}}分（{{exam.Exam_PassScore}}分及格）</row>
+                    <template v-if="exam.Exam_Purpose==0">
+                        <row>专业：{{subject.Sbj_Name}} </row>
+                        <row>课程：{{paper.Cou_Name}}</row>
+                    </template>
                 </card-content>
             </card>
         </el-dialog>

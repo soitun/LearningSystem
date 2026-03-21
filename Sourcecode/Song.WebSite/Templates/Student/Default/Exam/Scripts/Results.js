@@ -17,29 +17,22 @@ $ready(function () {
         },
         mounted: function () {
             var th = this;
-            th.loading_init = true;
-            $api.bat(
-                $api.get('Account/Current'),
-                $api.get('Organization/Current')
-            ).then(([account, organ]) => {
-                //获取结果
-                th.account = account.data.result;
+            th.organ = window.org;
+            th.config = window.config;
+            $api.login.current('account', acc => {
+                th.account = acc;
                 th.form.acid = th.account.Ac_ID;
-                th.organ = organ.data.result;
                 th.handleCurrentChange(1);
-                //机构配置信息
-                th.config = $api.organ(vapp.organ).config;
-            }).catch(err => console.error(err))
-                .finally(() => th.loading_init = false);
+            }, err => { });
+
         },
         created: function () {
 
         },
         computed: {
             //是否登录
-            islogin: function () {
-                return JSON.stringify(this.account) != '{}' && this.account != null;
-            }
+            islogin: t => JSON.stringify(t.account) != '{}' && t.account != null,
+
         },
         watch: {
         },
@@ -105,7 +98,13 @@ $ready(function () {
         watch: {
             'result': {
                 handler: function (nv, ov) {
-                    this.getDatas();
+                    var th = this;
+                    $api.get('Exam/ForID', { 'id': th.result.Exam_ID }).then(req => {
+                        th.exam = req.data.result;
+                        if (th.exam.Exam_Purpose == 0) th.getCourseTestpaper();
+                        else th.getExamTestpaper();
+                    });
+
                 }, immediate: true
             }
         },
@@ -114,20 +113,29 @@ $ready(function () {
 
         },
         methods: {
-            //获取详情
-            getDatas: function () {
+            //获取课程试卷的详情
+            getCourseTestpaper: function () {
                 var th = this;
                 th.loading = true;
                 //获取“试卷详情”
                 $api.bat(
-                    $api.cache('Exam/ForID', { 'id': this.result.Exam_ID }),
                     $api.cache('TestPaper/ForID', { 'id': this.result.Tp_Id }),
                     $api.cache('Subject/ForID', { 'id': this.result.Sbj_ID })
-                ).then(([exam, paper, subject]) => {
-                    //获取结果
-                    th.exam = exam.data.result;
+                ).then(([paper, subject]) => {
                     th.paper = paper.data.result;
                     th.subject = subject.data.result;
+                }).catch(err => console.error(err))
+                    .finally(() => th.loading = false);
+            },
+            //获取考试试卷
+            getExamTestpaper: function () {
+                var th = this;
+                th.loading = true;
+                //获取“试卷详情”
+                $api.bat(
+                    $api.cache('ExamTestPaper/ForID', { 'id': this.result.Tp_Id }),
+                ).then(([paper]) => {
+                    th.paper = paper.data.result;
                 }).catch(err => console.error(err))
                     .finally(() => th.loading = false);
             },

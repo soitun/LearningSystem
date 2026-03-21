@@ -39,8 +39,8 @@
         </div>
         <context v-if="!loading">
             <template v-if="error==''">
-                <div class="tp_name" v-if="exam && !!exam.Exam_Title">
-                    《 <span v-html="exam.Exam_Title"></span>》
+                <div class="tp_name" v-if="exam && !!exam.Exam_Name">
+                    《 <span v-html="exam.Exam_Name"></span>》
                 </div>
                 <div class="sticky">
                     <el-tabs v-model="tabactive">
@@ -62,7 +62,7 @@
                             </template>
                         </el-tab-pane>
                     </el-tabs>
-                    <span class="score" v-if="paper">（满分{{paper.Tp_Total}}分，{{paper.Tp_PassScore}}分及格）</span>
+                    <span class="score" v-if="paper">（满分{{totalScore}}分，{{passScore}}分及格）</span>
                     <alert v-else>试卷不存在</alert>
                 </div>
             </template>

@@ -166,7 +166,7 @@ namespace Song.ViewData.Methods
                 Song.Entities.TestPaper pager = Business.Do<ITestPaper>().PaperSingle(exas.Tp_Id);
                 if (pager != null)
                 {
-                    List<Song.Entities.TestPaperItem> items = Business.Do<ITestPaper>().GetItemForAny(pager);
+                    List<Song.Entities.TestPaperItem> items = Business.Do<ITestPaper>().PaperItems(pager);
                     foreach (Song.Entities.TestPaperItem ti in items)
                     {
                         if (ti.TPI_Type == 4)
@@ -388,9 +388,17 @@ namespace Song.ViewData.Methods
             Song.Entities.Examination exam = Business.Do<IExamination>().ExamSingle(examid);
             jo.Add("exist", !(exam == null || !exam.Exam_IsUse || exam.Exam_IsTheme));
             if (exam == null) return jo;
+            long tpid = exam.Exam_Purpose != 0 ? exam.Etp_Id : exam.Tp_Id;
             jo.Add("uid", exam.Exam_UID);               //考试主题的uid
+            jo.Add("exam", exam.ToJObject());
+            //考试主题
+            Examination theme = Business.Do<IExamination>().ExamTheme(exam.Exam_UID);
+            jo.Add("theme", theme.ToJObject());
             jo.Add("subject", exam.Sbj_ID.ToString());  //专业id
-            jo.Add("paper", exam.Tp_Id.ToString());     //试卷id
+            jo.Add("paperid", tpid);     //试卷id
+            //默认是0，表示关联的试卷来自课程，如果是1，则表示关联的试卷来自考试专用试卷
+            jo.Add("purpose", exam.Exam_Purpose);       //
+
             jo.Add("timespan", exam.Exam_Span);         //考试限时 
 
             //1为固定时间开始，2为限定时间区间考试
@@ -403,7 +411,7 @@ namespace Song.ViewData.Methods
             bool isStart, isOver, isSubmit;
             DateTime startTime, overTime;
             //答题记录
-            Song.Entities.ExamResults exr = Business.Do<IExamination>().ResultForCache(examid, exam.Tp_Id, acc.Ac_ID);
+            Song.Entities.ExamResults exr = Business.Do<IExamination>().ResultForCache(examid, tpid, acc.Ac_ID);
             if (exr != null) jo.Add("exrid", exr.Exr_ID);
             //判断是否已经开始、是否已经结束
             if (exam.Exam_DateType == 1)
@@ -481,32 +489,26 @@ namespace Song.ViewData.Methods
             {
                 XmlNode node = quesGroupNodes[i];
                 JObject ques = new JObject();
-                int type = Convert.ToInt32(node.Attributes["type"].Value);
+                int type = node.GetAttr<int>("type");
                 ques.Add("type", type);
-                float count, number;
-                float.TryParse(node.Attributes["count"].Value, out count);
-                float.TryParse(node.Attributes["number"].Value, out number);
-                ques.Add("count", count);
-                ques.Add("number", number);
+                ques.Add("byname", node.GetAttr("byname"));
+                ques.Add("count", node.GetAttr<float>("count"));
+                ques.Add("number", node.GetAttr<float>("number"));
                 JArray qarray = new JArray();
                 for (int n = 0; n < node.ChildNodes.Count; n++)
                 {
                     JObject jq = new JObject();
                     XmlNode q = node.ChildNodes[n];
-                    jq.Add("id", q.Attributes["id"].Value);
-
+                    jq.Add("id", q.GetAttr("id"));
                     string ans = string.Empty, file = string.Empty;
                     //如果是单选、多选、判断
-                    if (type == 1 || type == 2 || type == 3)
-                        ans = q.Attributes["ans"].Value;
+                    if (type == 1 || type == 2 || type == 3) ans = q.GetAttr("ans");
                     if (type == 4 || type == 5) ans = q.InnerText;
-                    if (type == 5) file = q.Attributes["file"] != null ? q.Attributes["file"].Value : "";
+                    if (type == 5) file = q.GetAttr("file");
                     ans = Html.ClearHTML(ans);
                     jq.Add("ans", ans);
                     if (q.Attributes["file"] != null) jq.Add("file", file);
-
-                    if (q.Attributes["class"] != null) jq.Add("cls", q.Attributes["class"].Value);                   
-                    if (q.Attributes["num"] != null) jq.Add("num", q.Attributes["num"].Value);
+                    jq.Add("num", q.GetAttr("num"));
                     qarray.Add(jq);
                 }
                 ques.Add("q", qarray);
@@ -525,14 +527,26 @@ namespace Song.ViewData.Methods
         [HttpGet]
         public JArray MakeoutPaper(int examid, long tpid,int stid)
         {
+            Examination exam = Business.Do<IExamination>().ExamSingle(examid);
+            if (exam == null || (exam.Exam_IsUse == false || exam.Exam_IsDeleted)) throw new Exception("当前考试不存在");
             //获取答题信息
             Song.Entities.ExamResults exr = Business.Do<IExamination>().ResultForCache(examid, tpid, stid);           
             if (exr != null && exr.Exr_IsSubmit) throw new Exception("已经交过卷");
 
             //试卷的试题，如果已经答题，则从答题信息中生成；如果没有答题，则随机生成
             Dictionary<TestPaperItem, List<Questions>> dics = null;
-            if (exr != null) dics = Business.Do<ITestPaper>().Putout(exr.Exr_Results, false);
-            else dics = Business.Do<ITestPaper>().Putout(tpid, false);
+            if (exam.Exam_Purpose == 0)
+            {
+                //课程试卷
+                if (exr != null) dics = Business.Do<ITestPaper>().Putout(exr.Exr_Results, false);
+                else dics = Business.Do<ITestPaper>().Putout(tpid, false);
+            }
+            else
+            {
+                //考试试卷
+                if (exr != null) dics = Business.Do<IExamTestPaper>().Putout(exr.Exr_Results, false);
+                else dics = Business.Do<IExamTestPaper>().Putout(tpid, false);
+            }
             //
             JArray jarr = new JArray();
             foreach (var di in dics)
@@ -543,6 +557,7 @@ namespace Song.ViewData.Methods
                 if (questions.Count < 1) continue;
                 JObject jo = new JObject();
                 jo.Add("type", (int)pi.TPI_Type);       //试题类型
+                jo.Add("byname", pi.TPI_TypeName);
                 jo.Add("count", questions.Count);       //试题数目
                 jo.Add("number", (float)pi.TPI_Number); //占用多少分
                 JArray ques = new JArray();
@@ -571,10 +586,10 @@ namespace Song.ViewData.Methods
             resXml.LoadXml(xml, false);
             //遍历试题答题内容
             XmlNodeList quesnodes = resXml.GetElementsByTagName("ques");
+            if (quesnodes.Count < 1) return jo;
             foreach (XmlNode ques in quesnodes)
             {
-                int type = 0;
-                int.TryParse(ques.Attributes["type"].Value, out type);
+                int type = ques.GetAttr<int>("type");
                 //填空和简答,清理冗余html标签
                 if (type == 4 || type == 5)
                 {
@@ -584,112 +599,78 @@ namespace Song.ViewData.Methods
                 }
             }
             XmlNode xn = getAttrBase64(resXml.SelectSingleNode("results"));
-            //试卷id，考试id
-            long tpid;
-            long.TryParse(xn.Attributes["tpid"].Value, out tpid);
-            int examid;
-            int.TryParse(xn.Attributes["examid"].Value, out examid);
+            //试卷id，考试id      
+            int examid = xn.GetAttr<int>("examid");
 
             DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
-            //考试开始时间
-            long begin;
-            long.TryParse(xn.Attributes["begin"].Value, out begin);
-            DateTime beginTime = dtStart.Add(new TimeSpan(begin * 10000));
-            //考试结束时间
-            long over;
-            long.TryParse(xn.Attributes["overtime"].Value, out over);
-            DateTime overTime = dtStart.Add(new TimeSpan(over * 10000));
-            //学员开始考试时间
-            long start;
-            long.TryParse(xn.Attributes["starttime"].Value, out start);
-            DateTime startTime = dtStart.Add(new TimeSpan(start * 10000));
-            //学生Id,学生名称
-            int stid;
-            int.TryParse(xn.Attributes["stid"].Value, out stid);
-            string stname = xn.Attributes["stname"].Value.ToString();
-            //学生性别，分组，身份证号
-            int stsex;
-            int.TryParse(xn.Attributes["stsex"].Value, out stsex);
-            long stsid;
-            long.TryParse(xn.Attributes["stsid"].Value, out stsid);
-            string stcardid = xn.Attributes["stcardid"].Value.ToString();
-            //学科Id,学科名称
-            long sbjid;
-            long.TryParse(xn.Attributes["sbjid"].Value, out sbjid);
-            string sbjname = xn.Attributes["sbjname"].Value.ToString();
-            //UID与考试主题
-            string uid = xn.Attributes["uid"].Value.ToString();
-            string theme = xn.Attributes["theme"].Value.ToString();
-            //提交方式，1为自动提交，2为交卷
-            int patter = Convert.ToInt32(xn.Attributes["patter"].Value);
+            ////考试开始时间,结束时间
+            //DateTime beginTime = xn.Attributes["begin"]?.Value?.ConvertNullable<DateTime>() ?? dtStart;
+            //DateTime overTime = xn.Attributes["overtime"]?.Value?.ConvertNullable<DateTime>() ?? dtStart;           
 
+            //提交方式，1为自动提交，2为交卷
+            int patter = xn.GetAttr<int>("patter", 1);
             //
             Song.Entities.Examination exam = Business.Do<IExamination>().ExamSingle(examid);
             //如果考试不存在
             if (exam == null) throw new Exception("当前考试不存在！");
             //如果考试已经结束
             int span = (int)exam.Exam_Span;
-            //if (DateTime.Now > ((DateTime)exam.Exam_Date).AddMinutes(span + 5)) return 0;  
 
-            try
-            {               
-                Song.Entities.ExamResults exr = new ExamResults();
-                exr.Exr_IsSubmit = patter == 2;
-                exr.Exam_ID = examid;
-                exr.Exam_Name = exam.Exam_Name;
-                exr.Tp_Id = tpid;
-                exr.Ac_ID = stid;
-                exr.Ac_Name = stname;
-                exr.Sts_ID = stsid;
-                exr.Ac_Gender = stsex;
-                exr.Ac_IDCardNumber = stcardid;
-                exr.Sbj_ID = sbjid;
-                exr.Sbj_Name = sbjname;
-                exr.Exr_IP = WeiSha.Core.Browser.IP;
-                exr.Exr_Mac = WeiSha.Core.Request.UniqueID();   //原本是网卡的mac地址,此处不再记录
-                exr.Exr_Results = resXml.OuterXml;
-                exr.Exam_UID = uid;
-                exr.Exam_Title = theme;
-                //exr.Exr_IsSubmit = patter == 2;
-                if (exr.Exr_IsSubmit) exr.Exr_SubmitTime = DateTime.Now;
-                exr.Exr_OverTime = overTime;
-                exr.Exr_CrtTime = startTime;
-                exr.Exr_LastTime = DateTime.Now;
+            Song.Entities.ExamResults exr = new ExamResults();
+            exr.Exr_IsSubmit = patter == 2;
+            exr.Exam_ID = xn.GetAttr<int>("examid");    //考试id
+            exr.Exam_Name = exam.Exam_Name;
+            exr.Tp_Id = xn.GetAttr<long>("tpid");       //试卷id
+            exr.Ac_ID = xn.GetAttr<int>("stid");        //学员id
+            exr.Ac_Name = xn.GetAttr("stname");         //学员名称
+            exr.Sts_ID = xn.GetAttr<long>("stsid");     //学员分组id
+            exr.Ac_Gender = xn.GetAttr<int>("stsex");   //性别
+            exr.Ac_IDCardNumber = xn.GetAttr("stcardid");   //学员身份证号
+            exr.Sbj_ID = xn.GetAttr<long>("sbjid", 0);     //专业id
+            exr.Sbj_Name = xn.GetAttr("sbjname");
+            exr.Exr_IP = WeiSha.Core.Browser.IP;
+            exr.Exr_Mac = WeiSha.Core.Request.UniqueID();   //原本是网卡的mac地址,此处不再记录
+            exr.Exr_Results = resXml.OuterXml;
+            //UID与考试主题
+            exr.Exam_UID = xn.GetAttr("uid");
+            exr.Exam_Title = xn.GetAttr("theme");
+            //exr.Exr_IsSubmit = patter == 2;
+            if (exr.Exr_IsSubmit) exr.Exr_SubmitTime = DateTime.Now;
+            exr.Exr_OverTime = xn.GetAttr<DateTime>("overtime");
+            exr.Exr_CrtTime = xn.GetAttr<DateTime>("starttime");
+            exr.Exr_LastTime = DateTime.Now;
 
-                //缓存当前答题信息
-                Business.Do<IExamination>().ResultCacheUpdate(exr, -1);
-                if (patter == 1) return jo;
-                exr = Business.Do<IExamination>().ResultSubmit(exr);
-                //是否重复提交
-                jo.Add("resubmit", exr.Exr_IsCalc);
-                //如果是手动提交，且没有计算成绩的，此处计算成绩
-                double score = -1;
-                if (exr.Exr_IsSubmit && !exr.Exr_IsCalc)
-                {
-                    //异步计算成绩
-                    if (async)
-                    {
-                        //后台异步计算
-                        Exam_Calc handler = new Exam_Calc(exr);
-                        System.Threading.Tasks.Task task = new System.Threading.Tasks.Task(handler.Calc);
-                        task.Start();
-                    }
-                    else
-                    {
-                        //实时计算成绩
-                        Business.Do<IExamination>().ResultClacScore(exr);
-                    }
-                }
-                if (exr.Exr_IsCalc) score = exr.Exr_ScoreFinal;
-                jo.Add("examid", exr.Exam_ID);
-                jo.Add("exrid", exr.Exr_ID);
-                jo.Add("score", score);
-                jo.Add("async", async);
-            }
-            catch(Exception ex)
+            //缓存当前答题信息
+
+            Business.Do<IExamination>().ResultCacheUpdate(exr, -1);
+            //if (patter == 1) return jo;
+            exr = Business.Do<IExamination>().ResultSubmit(exr);
+            //是否重复提交
+            jo.Add("resubmit", exr.Exr_IsCalc);
+            //如果是手动提交，且没有计算成绩的，此处计算成绩
+            double score = -1;
+            if (exr.Exr_IsSubmit && !exr.Exr_IsCalc)
             {
-                throw ex;
+                //异步计算成绩
+                if (async)
+                {
+                    //后台异步计算
+                    Exam_Calc handler = new Exam_Calc(exr);
+                    System.Threading.Tasks.Task task = new System.Threading.Tasks.Task(handler.Calc);
+                    task.Start();
+                }
+                else
+                {
+                    //实时计算成绩
+                    Business.Do<IExamination>().ResultClacScore(exr);
+                }
             }
+            if (exr.Exr_IsCalc) score = exr.Exr_ScoreFinal;
+            jo.Add("examid", exr.Exam_ID);
+            jo.Add("exrid", exr.Exr_ID);
+            jo.Add("score", score);
+            jo.Add("async", async);
+
             return jo;
         }
         /// <summary>
@@ -1152,25 +1133,22 @@ namespace Song.ViewData.Methods
             XmlDocument resXml = new XmlDocument();
             //考试信息
             Song.Entities.Examination exam = Business.Do<IExamination>().ExamSingle(result.Exam_ID);
-            if (exam == null) return result;          
-            //试卷
-            Song.Entities.TestPaper tp = Business.Do<ITestPaper>().PaperSingle(result.Tp_Id);
-            if (tp == null) throw new Exception("考试所用试卷不存在");
-            
+            if (exam == null) return result;
+            List<TestPaperItem> paperitems = exam.Exam_Purpose == 0 ? Business.Do<ITestPaper>().PaperItems(exam.Tp_Id) : Business.Do<IExamTestPaper>().PaperItems(exam.Etp_Id);
             resXml.LoadXml(result.Exr_Results, false);
-            //遍历试题答题内容
-            XmlNodeList quesnodes = resXml.GetElementsByTagName("ques");
-            foreach (XmlNode ques in quesnodes)
+            XmlNode results = resXml.SelectSingleNode("results");
+            foreach (TestPaperItem item in paperitems)
             {
-                int type = 0;
-                int.TryParse(ques.Attributes["type"].Value, out type);
+                XmlNode xn = results.SelectSingleNode($"ques[@type='{item.TPI_Type}']");
+                if (xn == null) continue;
                 //填空和简答,清理冗余html标签
-                if (type == 4 || type == 5)
+                if (item.TPI_Type == 4 || item.TPI_Type == 5)
                 {
-                    foreach(XmlNode q in ques.ChildNodes)                  
+                    foreach (XmlNode q in xn.ChildNodes)
                         q.InnerText = Html.ClearHTML(q.InnerText);
-                   
-                }               
+
+                }
+                xn.SetAttr("byname", item.TPI_TypeName);
             }
             result.Exr_Results = resXml.InnerXml;
             //判断开始时间与结束时间，是否考试结束等

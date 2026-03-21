@@ -24,13 +24,12 @@ Vue.component('question', {
                     this.accessoryLoad();
                 }
                 this.$nextTick(function () {
-                    var dom = $dom("card[qid='" + this.qans.id + "']");
-                    //console.error(dom);
+                    let dom = $dom("card[qid='" + this.qans.id + "']");
                     //清理空元素                
                     window.ques.clearempty(dom.find('card-title'));
                     window.ques.clearempty(dom.find('.ans_area'));
                     //公式渲染
-                    this.$mathjax([dom[0]]);
+                    //this.$mathjax([dom[0]]);
                 });
             },
             immediate: true
@@ -41,6 +40,9 @@ Vue.component('question', {
             },
             immediate: true
         }
+    },
+    updated: function () {
+        this.$mathjax();
     },
     computed: {
         //是否试题加载完成
