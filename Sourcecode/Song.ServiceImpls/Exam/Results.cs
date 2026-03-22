@@ -192,8 +192,8 @@ namespace Song.ServiceImpls.Exam
             this.IDCardNumber = xn.GetAttr("stcardid");
 
             //试卷id,专业id,专业名称
-            this.TestPaperID = xn.GetAttr<long>("tpid"); 
-            this.SubjectID = xn.GetAttr<long>("sbjid"); 
+            this.TestPaperID = xn.GetAttr<long>("tpid", 0);
+            this.SubjectID = xn.GetAttr<long>("sbjid", 0); 
             this.SubjectName = xn.GetAttr("sbjname");
 
             //交卷方式与当前试题
@@ -524,18 +524,16 @@ namespace Song.ServiceImpls.Exam
         /// <param name="index">试题索引</param>
         public QuesAnswer(XmlNode node, int index)
         {
-            this.Node = node;            
-            this.Type = Convert.ToInt32(node.ParentNode.Attributes["type"].Value);
-            this.ID = Convert.ToInt64(node.Attributes["id"].Value);
-            this.Num = Convert.ToSingle(node.Attributes["num"].Value);
-            if (this.Type == 4 || this.Type == 5)
-                this.Ans = node.InnerText; 
-            else
-                this.Ans = node.Attributes["ans"] != null ? node.Attributes["ans"].Value : "";
+            this.Node = node;
+            this.Type = node.ParentNode.GetAttr<int>("type");
+            this.ID = node.GetAttr<long>("id");
+            this.Num = node.GetAttr<float>("num");
+            if (this.Type == 4 || this.Type == 5) this.Ans = node.InnerText;
+            else this.Ans = node.GetAttr("ans");
 
-            this.File = node.Attributes["file"] != null ? node.Attributes["file"].Value : "";
-            this.Sucess = node.Attributes["sucess"] != null ? Convert.ToBoolean(node.Attributes["sucess"].Value) : false;
-            this.Score = node.Attributes["score"] != null ? Convert.ToSingle(node.Attributes["score"].Value) : 0;
+            this.File = node.GetAttr("file");
+            this.Sucess = node.GetAttr<bool>("sucess", false);
+            this.Score = node.GetAttr<float>("score", 0);
 
             this.Index = index;
         }
@@ -619,10 +617,9 @@ namespace Song.ServiceImpls.Exam
                         itemid.Add(_answers[i].Ans_ID);
                 }
                 Random rd = new Random(_answers.Count * this.Index + (int)(DateTime.Now.Ticks % int.MaxValue));
-                int idx = rd.Next(100) % itemid.Count;
                 //如果有一个答案项
                 if (itemid.Count <= 1) this.Ans = string.Empty;
-                else this.Ans = itemid[idx].ToString();
+                else this.Ans = itemid[rd.Next(100) % itemid.Count].ToString();
             }
             //多选题
             if (this.Type == 2)
@@ -781,12 +778,11 @@ namespace Song.ServiceImpls.Exam
         public void RebuildNode()
         {
             if (this.Node == null) return;
-            this.Node.Attributes["id"].Value = this.ID.ToString();
-            this.Node.Attributes["sucess"].Value = this.Sucess.ToString().ToLower();
-            this.Node.Attributes["score"].Value = this.Score.ToString();
-            if (this.Type == 4 || this.Type == 5)
-                this.Node.InnerText = this.Ans;
-            else this.Node.Attributes["ans"].Value = this.Ans;
+            this.Node.SetAttr("id", this.ID.ToString());
+            this.Node.SetAttr("sucess", this.Sucess.ToString().ToLower());
+            this.Node.SetAttr("score", this.Score.ToString());
+            if (this.Type == 4 || this.Type == 5) this.Node.InnerText = this.Ans;
+            else this.Node.SetAttr("ans", this.Ans);
         }
     }
     #endregion

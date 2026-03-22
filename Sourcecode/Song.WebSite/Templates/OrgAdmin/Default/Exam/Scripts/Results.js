@@ -205,7 +205,7 @@
                     btnOpen: function (row, file, title, icon, width, height) {
                         file = $api.url.set(file, { 'id': row.Exam_ID });
                         let boxid = file + "_" + row.Exam_ID;
-                        var title = title + '  - “' + row.Exam_Title + "”";
+                        var title = title + '  - “' + row.Exam_Title + "” - " + row.Exam_Name;
                         if (width == null) width = "80%";
                         if (height == null) height = "80%";
                         window.vapp.openbox(file, boxid, title, width, height, { 'ico': icon });
