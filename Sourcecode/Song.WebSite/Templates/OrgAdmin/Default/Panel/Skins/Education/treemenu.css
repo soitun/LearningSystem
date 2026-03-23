@@ -64,3 +64,10 @@ div.querypanel>section>section>tree_area {
             transparent 25%, transparent 50%, rgba(255, 255, 255, 0.05) 50%,
             rgba(255, 255, 255, 0.1) 75%, transparent 75%, transparent);
 }
+
+/*左侧菜单树的选项卡，垂直居中*/
+.treemenu tree_tags{
+    justify-content: center;
+    padding-bottom: 40px;
+    box-sizing: border-box;
+}
