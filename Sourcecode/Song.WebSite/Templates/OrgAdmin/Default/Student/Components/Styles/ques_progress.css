@@ -1,15 +1,11 @@
-﻿.ques_progress{
-    font-size: 15px;   
-}
-
-.ques_progress>div:first-child {
-    display: flex;
-    justify-content: space-between;
+﻿
+.ques_progress{
+  position: relative;
 }
 
 .ques_progress .progress {
     position: absolute;
-    bottom: 5px;
+    bottom: 0px;
     width: calc(100% - 8px);
     display: flex;
     box-sizing: border-box;

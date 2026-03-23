@@ -1,15 +1,11 @@
-﻿.video_progress {
-    font-size: 15px;   
-}
-
-.video_progress>div:first-child {
-    display: flex;
-    justify-content: space-between;
+﻿
+.video_progress {
+    position: relative;
 }
 
 .video_progress .progress {
-   
-    bottom: 5px;
+    position: absolute;
+    bottom: 0px;
     width: calc(100% - 8px);
     display: flex;
     box-sizing: border-box;
@@ -34,3 +30,4 @@
 .video_progress .el-progress:hover{
     transform: scale(1.05);
 }
+
