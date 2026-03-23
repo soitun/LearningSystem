@@ -73,9 +73,12 @@ Vue.component('createscore', {
     methods: {
         //显示面板
         show: function (acc) {
-            this.showpanel = true;
-            this.account = acc;
-            this.form.acid = acc.Ac_ID;
+            var th = this;
+            $api.login.current('super', d => {
+                th.showpanel = true;
+                th.account = acc;
+                th.form.acid = acc.Ac_ID;
+            });
         },
         //设置考试成绩
         setResultScore: function () {

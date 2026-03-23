@@ -98,7 +98,8 @@ Vue.component('createbatchscore', {
     methods: {
         //显示面板
         show: function () {
-            this.showpanel = true;
+            var th = this;
+            $api.login.current('super', d => th.showpanel = true);
         },
         //设置考试成绩
         setResultScore: function () {

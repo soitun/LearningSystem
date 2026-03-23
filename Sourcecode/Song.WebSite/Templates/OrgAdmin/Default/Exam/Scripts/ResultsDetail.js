@@ -328,6 +328,13 @@ $ready(['Components/setscore.js'],
                     });
                     box.open();
                 },
+                //打开修改成绩的面板
+                setScoreShow: function (item) {
+                    //打开修改面板
+                    var setscore = this.$refs['setscore'];
+                    if (setscore == null) return;
+                    $api.login.current('super', d => setscore.show(item));
+                },
                 //设置得分后，更新成绩
                 setScoreupdate: function (item) {
                     let index = this.datas.findIndex(t => t.Exr_ID == item.Exr_ID);

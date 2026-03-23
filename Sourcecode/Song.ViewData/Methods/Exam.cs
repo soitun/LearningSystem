@@ -936,6 +936,7 @@ namespace Song.ViewData.Methods
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <returns></returns>
+        [Admin,Teacher]
         public ListResult AbsenceExamAccounts(int examid, string name, string idcard, string phone, long stsid, int size, int index)
         {
             int total;
@@ -1193,6 +1194,7 @@ namespace Song.ViewData.Methods
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <returns></returns>
+        [Admin,Teacher]
         public ListResult Result4Exam(int examid, string name, string idcard, long stsid, float min, float max, bool? manual, int size, int index)
         {
             int count;
@@ -1271,6 +1273,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="exrid">考试记录的id</param>
         /// <returns></returns>
+        [Admin,Teacher]
         public float ResultClacScore(int exrid)
         {
             ExamResults exr = Business.Do<IExamination>().ResultSingle(exrid);
@@ -1286,6 +1289,7 @@ namespace Song.ViewData.Methods
         /// <param name="score">得分</param>
         /// <param name="time">开始时间</param>
         /// <param name="dura">用时</param>
+        [Admin]
         public ExamResults ResultSetScore(int exrid, float score, DateTime? time, int dura)
         {
             ExamResults exr = Business.Do<IExamination>().ResultSingle(exrid);
@@ -1301,6 +1305,7 @@ namespace Song.ViewData.Methods
         /// <param name="score">得分</param>
         /// <param name="time">开始时间</param>
         /// <param name="dura">用时</param>
+        [Admin]
         public ExamResults ResultCreateScore(int examid,int acid, float score, DateTime? time, int dura)
         {
             return Business.Do<IExamination>().ResultSetScore(examid, acid, score, time, dura);
@@ -1316,6 +1321,7 @@ namespace Song.ViewData.Methods
         /// <param name="minSpan">最短考试用时</param>
         /// <param name="maxSpan">最长考试用时</param>
         /// <returns></returns>
+        [Admin]
         public JObject ResultAbsenceBatchScore(int examid, int minScore, int maxScore, DateTime minTime, DateTime maxTime, int minSpan, int maxSpan)
         {
             var task= Business.Do<IExamination>().ResultAbsenceBatchScore(examid, minScore, maxScore, minTime, maxTime, minSpan, maxSpan);
@@ -1329,6 +1335,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="examid"></param>
         /// <returns></returns>
+        [Admin]
         public JObject ResultAbsenceBatchScoreLoading(int examid)
         {
             var task = Business.Do<IExamination>().ResultAbsenceBatchScore(examid);
