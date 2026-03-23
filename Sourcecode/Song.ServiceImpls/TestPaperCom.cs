@@ -443,10 +443,8 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public Dictionary<TestPaperItem, List<Questions>> Putout(TestPaper tp, bool isanswer)
         {
-            if (tp.Tp_FromType == 1) 
-                return _putout_1(tp, isanswer);
-            else
-                return _putout_0(tp, isanswer);
+            if (tp.Tp_FromType == 1) return _putout_1(tp, isanswer);
+            else return _putout_0(tp, isanswer);
         }
         /// <summary>
         /// 按课程抽题组卷

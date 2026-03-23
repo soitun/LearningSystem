@@ -1760,6 +1760,15 @@ namespace Song.ServiceImpls
             Accounts acc = accountsCom.AccountsSingle(accid);
             return ResultSetScore(exam, acc, score, time, duration);
         }
+        /// <summary>
+        /// 自助设置考试成绩得分，如果没有成绩记录，则创建一个
+        /// </summary>
+        /// <param name="exam">考试场次的对象</param>
+        /// <param name="acc">学员账号的对象</param>
+        /// <param name="score">期望的得分</param>
+        /// <param name="time">考试开始时间</param>
+        /// <param name="duration">考试用时，单位分钟</param>
+        /// <returns></returns>
         public ExamResults ResultSetScore(Examination exam, Accounts acc, float score, DateTime? time, int duration)
         {
             ExamResults exr = this.ResultSingle(acc.Ac_ID, exam.Exam_ID);     //考试答题记录的对象        
@@ -1781,21 +1790,30 @@ namespace Song.ServiceImpls
                 //机构信息               
                 exr.Org_ID = acc.Org_ID;      
                 exr.Org_Name = exam.Org_Name;
-                //试卷信息
-                TestPaper tp = tpCom.PaperSingle(exam.Tp_Id);
-                exr.Tp_Id = tp.Tp_Id;
-                //专业信息
-                Subject subject = sbjCom.SubjectSingle(tp.Sbj_ID);
-                if (subject != null)
+                //试卷信息               
+                if (exam.Exam_Purpose == 0)
                 {
-                    exr.Sbj_ID = subject.Sbj_ID;
-                    exr.Sbj_Name = subject.Sbj_Name;
+                    exr.Tp_Id = exam.Tp_Id;
+                    TestPaper tp = tpCom.PaperSingle(exam.Tp_Id);
+                    if (tp != null)
+                    {
+                        //专业信息
+                        Subject subject = sbjCom.SubjectSingle(tp.Sbj_ID);
+                        if (subject != null)
+                        {
+                            exr.Sbj_ID = subject.Sbj_ID;
+                            exr.Sbj_Name = subject.Sbj_Name;
+                        }
+                    }
                 }
+                else
+                    exr.Tp_Id = exam.Etp_Id;
                 //IP与Mac
                 exr.Exr_IP = WeiSha.Core.IP.Random();
                 exr.Exr_Mac = WeiSha.Core.Request.UniqueID();   //原本是网卡的mac地址,此处不再记录
                 //出卷,生成试卷
-                Song.ServiceImpls.Exam.Results results = Song.ServiceImpls.Exam.TestPaperHandler.Putout(exr.Tp_Id).ToResults(exam, acc);
+                Exam.TestPaperHandler handler = Song.ServiceImpls.Exam.TestPaperHandler.Putout(exam);
+                Song.ServiceImpls.Exam.Results results = handler.ToResults(acc);
                 exr.Exr_Results = results.OutputXML(false);
             }
             exr = this.ResultSetScore(exr, score, time, duration);

@@ -8,6 +8,7 @@ using Song.Entities;
 using System.Reflection;
 using Newtonsoft.Json.Linq;
 using WeiSha.Core;
+using WeiSha.Data;
 
 namespace Song.ServiceImpls.Exam
 {
@@ -16,16 +17,21 @@ namespace Song.ServiceImpls.Exam
     /// </summary>
     public class TestPaperHandler
     {
-        private static readonly TestPaperCom tpcom = new Song.ServiceImpls.TestPaperCom();
+        //课程试卷的操作对象
+        private static readonly TestPaperCom tpcom = new Song.ServiceImpls.TestPaperCom();       
+        //考试试卷的操作对象
+        private static readonly ExamTestPaperCom etpcom = new Song.ServiceImpls.ExamTestPaperCom();
+
+        private static readonly SubjectCom sbjcom = new Song.ServiceImpls.SubjectCom();
         private static readonly QuestionsCom quescom = new Song.ServiceImpls.QuestionsCom();
         /// <summary>
         /// 试卷ID
         /// </summary>
-        public long TestPaperID { get; set; }
+        public long TestPaperID { get; set; }        
         /// <summary>
-        /// 试卷实体对象
+        /// 考试场次的对象
         /// </summary>
-        public Song.Entities.TestPaper TestPaperEntity { get; set; }
+        public Examination Exam { get; set; }
         /// <summary>
         /// 生成的试卷的内容，包括试题和得分等
         /// </summary>
@@ -34,11 +40,12 @@ namespace Song.ServiceImpls.Exam
         /// <summary>
         /// 构建方法
         /// </summary>
+        /// <param name="exam"></param>
         /// <param name="tpid"></param>
-        public TestPaperHandler(long tpid)
+        public TestPaperHandler(Examination exam)
         {
-            this.TestPaperID = tpid;
-            this.TestPaperEntity = tpcom.PaperSingle(tpid);
+            this.Exam = exam;
+            this.TestPaperID = exam.Exam_Purpose == 0 ? exam.Tp_Id : exam.Etp_Id;                  
         }
         public TestPaperHandler()
         {
@@ -48,20 +55,34 @@ namespace Song.ServiceImpls.Exam
         /// <summary>
         /// 生成试卷
         /// </summary>
+        /// <param name="examid">考试场次的id</param>
         /// <param name="tpid">试卷id</param>
         /// <returns></returns>
-        public static TestPaperHandler Putout(long tpid) => Putout(tpid, false);
+        public static TestPaperHandler Putout(int examid)
+        {
+            Examination exam = Gateway.Default.From<Examination>().Where(Examination._.Exam_ID == examid).ToFirst<Examination>();
+            return Putout(exam);
+        }
         /// <summary>
         /// 生成试卷
         /// </summary>
+        /// <param name="exam"></param>
         /// <param name="tpid">试卷id</param>
         /// <param name="isanswer">试题是否带答案，模拟考试一般带答案，方便前端计算成绩</param>
         /// <returns></returns>
-        public static TestPaperHandler Putout(long tpid, bool isanswer)
+        public static TestPaperHandler Putout(Examination exam)
         {
-            TestPaperHandler tp = new TestPaperHandler(tpid);            
-            tp.PagerContents = tpcom.Putout(tp.TestPaperEntity, isanswer);  //生成试卷
-            return tp;
+            return Putout(exam, false);
+        }
+        public static TestPaperHandler Putout(Examination exam, bool isanswer)
+        {
+            TestPaperHandler handler = new TestPaperHandler(exam);
+            //生成试卷,分课程试卷和考试试卷
+            if (exam.Exam_Purpose==0)
+                handler.PagerContents = tpcom.Putout(exam.Tp_Id, isanswer); 
+            else
+                handler.PagerContents = etpcom.Putout(exam.Etp_Id, isanswer);
+            return handler;
         }
         #endregion
 
@@ -119,14 +140,12 @@ namespace Song.ServiceImpls.Exam
                 //按题型输出
                 Song.Entities.TestPaperItem pi = (Song.Entities.TestPaperItem)di.Key;   //试题类型                
                 List<Questions> questions = (List<Questions>)di.Value;   //当前类型的试题
-                int type = (int)pi.TPI_Type;    //试题类型
-                int count = questions.Count;  //试题数目
-                float num = (float)pi.TPI_Number;   //占用多少分
-                if (count < 1) continue;
+                if (questions.Count < 1) continue;
                 JObject jo = new JObject();
-                jo.Add("type", type);
-                jo.Add("count", count);
-                jo.Add("number", num);
+                jo.Add("type", pi.TPI_Type);     //试题类型
+                jo.Add("byname", pi.TPI_TypeName);  //题型的名称
+                jo.Add("count", questions.Count);   //试题数目
+                jo.Add("number", pi.TPI_Number);     //占用多少分                
                 JArray ques = new JArray();
                 foreach (Song.Entities.Questions q in questions)
                 {
@@ -149,9 +168,27 @@ namespace Song.ServiceImpls.Exam
             doc.AppendChild(xmlDeclaration);
             //创建根节点
             XmlElement root = doc.CreateElement("results");
-            root.SetAttribute("tpid", this.TestPaperEntity.Tp_Id.ToString());   //试卷ID
-            root.SetAttribute("sbjid", this.TestPaperEntity.Sbj_ID.ToString());   //专业id
-            root.SetAttribute("sbjname", this.TestPaperEntity.Sbj_Name.ToString());   //专业名称
+            root.SetAttribute("tpid", this.TestPaperID.ToString());   //试卷ID
+            //如果是程序试卷，则添加专业信息
+            if (this.Exam.Exam_Purpose == 0)
+            {
+                long sbjid = 0;
+                string sbjname = "";
+                TestPaper tp = tpcom.PaperSingle(Exam.Tp_Id);
+                if (tp != null)
+                {
+                    //专业信息
+                    Subject subject = sbjcom.SubjectSingle(tp.Sbj_ID);
+                    if (subject != null)
+                    {
+                        sbjid = subject.Sbj_ID;
+                        sbjname = subject.Sbj_Name;
+                    }
+                }
+                root.SetAttribute("sbjid", sbjid.ToString());   //专业id
+                root.SetAttribute("sbjname", sbjname);   //专业名称
+            }
+
             doc.AppendChild(root);
             Dictionary<TestPaperItem, List<Questions>> dics = this.PagerContents;
             foreach (var di in dics)
@@ -163,6 +200,7 @@ namespace Song.ServiceImpls.Exam
                 elques.SetAttribute("type", pi.TPI_Type.ToString());
                 elques.SetAttribute("count", questions.Count.ToString());
                 elques.SetAttribute("number", pi.TPI_Number.ToString());
+                elques.SetAttribute("byname", pi.TPI_TypeName);
                 //
                 foreach (Song.Entities.Questions q in questions)
                 {
@@ -212,6 +250,14 @@ namespace Song.ServiceImpls.Exam
             results.SortID = acc.Sts_ID;
             
             return results;
+        }
+        /// <summary>
+        /// 根据试卷生成答题的xml解析对象
+        /// </summary>
+        /// <returns></returns>
+        public Results ToResults(Accounts acc)
+        {
+            return ToResults(this.Exam, acc);
         }
         #endregion
     }
