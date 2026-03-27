@@ -162,9 +162,10 @@ Vue.component('btngroup', {
             if (args.length == 0) return;
             //第一个参数为按钮的id
             let btnid = args.length > 0 ? args[0] : null;
+            let btn = this.buttonArray.find(t => t.id == btnid);
             //按钮事件
             let existEvent = this.$listeners[btnid];
-            if (existEvent) return existEvent.apply(this, args.slice(1));
+            if (existEvent) return existEvent.apply(this, [btn,args[1]]);
         },
         //添加按钮事件
         add: function (url, param) {

@@ -672,6 +672,8 @@
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\Styles\ques_error.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\Styles\ques_wrong.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\tagselect.js" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\Export.html" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\Import.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\KnlRecy.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Knowledge.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\KnowledgeModify.html" />
@@ -687,6 +689,8 @@
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Questions.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\QuestionsCollect.html" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\QuestionsRecy.html" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\Export.js" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\Import.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\KnlRecy.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\Knowledge.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\KnowledgeModify.js" />
@@ -705,6 +709,8 @@
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\Tags.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\TagsRecy.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Scripts\Testpaper.js" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\Export.css" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\Import.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\KnlRecy.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\Knowledge.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Styles\KnowledgeModify.css" />
