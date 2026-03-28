@@ -124,7 +124,7 @@ Vue.component('upload-excel', {
             th.loading = true;
             var params = { 'xls': th.book.url, 'sheet': th.sheet.index, 'config': th.config_file, 'matching': marry };
             if (th.params != null) {
-                for (var k in th.params)
+                for (let k in th.params)
                     params[k] = th.params[k];
             }
             $api.post(th.apiurl, params).then(function (req) {
