@@ -28,17 +28,10 @@
         },
         created: function () {
             var th = this;
-            $api.bat(
-                $api.get('Organization/Current')
-            ).then(([org]) => {
-                //获取结果             
-                th.organ = org.data.result;
-                //机构配置信息
-                th.config = $api.organ(th.organ).config;
-                th.form.orgid = th.organ.Org_ID;
-                th.handleCurrentChange();
-            }).catch(err => console.error(err))
-                .finally(() => th.loading_init = false);
+            th.org = window.org;
+            th.config = window.config;
+            th.form.orgid = th.organ.Org_ID;
+            th.handleCurrentChange();
         },
         methods: {
             //选择时间区间
@@ -171,7 +164,7 @@
                                     $api.cache('Exam/Average4Exam', { 'examid': th.examlist[i].Exam_ID }),
                                     $api.get("Exam/AttendCount", { 'examid': th.examlist[i].Exam_ID }),     //参考人次
                                     $api.cache("Exam/AbsenceCount", { 'examid': th.examlist[i].Exam_ID }),  //缺考人数
-                                    $api.cache("Exam/Manual4Exam", { 'examid': th.examlist[i].Exam_ID })    
+                                    $api.cache("Exam/Manual4Exam", { 'examid': th.examlist[i].Exam_ID })
                                 ).then(([avg, num, absence, manual]) => {
                                     for (var n = 0; n < th.examlist.length; n++) {
                                         if (th.examlist[n].Exam_ID == avg.data.result.id) {
