@@ -13,7 +13,10 @@
             <el-tab-pane label="试题分类">
                <selectpart :orgid="org.Org_ID" @update="updatepart"></selectpart>
             </el-tab-pane>
-            <el-tab-pane label="知识点">知识点</el-tab-pane>
+            <el-tab-pane label="知识点">
+                <selectknl :orgid="org.Org_ID" @update="updateknl"></selectknl>
+
+            </el-tab-pane>
         </el-tabs>
     </div>
 </body>

@@ -1,6 +1,7 @@
 $ready(['/Utilities/Components/upload-excel.js',
     '../Question/Components/ques_type.js',
-    'Components/selectpart.js'],
+    'Components/selectpart.js',
+    'Components/selectknl.js',],
     function () {
         window.vapp = new Vue({
             el: '#vapp',
@@ -42,9 +43,13 @@ $ready(['/Utilities/Components/upload-excel.js',
 
             },
             methods: {
-                updatepart: function (parts,partid) {
+                updatepart: function (parts, partid) {
                     console.error(parts);
                     console.error(partid);
+                },
+                updateknl: function (knl, knlid) {
+                    console.error(knl);
+                    console.error(knlid);
                 },
                 //选择试题类型
                 selectType: function (type) {

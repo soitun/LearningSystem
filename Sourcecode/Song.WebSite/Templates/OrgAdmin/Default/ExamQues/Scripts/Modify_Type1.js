@@ -5,7 +5,7 @@ $ready(
         '../Question/Components/ques_type.js',
         'Components/selectpart.js',
         'Components/modify_main.js',
-        'Components/knowledge.js',
+        'Components/selectknl.js',
         'Components/general.js',
         'Components/ques_diff.js',
         'Components/ques_error.js',

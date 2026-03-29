@@ -237,7 +237,7 @@ Vue.component('modify_main', {
             :menubar="false" model="question" @change="text=>question.Qus_Explain=text"></editor>          
         </div>
         <div v-show="activeName=='knowledge'" remark="知识点">
-            <knowledge :question="question" :org="org"></knowledge>
+            <selectknl :knls="question.Knls" :orgid="question.Org_ID" @update="d=>question.Knls=d"></selectknl>
         </div>
         <div v-show="activeName=='error'" remark="存在编辑错误">
             <ques_error :question="question"></ques_error>
