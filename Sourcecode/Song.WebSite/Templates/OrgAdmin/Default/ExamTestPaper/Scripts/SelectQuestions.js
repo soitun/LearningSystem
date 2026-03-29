@@ -3,7 +3,7 @@ $ready([
     '../Question/Components/ques_type.js',      //题型
     '../ExamQues/Components/ques_diff.js',      //难度
     '../ExamQues/Components/ques_collect.js',   //收藏
-    '../ExamQues/Components/tagselect.js',  //标签
+    '../ExamQues/Components/selecttag.js',  //标签
     'Components/selectques.js',        //试题行
     'Components/diff.js',      //难度选择
     'Components/selectparts.js',        //试题分类的选择

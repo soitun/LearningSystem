@@ -3,7 +3,7 @@ $ready([
     '../Question/Components/ques_type.js',
     'Components/ques_diff.js',
     'Components/ques_collect.js',
-    'Components/tagselect.js',
+    'Components/selecttag.js',
 ], function () {
     window.vapp = new Vue({
         el: '#vapp',
@@ -109,7 +109,7 @@ $ready([
             },
             //查询面板重置的方法
             queryreset: function () {
-                this.$refs['tagselect'].clear();
+                this.$refs['selecttag'].clear();
             },
             //批量选择
             selectall: function () {

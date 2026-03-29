@@ -116,7 +116,7 @@ Vue.component('general', {
                 .finally(() => { });
         },
         //选择下拉的关键字时
-        tagselect: function (item) {
+        selecttag: function (item) {
             if (!this.taglist.some(tag => tag.Qtag_Name == item.Qtag_Name))
                 this.taglist.push(item);
             this.taginput = item.Qtag_Name;
@@ -163,7 +163,7 @@ Vue.component('general', {
                 <el-tag type="warning" size="medium" v-for="(tag,idx) in taglist" closable @close="taglist.splice(idx, 1)"> {{tag.Qtag_Name}}</el-tag>
                 <el-button v-if="!tagShowInput" class="button-new-tag" size="small" @click="showTagInput">+ 添加关键字</el-button>
                 <el-autocomplete class="input-new-tag" clearable v-else v-model="taginput" ref="taginput"
-                  :fetch-suggestions="tagquery"  placeholder="请输入内容"  @select="tagselect"
+                  :fetch-suggestions="tagquery"  placeholder="请输入内容"  @select="selecttag"
                   @keyup.enter.native="tagedit" @blur="tagedit">
                     <template slot-scope="{ item }">
                         <div class="name" v-html="showsearch(item.Qtag_Name,taginput)"></div>                       
@@ -171,7 +171,7 @@ Vue.component('general', {
                 </el-autocomplete>               
             </el-form-item>   
             <el-form-item label="试题分类" prop="parts" class="parts-area">
-                <partselect :orgid="question.Org_ID" :parts="parts" @update="updatepart"></partselect>              
+                <selectpart :orgid="question.Org_ID" :parts="parts" @update="updatepart"></selectpart>              
             </el-form-item>    
         </el-form>
     </div> `

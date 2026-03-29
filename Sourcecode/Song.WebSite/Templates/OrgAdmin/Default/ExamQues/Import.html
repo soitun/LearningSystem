@@ -11,7 +11,7 @@
     <div id="vapp" v-cloak>
         <el-tabs type="border-card">
             <el-tab-pane label="试题分类">
-               <partselect :orgid="org.Org_ID" @update="updatepart"></partselect>
+               <selectpart :orgid="org.Org_ID" @update="updatepart"></selectpart>
             </el-tab-pane>
             <el-tab-pane label="知识点">知识点</el-tab-pane>
         </el-tabs>

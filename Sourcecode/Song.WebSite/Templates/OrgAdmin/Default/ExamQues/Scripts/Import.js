@@ -1,6 +1,6 @@
 $ready(['/Utilities/Components/upload-excel.js',
     '../Question/Components/ques_type.js',
-    'Components/partselect.js'],
+    'Components/selectpart.js'],
     function () {
         window.vapp = new Vue({
             el: '#vapp',

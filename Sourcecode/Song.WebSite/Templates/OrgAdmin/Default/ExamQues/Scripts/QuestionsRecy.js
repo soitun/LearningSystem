@@ -111,7 +111,7 @@ $ready([
             },
             //查询面板重置的方法
             queryreset: function () {
-                this.$refs['tagselect'].clear();
+                this.$refs['selecttag'].clear();
             },
             //批量选择
             selectall: function () {
@@ -314,7 +314,7 @@ $ready([
                     </div>`
             },
             //关键字的选择，用于条件查询
-            'tagselect': {
+            'selecttag': {
                 props: ['org'],
                 data: function () {
                     return {

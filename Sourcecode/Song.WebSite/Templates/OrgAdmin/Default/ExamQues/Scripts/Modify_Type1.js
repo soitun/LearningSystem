@@ -3,7 +3,7 @@ $ready(
     ['/Utilities/Components/question/function.js',
         '/Utilities/Scripts/marked.min.js', //markdown的处理，用于AI解析生成文件的处理
         '../Question/Components/ques_type.js',
-        'Components/partselect.js',
+        'Components/selectpart.js',
         'Components/modify_main.js',
         'Components/knowledge.js',
         'Components/general.js',

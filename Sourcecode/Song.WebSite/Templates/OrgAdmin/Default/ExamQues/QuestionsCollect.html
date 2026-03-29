@@ -76,7 +76,7 @@
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item label="关键字">
-                        <tagselect ref="tagselect" :org="org" @change="v=>form.tagid=v.join(',')"></tagselect>
+                        <selecttag ref="selecttag" :org="org" @change="v=>form.tagid=v.join(',')"></selecttag>
                     </el-form-item>
                 </template>
             </query_panel>
