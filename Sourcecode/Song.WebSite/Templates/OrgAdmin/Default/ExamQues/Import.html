@@ -9,43 +9,12 @@
 
 <body>
     <div id="vapp" v-cloak>
-        <div v-show="tname==''" class="selectType">
-            <div class="head">
-                导入考试专用的试题
-                <loading v-if="loading">...</loading>
-            </div>
-            <el-form ref="form" :model="form" :rules="rules" @submit.native.prevent label-width="60px"
-                :disabled="loading">
-                <el-form-item label="题型" prop="Qus_Type">
-
-                </el-form-item>
-            </el-form>
-            <div class="footer">
-                <div>选择题型</div>
-                <div class="btn_list">
-                    <el-button type="primary" plain v-for="(type,i) in types" @click="selectType(i+1)">
-                        <ques_type :type="i+1" :types="types" :showname="true" :showicon="true"></ques_type>
-                    </el-button>
-                </div>
-            </div>
-        </div>
-        <template v-if="qtype!=0">
-            <div class="navibar">
-                <el-link type="primary" class="back" :disabled="step!=0" @click="qtype=0">
-                    <icon>&#xe748</icon>返回
-                </el-link>
-                <el-tag type="success">
-                    <ques_type :type="qtype" :types="types" :showname="true"></ques_type>
-                </el-tag>
-                <el-tag type="info">
-                    <icon course></icon>{{course.Cou_Name}}
-                </el-tag>
-            </div>
-            <upload-excel ref="upload" :template="tname+'题.xls'" :config="tname+'题.xml'" :title="tname+'题'"
-                apiurl="Question/ExcelImport" @finish="finish" @step="s=>step=s"
-                :params="{'type':qtype,'couid':form.Cou_ID}">
-            </upload-excel>
-        </template>
+        <el-tabs type="border-card">
+            <el-tab-pane label="试题分类">
+               <partselect :orgid="org.Org_ID" @update="updatepart"></partselect>
+            </el-tab-pane>
+            <el-tab-pane label="知识点">知识点</el-tab-pane>
+        </el-tabs>
     </div>
 </body>
 

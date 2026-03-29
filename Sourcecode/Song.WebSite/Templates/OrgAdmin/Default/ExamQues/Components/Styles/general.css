@@ -48,18 +48,18 @@
 
 .taglist .el-tag--medium {
 	height: 30px;
+	
 }
 
 /*试题分类*/
-.parts-area {
-	flex: 1;
+.parts-area {	
 	margin-bottom: 0px !important;
+	height: calc(100% - 42px * 3);
 }
 
 .parts-area .el-form-item__content {
 	height: 100%;
-	display: flex;
-	overflow: hidden;
+	position: relative;
 }
 
 .parts-area .el-form-item__content>* {
@@ -77,11 +77,7 @@
 	margin-bottom: 10px;
 }
 
-.parts-area .el-form-item__content .parttree,
-.parts-area .el-form-item__content .part_list {
-	overflow-y: auto;
-	height: calc(100% - 45px);
-}
+
 .part_list .el-tag {
 	margin-bottom: 5px;
 	margin-right: 5px;

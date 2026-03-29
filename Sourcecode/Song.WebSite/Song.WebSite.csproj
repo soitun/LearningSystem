@@ -657,6 +657,7 @@
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\general.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\knowledge.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\modify_main.js" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\partselect.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\ques_ansedit.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\ques_ansitem.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\ques_collect.js" />
@@ -666,6 +667,7 @@
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\Styles\general.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\Styles\knowledge.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\Styles\modify_main.css" />
+    <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\Styles\partselect.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\Styles\ques_ansedit.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\Styles\ques_ansitem.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\Styles\ques_collect.css" />

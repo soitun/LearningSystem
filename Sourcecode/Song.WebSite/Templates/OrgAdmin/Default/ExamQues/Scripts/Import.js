@@ -1,5 +1,6 @@
 $ready(['/Utilities/Components/upload-excel.js',
-    '../Question/Components/ques_type.js'],
+    '../Question/Components/ques_type.js',
+    'Components/partselect.js'],
     function () {
         window.vapp = new Vue({
             el: '#vapp',
@@ -41,6 +42,10 @@ $ready(['/Utilities/Components/upload-excel.js',
 
             },
             methods: {
+                updatepart: function (parts,partid) {
+                    console.error(parts);
+                    console.error(partid);
+                },
                 //选择试题类型
                 selectType: function (type) {
                     //没有选中课程
