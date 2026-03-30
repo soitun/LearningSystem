@@ -10,6 +10,10 @@
 <body>
     <div id="vapp" v-cloak>
         <div class="first">
+            <header>
+                <icon large>&#xe69f</icon>请选择要导入的试题类型、试题分类和知识点
+                <loading v-if="loading">...</loading>
+            </header>
             <el-tabs type="border-card">
                 <el-tab-pane label="所属“试题分类”">
                     <selectpart :orgid="org.Org_ID" @update="updatepart"></selectpart>
@@ -26,17 +30,16 @@
                     </el-radio-button>
                 </el-radio-group>
             </div>
-            <div class="footer">
-                <el-button type="primary" native-type="submit"  :loading="loading" plain
-                    @click="btnEnter('formData',true)">
-                    <icon>&#xe803</icon>上一步
-                </el-button>
-                <el-button type="primary" native-type="submit" :loading="loading" plain
-                    @click="btnApply('formData',false)">
-                    下一步 <icon>&#xe802</icon>
-                </el-button>
-                <el-button type='close'>取消</el-button>
-            </div>
+        </div>
+
+        <div class="footer">
+            <el-button type="primary" native-type="submit" :loading="loading" plain v-if="step>0" @click="step--">
+                <icon>&#xe803</icon>上一步
+            </el-button>
+            <el-button type="primary" native-type="submit" :loading="loading" plain v-if="step<1" @click="step++">
+                下一步 <icon>&#xe802</icon>
+            </el-button>
+            <el-button type='close'>取消</el-button>
         </div>
     </div>
 </body>
