@@ -9,7 +9,7 @@
 
 <body>
     <div id="vapp" v-cloak>
-        <div class="first">
+        <div class="first" v-show="maintstep==0">
             <header>
                 <icon large>&#xe69f</icon>请选择要导入的试题类型、试题分类和知识点
                 <loading v-if="loading">...</loading>
@@ -31,12 +31,21 @@
                 </el-radio-group>
             </div>
         </div>
-
+        <!--上传组件-->
+        <div class="second"  v-show="maintstep==1">
+            <upload-excel ref="upload" :template="tname+'题 - 考试试题.xls'" :config="tname+'题 - 考试试题.xml'" :title="tname+'题（考试试题）'"
+                apiurl="ExamQues/ExcelImport" @finish="finish" @step="s=>step=s"
+                :params="form">
+            </upload-excel>
+        </div>
+        <!--底部按钮-->
         <div class="footer">
-            <el-button type="primary" native-type="submit" :loading="loading" plain v-if="step>0" @click="step--">
-                <icon>&#xe803</icon>上一步
+            <el-button type="primary" native-type="submit" :loading="loading" plain v-if="maintstep>0"
+                @click="maintstep--">
+                <icon>&#xe748</icon>返 回
             </el-button>
-            <el-button type="primary" native-type="submit" :loading="loading" plain v-if="step<1" @click="step++">
+            <el-button type="primary" native-type="submit" :loading="loading" plain v-if="maintstep<1"
+                @click="maintstep++">
                 下一步 <icon>&#xe802</icon>
             </el-button>
             <el-button type='close'>取消</el-button>

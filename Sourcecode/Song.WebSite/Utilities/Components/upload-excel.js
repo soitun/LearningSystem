@@ -183,7 +183,7 @@ Vue.component('upload-excel', {
                 2、请选择要导入的工作簿（点击上方工作簿按钮进步入一步操作）；
             </div>
             <div class="btn">
-                <el-button type="primary" plain :disabled="loading" @click="step=0"><icon>&#xe748</icon>上一步</el-button>
+                <el-button type="primary" plain :disabled="loading" @click="step=0"><icon>&#xe803</icon>上一步</el-button>
             </div>
         </div>
         <div v-if="step==2" remark="匹配字段">
@@ -205,7 +205,7 @@ Vue.component('upload-excel', {
                 2、系统进行了自动匹配，但不保证完全正确，请手工设置对应关系。
             </div>
             <div class="btn">
-                <el-button type="primary" plain :disabled="loading" @click="step=1"><icon>&#xe748</icon>上一步</el-button>
+                <el-button type="primary" plain :disabled="loading" @click="step=1"><icon>&#xe803</icon>上一步</el-button>
                 <el-button type="primary" plain :disabled="loading" @click="btnInputData"><icon>&#xe67e</icon>导入数据</el-button>
                 <loading v-if="loading">正在导入，请稍候....</loading>
             </div>

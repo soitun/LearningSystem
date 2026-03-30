@@ -10,6 +10,8 @@
    height: 22px;
 }
 
+
+
 /*导入控件*/
 .upload_excel_area {
    width: 100%;
@@ -34,6 +36,11 @@
    text-decoration: underline;
 }
 
+.upload_excel_area .btn button icon {
+   display: inline-block;
+   transform: scale(1.2);
+}
+
 .upload_excel_area div[remark] {
    height: calc(100% - 120px);
 }
@@ -52,10 +59,11 @@
    left: 2px;
    top: 3px;
 }
+
 /*工作簿*/
-.upload_excel_area .nodata{
+.upload_excel_area .nodata {
    margin-left: 8px;
-    margin-top: 8px;
+   margin-top: 8px;
 }
 
 /*行*/
@@ -130,8 +138,9 @@
    height: calc(100% - 150px);
    overflow: auto;
    flex-flow: column;
-   
+
 }
+
 *::-webkit-scrollbar {
    /*滚动条整体样式*/
    width: 10px;

@@ -10,16 +10,12 @@ $ready(['/Utilities/Components/upload-excel.js',
                 config: {},      //当前机构配置项     
                 types: [],        //试题类型，来自web.config中配置项
 
+                //主要的参数
+                form: { 'type': 1, 'parts': [], 'knls': [] },
+                maintstep: 0,    //主步骤
+                step: 0,         //步数            
 
-                form: { 'type': 1 },       //查询课程的条件
-                rules: {
 
-                },
-
-                step: 0,         //步数
-                qtype: 0,       //当前题型       
-
-                loading_init: false,
                 loading: false
             },
             mounted: function () {
@@ -34,8 +30,8 @@ $ready(['/Utilities/Components/upload-excel.js',
             computed: {
                 //试题类型的名称
                 'tname': function () {
-                    if (this.qtype <= 0 || this.qtype > this.types.length) return '';
-                    return this.types[this.qtype - 1];
+                    if (this.form.type <= 0 || this.form.type > this.types.length) return '';
+                    return this.types[this.form.type - 1];
                 },
 
             },
@@ -44,34 +40,19 @@ $ready(['/Utilities/Components/upload-excel.js',
             },
             methods: {
                 updatepart: function (parts, partid) {
+                    this.form.parts = parts;
                     console.error(parts);
                     console.error(partid);
                 },
                 updateknl: function (knl, knlid) {
+                    this.form.knls = knl;
                     console.error(knl);
                     console.error(knlid);
-                },
-                //选择试题类型
-                selectType: function (type) {
-                    //没有选中课程
-                    if (!this.selectedCourse) {
-                        this.$refs['form'].validate(function (valid) {
-                            if (valid) {
-                                console.log(3);
-                            } else {
-                                console.log('error submit!!');
-                                return false;
-                            }
-                        });
-                        return;
-                    }
-                    this.qtype = type;
                 },
                 //完成导入的事件
                 finish: function (count) {
                     console.log(count);
                 },
-
             }
         });
 

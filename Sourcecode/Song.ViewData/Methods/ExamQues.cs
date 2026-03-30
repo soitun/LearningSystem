@@ -10,6 +10,8 @@ using WeiSha.Core;
 using Song.ViewData;
 using Help = Song.ViewData.Helper;
 using Newtonsoft.Json.Linq;
+using System.IO;
+using System.Data;
 
 namespace Song.ViewData.Methods
 {
@@ -936,6 +938,166 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public int TagQusTotal(string qtagid, long couid, int qtype, bool? use)
             => Business.Do<IExamQues>().TagQusTotal(qtagid.ToArray<long>(), couid, qtype, use);
+        #endregion
+
+        #region 试题导入导出
+        /// <summary>
+        /// 试题导入
+        /// </summary>
+        /// <param name="xls">服务器端的excel文件名，即上传后的excel文件名</param>
+        /// <param name="sheet">工作表的名称</param>
+        /// <param name="config">配置文件，完整虚拟路径名</param>
+        /// <param name="matching">excel列与字段的匹配关联</param>
+        /// <param name="type">试题类型</param>
+        /// <param name="couid">试题所属课程的id</param>
+        /// <returns>success:成功数;error:失败数</returns>
+        [HttpPost]
+        public JObject ExcelImport(string xls, int sheet, string config, JArray matching, int type, long couid)
+        {
+            //获取Excel中的数据
+            string excel = WeiSha.Core.Server.MapPath(xls);
+            DataTable dt = ViewData.Helper.Excel.SheetToDatatable(excel, sheet, config);
+
+            //当前机构和课程
+            Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
+            Song.Entities.Course course = null;
+            if (couid > 0) course = Business.Do<ICourse>().CourseSingle(couid);
+            //通过反射调用导入试题的方法
+            System.Reflection.Assembly assembly = System.Reflection.Assembly.Load("Song.ViewData");
+            Type impot = assembly.GetType("Song.ViewData.QuestionHandler.Import");
+            string func_name = "Type" + type;   //导入试题的方法名           
+
+            //开始导入，并计数
+            int success = 0, error = 0;
+            List<DataRow> errorDataRow = new List<DataRow>();
+            List<Exception> errorOjb = new List<Exception>();
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                try
+                {
+                    //throw new Exception();
+                    //将数据逐行导入数据库
+                    object[] objs = new object[] { excel, dt.Rows[i], type, course, org, matching };
+                    impot.InvokeMember(func_name, System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public,
+                        null, null, objs);
+
+                    success++;
+                }
+                catch (Exception ex)
+                {
+                    //如果出错，将错误行计数
+                    error++;
+                    errorDataRow.Add(dt.Rows[i]);
+                    errorOjb.Add(ex);
+                }
+            }
+            new Task(() =>
+            {
+                //刷新课程与章节的统计数据，当前课程下的章节试题也会计算
+                Business.Do<IQuestions>().QuesCountUpdate(-1, -1, couid, -1);
+            }).Start();
+
+
+            JObject jo = new JObject();
+            jo.Add("success", success);
+            jo.Add("error", error);
+            //错误数据
+            JArray jarr = new JArray();
+            for (int i = 0; i < errorDataRow.Count; i++)
+            {
+                DataRow dr = errorDataRow[i];
+                JObject jrow = new JObject();
+                foreach (DataColumn dc in dr.Table.Columns)
+                {
+                    jrow.Add(dc.ColumnName, dr[dc.ColumnName].ToString());
+                }
+                jrow.Add("exception", errorOjb[i].Message);
+                jarr.Add(jrow);
+            }
+            jo.Add("datas", jarr);
+            return jo;
+        }
+        /// <summary>
+        /// 导出试题
+        /// </summary>
+        /// <param name="subpath">导出文件的路径，相对临时路径的子路径</param>
+        /// <param name="folder">导出的文件夹，相对于subpath，更深一级</param>
+        /// <param name="types">题型</param>
+        /// <param name="diffs">难度</param>
+        /// <param name="part">导出方式，1导出所有，2导出正常的试题，没有错误，没有用户反馈说错误的，3导出状态为错误的试题，导出用户反馈说错误的试题</param>
+        /// <param name="orgid">机构id</param>
+        /// <param name="sbjid">专业id</param>
+        /// <param name="couid">课程id</param>
+        /// <param name="olid">章节id</param>
+        /// <returns></returns>
+        public JObject ExcelExport(string subpath, string folder, string types, string diffs, int part, int orgid, long sbjid, long couid, long olid)
+        {
+            JObject jo = null;
+            //导出所有
+            if (part == 1) jo = Business.Do<IQuestions>().QuestionsExportExcel(subpath, folder, orgid, types, sbjid, couid, olid, diffs, null, null);
+            //导出正常的试题，没有错误，没有用户反馈说错误的
+            if (part == 2) jo = Business.Do<IQuestions>().QuestionsExportExcel(subpath, folder, orgid, types, sbjid, couid, olid, diffs, false, false);
+            //导出状态为错误的试题
+            if (part == 3) jo = Business.Do<IQuestions>().QuestionsExportExcel(subpath, folder, orgid, types, sbjid, couid, olid, diffs, true, null);
+            //导出用户反馈说错误的试题
+            if (part == 4) jo = Business.Do<IQuestions>().QuestionsExportExcel(subpath, folder, orgid, types, sbjid, couid, olid, diffs, null, true);
+            return jo;
+        }
+        /// <summary>
+        /// 删除Excel文件
+        /// </summary>
+        /// <param name="couid">试题所在的课程</param>
+        /// <param name="filename">文件名，带后缀名，不带路径</param>
+        /// <param name="subpath">导出文件的路径，相对临时路径的子路径</param>
+        /// <returns></returns>
+        [HttpDelete]
+        public bool ExcelDelete(long couid, string filename, string subpath)
+        {
+            return Song.ViewData.Helper.Excel.DeleteFile(filename, subpath + "/" + couid.ToString(), "Temp");
+        }
+        /// <summary>
+        /// 删除所有
+        /// </summary>
+        /// <param name="couid">试题所在的课程</param>
+        /// <param name="subpath">导出文件的路径，相对临时路径的子路径</param>
+        /// <returns></returns>
+        [HttpDelete]
+        public bool ExcelDeleteAll(long couid, string subpath)
+        {
+            return Song.ViewData.Helper.Excel.DeleteDirectory(subpath + "/" + couid.ToString(), "Temp");
+        }
+        /// <summary>
+        /// 已经生成的Excel文件
+        /// </summary>
+        /// <param name="subpath">导出文件的路径，相对临时路径的子路径</param>
+        /// <param name="couid">课程id,如果小于等于零，则取所有</param>
+        /// <returns>file:文件名,url:下载地址,date:创建时间</returns>
+        public JArray ExcelFiles(string subpath, string couid)
+        {
+            string rootpath = Path.Combine(WeiSha.Core.Upload.Get["Temp"].Physics, subpath, couid.ToString());
+            JArray jarr = new JArray();
+            if (!System.IO.Directory.Exists(rootpath)) return jarr;
+            if (string.IsNullOrWhiteSpace(couid)) return jarr;
+
+            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(rootpath);
+            //if (couid == "0" || string.IsNullOrEmpty(couid)) couid = "*";
+            string[] patterns = new[] { $"*.xls", $"*.zip" };
+            List<FileInfo> files = new List<FileInfo>();
+            foreach (var pattern in patterns) files.AddRange(dir.GetFiles(pattern));
+            files = files.OrderByDescending(f => f.CreationTime).ToList<FileInfo>();
+            foreach (FileInfo f in files)
+            {
+                JObject jo = new JObject();
+                jo.Add("name", Path.GetFileNameWithoutExtension(f.Name).Replace("." + couid, ""));
+                jo.Add("file", f.Name);
+                jo.Add("url", WeiSha.Core.Upload.Get["Temp"].Virtual + subpath + "/" + couid.ToString() + "/" + f.Name);
+                jo.Add("date", f.CreationTime);
+                jo.Add("type", Path.GetExtension(f.Name).TrimStart('.'));
+                jo.Add("size", f.Length);
+                jarr.Add(jo);
+            }
+            return jarr;
+        }
         #endregion
     }
 }
