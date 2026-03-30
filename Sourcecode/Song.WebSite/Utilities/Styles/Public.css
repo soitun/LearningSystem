@@ -122,7 +122,34 @@ a[link]:hover {
 *[danger] {
     color: #f56c6c;
 }
-
+/*内容区域*/
+*[tootips]{
+    --tip_bgcolor: #ecf8ff;
+    --tip_bordercolor: #50bfff;
+}
+*[tootips]{
+    padding: 20px 20px 20px 40px;
+    box-sizing: border-box;
+    background-color: var(--tip_bgcolor);
+    border-radius: 4px;
+    border-left: 5px solid var(--tip_bordercolor);
+    margin: 20px;
+    width: calc(100% - 40px);
+    text-align: left;
+    text-indent: 0px;
+}
+*[tootips][red]{
+    --tip_bgcolor: #fff5f5;
+    --tip_bordercolor: #ff5a5a;
+}
+*[tootips][green]{
+    --tip_bgcolor: rgb(240, 249, 235);
+    --tip_bordercolor: #67C23A;
+}
+*[tootips][yellow]{
+    --tip_bgcolor: rgb(253, 246, 236);
+    --tip_bordercolor: #E6A23C;
+}
 /*卡片*/
 
 card {

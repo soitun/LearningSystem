@@ -25,7 +25,12 @@
     display: flex;
     margin-left: 20px;
     flex-direction: column;
+    height: 100%;
 }
 .selected_parts .part_list>*{
     margin:0px 5px 5px 0px;
+}
+.selected_parts .part_list{
+    height: calc(100% - 40px);
+    overflow-y: auto;
 }

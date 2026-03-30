@@ -11,7 +11,7 @@ $ready(['/Utilities/Components/upload-excel.js',
                 types: [],        //试题类型，来自web.config中配置项
 
 
-                form: { 'Cou_ID': '' },       //查询课程的条件
+                form: { 'type': 1 },       //查询课程的条件
                 rules: {
 
                 },
