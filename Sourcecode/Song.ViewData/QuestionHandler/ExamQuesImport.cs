@@ -18,6 +18,56 @@ namespace Song.ViewData.QuestionHandler
     /// </summary>
     public class ExamQuesImport
     {
+        #region 私有方法
+        /// <summary>
+        /// 解析试题分类
+        /// </summary>
+        /// <param name="parts"></param>
+        /// <param name="text"></param>
+        /// <param name="orgid"></param>
+        /// <returns></returns>
+        private static List<QuesPart> _analysis_parts(List<QuesPart> parts, string text,int orgid)
+        {
+            if (parts == null) parts = new List<QuesPart>();
+            foreach (string p in text.Split(';'))
+            {
+                if (string.IsNullOrWhiteSpace(p) || p.Trim() == "") continue;
+                QuesPart part = Business.Do<IExamQues>().PartBatchAdd(orgid, p);
+                if (!parts.Exists(t => t.Qp_ID == part.Qp_ID)) parts.Add(part);
+            }
+            return parts;
+        }
+        /// <summary>
+        /// 关联的知识点
+        /// </summary>
+        /// <param name="knls"></param>
+        /// <param name="text"></param>
+        /// <param name="orgid"></param>
+        /// <returns></returns>
+        private static List<QuesKnowledge> _analysis_knls(List<QuesKnowledge> knls, string text, int orgid)
+        {
+            if (knls == null) knls = new List<QuesKnowledge>();
+            foreach (string name in text.Split(';'))
+            {
+                if (string.IsNullOrWhiteSpace(name) || name.Trim() == "") continue;
+                QuesKnowledge knl = Business.Do<IExamQues>().KnlBatchAdd(orgid, name);
+                if (!knls.Exists(t => t.Qk_ID == knl.Qk_ID)) knls.Add(knl);
+            }
+            return knls;
+        }
+        private static List<QuesTags> _analysis_tags(List<QuesTags> tags, string text, int orgid)
+        {
+            if (tags == null) tags = new List<QuesTags>();
+            foreach (string name in text.Split(','))
+            {
+                if (string.IsNullOrWhiteSpace(name) || name.Trim() == "") continue;
+                QuesTags tag = Business.Do<IExamQues>().TagSingle(name, orgid, 0);
+                if (tag == null) tag = Business.Do<IExamQues>().TagAdd(name);
+                if (!tags.Exists(t => t.Qtag_ID == tag.Qtag_ID)) tags.Add(tag);
+            }
+            return tags;
+        }
+        #endregion
         /// <summary>
         /// 导入单选题，将某一行数据加入到数据库
         /// </summary>
@@ -31,9 +81,12 @@ namespace Song.ViewData.QuestionHandler
 
         public static void Type1(string excel, DataRow dr, JArray mathing, int type,int orgid, List<QuesPart> parts, List<QuesKnowledge> knls,List<QuesTags> tags)
         {
-            Song.Entities.Questions obj = new Song.Entities.Questions();
-            obj.Qus_IsUse = true;
-            obj.Qus_Type = type;
+            Questions obj = new Questions
+            {
+                Qus_IsUse = true,
+                Qus_Type = type,
+                Org_ID = orgid
+            };
             //正确答案
             int correct = 0;
             for (int i = 0; i < mathing.Count; i++)
@@ -55,38 +108,13 @@ namespace Song.ViewData.QuestionHandler
                     obj.Qus_Title = longtext(excel, column);
                     obj.Qus_Title = tranTxt(obj.Qus_Title);
                 }
-                if (field == "Qus_Diff") obj.Qus_Diff = column.Convert<int>(); 
+                if (field == "Qus_Diff") obj.Qus_Diff = column.Convert<int>();
                 //关联的分类
-                if (field == "Part")
-                {
-                    foreach(string p in column.Split(';'))
-                    {
-                        if (string.IsNullOrWhiteSpace(p) || p.Trim() == "") continue;
-                        QuesPart part = Business.Do<IExamQues>().PartBatchAdd(orgid, p);
-                        if(!parts.Exists(t => t.Qp_ID == part.Qp_ID))parts.Add(part);
-                    }                   
-                }
+                if (field == "Part") parts = _analysis_parts(parts, column, orgid);               
                 //关联的知识点
-                if (field == "Knl")
-                {
-                    foreach (string name in column.Split(';'))
-                    {
-                        if (string.IsNullOrWhiteSpace(name) || name.Trim() == "") continue;
-                        QuesKnowledge knl = Business.Do<IExamQues>().KnlBatchAdd(orgid, name);
-                        if (!knls.Exists(t => t.Qk_ID == knl.Qk_ID)) knls.Add(knl);
-                    }
-                }
+                if (field == "Knl")knls = _analysis_knls(knls, column, orgid);
                 //关联的关键字
-                if (field == "Tag")
-                {
-                    foreach (string name in column.Split(','))
-                    {
-                        if (string.IsNullOrWhiteSpace(name) || name.Trim() == "") continue;
-                        QuesTags tag = Business.Do<IExamQues>().TagSingle(name, orgid, 0);
-                        if(tag==null)tag = Business.Do<IExamQues>().TagAdd(name);
-                        if (!tags.Exists(t => t.Qtag_ID == tag.Qtag_ID)) tags.Add(tag);
-                    }
-                }
+                if (field == "Tag") tags = _analysis_tags(tags, column, orgid);
                 if (field == "Qus_Explain") obj.Qus_Explain = longtext(excel, column);
                 //唯一值，正确答案，类型
                 obj.Qus_UID = WeiSha.Core.Request.UniqueID();
@@ -122,9 +150,8 @@ namespace Song.ViewData.QuestionHandler
             if (correct < 1 || correct > ansItem.Count)
                 error = string.Format("正确答案的设置不正确，共{0}个答案选项，不能设置为{1}", ansItem.Count, correct);
             obj.Qus_IsError = error != "";
-            obj.Qus_ErrorInfo = error;          
-          
-            obj.Org_ID = orgid;
+            obj.Qus_ErrorInfo = error;           
+           
             ExamQuesImport.QuesInput(obj, ansItem, parts, tags, knls);
         }
 
