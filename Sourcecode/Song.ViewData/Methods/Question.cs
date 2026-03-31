@@ -160,7 +160,7 @@ namespace Song.ViewData.Methods
             if (couid > 0) course = Business.Do<ICourse>().CourseSingle(couid);
             //通过反射调用导入试题的方法
             System.Reflection.Assembly assembly = System.Reflection.Assembly.Load("Song.ViewData");
-            Type impot = assembly.GetType("Song.ViewData.QuestionHandler.Import");
+            Type impot = assembly.GetType("Song.ViewData.QuestionHandler.CourseQuesImport");
             string func_name = "Type" + type;   //导入试题的方法名           
 
             //开始导入，并计数

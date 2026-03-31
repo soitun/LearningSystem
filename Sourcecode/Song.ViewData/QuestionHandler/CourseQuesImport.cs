@@ -16,11 +16,12 @@ namespace Song.ViewData.QuestionHandler
     /// <summary>
     /// 试题导入
     /// </summary>
-    public class Import
+    public class CourseQuesImport
     {
         /// <summary>
         /// 导入单选题，将某一行数据加入到数据库
         /// </summary>
+        /// <param name="excel"></param>
         /// <param name="dr">数据行</param>
         /// <param name="type">题型</param>
         /// <param name="course">当前课程</param>
@@ -123,7 +124,7 @@ namespace Song.ViewData.QuestionHandler
             if (obj.Cou_ID == 0) throw new Exception("当前试题所在课程并不存在");
             //if (obj.Ol_ID == 0) throw new Exception("当前试题所在章节并不存在");
             if (org != null) obj.Org_ID = org.Org_ID;
-            Import.QuesInput(obj, ansItem);
+            CourseQuesImport.QuesInput(obj, ansItem);
         }
 
         /// <summary>
@@ -237,7 +238,7 @@ namespace Song.ViewData.QuestionHandler
             if (obj.Cou_ID == 0) throw new Exception("当前试题所在课程并不存在");
             //if (obj.Ol_ID == 0) throw new Exception("当前试题所在章节并不存在");
             if (org != null) obj.Org_ID = org.Org_ID;
-            Import.QuesInput(obj, ansItem);
+            CourseQuesImport.QuesInput(obj, ansItem);
         }
         /// <summary>
         /// 导入判断题，将某一行数据加入到数据库
@@ -315,7 +316,7 @@ namespace Song.ViewData.QuestionHandler
             if (obj.Cou_ID == 0) throw new Exception("当前试题所在课程并不存在");
             //if (obj.Ol_ID == 0) throw new Exception("当前试题所在章节并不存在");
             if (org != null) obj.Org_ID = org.Org_ID;
-            Import.QuesInput(obj, null);
+            CourseQuesImport.QuesInput(obj, null);
         }
         /// <summary>
         /// 导入简答题，将某一行数据加入到数据库
@@ -390,12 +391,17 @@ namespace Song.ViewData.QuestionHandler
             if (obj.Cou_ID == 0) throw new Exception("当前试题所在课程并不存在");
             //if (obj.Ol_ID == 0) throw new Exception("当前试题所在章节并不存在");
             if (org != null) obj.Org_ID = org.Org_ID;
-            Import.QuesInput(obj, null);
+            CourseQuesImport.QuesInput(obj, null);
         }
         /// <summary>
         /// 导入填空题，将某一行数据加入到数据库
         /// </summary>
+        /// <param name="excel"></param>
         /// <param name="dr"></param>
+        /// <param name="type"></param>
+        /// <param name="course"></param>
+        /// <param name="org"></param>
+        /// <param name="mathing"></param>
         public static void Type5(string excel, DataRow dr, int type, Song.Entities.Course course, Song.Entities.Organization org, JArray mathing)
         {
             Song.Entities.Questions obj = new Song.Entities.Questions();
@@ -488,7 +494,7 @@ namespace Song.ViewData.QuestionHandler
             if (obj.Cou_ID == 0) throw new Exception("当前试题所在课程并不存在");
             //if (obj.Ol_ID == 0) throw new Exception("当前试题所在章节并不存在");
             if (org != null) obj.Org_ID = org.Org_ID;
-            Import.QuesInput(obj, ansItem);
+            CourseQuesImport.QuesInput(obj, ansItem);
         }
         /// <summary>
         /// 处理题干

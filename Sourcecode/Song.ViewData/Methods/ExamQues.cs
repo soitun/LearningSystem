@@ -688,7 +688,7 @@ namespace Song.ViewData.Methods
             return sbjs.Count > 0 ? _KnlsNode(null, sbjs) : null;
         }
         /// <summary>
-        /// 机构下的专业，树形数据
+        /// 机构下的知识点，树形数据
         /// </summary>
         /// <param name="orgid">机构id</param>
         /// <param name="search">按名称检索</param>
@@ -949,10 +949,12 @@ namespace Song.ViewData.Methods
         /// <param name="config">配置文件，完整虚拟路径名</param>
         /// <param name="matching">excel列与字段的匹配关联</param>
         /// <param name="type">试题类型</param>
-        /// <param name="couid">试题所属课程的id</param>
+        /// <param name="parts">试题分类</param>
+        /// <param name="knls">知识点</param>
         /// <returns>success:成功数;error:失败数</returns>
         [HttpPost]
-        public JObject ExcelImport(string xls, int sheet, string config, JArray matching, int type, long couid)
+        public JObject ExcelImport(string xls, int sheet, string config, JArray matching,
+            int type, QuesPart[] parts, QuesKnowledge[] knls)
         {
             //获取Excel中的数据
             string excel = WeiSha.Core.Server.MapPath(xls);
@@ -960,12 +962,13 @@ namespace Song.ViewData.Methods
 
             //当前机构和课程
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
-            Song.Entities.Course course = null;
-            if (couid > 0) course = Business.Do<ICourse>().CourseSingle(couid);
+            int orgid = org.Org_ID;
+
             //通过反射调用导入试题的方法
             System.Reflection.Assembly assembly = System.Reflection.Assembly.Load("Song.ViewData");
-            Type impot = assembly.GetType("Song.ViewData.QuestionHandler.Import");
+            Type impot = assembly.GetType("Song.ViewData.QuestionHandler.ExamQuesImport");
             string func_name = "Type" + type;   //导入试题的方法名           
+            //return null;
 
             //开始导入，并计数
             int success = 0, error = 0;
@@ -977,7 +980,7 @@ namespace Song.ViewData.Methods
                 {
                     //throw new Exception();
                     //将数据逐行导入数据库
-                    object[] objs = new object[] { excel, dt.Rows[i], type, course, org, matching };
+                    object[] objs = new object[] { excel, dt.Rows[i], matching, type, orgid, parts.ToList(), knls.ToList(), new List<QuesTags>() };
                     impot.InvokeMember(func_name, System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public,
                         null, null, objs);
 
@@ -993,8 +996,10 @@ namespace Song.ViewData.Methods
             }
             new Task(() =>
             {
-                //刷新课程与章节的统计数据，当前课程下的章节试题也会计算
-                Business.Do<IQuestions>().QuesCountUpdate(-1, -1, couid, -1);
+                //刷新试题分类、标签、知识点下的试题数
+                Business.Do<IExamQues>().PartQusTotalUpdate();
+                Business.Do<IExamQues>().TagQusTotalUpdate();
+                Business.Do<IExamQues>().KnlQusTotalUpdate();
             }).Start();
 
 

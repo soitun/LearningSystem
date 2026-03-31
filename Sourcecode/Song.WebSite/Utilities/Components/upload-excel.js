@@ -30,6 +30,9 @@ Vue.component('upload-excel', {
             handler: function (nv, ov) {
                 this.$emit('step', nv);
             }, immediate: true
+        },
+        'config':function (nv, ov) { 
+            this.getconfig();
         }
     },
     computed: {
@@ -39,7 +42,7 @@ Vue.component('upload-excel', {
         }
     },
     created: function () {
-        this.getconfig();
+        
     },
     methods: {
         //获取字段匹配的配置信息

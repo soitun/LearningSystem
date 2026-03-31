@@ -25,7 +25,8 @@ namespace Song.ServiceInterfaces
         /// <param name="tags">试题关键字</param>
         /// <param name="parts">试题分类</param>
         /// <param name="knls">知识点</param>
-        long QuesAdd(Questions entity, QuesPart[] parts, QuesTags[] tags, QuesKnowledge[] knls);
+        /// <param name="isFreshcount">是否刷新统计数量</param>
+        long QuesAdd(Questions entity, QuesPart[] parts, QuesTags[] tags, QuesKnowledge[] knls, bool isFreshcount = true);
         /// <summary>
         /// 修改
         /// </summary>
@@ -33,7 +34,18 @@ namespace Song.ServiceInterfaces
         /// <param name="tags">试题关键字</param>
         /// <param name="parts">试题分类</param>
         /// <param name="knls">知识点</param>
-        void QuesSave(Questions entity, QuesPart[] parts, QuesTags[] tags, QuesKnowledge[] knls);
+        /// <param name="isFreshcount"></param>
+        void QuesSave(Questions entity, QuesPart[] parts, QuesTags[] tags, QuesKnowledge[] knls, bool isFreshcount = true);
+        /// <summary>
+        /// 批量导入试题时用此方法
+        /// </summary>
+        /// <param name="entity">考试实体</param>
+        /// <param name="ansItem">答案实体</param>
+        /// <param name="parts"></param>
+        /// <param name="tags"></param>
+        /// <param name="knls"></param>
+        /// <returns></returns>
+        void QuesInput(Questions entity, List<QuesAnswer> ansItem, List<QuesPart> parts, List<QuesTags> tags, List<QuesKnowledge> knls);
         /// <summary>
         /// 删除试题
         /// </summary>
@@ -116,6 +128,13 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="entity">业务实体</param>
         int PartAdd(QuesPart entity);
+        /// <summary>
+        /// 批量添加分类，可用于导入时
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="names">分类名称，可以是用逗号分隔的多个名称</param>
+        /// <returns></returns>
+        QuesPart PartBatchAdd(int orgid, string names);
         /// <summary>
         /// 是否已经存在
         /// </summary>
@@ -375,6 +394,13 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="entity">业务实体</param>
         int KnlAdd(QuesKnowledge entity);
+        /// <summary>
+        /// 批量添加知识点，可用于导入时
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="names">知识点，可以是用逗号分隔的多个名称</param>
+        /// <returns></returns>
+        QuesKnowledge KnlBatchAdd(int orgid, string names);
         /// <summary>
         /// 是否已经存在
         /// </summary>

@@ -28,7 +28,7 @@ namespace Song.ServiceImpls
         /// <param name="tags">试题关键字</param>
         /// <param name="parts">试题分类</param>
         /// <param name="knls">知识点</param>
-        public long QuesAdd(Questions entity, QuesPart[] parts, QuesTags[] tags, QuesKnowledge[] knls)
+        public long QuesAdd(Questions entity, QuesPart[] parts, QuesTags[] tags, QuesKnowledge[] knls, bool isFreshcount = true)
         {
             if (entity.Qus_ID <= 0) entity.Qus_ID = WeiSha.Core.Request.SnowID();
             entity.Qus_CrtTime = DateTime.Now;
@@ -39,7 +39,7 @@ namespace Song.ServiceImpls
                 if (org != null) entity.Org_ID = org.Org_ID;
             }
             if (string.IsNullOrWhiteSpace(entity.Qus_UID)) entity.Qus_UID = WeiSha.Core.Request.UniqueID();
-
+            entity.Qus_Purpose = 1;
             Gateway.Default.Save<Questions>(entity);
             //保存关键字的关联
             this.TagConnectionQues(tags, entity);
@@ -49,9 +49,12 @@ namespace Song.ServiceImpls
             this.KnlConnectionQues(knls, entity.Qus_ID);
 
             //更新试题分类、标签、知识点的题量统计
-            this.PartQusTotalUpdate(entity);
-            this.TagQusTotalUpdate(entity);
-            this.KnlQusTotalUpdate(entity);
+            if (isFreshcount)
+            {
+                this.PartQusTotalUpdate(entity);
+                this.TagQusTotalUpdate(entity);
+                this.KnlQusTotalUpdate(entity);
+            }
             return entity.Qus_ID;
         }
         /// <summary>
@@ -61,7 +64,7 @@ namespace Song.ServiceImpls
         /// <param name="tags">试题关键字</param>
         /// <param name="parts">试题分类</param>
         /// <param name="knls">知识点</param>
-        public void QuesSave(Questions entity, QuesPart[] parts, QuesTags[] tags, QuesKnowledge[] knls)
+        public void QuesSave(Questions entity, QuesPart[] parts, QuesTags[] tags, QuesKnowledge[] knls, bool isFreshcount = true)
         {
             entity.Qus_LastTime = DateTime.Now;
             entity.Qus_IsError = false;
@@ -81,6 +84,7 @@ namespace Song.ServiceImpls
             }
             Questions former = this.QuesSingle(entity.Qus_ID);  //获取之前的试题信息
             //保存
+            entity.Qus_Purpose = 1;
             Gateway.Default.Save<Questions>(entity);
 
             //保存关键字的关联
@@ -91,9 +95,46 @@ namespace Song.ServiceImpls
             this.KnlConnectionQues(knls, entity.Qus_ID);
 
             //更新试题分类、标签、知识点的题量统计
-            this.PartQusTotalUpdate(entity);
-            this.TagQusTotalUpdate(entity);
-            this.KnlQusTotalUpdate(entity, former);
+            if (isFreshcount)
+            {
+                this.PartQusTotalUpdate(entity);
+                this.TagQusTotalUpdate(entity);
+                this.KnlQusTotalUpdate(entity, former);
+            }
+        }
+
+        public void QuesInput(Questions entity, List<QuesAnswer> ansItem, List<QuesPart> parts, List<QuesTags> tags, List<QuesKnowledge> knls)
+        {            
+            //答题选项的处理
+            if (ansItem != null)
+            {
+                //如果有试题id，则加上，好像也无所谓
+                if (entity.Qus_ID > 0)
+                {
+                    for (int i = 0; i < ansItem.Count; i++)
+                        ansItem[i].Qus_ID = entity.Qus_ID;
+                }
+                entity.Qus_Items = Business.Do<IQuestions>().AnswerToItems(ansItem);
+            }
+            //判断是否存在
+            Questions old = null;
+            if (entity.Qus_ID > 0) old = Gateway.Default.From<Questions>().Where(Questions._.Qus_ID == entity.Qus_ID).ToFirst<Questions>();
+            if (old == null)
+            { 
+                //题干是否相同
+                WhereClip wc = Questions._.Qus_Purpose == 1;               
+                QuerySection<Questions> querySection = Gateway.Default.From<Questions>().Where(wc && Questions._.Qus_Title == entity.Qus_Title && Questions._.Qus_Items == entity.Qus_Items);
+                old = querySection.ToFirst<Questions>();
+            }
+            if (old == null)
+            {
+                this.QuesAdd(entity, parts.ToArray(), tags.ToArray(), knls.ToArray(), false);
+            }
+            else
+            {
+                old.Copy<Song.Entities.Questions>(entity, "Qus_ID");
+                this.QuesSave(entity, parts.ToArray(), tags.ToArray(), knls.ToArray(),false);
+            }          
         }
         /// <summary>
         /// 删除试题
@@ -402,6 +443,42 @@ namespace Song.ServiceImpls
                 entity.Qp_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
             return Gateway.Default.Save<QuesPart>(entity);
+        }
+        /// <summary>
+        /// 批量添加专业，可用于导入时
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="names">专业名称，可以是用逗号分隔的多个名称</param>
+        /// <returns></returns>
+        public QuesPart PartBatchAdd(int orgid, string names)
+        {
+            //整理名称信息
+            names = names.Replace("，", ",");
+            List<string> listName = new List<string>();
+            foreach (string str in names.Split(','))
+            {
+                string s = str.Replace("\n", "").Replace(" ", "").Replace("\t", "").Replace("\r", "");
+                if (s.Trim() != "") listName.Add(s.Trim());
+            }
+            //
+            long pid = 0;
+            Song.Entities.QuesPart last = null;
+            for (int i = 0; i < listName.Count; i++)
+            {
+                Song.Entities.QuesPart current = PartIsExist(orgid, pid, listName[i]);
+                if (current == null)
+                {
+                    current = new QuesPart();
+                    current.Qp_Name = listName[i];
+                    current.Qp_IsUse = true;
+                    current.Org_ID = orgid;
+                    current.Qp_PID = pid;
+                    this.PartAdd(current);
+                }
+                last = current;
+                pid = current.Qp_ID;
+            }
+            return last;
         }
         /// <summary>
         /// 是否已经存在
@@ -1124,6 +1201,42 @@ namespace Song.ServiceImpls
                 entity.Qk_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
             return Gateway.Default.Save<QuesKnowledge>(entity);
+        }
+        /// <summary>
+        /// 批量添加知识点，可用于导入时
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="names">知识点，可以是用逗号分隔的多个名称</param>
+        /// <returns></returns>
+        public QuesKnowledge KnlBatchAdd(int orgid, string names)
+        {
+            //整理名称信息
+            names = names.Replace("，", ",");
+            List<string> listName = new List<string>();
+            foreach (string str in names.Split(','))
+            {
+                string s = str.Replace("\n", "").Replace(" ", "").Replace("\t", "").Replace("\r", "");
+                if (s.Trim() != "") listName.Add(s.Trim());
+            }
+            //
+            long pid = 0;
+            Song.Entities.QuesKnowledge last = null;
+            for (int i = 0; i < listName.Count; i++)
+            {
+                Song.Entities.QuesKnowledge current = this.KnlIsExist(orgid, pid, listName[i]);
+                if (current == null)
+                {
+                    current = new QuesKnowledge();
+                    current.Qk_Name = listName[i];
+                    current.Qk_IsUse = true;
+                    current.Org_ID = orgid;
+                    current.Qk_PID = pid;
+                    this.KnlAdd(current);
+                }
+                last = current;
+                pid = current.Qk_ID;
+            }
+            return last;
         }
         /// <summary>
         /// 是否已经存在
