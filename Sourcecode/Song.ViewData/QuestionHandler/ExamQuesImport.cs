@@ -95,9 +95,8 @@ namespace Song.ViewData.QuestionHandler
                 string column = dr[mathing[i]["column"].ToString()].ToString();
                 //数据库字段的名称
                 string field = mathing[i]["field"].ToString();
-                if (field == "Qus_ID")
-                {
-                    if (string.IsNullOrEmpty(column) || column.Trim() == "") continue;        
+                if (field == "Qus_ID" && !string.IsNullOrWhiteSpace(column))
+                {     
                     Song.Entities.Questions ques = Business.Do<IQuestions>().QuesSingle(column.Convert<long>());
                     if (ques != null) obj = ques;
                 }
@@ -105,8 +104,7 @@ namespace Song.ViewData.QuestionHandler
                 if (field == "Qus_Title")
                 {
                     if (string.IsNullOrWhiteSpace(column) || column.Trim() == "") return;
-                    obj.Qus_Title = longtext(excel, column);
-                    obj.Qus_Title = tranTxt(obj.Qus_Title);
+                    obj.Qus_Title = tranTxt(longtext(excel, column));
                 }
                 if (field == "Qus_Diff") obj.Qus_Diff = column.Convert<int>();
                 //关联的分类
