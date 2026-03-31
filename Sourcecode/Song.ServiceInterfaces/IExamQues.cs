@@ -605,11 +605,17 @@ namespace Song.ServiceInterfaces
 
         #region 关键字
         /// <summary>
-        /// 添加
+        /// 添加关键字
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
         int TagAdd(QuesTags entity);
+        /// <summary>
+        /// 添加关键字
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        QuesTags TagAdd(string tag);
         /// <summary>
         /// 是否已经存在
         /// </summary>

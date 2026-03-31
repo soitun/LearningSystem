@@ -81,8 +81,7 @@ namespace Song.ServiceImpls
                     entity.Qus_IsError = true;
                     entity.Qus_ErrorInfo = "答案不得为空";
                 }
-            }
-            Questions former = this.QuesSingle(entity.Qus_ID);  //获取之前的试题信息
+            }           
             //保存
             entity.Qus_Purpose = 1;
             Gateway.Default.Save<Questions>(entity);
@@ -99,12 +98,15 @@ namespace Song.ServiceImpls
             {
                 this.PartQusTotalUpdate(entity);
                 this.TagQusTotalUpdate(entity);
+
+                Questions former = this.QuesSingle(entity.Qus_ID);  //获取之前的试题信息
                 this.KnlQusTotalUpdate(entity, former);
             }
         }
 
         public void QuesInput(Questions entity, List<QuesAnswer> ansItem, List<QuesPart> parts, List<QuesTags> tags, List<QuesKnowledge> knls)
-        {            
+        {
+            entity.Qus_Purpose = 1;     //标注为考试专用
             //答题选项的处理
             if (ansItem != null)
             {
@@ -119,13 +121,7 @@ namespace Song.ServiceImpls
             //判断是否存在
             Questions old = null;
             if (entity.Qus_ID > 0) old = Gateway.Default.From<Questions>().Where(Questions._.Qus_ID == entity.Qus_ID).ToFirst<Questions>();
-            if (old == null)
-            { 
-                //题干是否相同
-                WhereClip wc = Questions._.Qus_Purpose == 1;               
-                QuerySection<Questions> querySection = Gateway.Default.From<Questions>().Where(wc && Questions._.Qus_Title == entity.Qus_Title && Questions._.Qus_Items == entity.Qus_Items);
-                old = querySection.ToFirst<Questions>();
-            }
+            if (old == null) old = Business.Do<IQuestions>().QuesIsExist(entity); 
             if (old == null)
             {
                 this.QuesAdd(entity, parts.ToArray(), tags.ToArray(), knls.ToArray(), false);
@@ -133,7 +129,7 @@ namespace Song.ServiceImpls
             else
             {
                 old.Copy<Song.Entities.Questions>(entity, "Qus_ID");
-                this.QuesSave(entity, parts.ToArray(), tags.ToArray(), knls.ToArray(),false);
+                this.QuesSave(old, parts.ToArray(), tags.ToArray(), knls.ToArray(),false);
             }          
         }
         /// <summary>
@@ -1853,6 +1849,19 @@ namespace Song.ServiceImpls
                 entity.Qtag_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
             return Gateway.Default.Save<QuesTags>(entity);
+        }
+        /// <summary>
+        /// 添加关键字
+        /// </summary>
+        /// <param name="tagname"></param>
+        /// <returns></returns>
+        public QuesTags TagAdd(string tagname)
+        {
+            QuesTags tag = new QuesTags();
+            tag.Qtag_Name = tagname;       
+            tag.Qtag_IsDeleted = false;
+            TagAdd(tag);
+            return tag;
         }
         /// <summary>
         /// 是否已经存在

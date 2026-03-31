@@ -111,15 +111,7 @@ namespace Song.ServiceImpls
             //判断是否存在
             Questions old = null;
             if (entity.Qus_ID > 0) old = Gateway.Default.From<Questions>().Where(Questions._.Qus_ID == entity.Qus_ID).ToFirst<Questions>();
-            if (old == null)
-            {
-                WhereClip wc = Questions._.Qus_Type == entity.Qus_Type;
-                if (entity.Ol_ID > 0) wc.And(Questions._.Ol_ID == entity.Ol_ID);
-                if (entity.Cou_ID > 0) wc.And(Questions._.Cou_ID == entity.Cou_ID);
-                //题干是否相同
-                QuerySection<Questions> querySection = Gateway.Default.From<Questions>().Where(wc && Questions._.Qus_Title == entity.Qus_Title && Questions._.Qus_Items == entity.Qus_Items);
-                old = querySection.ToFirst<Questions>();
-            }
+            if (old == null) old = this.QuesIsExist(entity);
             if (old == null)
             {
                 entity.Qus_ID = WeiSha.Core.Request.SnowID();
@@ -280,7 +272,47 @@ namespace Song.ServiceImpls
             if (qus == null) return qus;           
             return qus;
         }
+        /// <summary>
+        /// 试题是否已经存在
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="identify"></param>
+        /// <returns></returns>
+        public Questions QuesIsExist(int orgid, long identify)
+        {
+            WhereClip wc = new WhereClip();
+            if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
+            Questions qus = Gateway.Default.From<Questions>().Where(wc && Questions._.Qus_ID == identify).ToFirst<Questions>();
+            return QuesIsExist(qus);
+        }
+        /// <summary>
+        /// 试题是否已经存在
+        /// </summary>
+        /// <param name="qus"></param>
+        /// <returns></returns>
+        public Questions QuesIsExist(Questions qus)
+        {
+            WhereClip wc = Questions._.Org_ID == qus.Org_ID && Questions._.Qus_Purpose == qus.Qus_Purpose;
+            wc.And(Questions._.Qus_ID != qus.Qus_ID);
 
+            //单选题和多选题
+            if (qus.Qus_Type == 1 || qus.Qus_Type == 2)
+            {
+                List<Questions> list = Gateway.Default.From<Questions>().Where(wc && Questions._.Qus_Title == qus.Qus_Title).ToList<Questions>();
+                if (list == null || list.Count < 1) return null;
+                //判断选项是否一致
+                List<QuesAnswer> answerlist = this.QuestionsAnswer(qus, null);
+                string answer = string.Join("", answerlist.Select(a => a.Ans_Context));
+                foreach (Questions tm in list)
+                {
+                    List<QuesAnswer> tmlist = this.QuestionsAnswer(tm, null);
+                    if (string.Join("", tmlist.Select(a => a.Ans_Context)) == answer) return tm;                    
+                }
+
+            }
+            else return Gateway.Default.From<Questions>().Where(wc && Questions._.Qus_Title == qus.Qus_Title).ToFirst<Questions>();
+            return null;
+        }
         public List<QuesAnswer> QuestionsAnswer(Questions qus, bool? isCorrect)
         {
             return this.ItemsToAnswer(qus, isCorrect);

@@ -69,20 +69,21 @@ namespace Song.ViewData.QuestionHandler
                 //关联的知识点
                 if (field == "Knl")
                 {
-                    foreach (string p in column.Split(';'))
+                    foreach (string name in column.Split(';'))
                     {
-                        if (string.IsNullOrWhiteSpace(p) || p.Trim() == "") continue;
-                        QuesKnowledge knl = Business.Do<IExamQues>().KnlBatchAdd(orgid, p);
+                        if (string.IsNullOrWhiteSpace(name) || name.Trim() == "") continue;
+                        QuesKnowledge knl = Business.Do<IExamQues>().KnlBatchAdd(orgid, name);
                         if (!knls.Exists(t => t.Qk_ID == knl.Qk_ID)) knls.Add(knl);
                     }
                 }
                 //关联的关键字
                 if (field == "Tag")
                 {
-                    foreach (string p in column.Split(','))
+                    foreach (string name in column.Split(','))
                     {
-                        if (string.IsNullOrWhiteSpace(p) || p.Trim() == "") continue;
-                        QuesTags tag = Business.Do<IExamQues>().TagSingle(p, orgid, 0);
+                        if (string.IsNullOrWhiteSpace(name) || name.Trim() == "") continue;
+                        QuesTags tag = Business.Do<IExamQues>().TagSingle(name, orgid, 0);
+                        if(tag==null)tag = Business.Do<IExamQues>().TagAdd(name);
                         if (!tags.Exists(t => t.Qtag_ID == tag.Qtag_ID)) tags.Add(tag);
                     }
                 }
