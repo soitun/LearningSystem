@@ -913,6 +913,7 @@ namespace Song.ViewData.Methods
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <returns></returns>
+        [Teacher,Admin,Student]
         public ListResult StudyLogPager(int orgid, long couid, int size,int index)
         {
             int total;
