@@ -37,7 +37,7 @@ Vue.component('studylog', {
             var th = this;
             if (index != null) th.query.index = index;
             else th.query.index++;
-            $api.get('Course/StudyLogPager', th.query).then(function (req) {
+            $api.post('Course/StudyLogPager', th.query).then(function (req) {
                 if (req.data.success) {
                     var result = req.data.result;
                     console.error(result);

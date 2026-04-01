@@ -67,6 +67,55 @@ namespace Song.ViewData.QuestionHandler
             }
             return tags;
         }
+        /// <summary>
+        /// 获取正确答案
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        private static int _get_correct_value(string text)
+        {
+            //取第一个数字为正确答案的索引
+            Match match1 = Regex.Match(text, @"\d+", RegexOptions.Multiline);
+            if (match1.Success) return match1.Value.Convert<int>();
+
+            //取第一个字母为正确答案的索引
+            Match match2 = Regex.Match(text, @"[A-Za-z]");
+            if (match2.Success)
+            {   
+                foreach (char c in match1.Value)               
+                    return (int)c - 64;              
+            }
+            return 0;
+        }
+        /// <summary>
+        /// 获取正确答案
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        private static List<int> _get_correct_values(string text)
+        {
+            List<int> values = new List<int>();
+            //取第一个数字为正确答案的索引           
+            MatchCollection matches1 = Regex.Matches(text, @"\d+", RegexOptions.Multiline);
+            foreach (Match match in matches1)
+            {
+                int tm= match.Value.Convert<int>();
+                if (tm < 1) continue;
+                values.Add(tm);                
+            }            
+
+            //取第一个字母为正确答案的索引
+            Match match2 = Regex.Match(text, @"[A-Za-z]");
+            MatchCollection matches2 = Regex.Matches(text, @"[A-Za-z]", RegexOptions.Multiline);
+            foreach (Match match in matches2)
+            {
+                char tm = match.Value[0];
+                int c = (int)tm - 64;
+                if (c < 1) continue;
+                values.Add(c);
+            }          
+            return values;
+        }
         #endregion
         /// <summary>
         /// 导入单选题，将某一行数据加入到数据库
@@ -79,13 +128,14 @@ namespace Song.ViewData.QuestionHandler
         /// <param name="parts">关联的分类</param>
         /// <param name="knls">关联的知识点</param>
 
-        public static void Type1(string excel, DataRow dr, JArray mathing, int type,int orgid, List<QuesPart> parts, List<QuesKnowledge> knls,List<QuesTags> tags)
+        public static void Type1(string excel, DataRow dr, JArray mathing, int type, int orgid, List<QuesPart> parts, List<QuesKnowledge> knls, List<QuesTags> tags)
         {
             Questions obj = new Questions
             {
                 Qus_IsUse = true,
                 Qus_Type = type,
-                Org_ID = orgid
+                Org_ID = orgid,
+                Qus_UID = WeiSha.Core.Request.UniqueID()
             };
             //正确答案
             int correct = 0;
@@ -96,7 +146,7 @@ namespace Song.ViewData.QuestionHandler
                 //数据库字段的名称
                 string field = mathing[i]["field"].ToString();
                 if (field == "Qus_ID" && !string.IsNullOrWhiteSpace(column))
-                {     
+                {
                     Song.Entities.Questions ques = Business.Do<IQuestions>().QuesSingle(column.Convert<long>());
                     if (ques != null) obj = ques;
                 }
@@ -106,21 +156,85 @@ namespace Song.ViewData.QuestionHandler
                     if (string.IsNullOrWhiteSpace(column) || column.Trim() == "") return;
                     obj.Qus_Title = tranTxt(longtext(excel, column));
                 }
-                if (field == "Qus_Diff") obj.Qus_Diff = column.Convert<int>();
-                //关联的分类
-                if (field == "Part") parts = _analysis_parts(parts, column, orgid);               
-                //关联的知识点
-                if (field == "Knl")knls = _analysis_knls(knls, column, orgid);
-                //关联的关键字
-                if (field == "Tag") tags = _analysis_tags(tags, column, orgid);
-                if (field == "Qus_Explain") obj.Qus_Explain = longtext(excel, column);
-                //唯一值，正确答案，类型
-                obj.Qus_UID = WeiSha.Core.Request.UniqueID();
-                if (field == "Ans_IsCorrect")
+                if (field == "Qus_Diff") obj.Qus_Diff = column.Convert<int>();          //难度               
+                if (field == "Part") parts = _analysis_parts(parts, column, orgid);    //关联的分类 
+                if (field == "Knl") knls = _analysis_knls(knls, column, orgid);      //关联的知识点
+                if (field == "Tag") tags = _analysis_tags(tags, column, orgid);      //关联的关键字
+                if (field == "Qus_Explain") obj.Qus_Explain = longtext(excel, column);          //试题解析 
+                if (field == "Ans_IsCorrect") correct = _get_correct_value(column);          //正确答案      
+            }
+            //再遍历一遍，取答案
+            List<Song.Entities.QuesAnswer> ansItem = new List<QuesAnswer>();
+            for (int i = 0; i < mathing.Count; i++)
+            {
+                //数据库字段的名称
+                string field = mathing[i]["field"].ToString();
+                Match match = new Regex(@"(Ans_Context)(\d+)").Match(field);
+                if (match.Success)
                 {
-                    if (new Regex(@"^\d+$", RegexOptions.Multiline).Match(column).Success)
-                        correct = column == string.Empty ? 0 : Convert.ToInt32(column);
+                    //Excel的列的值
+                    string column = dr[mathing[i]["column"].ToString()].ToString();
+                    if (column == string.Empty || column.Trim() == "") continue;
+                    int index = match.Groups[2].Value.Convert<int>();
+                    ansItem.Add(new QuesAnswer
+                    {
+                        Ans_Context = longtext(excel, column),
+                        Ans_IsCorrect = index == correct,
+                        Qus_UID = obj.Qus_UID
+                    });
                 }
+            }
+            //判断是否有错
+            string error = "";
+            if (ansItem.Count < 1) error = "缺少答案选项";
+            if (correct < 1 || correct > ansItem.Count)
+                error = string.Format("正确答案的设置不正确，共{0}个答案选项，不能设置为{1}", ansItem.Count, correct);
+            obj.Qus_IsError = error != "";
+            obj.Qus_ErrorInfo = error;
+
+            ExamQuesImport.QuesInput(obj, ansItem, parts, tags, knls);
+        }
+
+        /// <summary>
+        ///导入多选题，将某一行数据加入到数据库
+        /// </summary>
+        /// <param name="dr"></param>    
+        public static void Type2(string excel, DataRow dr, JArray mathing, int type, int orgid, List<QuesPart> parts, List<QuesKnowledge> knls, List<QuesTags> tags)
+        {
+            Questions obj = new Questions
+            {
+                Qus_IsUse = true,
+                Qus_Type = type,
+                Org_ID = orgid,
+                Qus_UID = WeiSha.Core.Request.UniqueID()
+            };
+            //正确答案
+            List<int> correct = null;
+            //是否有答案
+            bool isHavAns = false;
+            for (int i = 0; i < mathing.Count; i++)
+            {
+                //Excel的列的值
+                string column = dr[mathing[i]["column"].ToString()].ToString();
+                //数据库字段的名称
+                string field = mathing[i]["field"].ToString();
+                if (field == "Qus_ID")
+                {
+                    Song.Entities.Questions ques = Business.Do<IQuestions>().QuesSingle(column.Convert<long>());
+                    if (ques != null) obj = ques;
+                }
+                //题干
+                if (field == "Qus_Title")
+                {
+                    if (column == string.Empty || column.Trim() == "") return;
+                    obj.Qus_Title = tranTxt(longtext(excel, column));
+                }
+                if (field == "Qus_Diff") obj.Qus_Diff = column.Convert<int>();          //难度               
+                if (field == "Part") parts = _analysis_parts(parts, column, orgid);    //关联的分类 
+                if (field == "Knl") knls = _analysis_knls(knls, column, orgid);      //关联的知识点
+                if (field == "Tag") tags = _analysis_tags(tags, column, orgid);      //关联的关键字
+                if (field == "Qus_Explain") obj.Qus_Explain = longtext(excel, column);          //试题解析 
+                if (field == "Ans_IsCorrect") correct = _get_correct_values(column);          //正确答案              
             }
             //再遍历一遍，取答案
             List<Song.Entities.QuesAnswer> ansItem = new List<QuesAnswer>();
@@ -135,388 +249,184 @@ namespace Song.ViewData.QuestionHandler
                     string column = dr[mathing[i]["column"].ToString()].ToString();
                     if (column == string.Empty || column.Trim() == "") continue;
                     int index = Convert.ToInt16(match.Groups[2].Value);
-                    Song.Entities.QuesAnswer ans = new Song.Entities.QuesAnswer();
+                    QuesAnswer ans = new QuesAnswer();
                     ans.Ans_Context = longtext(excel, column);
-                    ans.Ans_IsCorrect = index == correct;
+                    foreach (int s in correct)
+                    {                      
+                        if (index == s)
+                        {
+                            ans.Ans_IsCorrect = true;
+                            isHavAns = true;
+                            break;
+                        }
+                    }
                     ans.Qus_UID = obj.Qus_UID;
                     ansItem.Add(ans);
                 }
             }
+            if (!isHavAns) obj.Qus_IsError = true;
             //判断是否有错
             string error = "";
             if (ansItem.Count < 1) error = "缺少答案选项";
-            if (correct < 1 || correct > ansItem.Count)
-                error = string.Format("正确答案的设置不正确，共{0}个答案选项，不能设置为{1}", ansItem.Count, correct);
+            if (!isHavAns) error = "没有设置正确答案";
             obj.Qus_IsError = error != "";
             obj.Qus_ErrorInfo = error;           
-           
+
             ExamQuesImport.QuesInput(obj, ansItem, parts, tags, knls);
         }
+        /// <summary>
+        /// 导入判断题，将某一行数据加入到数据库
+        /// </summary>
+        /// <param name="dr"></param>    
+        public static void Type3(string excel, DataRow dr, JArray mathing, int type, int orgid, List<QuesPart> parts, List<QuesKnowledge> knls, List<QuesTags> tags)
+        {
+            Questions obj = new Questions
+            {
+                Qus_IsUse = true,
+                Qus_Type = type,
+                Org_ID = orgid,
+                Qus_UID = WeiSha.Core.Request.UniqueID()
+            };
+            for (int i = 0; i < mathing.Count; i++)
+            {
+                //Excel的列的值
+                string column = dr[mathing[i]["column"].ToString()].ToString();
+                //数据库字段的名称
+                string field = mathing[i]["field"].ToString();
+                if (field == "Qus_ID")
+                {
+                    Song.Entities.Questions ques = Business.Do<IQuestions>().QuesSingle(column.Convert<long>());
+                    if (ques != null) obj = ques;
+                }
+                //题干
+                if (field == "Qus_Title")
+                {
+                    if (column == string.Empty || column.Trim() == "") return;
+                    obj.Qus_Title = longtext(excel, column);
+                }
+                if (field == "Qus_Diff") obj.Qus_Diff = column.Convert<int>();          //难度               
+                if (field == "Part") parts = _analysis_parts(parts, column, orgid);    //关联的分类 
+                if (field == "Knl") knls = _analysis_knls(knls, column, orgid);      //关联的知识点
+                if (field == "Tag") tags = _analysis_tags(tags, column, orgid);      //关联的关键字
+                if (field == "Qus_Explain") obj.Qus_Explain = longtext(excel, column);          //试题解析   
+                if (field == "Qus_IsCorrect")
+                {
+                    if (column == string.Empty || column.Trim() == "") obj.Qus_IsError = true;
+                    obj.Qus_IsCorrect = column.Trim() == "正确";
+                }
+            }
+            obj.Qus_ErrorInfo = "";   
+            ExamQuesImport.QuesInput(obj, null, parts, tags, knls);
+        }
+        /// <summary>
+        /// 导入简答题，将某一行数据加入到数据库
+        /// </summary>
+        /// <param name="dr"></param>
+        public static void Type4(string excel, DataRow dr, JArray mathing, int type, int orgid, List<QuesPart> parts, List<QuesKnowledge> knls, List<QuesTags> tags)
+        {
 
-        ///// <summary>
-        /////导入多选题，将某一行数据加入到数据库
-        ///// </summary>
-        ///// <param name="dr"></param>    
-        //public static void Type2(string excel, DataRow dr, int type, Song.Entities.Course course, Song.Entities.Organization org, JArray mathing)
-        //{
-        //    Song.Entities.Questions obj = new Song.Entities.Questions();
-        //    obj.Qus_IsUse = true;
-        //    obj.Qus_Type = type;
-        //    //正确答案
-        //    string[] correct = null;
-        //    //是否有答案
-        //    bool isHavAns = false;
-        //    for (int i = 0; i < mathing.Count; i++)
-        //    {
-        //        //Excel的列的值
-        //        string column = dr[mathing[i]["column"].ToString()].ToString();
-        //        //数据库字段的名称
-        //        string field = mathing[i]["field"].ToString();
-        //        if (field == "Qus_ID")
-        //        {
-        //            if (column == string.Empty || column.Trim() == "") continue;
-        //            long ques = Convert.ToInt64(column);
-        //            Song.Entities.Questions isHavObj = Business.Do<IQuestions>().QuesSingle(ques);
-        //            if (isHavObj != null) obj = isHavObj;
-        //        }
-        //        //题干难度、专业、试题讲解
-        //        if (field == "Qus_Title")
-        //        {
-        //            if (column == string.Empty || column.Trim() == "") return;
-        //            obj.Qus_Title = tranTxt(longtext(excel, column));
-        //        }
-        //        if (field == "Qus_Diff") obj.Qus_Diff = Convert.ToInt16(column);
-        //        if (field == "Sbj_Name")
-        //        {
-        //            Song.Entities.Subject subject = Business.Do<ISubject>().SubjectBatchAdd(org.Org_ID, column);
-        //            if (subject != null)
-        //            {
-        //                obj.Sbj_Name = subject.Sbj_Name;
-        //                obj.Sbj_ID = subject.Sbj_ID;
-        //            }
-        //        }
-        //        if (field == "Cou_Name" && course == null)
-        //        {
-        //            Song.Entities.Course cour = Business.Do<ICourse>().CourseBatchAdd(null,org.Org_ID, obj.Sbj_ID, column);
-        //            if (cour != null) obj.Cou_ID = cour.Cou_ID;
-        //        }
-        //        if (field == "Ol_Name")
-        //        {
-        //            long couid = course != null ? course.Cou_ID : obj.Cou_ID;
-        //            Song.Entities.Outline outline = Business.Do<IOutline>().OutlineBatchAdd(org.Org_ID, obj.Sbj_ID, couid, column);
-        //            if (outline != null)
-        //            {
-        //                obj.Ol_ID = outline.Ol_ID;
-        //                obj.Ol_Name = outline.Ol_Name;
-        //            }
-        //        }
-        //        if (field == "Qus_Explain") obj.Qus_Explain = longtext(excel, column);
-        //        //唯一值，正确答案，类型
-        //        obj.Qus_UID = WeiSha.Core.Request.UniqueID();
-        //        if (field == "Ans_IsCorrect")
-        //        {
-        //            column = Regex.Replace(column, @"[^1-9]", ",");
-        //            correct = column.Split(',');
-        //        }
-        //    }
-        //    //再遍历一遍，取答案
-        //    List<Song.Entities.QuesAnswer> ansItem = new List<QuesAnswer>();
-        //    for (int i = 0; i < mathing.Count; i++)
-        //    {
-        //        //数据库字段的名称
-        //        string field = mathing[i]["field"].ToString();
-        //        Match match = new Regex(@"(Ans_Context)(\d+)").Match(field);
-        //        if (match.Success)
-        //        {
-        //            //Excel的列的值
-        //            string column = dr[mathing[i]["column"].ToString()].ToString();
-        //            if (column == string.Empty || column.Trim() == "") continue;
-        //            int index = Convert.ToInt16(match.Groups[2].Value);
-        //            Song.Entities.QuesAnswer ans = new Song.Entities.QuesAnswer();
-        //            ans.Ans_Context = longtext(excel, column);
-        //            foreach (string s in correct)
-        //            {
-        //                if (s == string.Empty || s.Trim() == "") continue;
-        //                if (index == Convert.ToInt32(s))
-        //                {
-        //                    ans.Ans_IsCorrect = true;
-        //                    isHavAns = true;
-        //                    break;
-        //                }
-        //            }
-        //            ans.Qus_UID = obj.Qus_UID;
-        //            ansItem.Add(ans);
-        //        }
-        //    }
-        //    if (!isHavAns) obj.Qus_IsError = true;
-        //    //判断是否有错
-        //    string error = "";
-        //    if (ansItem.Count < 1) error = "缺少答案选项";
-        //    if (!isHavAns) error = "没有设置正确答案";
-        //    obj.Qus_IsError = error != "";
-        //    obj.Qus_ErrorInfo = error;
-        //    if (course != null)
-        //    {
-        //        obj.Cou_ID = course.Cou_ID;
-        //        obj.Sbj_ID = course.Sbj_ID;
-        //    }
-        //    if (obj.Sbj_ID == 0) throw new Exception("当前试题所属专业并不存在");
-        //    if (obj.Cou_ID == 0) throw new Exception("当前试题所在课程并不存在");
-        //    //if (obj.Ol_ID == 0) throw new Exception("当前试题所在章节并不存在");
-        //    if (org != null) obj.Org_ID = org.Org_ID;
-        //    ExamQuesImport.QuesInput(obj, ansItem);
-        //}
-        ///// <summary>
-        ///// 导入判断题，将某一行数据加入到数据库
-        ///// </summary>
-        ///// <param name="dr"></param>    
-        //public static void Type3(string excel, DataRow dr, int type, Song.Entities.Course course, Song.Entities.Organization org, JArray mathing)
-        //{
-        //    Song.Entities.Questions obj = new Song.Entities.Questions();
-        //    obj.Qus_IsUse = true;
-        //    obj.Qus_Type = type;
-        //    for (int i = 0; i < mathing.Count; i++)
-        //    {
-        //        //Excel的列的值
-        //        string column = dr[mathing[i]["column"].ToString()].ToString();
-        //        //数据库字段的名称
-        //        string field = mathing[i]["field"].ToString();
-        //        if (field == "Qus_ID")
-        //        {
-        //            if (string.IsNullOrEmpty(column) || column.Trim() == "") continue;
-        //            long ques = Convert.ToInt64(column);
-        //            Song.Entities.Questions isHavObj = Business.Do<IQuestions>().QuesSingle(ques);
-        //            if (isHavObj != null) obj = isHavObj;
-        //        }
-        //        //题干难度、专业、试题讲解
-        //        if (field == "Qus_Title")
-        //        {
-        //            if (column == string.Empty || column.Trim() == "") return;
-        //            obj.Qus_Title = longtext(excel, column);
-        //        }
-        //        if (field == "Qus_Diff")
-        //        {
-        //            obj.Qus_Diff = Convert.ToInt16(column);
-        //            obj.Qus_Diff = obj.Qus_Diff > 5 || obj.Qus_Diff < 1 ? 3 : obj.Qus_Diff;
-        //        }
-        //        if (field == "Sbj_Name")
-        //        {
-        //            Song.Entities.Subject subject = Business.Do<ISubject>().SubjectBatchAdd(org.Org_ID, column);
-        //            if (subject != null)
-        //            {
-        //                obj.Sbj_Name = subject.Sbj_Name;
-        //                obj.Sbj_ID = subject.Sbj_ID;
-        //            }
-        //        }
-        //        if (field == "Cou_Name" && course == null)
-        //        {
-        //            Song.Entities.Course cour = Business.Do<ICourse>().CourseBatchAdd(null, org.Org_ID, obj.Sbj_ID, column);
-        //            if (cour != null) obj.Cou_ID = cour.Cou_ID;
-        //        }
-        //        if (field == "Ol_Name")
-        //        {
-        //            long couid = course != null ? course.Cou_ID : obj.Cou_ID;
-        //            Song.Entities.Outline outline = Business.Do<IOutline>().OutlineBatchAdd(org.Org_ID, obj.Sbj_ID, couid, column);
-        //            if (outline != null)
-        //            {
-        //                obj.Ol_ID = outline.Ol_ID;
-        //                obj.Ol_Name = outline.Ol_Name;
-        //            }
-        //        }
-        //        if (field == "Qus_Explain") obj.Qus_Explain = longtext(excel, column);
-        //        //唯一值，正确答案，类型
-        //        obj.Qus_UID = WeiSha.Core.Request.UniqueID();
-        //        if (field == "Qus_IsCorrect")
-        //        {
-        //            if (column == string.Empty || column.Trim() == "") obj.Qus_IsError = true;
-        //            obj.Qus_IsCorrect = column.Trim() == "正确";
-        //        }
-        //    }
-        //    obj.Qus_ErrorInfo = "";
-        //    if (course != null)
-        //    {
-        //        obj.Cou_ID = course.Cou_ID;
-        //        obj.Sbj_ID = course.Sbj_ID;
-        //    }
-        //    if (obj.Sbj_ID == 0) throw new Exception("当前试题所属专业并不存在");
-        //    if (obj.Cou_ID == 0) throw new Exception("当前试题所在课程并不存在");
-        //    //if (obj.Ol_ID == 0) throw new Exception("当前试题所在章节并不存在");
-        //    if (org != null) obj.Org_ID = org.Org_ID;
-        //    ExamQuesImport.QuesInput(obj, null);
-        //}
-        ///// <summary>
-        ///// 导入简答题，将某一行数据加入到数据库
-        ///// </summary>
-        ///// <param name="dr"></param>
-        //public static void Type4(string excel, DataRow dr, int type, Song.Entities.Course course, Song.Entities.Organization org, JArray mathing)
-        //{
-
-        //    Song.Entities.Questions obj = new Song.Entities.Questions();
-        //    obj.Qus_IsUse = true;
-        //    obj.Qus_Type = type;
-        //    for (int i = 0; i < mathing.Count; i++)
-        //    {
-        //        //Excel的列的值
-        //        string column = dr[mathing[i]["column"].ToString()].ToString();
-        //        //数据库字段的名称
-        //        string field = mathing[i]["field"].ToString();
-        //        if (field == "Qus_ID")
-        //        {
-        //            if (string.IsNullOrEmpty(column) || column.Trim() == "") continue;
-        //            long ques = Convert.ToInt64(column);
-        //            Song.Entities.Questions isHavObj = Business.Do<IQuestions>().QuesSingle(ques);
-        //            if (isHavObj != null) obj = isHavObj;
-        //        }
-        //        //题干难度、专业、试题讲解
-        //        if (field == "Qus_Title")
-        //        {
-        //            if (column == string.Empty || column.Trim() == "") return;
-        //            obj.Qus_Title = longtext(excel, column);
-        //        }
-        //        if (field == "Qus_Diff") obj.Qus_Diff = Convert.ToInt16(column);
-        //        if (field == "Sbj_Name")
-        //        {
-        //            Song.Entities.Subject subject = Business.Do<ISubject>().SubjectBatchAdd(org.Org_ID, column);
-        //            if (subject != null)
-        //            {
-        //                obj.Sbj_Name = subject.Sbj_Name;
-        //                obj.Sbj_ID = subject.Sbj_ID;
-        //            }
-        //        }
-        //        if (field == "Cou_Name" && course == null)
-        //        {
-        //            Song.Entities.Course cour = Business.Do<ICourse>().CourseBatchAdd(null,org.Org_ID, obj.Sbj_ID, column);
-        //            if (cour != null) obj.Cou_ID = cour.Cou_ID;
-        //        }
-        //        if (field == "Ol_Name")
-        //        {
-        //            long couid = course != null ? course.Cou_ID : obj.Cou_ID;
-        //            Song.Entities.Outline outline = Business.Do<IOutline>().OutlineBatchAdd(org.Org_ID, obj.Sbj_ID, couid, column);
-        //            if (outline != null)
-        //            {
-        //                obj.Ol_ID = outline.Ol_ID;
-        //                obj.Ol_Name = outline.Ol_Name;
-        //            }
-        //        }
-        //        if (field == "Qus_Explain") obj.Qus_Explain = longtext(excel, column);
-        //        //唯一值，正确答案，类型
-        //        obj.Qus_UID = WeiSha.Core.Request.UniqueID();
-        //        if (field == "Qus_Answer")
-        //        {
-        //            if (column == string.Empty || column.Trim() == "") obj.Qus_IsError = true;
-        //            obj.Qus_Answer = column;
-        //        }
-        //    }
-        //    obj.Qus_ErrorInfo = "";
-        //    if (course != null)
-        //    {
-        //        obj.Cou_ID = course.Cou_ID;
-        //        obj.Sbj_ID = course.Sbj_ID;
-        //    }
-        //    if (obj.Sbj_ID == 0) throw new Exception("当前试题所属专业并不存在");
-        //    if (obj.Cou_ID == 0) throw new Exception("当前试题所在课程并不存在");
-        //    //if (obj.Ol_ID == 0) throw new Exception("当前试题所在章节并不存在");
-        //    if (org != null) obj.Org_ID = org.Org_ID;
-        //    ExamQuesImport.QuesInput(obj, null);
-        //}
-        ///// <summary>
-        ///// 导入填空题，将某一行数据加入到数据库
-        ///// </summary>
-        ///// <param name="dr"></param>
-        //public static void Type5(string excel, DataRow dr, int type, Song.Entities.Course course, Song.Entities.Organization org, JArray mathing)
-        //{
-        //    Song.Entities.Questions obj = new Song.Entities.Questions();
-        //    obj.Qus_IsUse = true;
-        //    obj.Qus_Type = type;
-        //    for (int i = 0; i < mathing.Count; i++)
-        //    {
-        //        //Excel的列的值
-        //        string column = dr[mathing[i]["column"].ToString()].ToString();
-        //        //数据库字段的名称
-        //        string field = mathing[i]["field"].ToString();
-        //        if (field == "Qus_ID")
-        //        {
-        //            if (column == string.Empty || column.Trim() == "") continue;
-        //            long ques = Convert.ToInt64(column);
-        //            Song.Entities.Questions isHavObj = Business.Do<IQuestions>().QuesSingle(ques);
-        //            if (isHavObj != null) obj = isHavObj;
-        //        }
-        //        //题干难度、专业、试题讲解
-        //        if (field == "Qus_Title")
-        //        {
-        //            if (string.IsNullOrEmpty(column) || column.Trim() == "") return;
-        //            obj.Qus_Title = longtext(excel, column);
-        //        }
-        //        if (field == "Qus_Diff") obj.Qus_Diff = Convert.ToInt16(column);
-        //        if (field == "Sbj_Name")
-        //        {
-        //            Song.Entities.Subject subject = Business.Do<ISubject>().SubjectBatchAdd(org.Org_ID, column);
-        //            if (subject != null)
-        //            {
-        //                obj.Sbj_Name = subject.Sbj_Name;
-        //                obj.Sbj_ID = subject.Sbj_ID;
-        //            }
-        //        }
-        //        if (field == "Cou_Name" && course == null)
-        //        {
-        //            Song.Entities.Course cour = Business.Do<ICourse>().CourseBatchAdd(null,org.Org_ID, obj.Sbj_ID, column);
-        //            if (cour != null) obj.Cou_ID = cour.Cou_ID;
-        //        }
-        //        if (field == "Ol_Name")
-        //        {
-        //            long couid = course != null ? course.Cou_ID : obj.Cou_ID;
-        //            Song.Entities.Outline outline = Business.Do<IOutline>().OutlineBatchAdd(org.Org_ID, obj.Sbj_ID, couid, column);
-        //            if (outline != null)
-        //            {
-        //                obj.Ol_ID = outline.Ol_ID;
-        //                obj.Ol_Name = outline.Ol_Name;
-        //            }
-        //        }
-        //        if (field == "Qus_Explain") obj.Qus_Explain = longtext(excel, column);
-        //        //唯一值
-        //        obj.Qus_UID = WeiSha.Core.Request.UniqueID();
-        //    }
-        //    //再遍历一遍，取答案
-        //    int ansNum = 0;
-        //    List<Song.Entities.QuesAnswer> ansItem = new List<QuesAnswer>();
-        //    for (int i = 0; i < mathing.Count; i++)
-        //    {
-        //        //数据库字段的名称
-        //        string field = mathing[i]["field"].ToString();
-        //        Match match = new Regex(@"(Ans_Context)(\d+)").Match(field);
-        //        if (match.Success)
-        //        {
-        //            //Excel的列的值
-        //            string column = dr[mathing[i]["column"].ToString()].ToString();
-        //            if (column == string.Empty || column.Trim() == "") continue;
-        //            Song.Entities.QuesAnswer ans = new Song.Entities.QuesAnswer();
-        //            ans.Ans_Context = longtext(excel, column);
-        //            ans.Qus_UID = obj.Qus_UID;
-        //            ansNum++;
-        //            ansItem.Add(ans);
-        //        }
-        //    }
-        //    obj.Qus_Title = tranTxt(obj.Qus_Title);
-        //    int bracketsCount = new Regex(@"（[^）]+）").Matches(obj.Qus_Title).Count;
-        //    //判断是否有错
-        //    string error = "";
-        //    if (bracketsCount <= 0) error = "试题中缺少填空项！（填空项用括号标识）";
-        //    if (ansNum <= 0) error = "缺少答案项";
-        //    if (ansNum < bracketsCount) error = string.Format("答案项少于填空项；填空项{0}个,答案{1}个", bracketsCount, ansNum);
-        //    //
-        //    obj.Qus_IsError = error != "";
-        //    obj.Qus_ErrorInfo = error;
-        //    if (course != null)
-        //    {
-        //        obj.Cou_ID = course.Cou_ID;
-        //        obj.Sbj_ID = course.Sbj_ID;
-        //    }
-        //    if (obj.Sbj_ID == 0) throw new Exception("当前试题所属专业并不存在");
-        //    if (obj.Cou_ID == 0) throw new Exception("当前试题所在课程并不存在");
-        //    //if (obj.Ol_ID == 0) throw new Exception("当前试题所在章节并不存在");
-        //    if (org != null) obj.Org_ID = org.Org_ID;
-        //    ExamQuesImport.QuesInput(obj, ansItem);
-        //}
+            Questions obj = new Questions
+            {
+                Qus_IsUse = true,
+                Qus_Type = type,
+                Org_ID = orgid,
+                Qus_UID = WeiSha.Core.Request.UniqueID()
+            };
+            for (int i = 0; i < mathing.Count; i++)
+            {
+                //Excel的列的值
+                string column = dr[mathing[i]["column"].ToString()].ToString();
+                //数据库字段的名称
+                string field = mathing[i]["field"].ToString();
+                if (field == "Qus_ID")
+                {
+                    Song.Entities.Questions ques = Business.Do<IQuestions>().QuesSingle(column.Convert<long>());
+                    if (ques != null) obj = ques;
+                }
+                //题干
+                if (field == "Qus_Title")
+                {
+                    if (column == string.Empty || column.Trim() == "") return;
+                    obj.Qus_Title = longtext(excel, column);
+                }
+                if (field == "Qus_Diff") obj.Qus_Diff = column.Convert<int>();          //难度               
+                if (field == "Part") parts = _analysis_parts(parts, column, orgid);    //关联的分类 
+                if (field == "Knl") knls = _analysis_knls(knls, column, orgid);      //关联的知识点
+                if (field == "Tag") tags = _analysis_tags(tags, column, orgid);      //关联的关键字
+                if (field == "Qus_Explain") obj.Qus_Explain = longtext(excel, column);          //试题解析 
+                if (field == "Qus_Answer")
+                {
+                    if (column == string.Empty || column.Trim() == "") obj.Qus_IsError = true;
+                    obj.Qus_Answer = column;
+                }
+            }
+            obj.Qus_ErrorInfo = "";
+            ExamQuesImport.QuesInput(obj, null, parts, tags, knls);
+        }
+        /// <summary>
+        /// 导入填空题，将某一行数据加入到数据库
+        /// </summary>
+        /// <param name="dr"></param>
+        public static void Type5(string excel, DataRow dr, JArray mathing, int type, int orgid, List<QuesPart> parts, List<QuesKnowledge> knls, List<QuesTags> tags)
+        {
+            Song.Entities.Questions obj = new Song.Entities.Questions();
+            obj.Qus_IsUse = true;
+            obj.Qus_Type = type;
+            for (int i = 0; i < mathing.Count; i++)
+            {
+                //Excel的列的值
+                string column = dr[mathing[i]["column"].ToString()].ToString();
+                //数据库字段的名称
+                string field = mathing[i]["field"].ToString();
+                if (field == "Qus_ID")
+                {
+                    Song.Entities.Questions ques = Business.Do<IQuestions>().QuesSingle(column.Convert<long>());
+                    if (ques != null) obj = ques;
+                }
+                //题干难度、专业、试题讲解
+                if (field == "Qus_Title")
+                {
+                    if (string.IsNullOrEmpty(column) || column.Trim() == "") return;
+                    obj.Qus_Title = longtext(excel, column);
+                }
+                if (field == "Qus_Diff") obj.Qus_Diff = column.Convert<int>();          //难度               
+                if (field == "Part") parts = _analysis_parts(parts, column, orgid);    //关联的分类 
+                if (field == "Knl") knls = _analysis_knls(knls, column, orgid);      //关联的知识点
+                if (field == "Tag") tags = _analysis_tags(tags, column, orgid);      //关联的关键字
+                if (field == "Qus_Explain") obj.Qus_Explain = longtext(excel, column);          //试题解析 
+            }
+            //再遍历一遍，取答案
+            int ansNum = 0;
+            List<Song.Entities.QuesAnswer> ansItem = new List<QuesAnswer>();
+            for (int i = 0; i < mathing.Count; i++)
+            {
+                //数据库字段的名称
+                string field = mathing[i]["field"].ToString();
+                Match match = new Regex(@"(Ans_Context)(\d+)").Match(field);
+                if (match.Success)
+                {
+                    //Excel的列的值
+                    string column = dr[mathing[i]["column"].ToString()].ToString();
+                    if (column == string.Empty || column.Trim() == "") continue;
+                    Song.Entities.QuesAnswer ans = new Song.Entities.QuesAnswer();
+                    ans.Ans_Context = longtext(excel, column);
+                    ans.Qus_UID = obj.Qus_UID;
+                    ansNum++;
+                    ansItem.Add(ans);
+                }
+            }
+            obj.Qus_Title = tranTxt(obj.Qus_Title);
+            int bracketsCount = new Regex(@"（[^）]+）").Matches(obj.Qus_Title).Count;
+            //判断是否有错
+            string error = "";
+            if (bracketsCount <= 0) error = "试题中缺少填空项！（填空项用括号标识）";
+            if (ansNum <= 0) error = "缺少答案项";
+            if (ansNum < bracketsCount) error = string.Format("答案项少于填空项；填空项{0}个,答案{1}个", bracketsCount, ansNum);
+            //
+            obj.Qus_IsError = error != "";
+            obj.Qus_ErrorInfo = error;
+            ExamQuesImport.QuesInput(obj, null, parts, tags, knls);
+        }
         /// <summary>
         /// 处理题干
         /// </summary>
