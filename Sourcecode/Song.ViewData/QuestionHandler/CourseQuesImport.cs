@@ -18,6 +18,57 @@ namespace Song.ViewData.QuestionHandler
     /// </summary>
     public class CourseQuesImport
     {
+        #region 私有方法       
+        /// <summary>
+        /// 获取正确答案
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        private static int _get_correct_value(string text)
+        {
+            //取第一个数字为正确答案的索引
+            Match match1 = Regex.Match(text, @"\d+", RegexOptions.Multiline);
+            if (match1.Success) return match1.Value.Convert<int>();
+
+            //取第一个字母为正确答案的索引
+            Match match2 = Regex.Match(text, @"[A-Za-z]");
+            if (match2.Success)
+            {
+                foreach (char c in match1.Value)
+                    return (int)c - 64;
+            }
+            return 0;
+        }
+        /// <summary>
+        /// 获取正确答案
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        private static List<int> _get_correct_values(string text)
+        {
+            List<int> values = new List<int>();
+            //取第一个数字为正确答案的索引           
+            MatchCollection matches1 = Regex.Matches(text, @"\d+", RegexOptions.Multiline);
+            foreach (Match match in matches1)
+            {
+                int tm = match.Value.Convert<int>();
+                if (tm < 1) continue;
+                values.Add(tm);
+            }
+
+            //取第一个字母为正确答案的索引
+            Match match2 = Regex.Match(text, @"[A-Za-z]");
+            MatchCollection matches2 = Regex.Matches(text, @"[A-Za-z]", RegexOptions.Multiline);
+            foreach (Match match in matches2)
+            {
+                char tm = match.Value[0];
+                int c = (int)tm - 64;
+                if (c < 1) continue;
+                values.Add(c);
+            }
+            return values;
+        }
+        #endregion
         /// <summary>
         /// 导入单选题，将某一行数据加入到数据库
         /// </summary>
@@ -82,11 +133,7 @@ namespace Song.ViewData.QuestionHandler
                 if (field == "Qus_Explain") obj.Qus_Explain = longtext(excel, column);
                 //唯一值，正确答案，类型
                 obj.Qus_UID = WeiSha.Core.Request.UniqueID();
-                if (field == "Ans_IsCorrect")
-                {
-                    if (new Regex(@"^\d+$", RegexOptions.Multiline).Match(column).Success)
-                        correct = column == string.Empty ? 0 : Convert.ToInt32(column);
-                }
+                if (field == "Ans_IsCorrect") correct = _get_correct_value(column);                
             }
             //再遍历一遍，取答案
             List<Song.Entities.QuesAnswer> ansItem = new List<QuesAnswer>();
@@ -137,7 +184,7 @@ namespace Song.ViewData.QuestionHandler
             obj.Qus_IsUse = true;
             obj.Qus_Type = type;
             //正确答案
-            string[] correct = null;
+            List<int> correct = null;
             //是否有答案
             bool isHavAns = false;
             for (int i = 0; i < mathing.Count; i++)
@@ -187,11 +234,7 @@ namespace Song.ViewData.QuestionHandler
                 if (field == "Qus_Explain") obj.Qus_Explain = longtext(excel, column);
                 //唯一值，正确答案，类型
                 obj.Qus_UID = WeiSha.Core.Request.UniqueID();
-                if (field == "Ans_IsCorrect")
-                {
-                    column = Regex.Replace(column, @"[^1-9]", ",");
-                    correct = column.Split(',');
-                }
+                if (field == "Ans_IsCorrect") correct = _get_correct_values(column);          //正确答案   
             }
             //再遍历一遍，取答案
             List<Song.Entities.QuesAnswer> ansItem = new List<QuesAnswer>();
@@ -208,10 +251,9 @@ namespace Song.ViewData.QuestionHandler
                     int index = Convert.ToInt16(match.Groups[2].Value);
                     Song.Entities.QuesAnswer ans = new Song.Entities.QuesAnswer();
                     ans.Ans_Context = longtext(excel, column);
-                    foreach (string s in correct)
+                    foreach (int s in correct)
                     {
-                        if (s == string.Empty || s.Trim() == "") continue;
-                        if (index == Convert.ToInt32(s))
+                        if (index == s)
                         {
                             ans.Ans_IsCorrect = true;
                             isHavAns = true;
