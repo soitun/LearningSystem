@@ -5,8 +5,10 @@
     --admin-bg-color: rgb(0, 135, 189);
     /*标题的颜色*/
     --title-color: rgb(255, 255, 255);
+    --title-hover: rgba(255, 249, 217,.4);
+    --title-bg-color: linear-gradient(180deg, #57757d66 0%, #fff 20%,#57757d  100%);
     /*时间的颜色*/
-    --time-color: rgb(105 106 106 / 80%);    
+    --time-color: rgb(105 106 106 / 80%);
     /*预载条，前景色、背景色*/
     --loading-color: rgb(255, 255, 255);
     --loading-shadow: rgb(2, 2, 2);
@@ -19,7 +21,7 @@ html, body {
     width: 100%;
     height: 100%;
     margin: 0px;
-    padding: 0px;   
+    padding: 0px;
     background-color: var(--bg-color);
     overflow: hidden;
 }
@@ -182,47 +184,62 @@ panel#login iframe {
 }
 
 #headbar {
-    display: flex;   
+    display: flex;
     cursor: default;
     user-select: none;
     color: var(--title-color);
     height: 45px;
-    line-height: 35px;   
+    line-height: 35px;
     margin-right: auto;
-    min-width: 0; 
-    flex-shrink: 1; 
+    min-width: 0;
+    flex-shrink: 1;
 }
-*[platinfo='title']{
+
+*[platinfo='title'] {
     height: 45px;
-    line-height: 35px;    
+    line-height: 35px;
     text-align: left;
-    text-shadow: 1px 1px 2px #666;
     font-size: 25px;
     font-weight: bold;
     white-space: nowrap;
     margin-right: 20px;
+    letter-spacing: 5px;
+    transition: .6s;
+    color: var(--title-color);
+    background: var(--title-bg-color);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
-*[platinfo='title']::before{
+
+*[platinfo='title']::before {
     content: '『';
     margin-right: 10px;
 }
-*[platinfo='title']::after{
+
+*[platinfo='title']::after {
     content: '』';
     margin-left: 10px;
 }
-*[platinfo='intro'],.intro {
+
+*[platinfo='title']:hover {
+    text-shadow: 1px 1px 10px var(--title-hover), -1px -1px 10px var(--title-hover);   
+}
+
+*[platinfo='intro'], .intro {
     font-size: 16px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    flex: 1; 
-    line-height: 40px;    
+    flex: 1;
+    line-height: 40px;
 }
 
 /*用户登录后的下拉菜单*/
 #user-area {
     background-color: transparent;
 }
+
 /*主区域*/
 #mainbody {
     display: flex;
