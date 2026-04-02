@@ -225,12 +225,12 @@ $ready([
             //导出
             output: function (btn) {
                 var title = btn.tips;
-                this.$refs.btngroup.pagebox('Export', title, null, 800, 600);
+                this.$refs.btngroup.pagebox('Export', title, btn.id, 800, 600);
             },
             //导入
             input: function (btn) {
                 var title = btn.tips;
-                this.$refs.btngroup.pagebox('Import', title, null, 900, 650);
+                this.$refs.btngroup.pagebox('Import', title, btn.id, 900, 650);
             },
             //更改使用状态
             changeState: function (row) {

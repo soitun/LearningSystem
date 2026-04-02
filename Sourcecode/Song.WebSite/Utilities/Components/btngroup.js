@@ -165,7 +165,7 @@ Vue.component('btngroup', {
             let btn = this.buttonArray.find(t => t.id == btnid);
             //按钮事件
             let existEvent = this.$listeners[btnid];
-            if (existEvent) return existEvent.apply(this, [btn,args[1]]);
+            if (existEvent) return existEvent.apply(this, [btn, args[1]]);
         },
         //添加按钮事件
         add: function (url, param) {
@@ -287,6 +287,8 @@ Vue.component('btngroup', {
             let ico = this.ico ? this.ico : (node && node.ico != '' ? node.ico : 'a021');
             let iconstyle = node && !!node.icon ? node.icon : {};
             let titstyle = node && !!node.font ? node.font : {};
+            if (boxid == null) boxid = 'box_' + new Date().getTime();
+            boxid = window.location.pathname + '_' + boxid;
             let attrs = {
                 width: width ? width : 400,
                 height: height ? height : 300,

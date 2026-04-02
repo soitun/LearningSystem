@@ -192,13 +192,13 @@ $ready([
             },
             //导出
             output: function (btn) {
-                var title = btn.tips;
-                this.$refs.btngroup.pagebox('Export', title, null, 800, 600);
+                let title = btn.tips;
+                this.$refs.btngroup.pagebox('Export', title, btn.id, 800, 600);
             },
             //导入
             input: function (btn) {
-                var title = btn.tips;
-                this.$refs.btngroup.pagebox('Import', title, null, 900, 650);
+                let title = btn.tips;
+                this.$refs.btngroup.pagebox('Import', title, btn.id, 900, 650);
             },
             //刷新行数据，
             freshrow: function (id) {

@@ -116,7 +116,10 @@ Vue.component('selectpart', {
             </div>
         </div>
         <div class="selected_parts">
-            <div class="title">已选 {{selected?.length ?? 0}} 个分类</div>
+            <div class="title">
+                <span>已选 {{selected?.length ?? 0}} 个分类</span>
+                <el-link type="warning"><icon>&#xe800</icon>清空</el-link>
+            </div>
             <div class="part_list" v-if="selected?.length>0">
                 <el-tag size="medium" v-for="(p,idx) in selected" closable @close="removepart(idx)">
                 {{p.Qp_Name}}</el-tag>

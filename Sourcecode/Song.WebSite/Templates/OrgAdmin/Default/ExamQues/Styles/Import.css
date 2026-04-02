@@ -1,47 +1,54 @@
 ﻿@charset "utf-8";
-.first{
+
+.first {
     width: 100%;
-    height: calc(100% - 50px);
+    height: calc(100% - 100px);
     position: relative;
 }
-.first header{
+
+.first header {
     padding: 10px 10px;
     height: 50px;
     line-height: 30px;
     box-sizing: border-box;
 }
-.types{
-    position: absolute;
-    top: 54px;
-    right: 4px;   
-    width: 450px;
+
+.types {
+    margin: 10px;
     display: flex;
-    justify-content:flex-end;
+    justify-content: flex-start;
 }
-.types>span:first-child{
+
+.types>span:first-child {
     line-height: 30px;
     font-weight: normal;
     font-size: 14px;
 }
-.types .el-radio-button__inner{
+
+.types .el-radio-button__inner {
     font-size: .8rem;
 }
-.el-tabs{
+
+.el-tabs {
     box-shadow: none !important;
     height: calc(100% - 50px);
 }
-.el-tabs .el-tabs__content{
+
+.el-tabs .el-tabs__content {
     height: calc(100% - 40px);
     box-sizing: border-box;
 }
-.el-tabs .el-tabs__content>div[role="tabpanel"]{
+
+.el-tabs .el-tabs__content>div[role="tabpanel"] {
     height: 100%;
     box-sizing: border-box;
 }
-.footer button{
+
+.footer button {
     height: 35px;
 }
-.footer button icon{
+
+.footer button icon {
     display: inline-block;
-   transform: scale(1.2);
+    transform: scale(1.2);
 }

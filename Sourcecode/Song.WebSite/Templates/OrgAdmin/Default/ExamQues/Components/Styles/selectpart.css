@@ -8,6 +8,10 @@
     height: 40px;
     line-height: 40px;
 }
+.selectpart>div>div.title:first-child{
+    display: flex;
+    justify-content: space-between;
+}
 .selectpart .parttree{
     flex: 1;
     height: 100%;
