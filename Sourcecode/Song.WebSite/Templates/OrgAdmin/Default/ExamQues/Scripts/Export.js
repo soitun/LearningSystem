@@ -1,29 +1,27 @@
 
-$ready(['../Question/Components/ques_type.js',],
+$ready(['../Question/Components/ques_type.js',
+    'Components/selectpart.js',
+    'Components/selectknl.js',
+    'Components/selecttag.js',],
     function () {
         window.vapp = new Vue({
             el: '#vapp',
             data: {
                 couid: $api.querystring('couid', '0'),        //课程id
-                organ: {},
+                org: {},
                 config: {},      //当前机构配置项    
                 types: [],        //试题类型，来自web.config中配置项
 
-
-                subjects: [],       //专业        
-                courses: [],     //专业下的课程列表    
-                course: {},          //当前课程  
-                outlines: [],     //章节
-                outline_panel: false,        //显示章节选择的面板
-                //章节过滤的字符
-                outlineFilterText: '',
                 //查询条件
                 form: {
-                    'subpath': 'QuestionToExcel',   //导出文件的路径，相对临时路径的子路径
-                    'folder': $api.querystring('couid', '0'),
-                    'types': [], 'diffs': [], 'part': 1, 'orgid': 0, 'sbjid': '',
-                    'couid': $api.querystring('couid', ''), 'olid': ''
+                    'subpath': 'QuestionToExcel',   //导出文件的路径，相对临时路径的子路径    
+                    'orgid': 0, 'diffs': [], 'types': [],
+                    'parts': [], 'tags': 1, 'knls': 0,
                 },
+                parts: [],  //选中的试题分类
+                knls: [], 
+                tags: [],
+
                 rules: {
                     types: [
                         { required: true, message: '必须选择一个试题类型', trigger: 'change' }
@@ -31,6 +29,10 @@ $ready(['../Question/Components/ques_type.js',],
                     diffs: [
                         { required: true, message: '必须选择一个难度', trigger: 'change' }
                     ]
+                },
+                //一些面板的显示
+                showpanel: {
+                    parts: false, knls: false, tags: false
                 },
                 //试题总记录
                 questotal: 0,       //总记录数
@@ -44,31 +46,14 @@ $ready(['../Question/Components/ques_type.js',],
             },
             created: function () {
                 var th = this;
-                th.loading = true;
-                $api.bat(
-                    $api.get('Organization/Current'),
-                    $api.cache('Question/Types:99999')
-                ).then(([org, types]) => {
-                    th.organ = org.data.result;
-                    th.config = $api.organ(th.organ).config;
-                    th.form.orgid = th.organ.Org_ID;
-                    th.types = types.data.result;
-                    if (th.couid != '' && th.couid != '0') {
-                        th.getCourse(th.couid);
-                    }
-                    th.getCourses();
-                }).catch(function (err) {
-                    alert(err);
-                    console.error(err);
-                }).finally(() => th.loading = false);
+                th.org = window.org;
+                th.config = window.config;
+                th.form.orgid = th.org.Org_ID;
+                $api.cache('Question/Types:99999').then(types => th.types = types.data.result);
                 //获取已经导出的文件
                 this.getFiles();
             },
             watch: {
-                //章节查询的字符
-                outlineFilterText: function (val) {
-                    this.$refs.tree.filter(val);
-                },
                 //监听表单数据变化
                 'form': {
                     handler: function (val) {
@@ -77,35 +62,16 @@ $ready(['../Question/Components/ques_type.js',],
                 }
             },
             computed: {
-                //禁止选择专业与课程，（例如在课程管理中的试题编辑）
-                'disable_select': function () {
-                    var couid = $api.querystring('couid', '0');
-                    return couid != '0' && couid != '';
-                },
-                //选中的章节名称
-                'selected_outline': function () {
-                    if (this.outlines.length <= 0) return '';
-                    if (this.form.olid == '' || this.form.olid < 0) return '';
-                    var outline = getname(this.form.olid, this.outlines);
-                    if (outline == null) return '';
-                    return outline.serial + ' ' + outline.Ol_Name;
-                    function getname(olid, outlines) {
-                        var ol = null;
-                        for (let i = 0; i < outlines.length; i++) {
-                            if (outlines[i].Ol_ID == olid) {
-                                ol = outlines[i];
-                                break;
-                            }
-                            if (outlines[i].children && outlines[i].children.length > 0) {
-                                ol = getname(olid, outlines[i].children);
-                                if (ol != null) break;
-                            }
-                        }
-                        return ol;
-                    }
-                }
+
             },
             methods: {
+                //更新试题分类
+                updateparts: function (val) {
+                    this.parts = val;
+                },
+                updateknl: function (val) {
+                    this.knls = val;
+                },
                 //计算试题总数
                 gettotal: function () {
                     var th = this;
@@ -128,87 +94,6 @@ $ready(['../Question/Components/ques_type.js',],
                                 .finally(() => th.loading_total = false);
                         } else th.questotal = 0;
                     });
-                },
-                //获取当前课程
-                getCourse: function (couid) {
-                    var th = this;
-                    $api.get('Course/ForID', { 'id': couid }).then(function (req) {
-                        if (req.data.success) {
-                            th.course = req.data.result;
-                            th.form.sbjid = th.course.Sbj_ID;
-                            th.form.couid = th.course.Cou_ID;
-                            //获取课程下的章节
-                            th.getOultines();
-                            //设置当前专业
-                            th.$refs['subject'].setsbj(th.course.Sbj_ID);
-
-                        } else {
-                            console.error(req.data.exception);
-                            throw req.config.way + ' ' + req.data.message;
-                        }
-                    }).catch(err => console.error(err))
-                        .finally(() => { });
-                },
-                //专业更改时
-                changeSbj: function (val) {
-                    this.form['sbjid'] = val;
-                    this.outlines = [];
-                    this.getCourses(val);
-                },
-                //获取课程
-                getCourses: function (sbjid) {
-                    var th = this;
-                    var orgid = th.organ.Org_ID;
-                    th.courses = [];
-                    $api.cache('Course/Pager', { 'orgid': orgid, 'sbjids': sbjid, 'thid': '', 'use': '', 'live': '', 'free': '', 'search': '', 'order': '', 'size': -1, 'index': 1 }).then(function (req) {
-                        if (req.data.success) {
-                            th.courses = req.data.result;
-                            th.getOultines();
-                        } else {
-                            console.error(req.data.exception);
-                            throw req.data.message;
-                        }
-                    }).catch(function (err) {
-                        alert(err);
-                        console.error(err);
-                    }).finally(() => { });
-                },
-                //当试题的课程更改时
-                changeCourse: function (couid) {
-                    var th = this;
-                    this.form['couid'] = couid;
-                    this.getOultines();
-                    //当前课程的对象
-                    var course = this.courses.find(function (item) {
-                        return item.Cou_ID == couid;
-                    });
-                    //如果没有选择专业
-                    var sbj = this.form['sbjid'];
-                    if (course) sbj = course.Sbj_ID;
-                    this.$refs['subject'].setsbj(sbj);
-                    this.getCourses(sbj);
-
-                },
-                //所取章节数据，为树形数据
-                getOultines: function () {
-                    var th = this;
-                    this.loading = true;
-                    var couid = th.form.couid && th.form.couid != '' ? th.form.couid : -1;
-                    $api.cache('Outline/Tree', { 'couid': couid, 'isuse': true }).then(function (req) {
-                        if (req.data.success) {
-                            th.outlines = req.data.result;
-                            th.calcSerial(null, '');
-                        } else {
-                            throw req.data.message;
-                        }
-                    }).catch(err => th.outlines = []).finally(() => th.loading = false);
-                },
-                //过滤章节树形
-                filterNode: function (value, data, node) {
-                    if (!value) return true;
-                    var txt = $api.trim(value.toLowerCase());
-                    if (txt == '') return true;
-                    return data.Ol_Name.toLowerCase().indexOf(txt) !== -1;
                 },
                 //计算章节序号
                 calcSerial: function (outline, lvl) {

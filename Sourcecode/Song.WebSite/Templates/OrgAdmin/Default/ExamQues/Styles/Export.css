@@ -1,31 +1,25 @@
 ﻿@charset "utf-8";
-#vapp{
-    overflow: auto;
-}
-.outline_panel {
-    width: 100%;
-    height: 100%;
+
+
+
+.el-dialog__wrapper {
     overflow: hidden;
+    display: flex;
 }
 
-.outline_panel .el-dialog {
-    margin: 5% !important;
-    width: 90%;
-    height: 88%;
+.el-dialog__body {
+    padding-top: 0px;
+    height: calc(100% - 60px);
+
+}
+
+.parts_panel {
+    margin: 8% auto 10% auto !important;
+    height: 80% !important;
     overflow: hidden;
-    box-shadow: 0px 0px 2px rgb(0 0 0 / 60%) !important;
+    box-sizing: border-box;
 }
 
-.outline_panel .el-dialog__body {
-    height: calc(100% - 110px - 30px);
-    overflow: auto;
-    padding-top: 10px !important;
-    padding-bottom: 10px !important;
-}
-
-.el-select-dropdown__item icon[question]{
-    float: right;
-}
 .footer{
     display: flex;
     justify-content: space-between;

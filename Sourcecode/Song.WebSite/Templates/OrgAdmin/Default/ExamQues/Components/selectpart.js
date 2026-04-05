@@ -29,7 +29,7 @@ Vue.component('selectpart', {
         //过滤树形数据
         'search': function (val) {
             this.$refs.parttree.filter(val);
-        },       
+        },
     },
     computed: {},
     mounted: function () {
@@ -89,9 +89,10 @@ Vue.component('selectpart', {
         },
         //移除已经选择的分类
         removepart: function (idx) {
-            this.selected.splice(idx, 1);
+            if (idx == -1) this.selected.splice(0, this.selected.length);
+            else this.selected.splice(idx, 1);
             this.setCheckedKeys();
-            this.partcheck(null, null);           
+            this.partcheck(null, null);
         },
         //设置当前试题的分类
         setCheckedKeys: function () {
@@ -118,7 +119,7 @@ Vue.component('selectpart', {
         <div class="selected_parts">
             <div class="title">
                 <span>已选 {{selected?.length ?? 0}} 个分类</span>
-                <el-link type="warning"><icon>&#xe800</icon>清空</el-link>
+                <el-link type="warning" @click="removepart(-1)"><icon>&#xe800</icon>清空</el-link>
             </div>
             <div class="part_list" v-if="selected?.length>0">
                 <el-tag size="medium" v-for="(p,idx) in selected" closable @close="removepart(idx)">

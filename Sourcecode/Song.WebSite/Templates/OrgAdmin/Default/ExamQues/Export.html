@@ -18,32 +18,27 @@
                     </el-checkbox>
                 </el-checkbox-group>
             </el-form-item>
-            <el-form-item label="专业" prop="Sbj_ID">
-                <sbj_cascader ref="subject" :orgid="organ.Org_ID" :disabled="disable_select" showitem="ques"
-                    @change="id=>changeSbj(id)">
-                </sbj_cascader>
-            </el-form-item>
-            <el-form-item label="课程" prop="Cou_ID">
-                <el-select v-model="form.couid" @change="changeCourse" value-key="Cou_ID" style="width: 100%;"
-                    filterable placeholder="-- 课程 --" clearable :multiple-limit="1" :disabled="disable_select">
-                    <el-option v-for="(item,i) in courses" :key="item.Cou_ID" :label="item.Cou_Name"
-                        :value="item.Cou_ID">
-                        <span>{{i+1}} . </span>
-                        <span>{{item.Cou_Name}}</span>
-                        <icon question v-if="item.Cou_QuesCount>0">{{item.Cou_QuesCount}}</icon>
-                    </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="章节" prop="Ol_ID">
-
-                <el-link icon="el-icon-folder-opened" type="primary" @click="outline_panel=true"
-                    :disabled="loading_export || form.couid==0">选择章节
-                    <span v-if="selected_outline==''">（默认为全部）</span>
-                    <span v-else>
-                        （当前选择： {{selected_outline}}）
-                    </span>
+            <el-form-item label="分类" prop="parts">
+                <el-link type="primary" @click="showpanel.parts=true">
+                    <span v-if="parts.length>0 && parts.length<2">{{parts[0].Qp_Name}}</span>
+                    <template v-if="parts.length>1">
+                        <span v-for="(p,i) in parts" v-else v-if="i<2"> {{p.Qp_Name}}，</span>
+                        <span v-if="parts.length>2">……共 {{parts.length}} 个分类</span>
+                    </template>
+                    (点击选择)
                 </el-link>
-                <el-link icon="el-icon-close" type="warning" @click="form.olid=0" v-if="selected_outline!=''">取消选择
+            </el-form-item>
+            <el-form-item label="关键字" prop="tags">
+                <selecttag ref="selecttag" :org="org" @change="v=>form.tagid=v.join(',')"></selecttag>
+            </el-form-item>
+            <el-form-item label="知识点" prop="knls">
+                <el-link type="primary" @click="showpanel.knls=true">
+                    <span v-if="knls.length>0 && knls.length<2">{{knls[0].Qk_Name}}</span>
+                    <template v-if="knls.length>1">
+                        <span v-for="(p,i) in knls" v-else v-if="i<2"> {{p.Qk_Name}}，</span>
+                        <span v-if="knls.length>2">……共 {{knls.length}} 个知识点</span>
+                    </template>
+                    (点击选择)
                 </el-link>
             </el-form-item>
             <el-form-item label="难度" prop="diffs">
@@ -51,17 +46,9 @@
                     <el-checkbox v-for="l in 5" :label="l" checked>{{l}}</el-checkbox>
                 </el-checkbox-group>
             </el-form-item>
-            <el-form-item label="其它">
-                <el-radio-group v-model="form.part">
-                    <el-radio :label="1">所有</el-radio>
-                    <el-radio :label="2">仅正常的试题</el-radio>
-                    <el-radio :label="3">仅存在错误的试题</el-radio>
-                    <el-radio :label="4">仅用户反馈的试题</el-radio>
-                </el-radio-group>
-            </el-form-item>
         </el-form>
         <div v-if="files.length>0" class="filepanel">
-            <el-divider content-position="left">已经生成的导出文件 - 
+            <el-divider content-position="left">已经生成的导出文件 -
                 <el-popconfirm title="确定删除所有文件吗？" @confirm="deleteFileAll()" v-if="files.length>0">
                     <el-link type="danger" v-loading="loading" slot="reference">
                         <icon>&#xe6fe</icon>删除所有
@@ -83,7 +70,7 @@
         <div class="footer">
             <el-tag type="warning" class="questotal">
                 <loading v-if="loading_total" bubble> 正在计算 ...</loading>
-                <span v-else>当前选择的试题共 ： <b class="red" >{{questotal}} </b>道</span>
+                <span v-else>当前选择的试题共 ： <b class="red">{{questotal}} </b>道</span>
             </el-tag>
             <span>
                 <el-button type="primary" plain @click="btnExportEvent" :loading="loading_export || loading"
@@ -93,25 +80,17 @@
                 <el-button type='close'>取消</el-button>
             </span>
         </div>
-        <!-- 章节选择框 -->
-        <el-dialog title="提示" :visible.sync="outline_panel" class="outline_panel">
-            <span slot="title">请选择章节
-                <el-input v-model="outlineFilterText" clearable style="width:160px;margin-left: 10px;" placeholder="搜索"
-                    suffix-icon="el-icon-search"></el-input>
-            </span>
-            <el-tree :data="outlines" node-key="Ol_ID" ref="tree" :props="{children: 'children',label: 'Ol_Name'}"
-                expand-on-click-node empty-text="没有供选择的章节" :filter-node-method="filterNode"
-                :expand-on-click-node="false" @node-click="d=>{form.olid = d.Ol_ID;outline_panel = false;}"
-                default-expand-all>
-                <span slot-scope="{ node, data }">
-                    <span>{{data.serial}}</span> {{ data.Ol_Name }}
-                </span>
-            </el-tree>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="outline_panel = false">取 消</el-button>
-            </span>
-        </el-dialog>
 
+        <!-- 试题分类的选择框 -->
+        <el-dialog title="请选择试题分类" :visible.sync="showpanel.parts" :append-to-body="true" custom-class="parts_panel"
+            width="80%">
+            <selectpart :orgid="org.Org_ID" @update="updateparts"></selectpart>
+        </el-dialog>
+        <!-- 试题分类的选择框 -->
+        <el-dialog title="请选择试题知识点" :visible.sync="showpanel.knls" :append-to-body="true" custom-class="parts_panel"
+            width="80%">
+            <selectknl :orgid="org.Org_ID" @update="updateknl"></selectknl>
+        </el-dialog>
     </div>
 </body>
 
