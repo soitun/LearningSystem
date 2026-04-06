@@ -190,24 +190,24 @@ namespace Song.ViewData.Methods
         /// <summary>
         /// 获取试题数量
         /// </summary>
-        /// <param name="orgid"></param>
-        /// <param name="qpid"></param>
-        /// <param name="tagid"></param>
-        /// <param name="knlid"></param>
-        /// <param name="isdeleted"></param>
-        /// <param name="diff"></param>
-        /// <param name="use"></param>
-        /// <param name="error"></param>
-        /// <param name="wrong"></param>
+        /// <param name="orgid">机构id</param>
+        /// <param name="qpid">字类id</param>
+        /// <param name="tagid">关键字id</param>
+        /// <param name="knlid">知识点</param>
+        /// <param name="isdeleted">是否删除</param>
+        /// <param name="diffs">难度</param>
+        /// <param name="use">是否启用</param>
+        /// <param name="error">错误</param>
+        /// <param name="wrong">报错</param>
         /// <returns>试题类型，数量</returns>
-        public JArray QuesTotal(int orgid, string qpid, string tagid, string knlid, bool? isdeleted, string diff,bool? use, bool? error, bool? wrong)
+        public JArray QuesTotal(int orgid, string qpid, string tagid, string knlid, bool? isdeleted, string diffs, bool? use, bool? error, bool? wrong)
         {
             Dictionary<int, int> dic = Business.Do<IExamQues>().QuesTotal(orgid,
                 qpid.ToArray<long>(),
                 tagid.ToArray<long>(),
                 knlid.ToArray<long>(),
                 isdeleted,
-                diff.ToArray<int>(),
+                diffs.ToArray<int>(),
                 use, error, wrong);
             string[] types = Business.Do<IQuestions>().QuestionTypes();
             JArray arr = new JArray();
@@ -223,6 +223,18 @@ namespace Song.ViewData.Methods
                 arr.Add(jo);
             }
             return arr;
+        }
+        /// <summary>
+        /// 计算有多少条试题
+        /// </summary>  
+        public int Total(int orgid, int[] types, string qpid, string tagid, string knlid, bool? isdeleted, int[] diffs, bool? use, bool? error, bool? wrong)
+        {
+            return Business.Do<IExamQues>().Total(orgid, types,
+                qpid.ToArray<long>(),
+                tagid.ToArray<long>(),
+                knlid.ToArray<long>(),
+                isdeleted, diffs,
+                use, error, wrong);
         }
         #endregion
 

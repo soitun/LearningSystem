@@ -13,13 +13,10 @@ $ready(['../Question/Components/ques_type.js',
                 types: [],        //试题类型，来自web.config中配置项
 
                 //查询条件
-                form: {
-                    'subpath': 'QuestionToExcel',   //导出文件的路径，相对临时路径的子路径    
-                    'orgid': 0, 'diffs': [], 'types': [],
-                    'parts': [], 'tags': 1, 'knls': 0,
-                },
+                form: { "orgid": "", "types": [], "qpid": "", "tagid": "", "knlid": "", "isdeleted": false, "diffs": [], "use": true, "error": "", "wrong": "" },
+                subpath: 'QuestionToExcel',  //导出文件的路径，相对临时路径的子路径    
                 parts: [],  //选中的试题分类
-                knls: [], 
+                knls: [],
                 tags: [],
 
                 rules: {
@@ -38,7 +35,7 @@ $ready(['../Question/Components/ques_type.js',
                 questotal: 0,       //总记录数
                 loading_total: false,   //获取试题数的加载中
 
-                loading: true,
+                loading: false,
                 loading_export: false,       //生成的预载
 
                 files: [],
@@ -51,7 +48,7 @@ $ready(['../Question/Components/ques_type.js',
                 th.form.orgid = th.org.Org_ID;
                 $api.cache('Question/Types:99999').then(types => th.types = types.data.result);
                 //获取已经导出的文件
-                this.getFiles();
+                //this.getFiles();
             },
             watch: {
                 //监听表单数据变化
@@ -68,9 +65,11 @@ $ready(['../Question/Components/ques_type.js',
                 //更新试题分类
                 updateparts: function (val) {
                     this.parts = val;
+                    this.form.qpid = this.parts.map(obj => obj.Qp_ID).join(', ');
                 },
                 updateknl: function (val) {
                     this.knls = val;
+                    this.form.knlid = this.knls.map(obj => obj.Qk_ID).join(', ');
                 },
                 //计算试题总数
                 gettotal: function () {
@@ -79,11 +78,7 @@ $ready(['../Question/Components/ques_type.js',
                     this.$refs['form'].validate((valid) => {
                         if (valid) {
                             th.loading_total = true;
-                            let query = $api.clone(th.form);
-                            //去除不需要的参数
-                            Reflect.deleteProperty(query, 'subpath');
-                            Reflect.deleteProperty(query, 'folder');
-                            $api.get('Question/Total', query).then(req => {
+                            $api.get('ExamQues/Total', th.form).then(req => {
                                 if (req.data.success) {
                                     th.questotal = req.data.result;
                                 } else {
@@ -94,15 +89,6 @@ $ready(['../Question/Components/ques_type.js',
                                 .finally(() => th.loading_total = false);
                         } else th.questotal = 0;
                     });
-                },
-                //计算章节序号
-                calcSerial: function (outline, lvl) {
-                    var childarr = outline == null ? this.outlines : (outline.children ? outline.children : null);
-                    if (childarr == null) return;
-                    for (let i = 0; i < childarr.length; i++) {
-                        childarr[i].serial = lvl + (i + 1) + '.';
-                        this.calcSerial(childarr[i], childarr[i].serial);
-                    }
                 },
                 //导出文件的按钮事件
                 btnExportEvent: function () {

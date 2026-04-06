@@ -25,7 +25,7 @@ Vue.component('selectknl', {
                 if (nv == null || nv == ov) return;
                 if (this.selected.length > 0) return;
                 this.selected = nv;
-                this.calcknls( this.datas, nv);
+                this.calcknls(this.datas, nv);
             }, immediate: true,
         },
         //过滤树形数据
@@ -49,6 +49,8 @@ Vue.component('selectknl', {
                 .then(req => {
                     if (req.data.success) {
                         let results = req.data.result;
+                        th.calcSerial(results, null, '');
+                        console.error(results);
                         th.datas = results;
                         if (th.selected && th.selected.length > 0)
                             th.datas = th.calcknls(results, th.selected);
@@ -72,6 +74,16 @@ Vue.component('selectknl', {
             }
             return treedata;
         },
+        //计算章节序号
+        calcSerial: function (datas, list, lvl) {
+            var childarr = list == null ? datas : (list.children ? list.children : null);
+            if (childarr == null) return null;
+            for (let i = 0; i < childarr.length; i++) {
+                childarr[i].serial = lvl + (i + 1) + '.';
+                this.calcSerial(datas, childarr[i], childarr[i].serial);
+            }
+            return list;
+        },
         //过滤树形
         filterNode: function (value, data) {
             if (!value) return true;
@@ -87,9 +99,9 @@ Vue.component('selectknl', {
             if (value.selected && idx < 0) this.selected.push(value);
             if (!value.selected && idx >= 0) this.selected.splice(idx, 1);
 
-             //触发事件
-             let knlid = this.selected.map(item => item.Qk_ID).join(',');
-             this.$emit('update', this.selected, knlid);
+            //触发事件
+            let knlid = this.selected.map(item => item.Qk_ID).join(',');
+            this.$emit('update', this.selected, knlid);
         },
         //获取已经选择的知识点
         gettreeselected: function (selected, selectarr) {
@@ -107,9 +119,9 @@ Vue.component('selectknl', {
             this.selected.splice(idx, 1);
             this.calcknls(this.datas, this.selected);
 
-             //触发事件
-             let knlid = this.selected.map(item => item.Qk_ID).join(',');
-             this.$emit('update', this.selected, knlid);
+            //触发事件
+            let knlid = this.selected.map(item => item.Qk_ID).join(',');
+            this.$emit('update', this.selected, knlid);
         },
     },
     template: `<div class="selectknl">
@@ -120,8 +132,9 @@ Vue.component('selectknl', {
             <div class="knltree">
                 <el-tree ref="knltree" node-key="Qk_ID" :props="{label: 'Qk_Name',id:'Qk_ID',children: 'children'}" 
                 :data="datas" @node-click="knlcheck" :filter-node-method="filterNode" empty-text="没有满足条件的数据">
-                    <div :class="{'selected':data.selected,'knlnode':true}" slot-scope="{ node, data }">
+                    <div :class="{'selected':data.selected,'knlnode':true}" slot-scope="{ node, data }">                       
                         <span v-if="data.selected"><icon>&#xa048</icon></span>
+                        <span v-html="data.serial"></span>
                         <span class="large" v-html="showsearch(data.Qk_Name,search)"></span>
                     </div> 
                 </el-tree>
@@ -135,9 +148,9 @@ Vue.component('selectknl', {
             </div>
             <div class="knls_list" v-if="knlslength>0">
                 <div v-for="(k,idx) in selected" >
-                    {{idx+1}} .
+                    {{idx+1}}                   
                     <el-tag size="medium"closable @close="removeknl(idx)">
-                    {{k.Qk_Name}}</el-tag>
+                     {{k.Qk_Name}}</el-tag>
                 </div>
             </div>
             <div class="knls_list_null" v-else>暂无</div>

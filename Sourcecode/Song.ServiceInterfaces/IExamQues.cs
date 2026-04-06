@@ -107,19 +107,34 @@ namespace Song.ServiceInterfaces
         /// <param name="former">原来的试题对象</param>
         void QuesStatisticalUpdate(Questions ques, Questions former);
         /// <summary>
-        /// 获取试题数量
+        /// 获取试题数量,按题型分类
         /// </summary>
-        /// <param name="orgid"></param>
-        /// <param name="qpid"></param>
-        /// <param name="tagid"></param>
-        /// <param name="knlid"></param>
-        /// <param name="isdeleted"></param>
-        /// <param name="diff"></param>
-        /// <param name="isUse"></param>
-        /// <param name="isError"></param>
-        /// <param name="isWrong"></param>
+        /// <param name="orgid">机构id</param>
+        /// <param name="qpid">分类id</param>
+        /// <param name="tagid">标签id</param>
+        /// <param name="knlid">知识点id</param>
+        /// <param name="isdeleted">是否删除的</param>
+        /// <param name="diff">难度等级</param>
+        /// <param name="isUse">是否启用</param>
+        /// <param name="isError">是否错误</param>
+        /// <param name="isWrong">是否有回馈问题</param>
         /// <returns>试题类型(数字），数量</returns>
         Dictionary<int, int> QuesTotal(int orgid, long[] qpid, long[] tagid, long[] knlid, bool? isdeleted, int[] diff, bool? isUse, bool? isError, bool? isWrong);
+        /// <summary>
+        /// 获取试题数量
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="types">题型</param>
+        /// <param name="qpid">分类id</param>
+        /// <param name="tagid">标签id</param>
+        /// <param name="knlid">知识点id</param>
+        /// <param name="isdeleted">是否删除的</param>
+        /// <param name="diffs">难度等级</param>
+        /// <param name="isUse">是否启用</param>
+        /// <param name="isError">是否错误</param>
+        /// <param name="isWrong">是否有回馈问题</param>
+        /// <returns></returns>
+        int Total(int orgid, int[] types, long[] qpid, long[] tagid, long[] knlid, bool? isdeleted, int[] diffs, bool? isUse, bool? isError, bool? isWrong);
         #endregion
 
         #region 试题分类

@@ -417,6 +417,74 @@ namespace Song.ServiceImpls
             }
             return dic;
         }
+        /// <summary>
+        /// 获取试题数量
+        /// </summary>
+        /// <param name="orgid">机构id</param>
+        /// <param name="types">题型</param>
+        /// <param name="qpid">分类id</param>
+        /// <param name="tagid">标签id</param>
+        /// <param name="knlid">知识点id</param>
+        /// <param name="isdeleted">是否删除的</param>
+        /// <param name="diffs">难度等级</param>
+        /// <param name="isUse">是否启用</param>
+        /// <param name="isError">是否错误</param>
+        /// <param name="isWrong">是否有回馈问题</param>
+        /// <returns></returns>
+        public int Total(int orgid, int[] types, long[] qpid, long[] tagid, long[] knlid, bool? isdeleted, int[] diffs, bool? isUse, bool? isError, bool? isWrong)
+        {
+            WhereClip wc = Questions._.Qus_Purpose == 1;    //用于考试的试题
+            if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
+            if (isdeleted != null) wc.And(Questions._.Qus_IsDeleted == isdeleted);    //删除状态
+            if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
+            if (isError != null) wc.And(Questions._.Qus_IsError == (bool)isError);
+            if (isWrong != null) wc.And(Questions._.Qus_IsWrong == (bool)isWrong);
+            //题型  
+            if (types != null && types.Length > 0)
+            {
+                WhereClip wctype = new WhereClip();
+                foreach (int d in types) wctype |= Questions._.Qus_Type == d;
+                wc.And(wctype);
+            }
+            //难度  
+            if (diffs != null && diffs.Length > 0)
+            {
+                WhereClip wcdiff = new WhereClip();
+                foreach (int d in diffs) if (d > 0 && d <= 5) wcdiff |= Questions._.Qus_Diff == d;
+                wc.And(wcdiff);
+            }
+            FromSection<Questions> section = Gateway.Default.From<Questions>();
+            //试题范围
+            WhereClip wcrange = new WhereClip();
+            //试题分类
+            if (qpid != null && qpid.Length > 0)
+            {
+                section.LeftJoin<Questions_QPart>(Questions_QPart._.Qus_ID == Questions._.Qus_ID);
+                WhereClip wcqp = new WhereClip();
+                List<long> list = this.PartTreeID(qpid, orgid);
+                foreach (long d in list) wcqp |= Questions_QPart._.Qp_ID == d;
+                wcrange.Or(wcqp);
+            }
+            //试题关键字
+            if (tagid != null && tagid.Length > 0)
+            {
+                section.LeftJoin<Questions_QTags>(Questions_QTags._.Qus_ID == Questions._.Qus_ID);
+                WhereClip wcqp = new WhereClip();
+                foreach (long t in tagid) wcqp |= Questions_QTags._.Qtag_ID == t;
+                wcrange.Or(wcqp);
+            }
+            //关联知识点
+            if (knlid != null && knlid.Length > 0)
+            {
+                section.LeftJoin<Questions_QKnl>(Questions_QKnl._.Qus_ID == Questions._.Qus_ID);
+                WhereClip wcqp = new WhereClip();
+                List<long> list = this.KnlTreeID(knlid, orgid);
+                foreach (long k in list) wcqp |= Questions_QKnl._.Qk_ID == k;
+                wcrange.Or(wcqp);
+            }
+            wc.And(wcrange);
+            return section.Where(wc).Count();           
+        }
         #endregion
 
         #region 试题分类
