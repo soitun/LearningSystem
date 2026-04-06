@@ -116,7 +116,9 @@ Vue.component('selectknl', {
         },
         //移除已经选择的知识点
         removeknl: function (idx) {
-            this.selected.splice(idx, 1);
+            if (idx == -1) this.selected.splice(0, this.selected.length);
+            else this.selected.splice(idx, 1);
+         
             this.calcknls(this.datas, this.selected);
 
             //触发事件
@@ -144,11 +146,12 @@ Vue.component('selectknl', {
             <div slot="header" class="title">
                 <el-badge :value="knlslength" :hidden="knlslength<1">
                     <icon>&#xa029</icon>关联的知识点</span>
-                </el-badge>               
+                </el-badge>         
+                <el-link type="warning" @click="removeknl(-1)"><icon>&#xe800</icon>清空</el-link>      
             </div>
             <div class="knls_list" v-if="knlslength>0">
                 <div v-for="(k,idx) in selected" >
-                    {{idx+1}}                   
+                    {{idx+1}} .                  
                     <el-tag size="medium"closable @close="removeknl(idx)">
                      {{k.Qk_Name}}</el-tag>
                 </div>

@@ -63,8 +63,8 @@
 /*知识点的选择*/
 .selectknl {
 	margin: 15px;
-	width: calc(100% - 30px);
-	height: calc(100% - 30px);
+	width: calc(100% - 30px) !important;
+	height: calc(100% - 30px) !important;
 	position: relative;
 	display: flex;
 }
