@@ -227,6 +227,16 @@ namespace Song.ViewData.Methods
         /// <summary>
         /// 计算有多少条试题
         /// </summary>  
+        /// <param name="orgid">机构id</param>
+        /// <param name="types">题型</param>
+        /// <param name="qpid">分类id</param>
+        /// <param name="tagid">标签id</param>
+        /// <param name="knlid">知识点id</param>
+        /// <param name="isdeleted">是否删除的</param>
+        /// <param name="diffs">难度等级</param>
+        /// <param name="use">是否启用</param>
+        /// <param name="error">是否错误</param>
+        /// <param name="wrong">是否有回馈问题</param>
         public int Total(int orgid, int[] types, string qpid, string tagid, string knlid, bool? isdeleted, int[] diffs, bool? use, bool? error, bool? wrong)
         {
             return Business.Do<IExamQues>().Total(orgid, types,
@@ -1038,63 +1048,59 @@ namespace Song.ViewData.Methods
         /// 导出试题
         /// </summary>
         /// <param name="subpath">导出文件的路径，相对临时路径的子路径</param>
-        /// <param name="folder">导出的文件夹，相对于subpath，更深一级</param>
-        /// <param name="types">题型</param>
-        /// <param name="diffs">难度</param>
-        /// <param name="part">导出方式，1导出所有，2导出正常的试题，没有错误，没有用户反馈说错误的，3导出状态为错误的试题，导出用户反馈说错误的试题</param>
         /// <param name="orgid">机构id</param>
-        /// <param name="sbjid">专业id</param>
-        /// <param name="couid">课程id</param>
-        /// <param name="olid">章节id</param>
+        /// <param name="types">题型</param>
+        /// <param name="qpid">分类id</param>
+        /// <param name="tagid">标签id</param>
+        /// <param name="knlid">知识点id</param>
+        /// <param name="isdeleted">是否删除的</param>
+        /// <param name="diffs">难度等级</param>
+        /// <param name="use">是否启用</param>
+        /// <param name="error">是否错误</param>
+        /// <param name="wrong">是否有回馈问题</param>
         /// <returns></returns>
-        public JObject ExcelExport(string subpath, string folder, string types, string diffs, int part, int orgid, long sbjid, long couid, long olid)
+        public JObject ExcelExport(string subpath, int orgid, int[] types, string qpid, string tagid, string knlid, bool? isdeleted, int[] diffs, bool? use, bool? error, bool? wrong)
         {
-            JObject jo = null;
-            //导出所有
-            if (part == 1) jo = Business.Do<IQuestions>().QuestionsExportExcel(subpath, folder, orgid, types, sbjid, couid, olid, diffs, null, null);
-            //导出正常的试题，没有错误，没有用户反馈说错误的
-            if (part == 2) jo = Business.Do<IQuestions>().QuestionsExportExcel(subpath, folder, orgid, types, sbjid, couid, olid, diffs, false, false);
-            //导出状态为错误的试题
-            if (part == 3) jo = Business.Do<IQuestions>().QuestionsExportExcel(subpath, folder, orgid, types, sbjid, couid, olid, diffs, true, null);
-            //导出用户反馈说错误的试题
-            if (part == 4) jo = Business.Do<IQuestions>().QuestionsExportExcel(subpath, folder, orgid, types, sbjid, couid, olid, diffs, null, true);
-            return jo;
+            return Business.Do<IExamQues>().QuesExportExcel(subpath, orgid, types,
+                qpid.ToArray<long>(),
+                tagid.ToArray<long>(),
+                knlid.ToArray<long>(), isdeleted, diffs, use, error, wrong);
         }
         /// <summary>
         /// 删除Excel文件
         /// </summary>
-        /// <param name="couid">试题所在的课程</param>
+        /// <param name="orgid">机构id</param>
         /// <param name="filename">文件名，带后缀名，不带路径</param>
         /// <param name="subpath">导出文件的路径，相对临时路径的子路径</param>
         /// <returns></returns>
         [HttpDelete]
-        public bool ExcelDelete(long couid, string filename, string subpath)
+        public bool ExcelDelete(int orgid, string filename, string subpath)
         {
-            return Song.ViewData.Helper.Excel.DeleteFile(filename, subpath + "/" + couid.ToString(), "Temp");
+            return Song.ViewData.Helper.Excel.DeleteFile(filename, subpath + "/" + orgid.ToString(), "Temp");
         }
         /// <summary>
         /// 删除所有
         /// </summary>
-        /// <param name="couid">试题所在的课程</param>
+        /// <param name="orgid">机构id</param>
         /// <param name="subpath">导出文件的路径，相对临时路径的子路径</param>
         /// <returns></returns>
         [HttpDelete]
-        public bool ExcelDeleteAll(long couid, string subpath)
+        public bool ExcelDeleteAll(string subpath, int orgid)
         {
-            return Song.ViewData.Helper.Excel.DeleteDirectory(subpath + "/" + couid.ToString(), "Temp");
+            return Song.ViewData.Helper.Excel.DeleteDirectory(subpath + "\\" + orgid.ToString(), "Temp");
         }
         /// <summary>
         /// 已经生成的Excel文件
         /// </summary>
         /// <param name="subpath">导出文件的路径，相对临时路径的子路径</param>
-        /// <param name="couid">课程id,如果小于等于零，则取所有</param>
+        /// <param name="orgid">机构id</param>
         /// <returns>file:文件名,url:下载地址,date:创建时间</returns>
-        public JArray ExcelFiles(string subpath, string couid)
+        public JArray ExcelFiles(string subpath, int orgid)
         {
-            string rootpath = Path.Combine(WeiSha.Core.Upload.Get["Temp"].Physics, subpath, couid.ToString());
+            string rootpath = Path.Combine(WeiSha.Core.Upload.Get["Temp"].Physics, subpath, orgid.ToString());
             JArray jarr = new JArray();
             if (!System.IO.Directory.Exists(rootpath)) return jarr;
-            if (string.IsNullOrWhiteSpace(couid)) return jarr;
+            if (orgid < 1) return jarr;
 
             System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(rootpath);
             //if (couid == "0" || string.IsNullOrEmpty(couid)) couid = "*";
@@ -1105,9 +1111,9 @@ namespace Song.ViewData.Methods
             foreach (FileInfo f in files)
             {
                 JObject jo = new JObject();
-                jo.Add("name", Path.GetFileNameWithoutExtension(f.Name).Replace("." + couid, ""));
+                jo.Add("name", Path.GetFileNameWithoutExtension(f.Name).Replace("." + orgid, ""));
                 jo.Add("file", f.Name);
-                jo.Add("url", WeiSha.Core.Upload.Get["Temp"].Virtual + subpath + "/" + couid.ToString() + "/" + f.Name);
+                jo.Add("url", WeiSha.Core.Upload.Get["Temp"].Virtual + subpath + "/" + orgid.ToString() + "/" + f.Name);
                 jo.Add("date", f.CreationTime);
                 jo.Add("type", Path.GetExtension(f.Name).TrimStart('.'));
                 jo.Add("size", f.Length);

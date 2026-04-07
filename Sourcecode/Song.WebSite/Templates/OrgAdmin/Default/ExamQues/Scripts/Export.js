@@ -7,14 +7,13 @@ $ready(['../Question/Components/ques_type.js',
         window.vapp = new Vue({
             el: '#vapp',
             data: {
-                couid: $api.querystring('couid', '0'),        //课程id
                 org: {},
                 config: {},      //当前机构配置项    
                 types: [],        //试题类型，来自web.config中配置项
 
                 //查询条件
                 form: { "orgid": "", "types": [], "qpid": "", "tagid": "", "knlid": "", "isdeleted": false, "diffs": [], "use": true, "error": "", "wrong": "" },
-                subpath: 'QuestionToExcel',  //导出文件的路径，相对临时路径的子路径    
+                subpath: 'ExamQuesToExcel',  //导出文件的路径，相对临时路径的子路径    
                 parts: [],  //选中的试题分类
                 knls: [],
                 tags: [],
@@ -48,7 +47,7 @@ $ready(['../Question/Components/ques_type.js',
                 th.form.orgid = th.org.Org_ID;
                 $api.cache('Question/Types:99999').then(types => th.types = types.data.result);
                 //获取已经导出的文件
-                //this.getFiles();
+                this.getFiles();
             },
             watch: {
                 //监听表单数据变化
@@ -115,13 +114,9 @@ $ready(['../Question/Components/ques_type.js',
                 exportFile: function () {
                     var th = this;
                     var form = $api.clone(th.form);
-                    //将题型从数组转为字符串
-                    form.types = th.form.types.join(',');
-                    //将难度等级从数组转为字符串
-                    form.diffs = th.form.diffs.join(',');
-                    //console.log(form);
+                    form['subpath'] = th.subpath;
                     th.loading_export = true;
-                    $api.get('Question/ExcelExport', form).then(function (req) {
+                    $api.get('ExamQues/ExcelExport', form).then(function (req) {
                         if (req.data.success) {
                             let result = req.data.result;
                             console.log(result);
@@ -139,7 +134,7 @@ $ready(['../Question/Components/ques_type.js',
                 getFiles: function () {
                     var th = this;
                     th.loading = true;
-                    $api.get('Question/ExcelFiles', { 'subpath': th.form.subpath, 'couid': th.couid }).then(function (req) {
+                    $api.get('ExamQues/ExcelFiles', { 'subpath': th.subpath, 'orgid': th.org.Org_ID }).then(function (req) {
                         if (req.data.success) {
                             th.files = req.data.result;
                         } else {
@@ -153,7 +148,7 @@ $ready(['../Question/Components/ques_type.js',
                     var th = this;
                     if (th.loading) return;
                     th.loading = true;
-                    $api.delete('Question/ExcelDelete', { 'couid': th.couid, 'filename': file, 'subpath': th.form.subpath }).then(function (req) {
+                    $api.delete('ExamQues/ExcelDelete', { 'orgid': th.org.Org_ID, 'filename': file, 'subpath': th.subpath }).then(function (req) {
                         if (req.data.success) {
                             th.getFiles();
                             th.$notify({
@@ -171,7 +166,7 @@ $ready(['../Question/Components/ques_type.js',
                     var th = this;
                     if (th.loading) return;
                     th.loading = true;
-                    $api.delete('Question/ExcelDeleteAll', { 'couid': th.couid, 'subpath': th.form.subpath }).then(function (req) {
+                    $api.delete('ExamQues/ExcelDeleteAll', { 'orgid': th.org.Org_ID, 'subpath': th.subpath }).then(function (req) {
                         if (req.data.success) {
                             th.getFiles();
                             th.$notify({

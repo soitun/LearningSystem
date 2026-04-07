@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json.Linq;
+using NPOI.HSSF.UserModel;
 using Song.Entities;
 using WeiSha.Data;
 
@@ -168,7 +170,7 @@ namespace Song.ServiceInterfaces
         /// 修改
         /// </summary>
         /// <param name="entity">业务实体</param>
-        void PartSave(QuesPart entity);
+        QuesPart PartSave(QuesPart entity);
         /// <summary>
         /// 修改试题分类的某些项
         /// </summary>
@@ -232,9 +234,19 @@ namespace Song.ServiceInterfaces
         /// <summary>
         /// 获取试题分类名称，如果为多级，则带上父级名称
         /// </summary>
-        /// <param name="id">试题分类的id</param>
+        /// <param name="partid">试题分类的id</param>
         /// <returns></returns>
-        string PartName(long id);
+        string PartName(long partid);
+        /// <summary>
+        /// 获取试题分类名称，如果为多级，则带上父级名称
+        /// </summary>
+        string PartName(long[] partid);
+        /// <summary>
+        /// 获取试题分类名称，如果为多级，则带上父级名称
+        /// </summary>
+        /// <param name="qid">试题的id</param>
+        /// <returns></returns>
+        string QuesPartName(long qid);
         /// <summary>
         /// 当前试题分类，是否有子试题分类
         /// </summary>
@@ -499,6 +511,16 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         string KnlName(long id);
         /// <summary>
+        /// 获取试题分类名称，如果为多级，则带上父级名称
+        /// </summary>
+        string KnlName(long[] knlid);
+        /// <summary>
+        /// 获取试题分类名称，如果为多级，则带上父级名称
+        /// </summary>
+        /// <param name="qid">试题的id</param>
+        /// <returns></returns>
+        string QuesKnlName(long qid);
+        /// <summary>
         /// 当前试题知识点，是否有子试题知识点
         /// </summary>
         /// <param name="orgid"></param>
@@ -686,6 +708,16 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         QuesTags TagSingle(string name, int orgid, long couid);
         /// <summary>
+        /// 获取关键字名称
+        /// </summary>
+        string TagName(long[] tagid);
+        /// <summary>
+        /// 获取试题标签名称
+        /// </summary>
+        /// <param name="qid">试题的id</param>
+        /// <returns></returns>
+        string QuesTagName(long qid);
+        /// <summary>
         /// 创建关键字与试题的关联
         /// </summary>
         /// <param name="tag"></param>
@@ -786,6 +818,41 @@ namespace Song.ServiceInterfaces
         #endregion
 
         #region 回收站
+        #endregion
+
+        #region 试题导出
+        /// <summary>
+        /// 导出试题
+        /// </summary>
+        /// <param name="subpath"></param>
+        /// <param name="orgid">所属机构</param>
+        /// <param name="types">题型</param>
+        /// <param name="qpid">分类id</param>
+        /// <param name="tagid">标签id</param>
+        /// <param name="knlid">知识点id</param>
+        /// <param name="isdeleted">是否删除的</param>
+        /// <param name="diffs">难度等级</param>
+        /// <param name="isUse">是否启用</param>
+        /// <param name="isError">是否错误</param>
+        /// <param name="isWrong">是否有回馈问题</param>
+        /// <returns></returns>
+        HSSFWorkbook QuesExport(string subpath, int orgid, int[] types, long[] qpid, long[] tagid, long[] knlid, bool? isdeleted, int[] diffs, bool? isUse, bool? isError, bool? isWrong);
+        /// <summary>
+        /// 导出试题,生成文件
+        /// </summary>
+        /// <param name="subpath">导出文件的路径（服务器端），相对临时路径的子路径</param>
+        /// <param name="orgid">所属机构</param>
+        /// <param name="types">题型</param>
+        /// <param name="qpid">分类id</param>
+        /// <param name="tagid">标签id</param>
+        /// <param name="knlid">知识点id</param>
+        /// <param name="isdeleted">是否删除的</param>
+        /// <param name="diffs">难度等级</param>
+        /// <param name="isUse">是否启用</param>
+        /// <param name="isError">是否错误</param>
+        /// <param name="isWrong">是否有回馈问题</param>     
+        /// <returns></returns>
+        JObject QuesExportExcel(string subpath, int orgid, int[] types, long[] qpid, long[] tagid, long[] knlid, bool? isdeleted, int[] diffs, bool? isUse, bool? isError, bool? isWrong);
         #endregion
     }
 }

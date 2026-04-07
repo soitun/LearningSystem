@@ -24,7 +24,7 @@ namespace Song.ViewData.Methods
     public class Question : ViewMethod, IViewAPI
     {
         #region 题型
-        private static string[] _types=null;
+        private static string[] _types = null;
         /// <summary>
         /// 题型
         /// </summary>
@@ -48,12 +48,12 @@ namespace Song.ViewData.Methods
         [Admin, Teacher]
         [HttpDelete]
         public int Delete(long[] qusid, long[] olid)
-        {          
-            if (qusid == null || qusid.Length<1) return 0;          
+        {
+            if (qusid == null || qusid.Length < 1) return 0;
             Business.Do<IQuestions>().QuesDelete(qusid);
             //更新章节试题数
             Business.Do<IOutline>().StatisticalQuestion(olid);
-            return qusid.Length;          
+            return qusid.Length;
         }
         /// <summary>
         /// 添加试题
@@ -104,12 +104,12 @@ namespace Song.ViewData.Methods
             {
                 old.Qus_Items = Business.Do<IQuestions>().AnswerToItems(Helper.Question.AnswerToItems(entity));
             }
-            
+
             Business.Do<IQuestions>().QuesSave(old);
 
             //更新章节试题数
             if (oldOlid != newOlid)
-            {                
+            {
                 Business.Do<IOutline>().StatisticalQuestion(oldOlid);
                 Business.Do<IOutline>().StatisticalQuestion(newOlid);
             }
@@ -175,7 +175,7 @@ namespace Song.ViewData.Methods
                     //将数据逐行导入数据库
                     object[] objs = new object[] { excel, dt.Rows[i], type, course, org, matching };
                     impot.InvokeMember(func_name, System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public,
-                        null, null, objs); 
+                        null, null, objs);
 
                     success++;
                 }
@@ -188,11 +188,11 @@ namespace Song.ViewData.Methods
                 }
             }
             new Task(() =>
-            {              
+            {
                 //刷新课程与章节的统计数据，当前课程下的章节试题也会计算
                 Business.Do<IQuestions>().QuesCountUpdate(-1, -1, couid, -1);
             }).Start();
-           
+
 
             JObject jo = new JObject();
             jo.Add("success", success);
@@ -226,7 +226,7 @@ namespace Song.ViewData.Methods
         /// <param name="couid">课程id</param>
         /// <param name="olid">章节id</param>
         /// <returns></returns>
-        public JObject ExcelExport(string subpath,string folder, string types, string diffs, int part, int orgid, long sbjid, long couid, long olid)
+        public JObject ExcelExport(string subpath, string folder, string types, string diffs, int part, int orgid, long sbjid, long couid, long olid)
         {
             JObject jo = null;
             //导出所有
@@ -249,7 +249,7 @@ namespace Song.ViewData.Methods
         [HttpDelete]
         public bool ExcelDelete(long couid, string filename, string subpath)
         {
-            return Song.ViewData.Helper.Excel.DeleteFile(filename, subpath + "/" + couid.ToString(), "Temp");          
+            return Song.ViewData.Helper.Excel.DeleteFile(filename, subpath + "/" + couid.ToString(), "Temp");
         }
         /// <summary>
         /// 删除所有
@@ -272,7 +272,7 @@ namespace Song.ViewData.Methods
         {
             string rootpath = Path.Combine(WeiSha.Core.Upload.Get["Temp"].Physics, subpath, couid.ToString());
             JArray jarr = new JArray();
-            if (!System.IO.Directory.Exists(rootpath)) return jarr;           
+            if (!System.IO.Directory.Exists(rootpath)) return jarr;
             if (string.IsNullOrWhiteSpace(couid)) return jarr;
 
             System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(rootpath);
@@ -310,7 +310,7 @@ namespace Song.ViewData.Methods
         [Cache]
         public int Count(int orgid, long sbjid, long couid, long olid, int type, bool? use)
         {
-            return Business.Do<IQuestions>().QuesOfCount(orgid, sbjid, couid, olid, type,-1, use);
+            return Business.Do<IQuestions>().QuesOfCount(orgid, sbjid, couid, olid, type, -1, use);
         }
         /// <summary>
         /// 计算有多少条试题，如果涉及专业或章节，将计算所有下级的数量
@@ -360,7 +360,7 @@ namespace Song.ViewData.Methods
         /// <param name="id">试题id</param>
         /// <returns></returns>
         [Cache]
-        [HttpPut,HttpPost]
+        [HttpPut, HttpPost]
         public Song.Entities.Questions ForID(long id)
         {
             Song.Entities.Questions ques = Business.Do<IQuestions>().QuesSingle(id);
@@ -511,23 +511,17 @@ namespace Song.ViewData.Methods
         [HttpPost]
         public bool CollectAdd(int acid, long qid, long couid)
         {
-            try
+
+            Student_Collect stc = Business.Do<IStudent>().CollectSingle(acid, qid);
+            if (stc == null)
             {
-                Student_Collect stc = Business.Do<IStudent>().CollectSingle(acid, qid);
-                if (stc == null)
-                {
-                    stc = new Entities.Student_Collect();
-                    stc.Ac_ID = acid;
-                    stc.Qus_ID = qid;
-                    stc.Cou_ID = couid;
-                    Business.Do<IStudent>().CollectAdd(stc);
-                }
-                return true;
+                stc = new Entities.Student_Collect();
+                stc.Ac_ID = acid;
+                stc.Qus_ID = qid;
+                stc.Cou_ID = couid;
+                Business.Do<IStudent>().CollectAdd(stc);
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return true;
         }
         /// <summary>
         /// 删除收藏
@@ -536,17 +530,10 @@ namespace Song.ViewData.Methods
         /// <param name="qid">试题id</param>
         /// <returns></returns>
         [HttpDelete]
-        public bool CollectDelete(int acid,long qid)
+        public bool CollectDelete(int acid, long qid)
         {
-            try
-            {
-                Business.Do<IStudent>().CollectDelete(qid, acid);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            Business.Do<IStudent>().CollectDelete(qid, acid);
+            return true;
         }
         /// <summary>
         /// 清空试题收藏
@@ -557,15 +544,8 @@ namespace Song.ViewData.Methods
         [HttpDelete]
         public bool CollectClear(int acid, long couid)
         {
-            try
-            {
-                Business.Do<IStudent>().CollectClear(couid, acid);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            Business.Do<IStudent>().CollectClear(couid, acid);
+            return true;
         }
         /// <summary>
         /// 是否收藏试题
@@ -576,15 +556,8 @@ namespace Song.ViewData.Methods
         [HttpGet]
         public bool CollectExist(int acid, long qid)
         {
-            try
-            {
-                Student_Collect sc = Business.Do<IStudent>().CollectSingle(acid, qid);
-                return sc != null;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            Student_Collect sc = Business.Do<IStudent>().CollectSingle(acid, qid);
+            return sc != null;
         }
         #endregion
 
@@ -622,38 +595,30 @@ namespace Song.ViewData.Methods
         [HttpPost]
         public bool NotesModify(int acid, long qid, string note)
         {
-            
-            try
+            //如果笔记内容为空，则删除记录
+            if (string.IsNullOrWhiteSpace(note))
             {
-                //如果笔记内容为空，则删除记录
-                if (string.IsNullOrWhiteSpace(note))
+                Business.Do<IStudent>().NotesDelete(qid, acid);
+                return false;
+            }
+            else
+            {
+                //如果不为空
+                Song.Entities.Student_Notes sn = Business.Do<IStudent>().NotesSingle(qid, acid);
+                if (sn != null)
                 {
-                    Business.Do<IStudent>().NotesDelete(qid, acid);
-                    return false;
+                    sn.Stn_Context = note;
+                    Business.Do<IStudent>().NotesSave(sn);
                 }
                 else
                 {
-                    //如果不为空
-                    Song.Entities.Student_Notes sn = Business.Do<IStudent>().NotesSingle(qid, acid);
-                    if (sn != null)
-                    {
-                        sn.Stn_Context = note;
-                        Business.Do<IStudent>().NotesSave(sn);
-                    }
-                    else
-                    {
-                        sn = new Student_Notes();
-                        sn.Stn_Context = note;
-                        sn.Qus_ID = qid;
-                        sn.Ac_ID = acid;
-                        Business.Do<IStudent>().NotesAdd(sn);
-                    }
-                    return true;
+                    sn = new Student_Notes();
+                    sn.Stn_Context = note;
+                    sn.Qus_ID = qid;
+                    sn.Ac_ID = acid;
+                    Business.Do<IStudent>().NotesAdd(sn);
                 }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
+                return true;
             }
         }
         /// <summary>
@@ -665,15 +630,8 @@ namespace Song.ViewData.Methods
         [HttpDelete]
         public bool NotesClear(int acid, long couid)
         {
-            try
-            {
-                Business.Do<IStudent>().NotesClear(couid, acid);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            Business.Do<IStudent>().NotesClear(couid, acid);
+            return true;
         }
         /// <summary>
         /// 试题笔记
@@ -684,15 +642,9 @@ namespace Song.ViewData.Methods
         [HttpGet]
         public Song.Entities.Student_Notes NotesSingle(int acid, long qid)
         {
-            try
-            {
-                Song.Entities.Student_Notes note = Business.Do<IStudent>().NotesSingle(qid, acid);
-                return note;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+
+            Song.Entities.Student_Notes note = Business.Do<IStudent>().NotesSingle(qid, acid);
+            return note;
         }
         #endregion
 
@@ -707,21 +659,16 @@ namespace Song.ViewData.Methods
         [Student]
         public bool WrongModify(long qid, string error)
         {
-            try
-            {
-                Song.Entities.Questions ques = Business.Do<IQuestions>().QuesSingle(qid);
-                if (ques == null) return false;
-                ques.Qus_WrongInfo = error;
-                ques.Qus_IsWrong = !string.IsNullOrWhiteSpace(error);
-                Business.Do<IQuestions>().QuesUpdate(qid,
-                    new Field[] { Questions._.Qus_WrongInfo, Questions._.Qus_IsWrong },
-                    new object[] { ques.Qus_WrongInfo, ques.Qus_IsWrong });
-                return ques.Qus_IsWrong;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+
+            Song.Entities.Questions ques = Business.Do<IQuestions>().QuesSingle(qid);
+            if (ques == null) return false;
+            ques.Qus_WrongInfo = error;
+            ques.Qus_IsWrong = !string.IsNullOrWhiteSpace(error);
+            Business.Do<IQuestions>().QuesUpdate(qid,
+                new Field[] { Questions._.Qus_WrongInfo, Questions._.Qus_IsWrong },
+                new object[] { ques.Qus_WrongInfo, ques.Qus_IsWrong });
+            return ques.Qus_IsWrong;
+
         }
         ///// <summary>
         ///// 试题错误信息
@@ -744,7 +691,7 @@ namespace Song.ViewData.Methods
         /// <param name="couid">试题所在课程的id</param>
         /// <returns></returns>
         [HttpPost]
-        public bool ErrorAdd(int acid,long qid,long couid)
+        public bool ErrorAdd(int acid, long qid, long couid)
         {
             //如果未设置学员id，则取当前登录的学员账号id
             if (acid <= 0)
@@ -752,19 +699,13 @@ namespace Song.ViewData.Methods
                 Song.Entities.Accounts acc = this.User;
                 if (acc != null) acid = acc.Ac_ID;
             }
-            try
-            {
-                Song.Entities.Student_Ques stc = new Entities.Student_Ques();
-                stc.Ac_ID = acid;
-                stc.Qus_ID = qid;
-                stc.Cou_ID = couid;
-                stc.Squs_CrtTime = DateTime.Now;
-                Business.Do<IStudent>().QuesAdd(stc);
-                return true;
-            }catch(Exception ex)
-            {
-                throw ex;
-            }
+            Song.Entities.Student_Ques stc = new Entities.Student_Ques();
+            stc.Ac_ID = acid;
+            stc.Qus_ID = qid;
+            stc.Cou_ID = couid;
+            stc.Squs_CrtTime = DateTime.Now;
+            Business.Do<IStudent>().QuesAdd(stc);
+            return true;
         }
         /// <summary>
         /// 学员答错的题，仅包含试题id与类型
@@ -773,7 +714,7 @@ namespace Song.ViewData.Methods
         /// <param name="couid">试题id</param>
         /// <param name="type">试题类型</param>
         /// <returns></returns>       
-        public Dictionary<string, List<string>> ErrorQues(int acid,long couid,int type)
+        public Dictionary<string, List<string>> ErrorQues(int acid, long couid, int type)
         {
             Song.Entities.Questions[] ques = Business.Do<IStudent>().QuesAll(acid, 0, couid, type);
             Dictionary<string, List<string>> dic = new Dictionary<string, List<string>>();
@@ -808,7 +749,7 @@ namespace Song.ViewData.Methods
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public ListResult ErrorCourse(int acid,string course, int size, int index)
+        public ListResult ErrorCourse(int acid, string course, int size, int index)
         {
             int count;
             Song.Entities.Course[] courses = Business.Do<IStudent>().QuesForCourse(acid, course, size, index, out count);
@@ -856,17 +797,10 @@ namespace Song.ViewData.Methods
         /// <param name="acid">学员id</param>
         /// <param name="qid">试题id</param>
         /// <returns></returns>
-        public bool ErrorDelete(int acid,long qid)
+        public bool ErrorDelete(int acid, long qid)
         {
-            try
-            {
-                Business.Do<IStudent>().QuesDelete(qid,acid);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            Business.Do<IStudent>().QuesDelete(qid, acid);
+            return true;
         }
         /// <summary>
         /// 清空答错的试题，按课程清除
@@ -875,17 +809,10 @@ namespace Song.ViewData.Methods
         /// <param name="couid">课程id</param>
         /// <returns></returns>
         [HttpDelete]
-        public int ErrorClear(int acid,long couid)
+        public int ErrorClear(int acid, long couid)
         {
-            try
-            {
-                return Business.Do<IStudent>().QuesClear(couid, acid);               
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-           
+            return Business.Do<IStudent>().QuesClear(couid, acid);
+
         }
         #endregion
 
@@ -926,7 +853,7 @@ namespace Song.ViewData.Methods
                     timeTricks = new DateTime(1970, 1, 1).Ticks + timeTricks * 10000;
                     DateTime last = new DateTime(timeTricks);
                 }
-            }           
+            }
             new System.Threading.Tasks.Task(() =>
             {
                 Business.Do<IQuestions>().ExerciseLogSave(acc, -1, couid, olid, json.ToString(), total, answer, correct, wrong, rate);
@@ -936,7 +863,7 @@ namespace Song.ViewData.Methods
                 Student_Course sc = Business.Do<ICourse>().StudentCourse(acid, couid);
                 if (sc == null) sc = Business.Do<IStudent>().SortCourseToStudent(acc, couid);
                 if (sc != null) Business.Do<ICourse>().StudentScoreSave(sc, -1, (float)Math.Round(cou_passrate * 100) / 100, -1);
-                
+
             }).Start();
 
             return true;
@@ -980,7 +907,7 @@ namespace Song.ViewData.Methods
         /// <param name="couid"></param>
         /// <param name="olid"></param>
         /// <returns></returns>
-        [HttpDelete,HttpGet(Ignore =true)]
+        [HttpDelete, HttpGet(Ignore = true)]
         public bool ExerciseLogDel(int acid, long couid, long olid)
         {
             if (acid <= 0 || couid <= 0 || olid <= 0) return false;
@@ -1168,7 +1095,7 @@ namespace Song.ViewData.Methods
             catch
             {
                 return null;
-            }            
+            }
             return joqus;
         }
         /// <summary>
@@ -1181,7 +1108,7 @@ namespace Song.ViewData.Methods
         [HttpPost]
         public float AICalcScore(long qid, string answer, float num)
         {
-            float score = Business.Do<IQuestions>().CalcScore(qid, answer,num);
+            float score = Business.Do<IQuestions>().CalcScore(qid, answer, num);
             return score;
         }
         #endregion

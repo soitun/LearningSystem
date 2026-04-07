@@ -907,10 +907,10 @@ namespace Song.ServiceImpls
                     row.CreateCell(1).SetCellValue(q.Qus_Title);
                 else row.CreateCell(1).SetCellValue(_build_text(q.Qus_ID, 0, "Qus_Title", folder, q.Qus_Title));
                 //专业,课程,章节
-                if (string.IsNullOrWhiteSpace(sbjname)) sbjname = Business.Do<ISubject>().SubjectName(q.Sbj_ID);
-                row.CreateCell(2).SetCellValue(sbjname);
-                if (string.IsNullOrWhiteSpace(couname)) couname = Business.Do<ICourse>().CourseName(q.Cou_ID);
-                row.CreateCell(3).SetCellValue(couname);
+                if (string.IsNullOrWhiteSpace(sbjname)) row.CreateCell(2).SetCellValue(Business.Do<ISubject>().SubjectName(q.Sbj_ID));
+                else row.CreateCell(2).SetCellValue(sbjname);
+                if (string.IsNullOrWhiteSpace(couname)) row.CreateCell(3).SetCellValue(Business.Do<ICourse>().CourseName(q.Cou_ID));
+                else row.CreateCell(3).SetCellValue(couname);
                 row.CreateCell(4).SetCellValue(Business.Do<IOutline>().OutlineName(q.Ol_ID));
                 row.CreateCell(5).SetCellValue((int)q.Qus_Diff);
                 row.CreateCell(12).SetCellValue(ansIndex.ToString());
@@ -965,12 +965,10 @@ namespace Song.ServiceImpls
                     row.CreateCell(1).SetCellValue(q.Qus_Title);
                 else row.CreateCell(1).SetCellValue(_build_text(q.Qus_ID, 0, "Qus_Title", folder, q.Qus_Title));
                 //专业,课程,章节
-                if (string.IsNullOrWhiteSpace(sbjname))
-                    sbjname = Business.Do<ISubject>().SubjectName(q.Sbj_ID);
-                row.CreateCell(2).SetCellValue(sbjname);
-                if (string.IsNullOrWhiteSpace(couname))
-                    couname = Business.Do<ICourse>().CourseName(q.Cou_ID);
-                row.CreateCell(3).SetCellValue(couname);
+                if (string.IsNullOrWhiteSpace(sbjname)) row.CreateCell(2).SetCellValue(Business.Do<ISubject>().SubjectName(q.Sbj_ID));
+                else row.CreateCell(2).SetCellValue(sbjname);
+                if (string.IsNullOrWhiteSpace(couname)) row.CreateCell(3).SetCellValue(Business.Do<ICourse>().CourseName(q.Cou_ID));
+                else row.CreateCell(3).SetCellValue(couname);
                 row.CreateCell(4).SetCellValue(Business.Do<IOutline>().OutlineName(q.Ol_ID));
                 row.CreateCell(5).SetCellValue((int)q.Qus_Diff);
                 row.CreateCell(12).SetCellValue(ansIndex.ToString());
@@ -1011,12 +1009,10 @@ namespace Song.ServiceImpls
                     row.CreateCell(1).SetCellValue(q.Qus_Title);
                 else row.CreateCell(1).SetCellValue(_build_text(q.Qus_ID, 0, "Qus_Title", folder, q.Qus_Title));
                 //专业,课程,章节
-                if (string.IsNullOrWhiteSpace(sbjname))
-                    sbjname = Business.Do<ISubject>().SubjectName(q.Sbj_ID);
-                row.CreateCell(2).SetCellValue(sbjname);
-                if (string.IsNullOrWhiteSpace(couname))
-                    couname = Business.Do<ICourse>().CourseName(q.Cou_ID);
-                row.CreateCell(3).SetCellValue(couname);
+                if (string.IsNullOrWhiteSpace(sbjname)) row.CreateCell(2).SetCellValue(Business.Do<ISubject>().SubjectName(q.Sbj_ID));
+                else row.CreateCell(2).SetCellValue(sbjname);
+                if (string.IsNullOrWhiteSpace(couname)) row.CreateCell(3).SetCellValue(Business.Do<ICourse>().CourseName(q.Cou_ID));
+                else row.CreateCell(3).SetCellValue(couname);
                 row.CreateCell(4).SetCellValue(Business.Do<IOutline>().OutlineName(q.Ol_ID));
                 row.CreateCell(5).SetCellValue((int)q.Qus_Diff);
                 row.CreateCell(6).SetCellValue(ans);
@@ -1053,12 +1049,10 @@ namespace Song.ServiceImpls
                     row.CreateCell(1).SetCellValue(q.Qus_Title);
                 else row.CreateCell(1).SetCellValue(_build_text(q.Qus_ID, 0, "Qus_Title", folder, q.Qus_Title));
                 //专业,课程,章节
-                if (string.IsNullOrWhiteSpace(sbjname))
-                    sbjname = Business.Do<ISubject>().SubjectName(q.Sbj_ID);
-                row.CreateCell(2).SetCellValue(sbjname);
-                if (string.IsNullOrWhiteSpace(couname))
-                    couname = Business.Do<ICourse>().CourseName(q.Cou_ID);
-                row.CreateCell(3).SetCellValue(couname);
+                if (string.IsNullOrWhiteSpace(sbjname)) row.CreateCell(2).SetCellValue(Business.Do<ISubject>().SubjectName(q.Sbj_ID));
+                else row.CreateCell(2).SetCellValue(sbjname);
+                if (string.IsNullOrWhiteSpace(couname)) row.CreateCell(3).SetCellValue(Business.Do<ICourse>().CourseName(q.Cou_ID));
+                else row.CreateCell(3).SetCellValue(couname);
                 row.CreateCell(4).SetCellValue(Business.Do<IOutline>().OutlineName(q.Ol_ID));
                 row.CreateCell(5).SetCellValue((int)q.Qus_Diff);               
                 //正常答案
@@ -1108,12 +1102,10 @@ namespace Song.ServiceImpls
                     row.CreateCell(1).SetCellValue(q.Qus_Title);
                 else row.CreateCell(1).SetCellValue(_build_text(q.Qus_ID, 0, "Qus_Title", folder, q.Qus_Title));
                 //专业,课程,章节
-                if (string.IsNullOrWhiteSpace(sbjname))
-                    sbjname = Business.Do<ISubject>().SubjectName(q.Sbj_ID);
-                row.CreateCell(2).SetCellValue(sbjname);
-                if (string.IsNullOrWhiteSpace(couname))
-                    couname = Business.Do<ICourse>().CourseName(q.Cou_ID);
-                row.CreateCell(3).SetCellValue(couname);
+                if (string.IsNullOrWhiteSpace(sbjname)) row.CreateCell(2).SetCellValue(Business.Do<ISubject>().SubjectName(q.Sbj_ID));
+                else row.CreateCell(2).SetCellValue(sbjname);
+                if (string.IsNullOrWhiteSpace(couname)) row.CreateCell(3).SetCellValue(Business.Do<ICourse>().CourseName(q.Cou_ID));
+                else row.CreateCell(3).SetCellValue(couname);
                 row.CreateCell(4).SetCellValue(Business.Do<IOutline>().OutlineName(q.Ol_ID));
                 row.CreateCell(5).SetCellValue((int)q.Qus_Diff);
                 //解析

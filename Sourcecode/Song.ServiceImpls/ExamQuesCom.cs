@@ -1,8 +1,12 @@
-﻿using Song.Entities;
+﻿using Newtonsoft.Json.Linq;
+using NPOI.HSSF.UserModel;
+using NPOI.SS.UserModel;
+using Song.Entities;
 using Song.ServiceInterfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using WeiSha.Core;
 using WeiSha.Data;
@@ -575,7 +579,7 @@ namespace Song.ServiceImpls
         /// 修改
         /// </summary>
         /// <param name="entity">业务实体</param>
-        public void PartSave(QuesPart entity)
+        public QuesPart PartSave(QuesPart entity)
         {
             //专业的id与pid不能相等
             if (entity.Qp_PID == entity.Qp_ID) throw new Exception("QuesPart table PID Can not be equal to ID");
@@ -599,6 +603,7 @@ namespace Song.ServiceImpls
                     throw ex;
                 }
             }
+            return entity;
         }
         /// <summary>
         /// 修改试题分类的某些项
@@ -761,26 +766,49 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 获取试题分类名称，如果为多级，则带上父级名称
         /// </summary>
-        /// <param name="id">试题分类的id</param>
+        /// <param name="partid">试题分类的id</param>
         /// <returns></returns>
-        public string PartName(long id)
+        public string PartName(long partid)
         {
             QuesPart entity = null;
             string xpath = string.Empty;
             do
             {
-                entity = Gateway.Default.From<QuesPart>().Where(QuesPart._.Qp_ID == id)
+                entity = Gateway.Default.From<QuesPart>().Where(QuesPart._.Qp_ID == partid)
                     .Select(new Field[] { QuesPart._.Qp_ID, QuesPart._.Qp_PID, QuesPart._.Qp_Name }).ToFirst<QuesPart>();
                 if (entity != null)
                 {
-                    if (string.IsNullOrWhiteSpace(xpath))
-                        xpath = entity.Qp_Name;
-                    else
-                        xpath = entity.Qp_Name + "," + xpath;
-                    id = entity.Qp_PID;
+                    if (string.IsNullOrWhiteSpace(xpath)) xpath = entity.Qp_Name;
+                    else xpath = entity.Qp_Name + "," + xpath;
+                    partid = entity.Qp_PID;
                 }
-            } while (entity != null && id > 0);
+            } while (entity != null && partid > 0);
             return xpath;
+        }
+        /// <summary>
+        /// 获取试题分类名称，如果为多级，则带上父级名称
+        /// </summary>
+        public string PartName(long[] partid)
+        {
+            List<string> list = new List<string>();
+            for (int i = 0; i < partid.Length; i++)
+            {
+                string name = this.PartName(partid[i]);
+                if (!string.IsNullOrWhiteSpace(name)) list.Add(name);
+            }
+            return string.Join(";", list);
+        }
+        /// <summary>
+        /// 获取试题分类名称，如果为多级，则带上父级名称
+        /// </summary>
+        /// <param name="qid">试题的id</param>
+        /// <returns></returns>
+        public string QuesPartName(long qid)
+        {
+            List<QuesPart> list = this.PartForQues(qid);
+            if (list == null) return string.Empty;
+            long[] idarray = list.Select(q => q.Qp_ID).ToArray();
+            return this.PartName(idarray);
         }
         /// <summary>
         /// 当前试题分类，是否有子试题分类
@@ -1528,14 +1556,38 @@ namespace Song.ServiceImpls
                     .Select(new Field[] { QuesKnowledge._.Qk_ID, QuesKnowledge._.Qk_PID, QuesKnowledge._.Qk_Name }).ToFirst<QuesKnowledge>();
                 if (entity != null)
                 {
-                    if (string.IsNullOrWhiteSpace(xpath))
-                        xpath = entity.Qk_Name;
-                    else
-                        xpath = entity.Qk_Name + "," + xpath;
+                    if (string.IsNullOrWhiteSpace(xpath)) xpath = entity.Qk_Name;
+                    else xpath = entity.Qk_Name + "," + xpath;
                     id = entity.Qk_PID;
                 }
             } while (entity != null && id > 0);
             return xpath;
+        }
+        /// <summary>
+        /// 获取试题分类名称，如果为多级，则带上父级名称
+        /// </summary>
+        public string KnlName(long[] knlid)
+        {
+            List<string> list = new List<string>();
+            for (int i = 0; i < knlid.Length; i++)
+            {
+                string name = this.KnlName(knlid[i]);
+                if (!string.IsNullOrWhiteSpace(name)) list.Add(name);
+            }
+            return string.Join(";", list);
+        }
+        /// <summary>
+        /// 获取试题分类名称，如果为多级，则带上父级名称
+        /// </summary>
+        /// <param name="qid">试题的id</param>
+        /// <returns></returns>
+        public string QuesKnlName(long qid)
+        {
+
+            List<QuesKnowledge> list = this.KnlForQues(qid);
+            if (list == null) return string.Empty;
+            long[] idarray = list.Select(q => q.Qk_ID).ToArray();
+            return this.KnlName(idarray);
         }
         /// <summary>
         /// 当前试题知识点，是否有子试题知识点
@@ -2053,6 +2105,30 @@ namespace Song.ServiceImpls
             return Gateway.Default.From<QuesTags>().Where(wc).ToFirst<QuesTags>();
         }
         /// <summary>
+        /// 获取关键字名称
+        /// </summary>
+        public string TagName(long[] tagid)
+        {
+            if (tagid == null || tagid.Length == 0) return string.Empty;
+            WhereClip wc = new WhereClip();
+            foreach (long id in tagid)
+                wc.Or(QuesTags._.Qtag_ID == id);
+            List<QuesTags> list = Gateway.Default.From<QuesTags>().Where(wc).ToList<QuesTags>();
+            string[] arr = list.Select(q => q.Qtag_Name).ToArray();
+            return string.Join(",", arr);
+        }
+        /// <summary>
+        /// 获取试题标签名称
+        /// </summary>
+        /// <param name="qid">试题的id</param>
+        /// <returns></returns>
+        public string QuesTagName(long qid)
+        {
+            List<QuesTags> list = this.TagForQues(qid);
+            string[] arr = list.Select(q => q.Qtag_Name).ToArray();
+            return string.Join(",", arr);
+        }
+        /// <summary>
         /// 创建关键字与试题的关联
         /// </summary>
         /// <param name="tag"></param>
@@ -2290,6 +2366,434 @@ namespace Song.ServiceImpls
             countSum = Gateway.Default.Count<QuesTags>(wc);
             return Gateway.Default.From<QuesTags>().Where(wc).OrderBy(QuesTags._.Qtag_Order.Asc).ToList<QuesTags>(size, (index - 1) * size);
         }
+        #endregion
+
+        #region 试题导出
+        /// <summary>
+        /// 导出试题
+        /// </summary>
+        /// <param name="subpath"></param>
+        /// <param name="orgid">所属机构</param>
+        /// <param name="types">题型</param>
+        /// <param name="qpid">分类id</param>
+        /// <param name="tagid">标签id</param>
+        /// <param name="knlid">知识点id</param>
+        /// <param name="isdeleted">是否删除的</param>
+        /// <param name="diffs">难度等级</param>
+        /// <param name="isUse">是否启用</param>
+        /// <param name="isError">是否错误</param>
+        /// <param name="isWrong">是否有回馈问题</param>
+        /// <returns></returns>
+        public HSSFWorkbook QuesExport(string subpath, int orgid, int[] types, long[] qpid, long[] tagid, long[] knlid, bool? isdeleted, int[] diffs, bool? isUse, bool? isError, bool? isWrong)
+        {
+            HSSFWorkbook hssfworkbook = new HSSFWorkbook();
+            WhereClip wc = Questions._.Qus_Purpose == 1;    //用于考试的试题         
+            wc.And(Questions._.Qus_IsDeleted == false);
+            if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
+            if (isError != null) wc.And(Questions._.Qus_IsError == (bool)isError);
+            if (isWrong != null) wc.And(Questions._.Qus_IsWrong == (bool)isWrong);          
+            //题型
+            if (types != null && types.Length > 0)
+            {
+                WhereClip wctype = new WhereClip();
+                foreach (int t in types) wctype |= Questions._.Qus_Type == t;
+                wc.And(wctype);
+            }
+            //难度  
+            if (diffs != null && diffs.Length > 0)
+            {
+                WhereClip wcdiff = new WhereClip();
+                foreach (int d in diffs) if (d > 0 && d <= 5) wcdiff |= Questions._.Qus_Diff == d;
+                wc.And(wcdiff);
+            }
+            FromSection<Questions> section = Gateway.Default.From<Questions>().LeftJoin<QuesCollect>(QuesCollect._.Qus_ID == Questions._.Qus_ID);
+            //试题分类
+            if (qpid != null && qpid.Length > 0)
+            {
+                section.LeftJoin<Questions_QPart>(Questions_QPart._.Qus_ID == Questions._.Qus_ID);
+                WhereClip wcqp = new WhereClip();
+                foreach (long d in qpid) wcqp |= Questions_QPart._.Qp_ID == d;
+                wc.And(wcqp);
+            }
+            //试题关键字
+            if (tagid != null && tagid.Length > 0)
+            {
+                section.LeftJoin<Questions_QTags>(Questions_QTags._.Qus_ID == Questions._.Qus_ID);
+                WhereClip wcqp = new WhereClip();
+                foreach (long t in tagid) wcqp |= Questions_QTags._.Qtag_ID == t;
+                wc.And(wcqp);
+            }
+            //关联知识点
+            if (knlid != null && knlid.Length > 0)
+            {
+                section.LeftJoin<Questions_QKnl>(Questions_QKnl._.Qus_ID == Questions._.Qus_ID);
+                WhereClip wcqp = new WhereClip();
+                foreach (long k in knlid) wcqp |= Questions_QKnl._.Qk_ID == k;
+                wc.And(wcqp);
+            }
+            //生成分类、知识点、关键字的信息
+            string parts = this.PartName(qpid), knls = this.KnlName(knlid), tags = this.TagName(tagid);
+            //每页最多能放多少道题
+            int pagesize = 30000;
+            //试题类型，通过不同的试题类型返回工作表
+            foreach (int ty in types)
+            {              
+                //计算有多少道题
+                WhereClip where = (Questions._.Qus_Type == ty).And(wc);
+                int total = Gateway.Default.Count<Questions>(where);       //当前题型的记录数
+                int totalPages = (total + pagesize - 1) / pagesize;     //页数
+
+                for (int idx = 1; idx <= totalPages; idx++)
+                {
+                    if (ty == 1) _buildExcelSql_1(hssfworkbook, where, subpath, parts, tags, knls, total, pagesize, idx);
+                    if (ty == 2) _buildExcelSql_2(hssfworkbook, where, subpath, parts, tags, knls, total, pagesize, idx);
+                    if (ty == 3) _buildExcelSql_3(hssfworkbook, where, subpath, parts, tags, knls, total, pagesize, idx);
+                    if (ty == 4) _buildExcelSql_4(hssfworkbook, where, subpath, parts, tags, knls, total, pagesize, idx);
+                    if (ty == 5) _buildExcelSql_5(hssfworkbook, where, subpath, parts, tags, knls, total, pagesize, idx);
+                }
+            }
+            return hssfworkbook;
+        }
+        /// <summary>
+        /// 导出试题,生成文件
+        /// </summary>
+        /// <param name="subpath">导出文件的路径（服务器端），相对临时路径的子路径</param>
+        /// <param name="orgid">所属机构</param>
+        /// <param name="types">题型</param>
+        /// <param name="qpid">分类id</param>
+        /// <param name="tagid">标签id</param>
+        /// <param name="knlid">知识点id</param>
+        /// <param name="isdeleted">是否删除的</param>
+        /// <param name="diffs">难度等级</param>
+        /// <param name="isUse">是否启用</param>
+        /// <param name="isError">是否错误</param>
+        /// <param name="isWrong">是否有回馈问题</param>     
+        /// <returns></returns>
+        public JObject QuesExportExcel(string subpath, int orgid, int[] types, long[] qpid, long[] tagid, long[] knlid, bool? isdeleted, int[] diffs, bool? isUse, bool? isError, bool? isWrong)
+        {
+            long snowid = WeiSha.Core.Request.SnowID();
+            DateTime date = DateTime.Now;
+            //导出文件的位置
+            string path = Path.Combine(Upload.Get["Temp"].Physics, subpath, orgid.ToString(), snowid.ToString());
+            string filename = string.Format("考试试题导出.({0}).xls", date.ToString("yyyy-MM-dd hh-mm-ss"));
+
+            //导出Excel
+            HSSFWorkbook hssfworkbook = this.QuesExport(path, orgid, types, qpid, tagid, knlid, isdeleted, diffs, isUse, isError, isWrong);
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            FileStream file = new FileStream(Path.Combine(path, filename), FileMode.Create);
+            hssfworkbook.Write(file);
+            file.Close();
+
+            //生成最终的导出文件，如果没有txt文件（即试题内容没有超出Excel单元格最大文本长度），则输出Excel
+            //如果有txt文件，则打包输出
+            string[] files = Directory.GetFiles(path, "*.txt");
+            string parentFolder = Directory.GetParent(path).FullName;     // 获取上级文件夹路径
+            if (files.Length < 1)
+            {
+                string parentFile = Path.Combine(parentFolder, filename);
+                // 如果目标文件存在，可以先删除或改名
+                if (File.Exists(parentFile)) File.Delete(parentFile);
+                File.Move(Path.Combine(path, filename), parentFile);
+            }
+            else
+            {
+                string zipfile = Path.Combine(parentFolder, Path.ChangeExtension(filename, ".zip"));
+                WeiSha.Core.Compress.ZipFiles(path, zipfile);
+                filename = zipfile;
+            }
+            Directory.Delete(path, true);
+            //
+            JObject jo = new JObject();
+            jo.Add("file", filename);
+            jo.Add("url", WeiSha.Core.Upload.Get["Temp"].Virtual + subpath + "/" + orgid + "/" + filename);
+            jo.Add("date", date);
+            return jo;
+        }
+        #region 导出试的私有方法
+        //Excel单元格的最长文本长度
+        private static int _excel_field_max_length = 32767;
+        /// <summary>
+        /// 将过长的内容存储到文件
+        /// </summary>
+        /// <param name="qid"></param>
+        /// <param name="idx"></param>
+        /// <param name="field">字段名称</param>
+        /// <param name="folder">导出内容的文件夹，为物理路径</param>
+        /// <param name="content">要保存的内容</param>
+        /// <returns>文件名</returns>
+        private string _build_text(long qid, int idx, string field, string folder, string content)
+        {
+            string name = $"{qid}.{idx}.{field}.txt";
+            string fullname = folder + "\\" + name;
+            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+            File.WriteAllText(fullname, content);
+            return name;
+        }
+        /// <summary>
+        /// 生成单选题导出Excel的SQL语句
+        /// </summary>
+        /// <param name="hssfworkbook"></param>
+        /// <param name="where">查询条件</param>
+        /// <param name="total"></param>
+        /// <param name="size"></param>
+        /// <param name="index"></param>
+        private void _buildExcelSql_1(HSSFWorkbook hssfworkbook, WhereClip where, string subpath, string parts, string tags, string knls, int total, int size, int index)
+        {
+            Song.Entities.Questions[] ques = Gateway.Default.From<Questions>().Where(where).OrderBy(Questions._.Qus_ID.Asc).ToArray<Questions>(size, (index - 1) * size);
+            //创建工作簿对象
+            string sheetname = "单选题";
+            ISheet sheet = hssfworkbook.CreateSheet(total <= size ? sheetname : sheetname + "_" + index.ToString("D2"));
+            //创建数据行对象
+            IRow rowHead = sheet.CreateRow(0);
+            //创建表头
+            string[] cells = new string[] { "ID", "题干", "分类", "关键字", "知识点", "难度", "答案选项1", "答案选项2", "答案选项3", "答案选项4", "答案选项5", "答案选项6", "正确答案", "试题讲解" };
+            for (int h = 0; h < cells.Length; h++)
+                rowHead.CreateCell(h).SetCellValue(cells[h]);
+            //生成数据行
+            ICellStyle style_size = hssfworkbook.CreateCellStyle();
+            style_size.WrapText = true;
+            int i = 0;
+            foreach (Song.Entities.Questions q in ques)
+            {
+                string folder = Path.Combine(subpath, q.Org_ID.ToString());
+                IRow row = sheet.CreateRow(i + 1);
+                List<QuesAnswer> qas = Business.Do<IQuestions>().QuestionsAnswer(q, null);
+                int ansIndex = 0;
+
+                for (int j = 0; j < qas.Count; j++)
+                {
+                    QuesAnswer c = qas[j];
+                    if (string.IsNullOrWhiteSpace(c.Ans_Context) || c.Ans_Context.Length <= _excel_field_max_length)
+                        row.CreateCell(6 + j).SetCellValue(c.Ans_Context);
+                    else row.CreateCell(6 + j).SetCellValue(_build_text(q.Qus_ID, j, "Ans_Context", folder, c.Ans_Context));
+                    if (c.Ans_IsCorrect) ansIndex = j + 1;
+                }
+
+                row.CreateCell(0).SetCellValue(q.Qus_ID.ToString());
+                //题干
+                if (string.IsNullOrWhiteSpace(q.Qus_Title) || q.Qus_Title.Length <= _excel_field_max_length)
+                    row.CreateCell(1).SetCellValue(q.Qus_Title);
+                else row.CreateCell(1).SetCellValue(_build_text(q.Qus_ID, 0, "Qus_Title", folder, q.Qus_Title));
+                // 分类, 关键字, 知识点
+                if (string.IsNullOrWhiteSpace(parts)) row.CreateCell(2).SetCellValue(this.QuesPartName(q.Qus_ID));
+                else row.CreateCell(2).SetCellValue(parts);
+                if (string.IsNullOrWhiteSpace(tags)) row.CreateCell(3).SetCellValue(this.QuesTagName(q.Qus_ID));
+                else row.CreateCell(3).SetCellValue(tags);
+                if (string.IsNullOrWhiteSpace(knls)) row.CreateCell(4).SetCellValue(this.QuesKnlName(q.Qus_ID));
+                else row.CreateCell(4).SetCellValue(knls);
+
+                row.CreateCell(5).SetCellValue((int)q.Qus_Diff);
+                row.CreateCell(12).SetCellValue(ansIndex.ToString());
+                //解析
+                if (string.IsNullOrWhiteSpace(q.Qus_Explain) || q.Qus_Explain.Length <= _excel_field_max_length)
+                    row.CreateCell(13).SetCellValue(q.Qus_Explain);
+                else row.CreateCell(13).SetCellValue(_build_text(q.Qus_ID, 0, "Qus_Explain", folder, q.Qus_Explain));
+
+                i++;
+            }
+        }
+
+        //多选题导出
+        private void _buildExcelSql_2(HSSFWorkbook hssfworkbook, WhereClip where, string subpath, string parts, string tags, string knls, int total, int size, int index)
+        {
+            Song.Entities.Questions[] ques = Gateway.Default.From<Questions>().Where(where).OrderBy(Questions._.Qus_ID.Asc).ToArray<Questions>(size, (index - 1) * size);
+            //创建工作簿对象
+            string sheetname = "多选题";
+            ISheet sheet = hssfworkbook.CreateSheet(total <= size ? sheetname : sheetname + "_" + index.ToString("D2"));
+            //sheet.DefaultColumnWidth = 30;
+            //创建数据行对象
+            IRow rowHead = sheet.CreateRow(0);
+            //创建表头
+            string[] cells = new string[] { "ID", "题干", "专业", "课程", "章节", "难度", "答案选项1", "答案选项2", "答案选项3", "答案选项4", "答案选项5", "答案选项6", "正确答案", "试题讲解" };
+            for (int h = 0; h < cells.Length; h++)
+                rowHead.CreateCell(h).SetCellValue(cells[h]);
+            //生成数据行
+            ICellStyle style_size = hssfworkbook.CreateCellStyle();
+            style_size.WrapText = true;
+            int i = 0;
+            foreach (Song.Entities.Questions q in ques)
+            {
+                string folder = Path.Combine(subpath, q.Org_ID.ToString());
+                IRow row = sheet.CreateRow(i + 1);
+                List<QuesAnswer> qas = Business.Do<IQuestions>().QuestionsAnswer(q, null);
+                string ansIndex = "";
+                for (int j = 0; j < qas.Count; j++)
+                {
+                    QuesAnswer c = qas[j];
+                    if (string.IsNullOrWhiteSpace(c.Ans_Context) || c.Ans_Context.Length <= _excel_field_max_length)
+                        row.CreateCell(6 + j).SetCellValue(c.Ans_Context);
+                    if (c.Ans_IsCorrect) ansIndex += Convert.ToString(j + 1) + ",";
+                }
+                if (ansIndex.Length > 0)
+                {
+                    if (ansIndex.Substring(ansIndex.Length - 1) == ",")
+                        ansIndex = ansIndex.Substring(0, ansIndex.Length - 1);
+                }
+
+                row.CreateCell(0).SetCellValue(q.Qus_ID.ToString());
+                //题干
+                if (string.IsNullOrWhiteSpace(q.Qus_Title) || q.Qus_Title.Length <= _excel_field_max_length)
+                    row.CreateCell(1).SetCellValue(q.Qus_Title);
+                else row.CreateCell(1).SetCellValue(_build_text(q.Qus_ID, 0, "Qus_Title", folder, q.Qus_Title));
+                //专业,课程,章节
+                if (string.IsNullOrWhiteSpace(parts)) row.CreateCell(2).SetCellValue(this.QuesPartName(q.Qus_ID));
+                else row.CreateCell(2).SetCellValue(parts);
+                if (string.IsNullOrWhiteSpace(tags)) row.CreateCell(3).SetCellValue(this.QuesTagName(q.Qus_ID));
+                else row.CreateCell(3).SetCellValue(tags);
+                if (string.IsNullOrWhiteSpace(knls)) row.CreateCell(4).SetCellValue(this.QuesKnlName(q.Qus_ID));
+                else row.CreateCell(4).SetCellValue(knls);
+                row.CreateCell(5).SetCellValue((int)q.Qus_Diff);
+                row.CreateCell(12).SetCellValue(ansIndex.ToString());
+                //解析
+                if (string.IsNullOrWhiteSpace(q.Qus_Explain) || q.Qus_Explain.Length <= _excel_field_max_length)
+                    row.CreateCell(13).SetCellValue(q.Qus_Explain);
+                else row.CreateCell(13).SetCellValue(_build_text(q.Qus_ID, 0, "Qus_Explain", folder, q.Qus_Explain));
+
+                i++;
+            }
+        }
+        //判断题导出
+        private void _buildExcelSql_3(HSSFWorkbook hssfworkbook, WhereClip where, string subpath, string parts, string tags, string knls, int total, int size, int index)
+        {
+            Song.Entities.Questions[] ques = Gateway.Default.From<Questions>().Where(where).OrderBy(Questions._.Qus_ID.Asc).ToArray<Questions>(size, (index - 1) * size);
+            //创建工作簿对象
+            string sheetname = "判断题";
+            ISheet sheet = hssfworkbook.CreateSheet(total <= size ? sheetname : sheetname + "_" + index.ToString("D2"));
+            //sheet.DefaultColumnWidth = 30;
+            //创建数据行对象
+            IRow rowHead = sheet.CreateRow(0);
+            //创建表头
+            string[] cells = new string[] { "ID", "题干", "专业", "课程", "章节", "难度", "答案", "试题讲解" };
+            for (int h = 0; h < cells.Length; h++)
+                rowHead.CreateCell(h).SetCellValue(cells[h]);
+            //生成数据行
+            ICellStyle style_size = hssfworkbook.CreateCellStyle();
+            style_size.WrapText = true;
+            int i = 0;
+            foreach (Song.Entities.Questions q in ques)
+            {
+                string folder = Path.Combine(subpath, q.Org_ID.ToString());
+                string ans = "";
+                if (Convert.ToString(q.Qus_IsCorrect) == "False") { ans = "错误"; } else { ans = "正确"; }
+                IRow row = sheet.CreateRow(i + 1);
+                row.CreateCell(0).SetCellValue(q.Qus_ID.ToString());
+                //题干
+                if (string.IsNullOrWhiteSpace(q.Qus_Title) || q.Qus_Title.Length <= _excel_field_max_length)
+                    row.CreateCell(1).SetCellValue(q.Qus_Title);
+                else row.CreateCell(1).SetCellValue(_build_text(q.Qus_ID, 0, "Qus_Title", folder, q.Qus_Title));
+                //专业,课程,章节
+                if (string.IsNullOrWhiteSpace(parts)) row.CreateCell(2).SetCellValue(this.QuesPartName(q.Qus_ID));
+                else row.CreateCell(2).SetCellValue(parts);
+                if (string.IsNullOrWhiteSpace(tags)) row.CreateCell(3).SetCellValue(this.QuesTagName(q.Qus_ID));
+                else row.CreateCell(3).SetCellValue(tags);
+                if (string.IsNullOrWhiteSpace(knls)) row.CreateCell(4).SetCellValue(this.QuesKnlName(q.Qus_ID));
+                else row.CreateCell(4).SetCellValue(knls);
+                row.CreateCell(5).SetCellValue((int)q.Qus_Diff);
+                row.CreateCell(6).SetCellValue(ans);
+                //解析
+                if (string.IsNullOrWhiteSpace(q.Qus_Explain) || q.Qus_Explain.Length <= _excel_field_max_length)
+                    row.CreateCell(7).SetCellValue(q.Qus_Explain);
+                else row.CreateCell(7).SetCellValue(_build_text(q.Qus_ID, 0, "Qus_Explain", folder, q.Qus_Explain));
+                i++;
+            }
+        }
+        //简答题导出
+        private void _buildExcelSql_4(HSSFWorkbook hssfworkbook, WhereClip where, string subpath, string parts, string tags, string knls, int total, int size, int index)
+        {
+            Song.Entities.Questions[] ques = Gateway.Default.From<Questions>().Where(where).OrderBy(Questions._.Qus_ID.Asc).ToArray<Questions>(size, (index - 1) * size);
+            //创建工作簿对象
+            string sheetname = "简答题";
+            ISheet sheet = hssfworkbook.CreateSheet(total <= size ? sheetname : sheetname + "_" + index.ToString("D2"));
+            //创建数据行对象
+            IRow rowHead = sheet.CreateRow(0);
+            //创建表头
+            string[] cells = new string[] { "ID", "题干", "专业", "课程", "章节", "难度", "答案", "试题讲解" };
+            for (int h = 0; h < cells.Length; h++)
+                rowHead.CreateCell(h).SetCellValue(cells[h]);
+            //生成数据行
+            ICellStyle style_size = hssfworkbook.CreateCellStyle();
+            style_size.WrapText = true;
+            int i = 0;
+            foreach (Song.Entities.Questions q in ques)
+            {
+                string folder = Path.Combine(subpath, q.Org_ID.ToString());
+                IRow row = sheet.CreateRow(i + 1);
+                row.CreateCell(0).SetCellValue(q.Qus_ID.ToString());
+                //题干
+                if (string.IsNullOrWhiteSpace(q.Qus_Title) || q.Qus_Title.Length <= _excel_field_max_length)
+                    row.CreateCell(1).SetCellValue(q.Qus_Title);
+                else row.CreateCell(1).SetCellValue(_build_text(q.Qus_ID, 0, "Qus_Title", folder, q.Qus_Title));
+                //专业,课程,章节
+                if (string.IsNullOrWhiteSpace(parts)) row.CreateCell(2).SetCellValue(this.QuesPartName(q.Qus_ID));
+                else row.CreateCell(2).SetCellValue(parts);
+                if (string.IsNullOrWhiteSpace(tags)) row.CreateCell(3).SetCellValue(this.QuesTagName(q.Qus_ID));
+                else row.CreateCell(3).SetCellValue(tags);
+                if (string.IsNullOrWhiteSpace(knls)) row.CreateCell(4).SetCellValue(this.QuesKnlName(q.Qus_ID));
+                else row.CreateCell(4).SetCellValue(knls);
+                row.CreateCell(5).SetCellValue((int)q.Qus_Diff);
+                //正常答案
+                if (string.IsNullOrWhiteSpace(q.Qus_Answer) || q.Qus_Answer.Length <= _excel_field_max_length)
+                    row.CreateCell(6).SetCellValue(q.Qus_Answer);
+                else row.CreateCell(6).SetCellValue(_build_text(q.Qus_ID, 0, "Qus_Answer", folder, q.Qus_Answer));
+                //解析
+                if (string.IsNullOrWhiteSpace(q.Qus_Explain) || q.Qus_Explain.Length <= _excel_field_max_length)
+                    row.CreateCell(7).SetCellValue(q.Qus_Explain);
+                else row.CreateCell(7).SetCellValue(_build_text(q.Qus_ID, 0, "Qus_Explain", folder, q.Qus_Explain));
+                i++;
+            }
+        }
+        //填空题导出
+        private void _buildExcelSql_5(HSSFWorkbook hssfworkbook, WhereClip where, string subpath, string parts, string tags, string knls, int total, int size, int index)
+        {
+            Song.Entities.Questions[] ques = Gateway.Default.From<Questions>().Where(where).OrderBy(Questions._.Qus_ID.Asc).ToArray<Questions>(size, (index - 1) * size);
+            //创建工作簿对象
+            string sheetname = "填空题";
+            ISheet sheet = hssfworkbook.CreateSheet(total <= size ? sheetname : sheetname + "_" + index.ToString("D2"));
+            //创建数据行对象
+            IRow rowHead = sheet.CreateRow(0);
+            //创建表头
+            string[] cells = new string[] { "ID", "题干", "专业", "课程", "章节", "难度",
+                "答案选项1", "答案选项2", "答案选项3", "答案选项4", "答案选项5", "答案选项6", "试题讲解" };
+            for (int h = 0; h < cells.Length; h++)
+                rowHead.CreateCell(h).SetCellValue(cells[h]);
+            //生成数据行
+            ICellStyle style_size = hssfworkbook.CreateCellStyle();
+            style_size.WrapText = true;
+            int i = 0;
+            foreach (Song.Entities.Questions q in ques)
+            {
+                string folder = Path.Combine(subpath, q.Org_ID.ToString());
+                IRow row = sheet.CreateRow(i + 1);
+                List<QuesAnswer> qas = Business.Do<IQuestions>().QuestionsAnswer(q, null);
+                for (int j = 0; j < qas.Count; j++)
+                {
+                    QuesAnswer c = qas[j];
+                    if (string.IsNullOrWhiteSpace(c.Ans_Context) || c.Ans_Context.Length <= _excel_field_max_length)
+                        row.CreateCell(6 + j).SetCellValue(c.Ans_Context);
+                    else row.CreateCell(6 + j).SetCellValue(_build_text(q.Qus_ID, j, "Ans_Context", folder, c.Ans_Context));
+                }
+
+                row.CreateCell(0).SetCellValue(q.Qus_ID.ToString());
+                //题干
+                if (string.IsNullOrWhiteSpace(q.Qus_Title) || q.Qus_Title.Length <= _excel_field_max_length)
+                    row.CreateCell(1).SetCellValue(q.Qus_Title);
+                else row.CreateCell(1).SetCellValue(_build_text(q.Qus_ID, 0, "Qus_Title", folder, q.Qus_Title));
+                //专业,课程,章节
+                if (string.IsNullOrWhiteSpace(parts)) row.CreateCell(2).SetCellValue(this.QuesPartName(q.Qus_ID));
+                else row.CreateCell(2).SetCellValue(parts);
+                if (string.IsNullOrWhiteSpace(tags)) row.CreateCell(3).SetCellValue(this.QuesTagName(q.Qus_ID));
+                else row.CreateCell(3).SetCellValue(tags);
+                if (string.IsNullOrWhiteSpace(knls)) row.CreateCell(4).SetCellValue(this.QuesKnlName(q.Qus_ID));
+                else row.CreateCell(4).SetCellValue(knls);
+                row.CreateCell(5).SetCellValue((int)q.Qus_Diff);
+                //解析
+                if (string.IsNullOrWhiteSpace(q.Qus_Explain) || q.Qus_Explain.Length <= _excel_field_max_length)
+                    row.CreateCell(12).SetCellValue(q.Qus_Explain);
+                else row.CreateCell(12).SetCellValue(_build_text(q.Qus_ID, 0, "Qus_Explain", folder, q.Qus_Explain));
+                i++;
+            }
+        }
+        #endregion
         #endregion
     }
 }

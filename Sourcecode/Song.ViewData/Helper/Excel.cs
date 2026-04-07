@@ -314,7 +314,7 @@ namespace Song.ViewData.Helper
             //校验文件夹
             if (!string.IsNullOrWhiteSpace(folder)) rootPhy += WeiSha.Core.Server.LegalPath(folder);
             if (!rootPhy.EndsWith("\\")) rootPhy += "\\";
-            if (!Directory.Exists(rootPhy)) return false;
+            if (!Directory.Exists(rootPhy)) throw new Exception("上传的根文件夹不存在！");
             //删除文件
             string filePath = rootPhy + file;
             if (!File.Exists(filePath)) return false;
