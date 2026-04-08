@@ -17,7 +17,7 @@ $ready(function () {
                     { required: true, message: '不得为空', trigger: 'blur' }
                 ],
                 MM_Link: [
-                    { required: true, message: '不得为空', trigger: 'blur' }
+                    //{ required: true, message: '不得为空', trigger: 'blur' }
                 ]
             },
             MM_PatId: '',    //临时数据，用于移动菜单时的临时记录
@@ -226,9 +226,7 @@ $ready(function () {
             updateSave: function () {
                 var th = this;
                 th.loading = true;
-                th.setIsShow(null);
-                console.error(th.data);
-                //return;
+                th.setIsShow(null);          
                 $api.post('ManageMenu/FuncMenuUpdate', { 'uid': th.uid, 'tree': th.data }).then(function (req) {
                     if (req.data.success) {
                         var result = req.data.result;
