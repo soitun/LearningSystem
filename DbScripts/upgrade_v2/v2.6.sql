@@ -232,13 +232,14 @@ ALTER TABLE "Questions" ADD COLUMN "Qus_IsDeleted" BOOLEAN NOT NULL DEFAULT FALS
 CREATE INDEX  IF NOT EXISTS "Questions_IX_IsDeleted" ON "Questions"("Qus_IsDeleted");
 
 --创建操作日志的记录表
+DROP TABLE IF EXISTS "DataOperateLog" CASCADE;
 CREATE TABLE "DataOperateLog" (
     -- 主键
     "Dlog_ID" BIGINT PRIMARY KEY DEFAULT 0,    
     -- 操作对象的记录
     "Dlog_Entity" VARCHAR(100) NOT NULL,    --记录名，即表结构名称
     "Dlog_KeyID" BIGINT NOT NULL,   --被操作表的主键值
-    "Dlog_Type" SMALLINT NOT NULL, -- 1新增, 2修改, 3删除    
+    "Dlog_Type" INTEGER NOT NULL, -- 1新增, 2修改, 3删除    
     -- 时间信息
     "Dlog_CrtTime" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,  --创建时间
     "Dlog_Timespan" INTEGER, -- 用时（毫秒）    
@@ -281,13 +282,14 @@ CREATE INDEX  IF NOT EXISTS "DataOperateLog_IX_API" ON "DataOperateLog"("Dlog_AP
 
 
 --创建操作日志的档案表
+DROP TABLE IF EXISTS "DataOperateLogArchive" CASCADE;
 CREATE TABLE "DataOperateLogArchive" (
     -- 主键
     "Dlog_ID" BIGINT PRIMARY KEY DEFAULT 0,    
     -- 操作对象的记录
     "Dlog_Entity" VARCHAR(100) NOT NULL,    --记录名，即表结构名称
     "Dlog_KeyID" BIGINT NOT NULL,   --被操作表的主键值
-    "Dlog_Type" SMALLINT NOT NULL, -- 1新增, 2修改, 3删除    
+    "Dlog_Type" INTEGER NOT NULL, -- 1新增, 2修改, 3删除    
     -- 时间信息
     "Dlog_CrtTime" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,  --创建时间
     "Dlog_Timespan" INTEGER, -- 用时（毫秒）    
@@ -394,7 +396,7 @@ CREATE INDEX  IF NOT EXISTS "Examination_IX_Etp_Id" ON "Examination"("Etp_Id");
 ALTER TABLE "Examination" ADD COLUMN "Acc_Id" integer NOT NULL DEFAULT 0;
 CREATE INDEX  IF NOT EXISTS "Examination_IX_Acc_Id" ON "Examination"("Acc_Id");
 
-ALTER TABLE "Examination" ADD COLUMN "Exam_Purpose" bigint NOT NULL DEFAULT 0;
+ALTER TABLE "Examination" ADD COLUMN "Exam_Purpose" integer NOT NULL DEFAULT 0;
 CREATE INDEX  IF NOT EXISTS "Examination_IX_Purpose" ON "Examination"("Exam_Purpose");
 CREATE INDEX  IF NOT EXISTS "Examination_IX_Order" ON "Examination"("Exam_Order");
 /*考试成绩中的试卷id*/

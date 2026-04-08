@@ -795,6 +795,8 @@
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\SetupPaperInfo.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamTestPaper\Styles\SetupScore.css" />
     <Content Include="Templates\OrgAdmin\Default\Exam\AbsenceList.html" />
+    <Content Include="Templates\OrgAdmin\Default\Exam\Analysis.html" />
+    <Content Include="Templates\OrgAdmin\Default\Exam\Archives.html" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Components\accountselect.js" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Components\createbatchscore.js" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Components\createscore.js" />
@@ -817,6 +819,8 @@
     <Content Include="Templates\OrgAdmin\Default\Exam\ResultsReview.html" />
     <Content Include="Templates\OrgAdmin\Default\Exam\ResultsSummarize.html" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\AbsenceList.js" />
+    <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\Analysis.js" />
+    <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\Archives.js" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\List.js" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\Manual.js" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\Modify.js" />
@@ -828,6 +832,8 @@
     <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\ResultsSummarize.js" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\_ExamItems.js" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Styles\AbsenceList.css" />
+    <Content Include="Templates\OrgAdmin\Default\Exam\Styles\Analysis.css" />
+    <Content Include="Templates\OrgAdmin\Default\Exam\Styles\Archives.css" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Styles\List.css" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Styles\Manual.css" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Styles\Modify.css" />
@@ -842,6 +848,15 @@
     <Content Include="Templates\OrgAdmin\Default\Images\学员中心-mobi.png" />
     <Content Include="Templates\OrgAdmin\Default\Images\学员中心-web.png" />
     <Content Include="Templates\OrgAdmin\Default\Images\试题练习%28mobi%29.png" />
+    <Content Include="Templates\OrgAdmin\Default\Logs\Exam.html" />
+    <Content Include="Templates\OrgAdmin\Default\Logs\Login.html" />
+    <Content Include="Templates\OrgAdmin\Default\Logs\LoginDetail.html" />
+    <Content Include="Templates\OrgAdmin\Default\Logs\Scripts\Exam.js" />
+    <Content Include="Templates\OrgAdmin\Default\Logs\Scripts\Login.js" />
+    <Content Include="Templates\OrgAdmin\Default\Logs\Scripts\LoginDetail.js" />
+    <Content Include="Templates\OrgAdmin\Default\Logs\Styles\Exam.css" />
+    <Content Include="Templates\OrgAdmin\Default\Logs\Styles\Login.css" />
+    <Content Include="Templates\OrgAdmin\Default\Logs\Styles\LoginDetail.css" />
     <Content Include="Templates\OrgAdmin\Default\Oneself\Logout.html" />
     <Content Include="Templates\OrgAdmin\Default\Oneself\Modify.html" />
     <Content Include="Templates\OrgAdmin\Default\Oneself\Mypassword.html" />
@@ -962,12 +977,6 @@
     <Content Include="Templates\OrgAdmin\Default\Learningcard\Styles\OutputExcel.css" />
     <Content Include="Templates\OrgAdmin\Default\Learningcard\Styles\OutputQrcode.css" />
     <Content Include="Templates\OrgAdmin\Default\Links\Components\links_count.js" />
-    <Content Include="Templates\OrgAdmin\Default\Log\LoginLog.html" />
-    <Content Include="Templates\OrgAdmin\Default\Log\LoginLogDetail.html" />
-    <Content Include="Templates\OrgAdmin\Default\Log\Scripts\LoginLog.js" />
-    <Content Include="Templates\OrgAdmin\Default\Log\Scripts\LoginLogDetail.js" />
-    <Content Include="Templates\OrgAdmin\Default\Log\Styles\LoginLog.css" />
-    <Content Include="Templates\OrgAdmin\Default\Log\Styles\LoginLogDetail.css" />
     <Content Include="Templates\OrgAdmin\Default\News\Components\article_count.js" />
     <Content Include="Templates\OrgAdmin\Default\News\Components\Styles\article_count.css" />
     <Content Include="Templates\OrgAdmin\Default\Panel\Scripts\ctrls.js" />

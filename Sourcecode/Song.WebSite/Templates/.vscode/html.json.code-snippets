@@ -12,7 +12,7 @@
 			"</head>",
 			"<body>",
 			"    <div id=\"vapp\" v-cloak> ",
-			"    $0",
+			"    $0 <icon null>功能暂未开发...</icon>",
 			"    </div> ",
 			"</body>",
 			"</html>"
