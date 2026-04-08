@@ -266,7 +266,7 @@ $ready(['../Question/Components/ques_type.js',
                 getquestotal: function () {
                     var th = this;
                     th.loadstate.total = true;
-                    let form = { "orgid": "", "qpid": "", "tagid": "", "knlid": "", "isdeleted": false, "diff": "", "use": true, "error": false, "wrong": false };
+                    let form = { "orgid": "", "qpid": "", "tagid": "", "knlid": "", "isdeleted": false, "diffs": "", "use": true, "error": false, "wrong": false };
                     form.orgid = th.org.Org_ID;
                     form.qpid = th.parts.map(p => p.Qp_ID).join(',');
                     form.tagid = th.tags.map(p => p.Qtag_ID).join(',');
