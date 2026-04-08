@@ -172,23 +172,31 @@ namespace Song.ViewData.Helper
             lock (lockObj)
             {
                 var menupages = new Dictionary<string, Dictionary<int, HashSet<string>>>();
-
-                //管理员按岗位划分权限
-                List<Position> positions = Business.Do<IPosition>().GetAll(0);
-                Dictionary<int, HashSet<string>> dic = new Dictionary<int, HashSet<string>>();
-                foreach (Position posi in positions)
+                try
                 {
-                    List<ManageMenu> mms = Business.Do<IPurview>().PosiPurviewMenu(posi);
-                    HashSet<string> hset = new HashSet<string>();
-                    for (int j = 0; j < mms.Count; j++)
+                    //管理员按岗位划分权限
+                    List<Position> positions = Business.Do<IPosition>().GetAll(0);
+                    Dictionary<int, HashSet<string>> dic = new Dictionary<int, HashSet<string>>();
+                    foreach (Position posi in positions)
                     {
-                        if (string.IsNullOrWhiteSpace(mms[j].MM_Link) || mms[j].MM_Link.StartsWith("http"))
-                            continue;
-                        hset.Add(mms[j].MM_Link.ToLower());
+                        List<ManageMenu> mms = Business.Do<IPurview>().PosiPurviewMenu(posi);
+                        if (mms == null || mms.Count == 0) continue;
+                        HashSet<string> hset = new HashSet<string>();
+                        for (int j = 0; j < mms.Count; j++)
+                        {
+                            if (string.IsNullOrWhiteSpace(mms[j].MM_Link) || mms[j].MM_Link.StartsWith("http"))
+                                continue;
+                            hset.Add(mms[j].MM_Link?.ToLower());
+                        }
+                        dic.Add(posi.Posi_Id, hset);
                     }
-                    dic.Add(posi.Posi_Id, hset);
-                }               
-                menupages.Add("organAdmin", dic);
+                    menupages.Add("organAdmin", dic);
+                }
+                catch (Exception ex)
+                {
+                    WeiSha.Core.Log.Error("管理权限", ex);
+                    throw ex;
+                }
 
                 //学员与教师的权限菜单              
                 string[] keys = { "student", "teacher" };
@@ -200,12 +208,13 @@ namespace Song.ViewData.Helper
                     foreach (Organization org in orgs)
                     {
                         List<ManageMenu> mms = Business.Do<IPurview>().OrganPurviewMenu(org, keys[i]);
+                        if (mms == null || mms.Count == 0) continue;
                         HashSet<string> hset2 = new HashSet<string>();
                         for (int j = 0; j < mms.Count; j++)
                         {
                             if (string.IsNullOrWhiteSpace(mms[j].MM_Link) || mms[j].MM_Link.StartsWith("http"))
                                 continue;
-                            hset2.Add(mms[j].MM_Link.ToLower());
+                            hset2.Add(mms[j].MM_Link?.ToLower());
                         }
                         dic2.Add(org.Org_ID, hset2);
                     }
@@ -218,7 +227,7 @@ namespace Song.ViewData.Helper
                 foreach (ManageMenu m in Business.Do<IManageMenu>().GetAll(true, true, "sys"))
                 {
                     if (string.IsNullOrWhiteSpace(m.MM_Link) || m.MM_Link.StartsWith("http")) continue;
-                    hset3.Add(m.MM_Link.ToLower());
+                    hset3.Add(m.MM_Link?.ToLower());
                 }
                 dic3.Add(0, hset3);
                 menupages.Add("manage", dic3);
@@ -236,6 +245,7 @@ namespace Song.ViewData.Helper
             if (_menu_hashset == null)
             {
                 lock (this) InitializedMenu();
+                    
             }
             if (role.Equals("orgadmin")) return _menu_hashset.ContainsKey("organAdmin") ? _menu_hashset["organAdmin"] : null;
             foreach (string str in _menu_hashset.Keys)          
