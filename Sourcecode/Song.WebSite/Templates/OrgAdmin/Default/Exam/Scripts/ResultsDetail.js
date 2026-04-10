@@ -1,5 +1,7 @@
 ﻿
-$ready(['Components/setscore.js'],
+$ready(['Components/setscore.js',
+    '../Components/score.js',
+],
     function () {
         window.vapp = new Vue({
             el: '#app',
@@ -131,7 +133,14 @@ $ready(['Components/setscore.js'],
                     th.form.size = Math.floor(area / 40);
                     $api.get("Exam/Result4Exam", th.form).then(function (d) {
                         if (d.data.success) {
-                            th.datas = d.data.result;
+                            let result = d.data.result;
+                            /*
+                            for (let index = 0; index < result.length; index++) {
+                                const element = result[index];
+                                let rnd = Math.random() * 100;
+                                element.Exr_ScoreFinal = Math.round(rnd * 100) / 100;;
+                            }*/
+                            th.datas = result;
                             th.totalpages = Number(d.data.totalpages);
                             th.total = d.data.total;
                         } else {
@@ -295,15 +304,40 @@ $ready(['Components/setscore.js'],
                     }).catch(err => console.error(err))
                         .finally(() => { });
                 },
-                //打开考试回顾的窗口
-                review: function (row) {
-                    let url = $api.url.set("/student/exam/review", {
-                        "examid": row.Exam_ID,
-                        "exrid": row.Exr_ID
-                    });
-                    let boxid = "ResultsReview_" + row.Exr_ID + "_" + row.Exam_ID;
-                    let title = row.Ac_Name + '在“' + this.entity.Exam_Name + "”中的成绩回顾";
-                    this._openbox(url, title, boxid, '80%', '80%', 'e696');
+                //行的右侧下拉菜单的事件
+                handleCommand: function (command, row) {
+                    //获取el-dropdown组件中的行数据的id
+                    let exrid = row.$attrs?.exrid;
+                    while (!exrid && row.$parent) {
+                        row = row.$parent;
+                        exrid = row.$attrs?.exrid;
+                    }
+                    //当前行数据的对象
+                    const obj = this.datas.find(item => item.Exr_ID === exrid);
+                    //试卷预览
+                    if (command == 'review') {
+                        let url = $api.url.set("/student/exam/review", {
+                            "examid": obj.Exam_ID,
+                            "exrid": obj.Exr_ID
+                        });
+                        let boxid = "ResultsReview_" + obj.Exr_ID + "_" + obj.Exam_ID;
+                        let title = obj.Ac_Name + '在“' + this.entity.Exam_Name + "”中的成绩回顾";
+                        this._openbox(url, title, boxid, '80%', '80%', 'e696');
+                    }
+                    //重新计算
+                    if (command == 'calc') this.clacResultScore(obj);
+                    //删除
+                    if (command == 'delete') {
+                        this.$confirm('学员：' + obj.Ac_Name + '<br/>成绩：' + obj.Exr_ScoreFinal + ' 分', 
+                        '确定要删除当前成绩吗？', {
+                            dangerouslyUseHTMLString: true,
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(t => {
+                            this.$refs.btngroup.delete(obj.Exr_ID)
+                        }).catch(action => { });
+                    }
                 },
                 //导出的窗口
                 output: function () {
@@ -360,37 +394,6 @@ $ready(['Components/setscore.js'],
                 }
             },
             components: {
-                //得分的输出，为了小数点对齐
-                'score': {
-                    props: ['item'],
-                    data: function () {
-                        return {
-                            prev: '',
-                            dot: '.',
-                            after: ''
-                        }
-                    },
-                    watch: {
-                        'item': {
-                            handler: function (nv, ov) {
-                                let score = this.item.Exr_ScoreFinal;
-                                var num = String(Math.round(score * 100) / 100);
-                                if (num.indexOf('.') > -1) {
-                                    this.prev = num.substring(0, num.indexOf('.'));
-                                    this.after = num.substring(num.indexOf('.') + 1);
-                                } else {
-                                    this.prev = num;
-                                    this.dot = '&nbsp;';
-                                }
-                            }, immediate: true,
-                        }
-                    },
-                    template: `<div class="score link" @click="$emit('click')">
-                    <span class="prev">{{prev}}</span>
-                    <span class="dot" v-html="dot"></span>
-                    <span class="after">{{after}}</span>
-                </div>`
-                },
                 //显示学员组名称
                 'stsname': {
                     props: ['stsid'],

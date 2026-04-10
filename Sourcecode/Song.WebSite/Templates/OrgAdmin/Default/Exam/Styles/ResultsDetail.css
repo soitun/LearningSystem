@@ -55,33 +55,16 @@ body, html {
     margin-top: 20px;
 }
 
-/*得分，小数点对齐*/
-.score {
-    width: 80px;
-    display: flex;
-}
 
-.score span {
-    display: block;
-}
-
-.score .after {
-    width: 30px;
-    float: right;
-    text-align: left;
-}
-
-.score .dot {
-    width: 8px;
-    float: right;
-    text-align: center;
-}
-
-.score .prev {
-    width: 45px;
-    float: right;
-    text-align: right;
-}
 .el-slider__marks-text{
     width: max-content;
+}
+
+.scope_column .el-dropdown-link{
+  
+    display: flex;
+    justify-content: space-between;
+}
+.scope_column .el-dropdown-link i{
+    margin-top: 5px;
 }

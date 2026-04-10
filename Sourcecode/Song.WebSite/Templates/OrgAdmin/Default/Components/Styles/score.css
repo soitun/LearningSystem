@@ -1,0 +1,27 @@
+/*得分，小数点对齐*/
+.score {
+    width: 80px;
+    display: flex;
+}
+
+.score span {
+    display: block;
+}
+
+.score .after {
+    width: 20px;
+    float: right;
+    text-align: left;
+}
+
+.score .dot {
+    width: 8px;
+    float: right;
+    text-align: center;
+}
+
+.score .prev {
+    width: 50px;
+    float: right;
+    text-align: right;
+}

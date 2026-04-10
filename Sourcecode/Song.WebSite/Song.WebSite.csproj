@@ -650,6 +650,12 @@
     <Content Include="Templates\OrgAdmin\Default\Admin\PositionPurview.html" />
     <Content Include="Templates\OrgAdmin\Default\Admin\Scripts\PositionPurview.js" />
     <Content Include="Templates\OrgAdmin\Default\Admin\Styles\PositionPurview.css" />
+    <Content Include="Templates\OrgAdmin\Default\Components\outline_cascader.js" />
+    <Content Include="Templates\OrgAdmin\Default\Components\sbj_cascader.js" />
+    <Content Include="Templates\OrgAdmin\Default\Components\score.js" />
+    <Content Include="Templates\OrgAdmin\Default\Components\Styles\outline_cascader.css" />
+    <Content Include="Templates\OrgAdmin\Default\Components\Styles\sbj_cascader.css" />
+    <Content Include="Templates\OrgAdmin\Default\Components\Styles\score.css" />
     <Content Include="Templates\OrgAdmin\Default\Course\AIAgent.html" />
     <Content Include="Templates\OrgAdmin\Default\Course\Scripts\AIAgent.js" />
     <Content Include="Templates\OrgAdmin\Default\Course\Styles\AIAgent.css" />
@@ -1230,10 +1236,6 @@
     <Content Include="Templates\OrgAdmin\Default\Admin\Styles\Pwreset.css" />
     <Content Include="Templates\OrgAdmin\Default\Admin\Styles\Position.css" />
     <Content Include="Templates\OrgAdmin\Default\Admin\Styles\PositionModify.css" />
-    <Content Include="Templates\OrgAdmin\Default\Components\outline_cascader.js" />
-    <Content Include="Templates\OrgAdmin\Default\Components\sbj_cascader.js" />
-    <Content Include="Templates\OrgAdmin\Default\Components\Styles\outline_cascader.css" />
-    <Content Include="Templates\OrgAdmin\Default\Components\Styles\sbj_cascader.css" />
     <Content Include="Templates\OrgAdmin\Default\Course\Components\video_list.js" />
     <Content Include="Templates\OrgAdmin\Default\Course\Components\outline_live.js" />
     <Content Include="Templates\OrgAdmin\Default\Course\Components\course_prices.js" />
