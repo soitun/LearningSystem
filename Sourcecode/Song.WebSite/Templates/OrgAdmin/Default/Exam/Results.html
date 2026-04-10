@@ -50,8 +50,8 @@
                 <el-table-column label="参考人数" width="100" align="center">
                     <template slot-scope="scope">
                         <el-tooltip content="查看成绩" placement="bottom" effect="light">
-                            <el-link type="primary" @click="btnResultSummarize(scope.row)">
-                                <attendcount :exam="scope.row"  @click="btnResultSummarize(scope.row)"></attendcount>
+                            <el-link type="primary" @click="btnResultSummarize(scope.row)" >
+                                <attendcount :exam="scope.row"  @click="btnResultSummarize(scope.row)" medium></attendcount>
                             </el-link>
                         </el-tooltip>                        
                     </template>

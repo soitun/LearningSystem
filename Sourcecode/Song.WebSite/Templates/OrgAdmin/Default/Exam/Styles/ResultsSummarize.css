@@ -47,11 +47,11 @@ td.left div.cell{
     text-align: left;
 }
 /*考试成绩得分*/
-.score {
+.examscore {
     color: #999;
 }
 
-.score span {
+.examscore span {
     color: #333;
     font-size: 14px;
     line-height: 10px;

@@ -328,8 +328,8 @@ $ready(['Components/setscore.js',
                     if (command == 'calc') this.clacResultScore(obj);
                     //删除
                     if (command == 'delete') {
-                        this.$confirm('学员：' + obj.Ac_Name + '<br/>成绩：' + obj.Exr_ScoreFinal + ' 分', 
-                        '确定要删除当前成绩吗？', {
+                        this.$confirm('学员：' + obj.Ac_Name + '<br/>成绩：' + obj.Exr_ScoreFinal + ' 分',
+                            '确定要删除当前成绩吗？', {
                             dangerouslyUseHTMLString: true,
                             confirmButtonText: '确定',
                             cancelButtonText: '取消',

@@ -2207,7 +2207,15 @@ namespace Song.ServiceImpls
             if (exam.Exam_GroupType == 2)
             {
                 List<StudentSort> sts = this.ScopeForStudentSort(exam.Exam_UID);
+                if (sts == null || sts.Count < 1) return 0;
                 foreach (StudentSort ss in sts) wc.Or(Accounts._.Sts_ID == ss.Sts_ID);
+            }
+            //如果参考人员为指定学员
+            if (exam.Exam_GroupType == 3)
+            {
+                List<Accounts> acclist = this.ScopeForAccounts(exam.Exam_UID);
+                if (acclist == null || acclist.Count < 1) return 0;
+                foreach (Accounts ss in acclist) wc.Or(Accounts._.Ac_ID == ss.Ac_ID);
             }
             //子查询条件
             WhereClip wcsub = ExamResults._.Exam_ID == examid && ExamResults._.Ac_ID == Accounts._.Ac_ID;

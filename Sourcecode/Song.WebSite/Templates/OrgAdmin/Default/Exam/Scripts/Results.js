@@ -220,12 +220,12 @@
                 <el-col :span="2"><loading asterisk v-if="item.avg==-1"></loading><span v-else>{{item.avg}}</span></el-col>
                 <el-col :span="2" remark="参考人数"><loading asterisk v-if="item.number==-1"></loading>
                     <el-tooltip  v-else content="点击查看成绩" placement="bottom" effect="light">
-                        <el-link type="primary" @click="btnResultView(item)">{{item.number}}</el-link>      
+                        <el-link type="primary" @click="btnResultView(item)"><span medium>{{item.number}}</span></el-link>      
                     </el-tooltip>   
                 </el-col>
                 <el-col :span="2" remark="缺考人数"><loading asterisk v-if="item.absence==-1"></loading>
                     <el-tooltip  v-else content="查看/导出缺考人员" placement="bottom" effect="light">
-                        <el-link type="info" @click="btnAbsence(item)">{{item.absence}}</el-link>      
+                        <el-link type="info" @click="btnAbsence(item)"><span medium>{{item.absence}}</span></el-link>      
                     </el-tooltip> 
                 </el-col>
                 <el-col :span="2">

@@ -31,7 +31,7 @@
   },
   "Exam_GroupType": {
     "mark": "参考人员类型",
-    "intro": "1为全体，2为按部门，3为按班组",
+    "intro": "1为全体，2为按学员组，3为指定学员",
     "relation": ""
   },
   "Exam_Monitor": {

@@ -83,23 +83,23 @@ a[link]:hover {
 
 /*字体大小*/
 .huge, *[huge] {
-    font-size: 1.2rem;
+    font-size: 1.2rem !important;
 }
 
 .large, *[large] {
-    font-size: 1.05rem;
+    font-size: 1.05rem !important;
 }
 
 .medium, *[medium] {
-    font-size: 1rem;
+    font-size: 1rem !important;
 }
 
 .small, *[small] {
-    font-size: .9rem;
+    font-size: .9rem !important;
 }
 
 .mini, *[mini] {
-    font-size: .75rem;
+    font-size: .75rem !important;
 }
 
 /*颜色*/

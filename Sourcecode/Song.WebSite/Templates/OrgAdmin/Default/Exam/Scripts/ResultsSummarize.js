@@ -1,5 +1,5 @@
 ﻿
-$ready(function () {
+$ready(['../Components/score.js'],function () {
 
     window.vapp = new Vue({
         el: '#app',
@@ -266,7 +266,7 @@ $ready(function () {
                 </div>`
             },
             //学员每场次得分
-            'score': {
+            'examscore': {
                 props: ['examid', 'acid'],
                 data: function () {
                     return {
@@ -305,10 +305,12 @@ $ready(function () {
                 created: function () {
 
                 },
-                template: `<span class="score">
+                template: `<span class="examscore">
                     <loading bubble v-if="loading"></loading>
                     <template v-else-if="score.score<0">-</template>
-                    <span class="link" v-else @click="$emit('review',score)">{{score.score}}</span>
+                    <el-link  v-else type="primary"  @click="$emit('review',score)">
+                        <score :value="score.score"></score>    
+                    </el-link>                                   
                 </span>`
             },
         }
