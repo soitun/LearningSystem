@@ -8,10 +8,12 @@
     display: block;
 }
 
-.score .after {
-    width: 20px;
+
+/*前缀，即整数部分*/
+.score .prev {
+    width: 50px;
     float: right;
-    text-align: left;
+    text-align: right;
 }
 
 .score .dot {
@@ -19,9 +21,9 @@
     float: right;
     text-align: center;
 }
-
-.score .prev {
-    width: 50px;
+/*后缀，即小数部分*/
+.score .after {
+    width: 20px;
     float: right;
-    text-align: right;
+    text-align: left;
 }
