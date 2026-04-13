@@ -104,5 +104,11 @@ namespace Song.ServiceInterfaces
         /// <param name="orgid"></param>
         /// <returns></returns>
         Position GetAdmin(int orgid);
+        /// <summary>
+        /// 获取岗位的成员数量
+        /// </summary>
+        /// <param name="posid"></param>
+        /// <returns></returns>
+        int EmpCount(int posid);
     }
 }

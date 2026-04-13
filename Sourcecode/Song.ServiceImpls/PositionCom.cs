@@ -229,5 +229,15 @@ namespace Song.ServiceImpls
             pos = Gateway.Default.From<Position>().Where(Position._.Posi_IsAdmin == true && Position._.Org_ID == orgid).ToFirst<Position>();
             return pos;
         }
+        /// <summary>
+        /// 获取岗位的成员数量
+        /// </summary>
+        /// <param name="posid"></param>
+        /// <returns></returns>
+        public int EmpCount(int posid)
+        {
+            if (posid <= 0) return 0;
+            return Gateway.Default.Count<EmpAccount>(EmpAccount._.Posi_Id == posid);
+        }
     }
 }

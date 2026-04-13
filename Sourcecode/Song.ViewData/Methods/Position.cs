@@ -209,6 +209,15 @@ namespace Song.ViewData.Methods
                 Business.Do<IEmployee>().Update(accid, new WeiSha.Data.Field[] { EmpAccount._.Posi_Id, EmpAccount._.Posi_Name },
                       new object[] { posid, posi.Posi_Name });          
             return datas.Length;
-        }       
+        }      
+        /// <summary>
+        /// 岗位下的员工数量
+        /// </summary>
+        /// <param name="id">岗位id</param>
+        /// <returns></returns>
+        public int EmpoyeeCount(int id)
+        {
+            return Business.Do<IPosition>().EmpCount(id);
+        }
     }
 }

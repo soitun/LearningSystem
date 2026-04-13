@@ -3,6 +3,8 @@ $ready(function () {
     window.vapp = new Vue({
         el: '#vapp',
         data: {
+            org: {},
+            config: {},
             form: {
                 name: '',
                 size: 20,
@@ -14,6 +16,8 @@ $ready(function () {
             selects: []      //数据表中选中的行
         },
         created: function () {
+            this.organ = window.org;
+            this.config = window.config;
             this.loadDatas();
         },
         methods: {
@@ -42,7 +46,7 @@ $ready(function () {
             loadDatas: function () {
                 var th = this;
                 let area = $dom.height() - 100;
-                $api.post("Position/all").then(function (d) {
+                $api.post("Position/All4Organ", { 'orgid': th.organ.Org_ID }).then(function (d) {
                     if (d.data.success) {
                         th.datas = d.data.result;
                         th.rowdrop();
@@ -87,7 +91,7 @@ $ready(function () {
                     group: { // 是否开启跨表拖拽
                         pull: false,
                         put: false
-                    },                  
+                    },
                     onEnd: (e) => {
                         var table = this.$refs.datatable;
                         let indexkey = table.$attrs['index-key'];
@@ -121,6 +125,43 @@ $ready(function () {
                     alert(err);
                     console.error(err);
                 }).finally(() => { });
+            }
+        },
+        components: {
+            //岗位的员工数
+            'empcount': {
+                props: ['position'],
+                data: function () {
+                    return {
+                        count: 0,
+                        loading: false,
+                    }
+                },
+                watch: {
+                    'position': {
+                        handler: function (val) {
+                            var th = this;
+                            this.loading = true;
+                            $api.get("Position/EmpoyeeCount", { "id": val.Posi_Id })
+                                .then(req => {
+                                    if (req.data.success) {
+                                        th.count = req.data.result;                                      
+                                    } else {
+                                        console.error(req.data.exception);
+                                        throw req.config.way + ' ' + req.data.message;
+                                    }
+                                }).catch(err => console.error(err))
+                                .finally(() => th.loading = false);
+                        }, immediate: true,deep:true
+                    }
+                },
+                methods: {
+
+                },
+                template: `<span>
+                        <loading v-if="loading"></loading>
+                        ({{count}})
+                    </span>`
             }
         }
     });
