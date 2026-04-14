@@ -69,6 +69,16 @@ namespace Song.ViewData.Methods
             return Business.Do<IPosition>().GetSingle(id);
         }
         /// <summary>
+        /// 根据岗位id，获取当前机构的岗位
+        /// </summary>
+        /// <param name="posid"></param>
+        /// <param name="orgid"></param>
+        /// <returns></returns>
+        public Song.Entities.Position ForID(int posid, int orgid)
+        {
+            return Business.Do<IPosition>().GetSingle(posid, orgid);
+        }
+        /// <summary>
         /// 修改岗位
         /// </summary>
         /// <param name="posi"></param>

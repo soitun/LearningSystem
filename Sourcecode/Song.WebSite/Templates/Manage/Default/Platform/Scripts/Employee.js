@@ -2,10 +2,11 @@
     window.vapp = new Vue({
         el: '#vapp',
         data: {
+            org: {},
+            config: {},      //当前机构配置项
             form: {
-                name: '',
-                size: 20,
-                index: 1
+                orgid: 0, name: '',
+                size: 20, index: 1
             },
             loading: false,
             loadingid: 0,        //当前操作中的对象id
@@ -15,6 +16,9 @@
             selects: [] //数据表中选中的行
         },
         created: function () {
+            this.org = window.org;
+            this.config = window.config;
+            this.form.orgid = this.org.Org_ID;
             this.handleCurrentChange(1);
         },
         methods: {

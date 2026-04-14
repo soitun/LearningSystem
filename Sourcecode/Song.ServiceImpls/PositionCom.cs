@@ -113,6 +113,16 @@ namespace Song.ServiceImpls
             return Gateway.Default.From<Position>().Where(Position._.Posi_Id==identify).ToFirst<Position>();
         }
         /// <summary>
+        /// 获取单一实体对象，按主键ID；
+        /// </summary>
+        /// <param name="identify">实体的主键</param>
+        /// <param name="orgid"></param>
+        /// <returns></returns>
+        public Position GetSingle(int identify, int orgid)
+        {
+            return Gateway.Default.From<Position>().Where(Position._.Posi_Id == identify && Position._.Org_ID == orgid).ToFirst<Position>();
+        }
+        /// <summary>
         /// 获取单一实体对象，按职位名称
         /// </summary>
         /// <param name="name">职位名称</param>

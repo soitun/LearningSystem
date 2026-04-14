@@ -432,18 +432,23 @@ namespace Song.ViewData.Methods
         /// <summary>
         /// 获取管理员列表(限当前机构）
         /// </summary>
+        /// <param name="orgid">机构id,默认取当前机构</param>
         /// <param name="name">姓名，为空则返回所有</param>
         /// <param name="size">每页多少条记录</param>
         /// <param name="index">第几页</param>
         /// <returns>按页返回列表数据</returns>
         [HttpGet]
         [Admin]
-        public ListResult List(string name, int size, int index)
+        public ListResult List(int orgid, string name, int size, int index)
         {
-            Song.Entities.Organization org = LoginAdmin.Status.Organ(this.Letter);
+            if (orgid <= 0)
+            {
+                Song.Entities.Organization org = LoginAdmin.Status.Organ(this.Letter);
+                orgid = org.Org_ID;
+            }
             //总记录数
             int count;
-            List<EmpAccount> eas = Business.Do<IEmployee>().GetPager(org.Org_ID, -1, name, size, index, out count);
+            List<EmpAccount> eas = Business.Do<IEmployee>().GetPager(orgid, -1, name, size, index, out count);
             foreach (EmpAccount ea in eas) ea.Acc_Pw = string.Empty;
             ListResult result = new ListResult(eas);
             result.Index = index;
@@ -491,6 +496,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="search"></param>
         /// <returns></returns>
+        [Admin]
         public List<EmpAccount> All(string search)
         {
             List<EmpAccount> eas = Business.Do<IEmployee>().GetAll(-1, -1, null, search);

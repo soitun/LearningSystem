@@ -48,6 +48,13 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         Position GetSingle(int identify);
         /// <summary>
+        /// 获取单一实体对象，按主键ID；
+        /// </summary>
+        /// <param name="identify">实体的主键</param>
+        /// <param name="orgid"></param>
+        /// <returns></returns>
+        Position GetSingle(int identify,int orgid);
+        /// <summary>
         /// 按岗位名称，获取某个机构下的岗位
         /// </summary>
         /// <param name="orgid">机构id</param>

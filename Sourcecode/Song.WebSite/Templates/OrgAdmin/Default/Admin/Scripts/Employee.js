@@ -2,10 +2,11 @@
     window.vapp = new Vue({
         el: '#vapp',
         data: {
+            org: {},
+            config: {},      //当前机构配置项
             form: {
-                name: '',
-                size: 20,
-                index: 1
+                orgid: 0, name: '',
+                size: 20, index: 1
             },
             loading: false,
             loadstate: {
@@ -18,6 +19,9 @@
             selects: [] //数据表中选中的行
         },
         created: function () {
+            this.org = window.org;
+            this.config = window.config;
+            this.form.orgid = this.org.Org_ID;
             this.handleCurrentChange(1);
         },
         methods: {
@@ -133,6 +137,45 @@
                     title: $dom('title').text() + ' - 修改'
                 });
                 pbox.open();
+            }
+        },
+        components: {
+            //岗位名称
+            'posiname': {
+                props: ['account'],
+                data: function () {
+                    return {
+                        posi:{},
+                        loading: false,
+                    }
+                },
+                watch: {
+                    'account': {
+                        handler: function (val) {
+                            var th = this;
+                            this.loading = true;
+                            $api.get("Position/ForID", { "posid": val.Posi_Id,"orgid": val.Org_ID})
+                                .then(req => {
+                                    if (req.data.success) {
+                                        th.posi = req.data.result;                                      
+                                    } else {
+                                        console.error(req.data.exception);
+                                        throw req.config.way + ' ' + req.data.message;
+                                    }
+                                }).catch(err => console.error(err))
+                                .finally(() => th.loading = false);
+                        }, immediate: true,deep:true
+                    }
+                },
+                methods: {},
+                template: `<div>
+                <loading v-if="loading"></loading>
+                <template v-else>
+                    {{posi.Posi_Name}}
+                    <span class="el-icon-s-custom red" v-show='posi.Posi_IsAdmin' title="系统管理岗"></span>
+                </template>
+                
+            </div>`
             }
         }
     });

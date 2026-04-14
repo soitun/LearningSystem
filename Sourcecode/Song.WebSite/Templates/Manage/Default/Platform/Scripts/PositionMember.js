@@ -30,21 +30,11 @@ $ready(function () {
         },
         mounted: function () {
             var th = this;
-            th.loading.init = true;
-            $api.bat(
-                $api.get('Organization/Current'),
-                $api.get('Position/ForID', { 'id': th.id })
-            ).then(([organ, posi]) => {
-                //获取结果             
-                th.organ = organ.data.result;
-                //机构配置信息
-                th.config = $api.organ(vapp.organ).config;
-                th.employelist(1);
-                th.getPosiAccount();
-            }).catch(function (err) {
-                alert(err, '错误');
-                console.error(err);
-            }).finally(() => th.loading = false);
+            th.org = window.org;
+            th.config = window.config;
+            th.form.orgid = th.org.Org_ID;
+            th.employelist(1);
+            th.getPosiAccount();
         },
         created: function () {
 
