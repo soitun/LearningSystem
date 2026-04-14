@@ -6,6 +6,7 @@ using WeiSha.Core;
 using Song.Entities;
 using WeiSha.Data;
 using Song.ServiceInterfaces;
+using System.Linq;
 
 namespace Song.ServiceImpls
 {
@@ -462,7 +463,9 @@ namespace Song.ServiceImpls
             }
             if (!selected.Exists(x => x.MM_Id == root.MM_Id)) selected.Insert(0, root);
             //
-            return selected.Count < 1 || (selected.Count == 1 && selected[0].MM_Id == root.MM_Id) ? mms : selected;
+            List<ManageMenu> results = selected.Count < 1 || (selected.Count == 1 && selected[0].MM_Id == root.MM_Id) ? mms : selected;
+            if (results == null) return null;
+            return results.OrderBy(m => m.MM_Order).ToList();
         }
         /// <summary>
         /// 岗位的管理菜单

@@ -382,31 +382,24 @@ namespace Song.ServiceImpls
             if (isShow != null) wc.And(ManageMenu._.MM_IsShow == isShow);
             // 所有菜单项
             List<ManageMenu> mms = Gateway.Default.From<ManageMenu>().Where(wc).OrderBy(ManageMenu._.MM_Order.Asc).ToList<ManageMenu>();
-            return _getFunctionMenu(uid, mms);
+
+            return _getFunctionMenu(uid, mms, null);
         }
-        private List<ManageMenu> _getFunctionMenu(string uid, List<ManageMenu> mms)
-        {        
-            List<ManageMenu> currentLvl = new List<ManageMenu>();
-            List<ManageMenu> tmlist = new List<ManageMenu>();   //临时记录          
-            for (int i = 0; i < mms.Count; i++)
+        private List<ManageMenu> _getFunctionMenu(string uid, List<ManageMenu> mms, List<ManageMenu> list)
+        {
+            if (list == null) list = new List<ManageMenu>();
+            foreach (ManageMenu m in mms)
             {
-                if (mms[i].MM_PatId == uid)
-                {
-                    currentLvl.Add(mms[i]);
-                    tmlist.Add(mms[i]);
-                    mms.RemoveAt(i);
-                    i--;
-                }
+                if (m.MM_PatId == uid) list.Add(m);             
             }
-            if (currentLvl.Count > 0)
+            foreach (ManageMenu m in mms)
             {
-                for (int i = 0; i < currentLvl.Count; i++)
-                {
-                    tmlist.AddRange(_getFunctionMenu(currentLvl[i].MM_UID, mms));
-                }
-            }           
-            return tmlist;
+                if (m.MM_PatId == uid)               
+                    _getFunctionMenu(m.MM_UID, mms, list);                
+            }
+            return list;
         }
+
         /// <summary>
         /// 获取当前对象的子级对象；
         /// </summary>

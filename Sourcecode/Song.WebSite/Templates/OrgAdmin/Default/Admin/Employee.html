@@ -59,7 +59,7 @@
                 </el-table-column>
                 <el-table-column label="密码" width="80" align="center">
                     <template slot-scope="scope">
-                        <el-link type="primary" plain icon="el-icon-edit" :disabled='scope.row.isAdminPosi'
+                        <el-link type="primary" plain icon="el-icon-edit"
                             @click="$refs.btngroup.pagebox('Pwreset?id='+scope.row.Acc_Id,'密码重置','Pwreset_'+scope.row.Acc_Id)">
                             重置</el-link>
                     </template>

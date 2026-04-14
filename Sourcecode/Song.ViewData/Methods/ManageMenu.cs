@@ -375,6 +375,8 @@ namespace Song.ViewData.Methods
         {
             Song.Entities.EmpAccount acc = LoginAdmin.Status.User(this.Letter);
             if (acc == null) throw new ExceptionForNoLogin();
+            acc = Business.Do<IEmployee>().GetSingle(acc.Acc_Id);
+            if(acc==null) throw new ExceptionForNoLogin("当前管理员不存在");
             //根菜单的标识，由于菜单分为管理菜单、学员菜单、教师菜单，所以这里要区分
             string menu_marker = "organAdmin";
             //超级管理员，取所有功能菜单
@@ -396,6 +398,7 @@ namespace Song.ViewData.Methods
             else
             {
                 List<Song.Entities.ManageMenu> mm = Business.Do<IPurview>().PosiPurviewMenu(acc.Posi_Id);
+                if (mm == null) throw new Exception("当前管理员不属于任何岗位");
                 return _MenuNode(null, mm, true);
             }
             //return null;

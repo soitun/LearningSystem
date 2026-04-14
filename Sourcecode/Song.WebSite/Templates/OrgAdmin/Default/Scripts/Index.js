@@ -173,6 +173,7 @@ window.$succeeded = function (result) {
         $api.get('ManageMenu/Menus:60').then(function (req) {
             if (req.data.success) {
                 var result = nodeconvert(req.data.result);
+                console.error(result);
                 s.add(result[0].childs);
             } else throw req.data.message;
         }).catch(err => {

@@ -14,8 +14,8 @@ namespace Song.ViewData.Methods
     /// <summary>
     /// 岗位（或叫角色）管理
     /// </summary>
-    [HttpPut, HttpGet,HttpPost]
-    public class Position : ViewMethod,IViewAPI
+    [HttpPut, HttpGet, HttpPost]
+    public class Position : ViewMethod, IViewAPI
     {
         /// <summary>
         /// 当前登录账号所在的机构的所有岗位
@@ -26,7 +26,7 @@ namespace Song.ViewData.Methods
         {
             Song.Entities.Organization org = LoginAdmin.Status.Organ(this.Letter);
             if (org == null) return null;
-            return  Business.Do<IPosition>().GetAll(org.Org_ID);
+            return Business.Do<IPosition>().GetAll(org.Org_ID);
         }
         /// <summary>
         /// 机构的所有岗位
@@ -35,7 +35,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         [HttpGet]
         public List<Song.Entities.Position> All4Organ(int orgid)
-        {           
+        {
             return Business.Do<IPosition>().GetAll(orgid);
         }
         /// <summary>
@@ -105,7 +105,7 @@ namespace Song.ViewData.Methods
             if (string.IsNullOrWhiteSpace(id)) return i;
             List<int> list = id.ToList<int>();
             foreach (int s in list)
-                i += Business.Do<IPosition>().Delete(s);            
+                i += Business.Do<IPosition>().Delete(s);
             return i;
         }
         /// <summary>
@@ -115,9 +115,9 @@ namespace Song.ViewData.Methods
         /// <param name="id">岗位id</param>
         /// <param name="orgid">机构id</param>
         /// <returns></returns>
-        public bool Exist(string name,int id,int orgid)
+        public bool Exist(string name, int id, int orgid)
         {
-            return Business.Do<IPosition>().IsExist(name,id,orgid);
+            return Business.Do<IPosition>().IsExist(name, id, orgid);
         }
         /// <summary>
         /// 添加岗位
@@ -127,41 +127,28 @@ namespace Song.ViewData.Methods
         [Admin]
         public bool Add(Song.Entities.Position posi)
         {
-            try
-            {
-                posi.Posi_IsAdmin = false;
-                //posi.Org_ID = 0;
-                Business.Do<IPosition>().Add(posi);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+            posi.Posi_IsAdmin = false;
+            //posi.Org_ID = 0;
+            Business.Do<IPosition>().Add(posi);
+            return true;
+        } 
         /// <summary>
         /// 添加管理岗位
         /// </summary>
         /// <param name="orgid"></param>
         /// <param name="name">管理岗位的名称</param>
         /// <returns></returns>
-        [SuperAdmin,HttpPost]
+        [SuperAdmin, HttpPost]
         public bool AddAdminPosi(int orgid, string name)
         {
-            try
-            {
-                Song.Entities.Position posi = new Entities.Position();
-                posi.Posi_IsAdmin = true;
-                posi.Posi_IsUse = true;
-                posi.Posi_Name = string.IsNullOrWhiteSpace(name) ? "管理员" : name;
-                posi.Org_ID = orgid;
-                Business.Do<IPosition>().Add(posi);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+
+            Song.Entities.Position posi = new Entities.Position();
+            posi.Posi_IsAdmin = true;
+            posi.Posi_IsUse = true;
+            posi.Posi_Name = string.IsNullOrWhiteSpace(name) ? "管理员" : name;
+            posi.Org_ID = orgid;
+            Business.Do<IPosition>().Add(posi);
+            return true;
         }
         /// <summary>
         /// 更改职务的排序
@@ -172,15 +159,7 @@ namespace Song.ViewData.Methods
         [Admin]
         public bool UpdateTaxis(Song.Entities.Position[] items)
         {
-            try
-            {
-                Business.Do<IPosition>().UpdateTaxis(items);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return Business.Do<IPosition>().UpdateTaxis(items);
         }
         /// <summary>
         /// 当前岗位下的所有员工

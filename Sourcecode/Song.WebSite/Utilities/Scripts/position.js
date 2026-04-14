@@ -62,6 +62,7 @@
 
     //如果是移动端，则当地理位置变更时，重新获取GPS信息
     if ($dom.ismobi() || $dom.ispad()) {
+        return;
         window.navigator.geolocation.watchPosition($posi.updataPosition, $posi.handleError, $posi.options);
         window.position_coords_intervalId = setInterval(function () {
             if (window.$posi.coords.longitude == 0 || window.$posi.coords.latitude == 0)
