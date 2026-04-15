@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using WeiSha.Core;
 using WeiSha.Data;
 
@@ -170,6 +171,10 @@ namespace Song.ServiceImpls
         /// <param name="id">实体的主键</param>
         public int QuesRemove(long id)
         {
+            if (this.QuesExistTestpaper(id))
+            {
+                throw new Exception("当前试题已经被试卷采用，不可删除");
+            }
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
@@ -200,6 +205,33 @@ namespace Song.ServiceImpls
                     throw ex;
                 }
             }
+        }
+        /// <summary>
+        /// 试题是否存在于试卷
+        /// </summary>
+        /// <param name="qid"></param>
+        /// <returns></returns>
+        public bool QuesExistTestpaper(long qid)
+        {
+            bool isexist = false;
+           using (SourceReader reader = Gateway.Default.From<ExamTestPaper>().Where(ExamTestPaper._.Etp_Type==1).ToReader())
+            {
+                while (reader.Read())
+                {
+                    string config = reader["Etp_FromConfig"].ToString();
+                    XmlDocument xmldoc = new XmlDocument();
+                    xmldoc.LoadXml(config);
+                    foreach (XmlNode node in xmldoc.SelectNodes("//q"))
+                    {
+                        string qidstr = node.Attributes["id"]?.Value;
+                        long quesid = qidstr.Convert<long>();
+                        if (qid == quesid) return true;
+                    }
+                }
+                reader.Close();
+                reader.Dispose();
+            }
+            return isexist;
         }
         /// <summary>
         /// 获取随机试题

@@ -151,14 +151,23 @@ $ready([
             deleteData: function (datas) {
                 var th = this;
                 var loading = this.$fulloading();
+                var arr = datas.split(",");
                 $api.delete('ExamQues/QuesRemove', { 'id': datas }).then(function (req) {
                     if (req.data.success) {
                         var result = req.data.result;
-                        th.$notify({
-                            type: 'success',
-                            message: '成功删除' + result + '条数据',
-                            center: true
-                        });
+                        if (result > 0) {
+                            th.$notify({
+                                type: 'success',
+                                message: '成功删除' + result + '条数据',
+                                center: true
+                            });
+                        }
+                        //
+                        if (arr.length > result) {
+                            th.$alert((arr.length - result) + '条数据删除失败，可能是试题已经被试卷采用','删除失败', {
+                                type: 'warning'
+                            });
+                        }
                         th.handleCurrentChange();
                     } else {
                         console.error(req.data.exception);

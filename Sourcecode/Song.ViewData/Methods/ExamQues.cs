@@ -136,7 +136,7 @@ namespace Song.ViewData.Methods
         }
 
         /// <summary>
-        /// 删除试题分
+        /// 删除试题
         /// </summary>
         /// <param name="id">试题id，可以是多个，用逗号分隔</param>
         /// <returns></returns>
@@ -148,7 +148,16 @@ namespace Song.ViewData.Methods
             if (string.IsNullOrWhiteSpace(id)) return i;
             List<long> list = id.ToList<long>();
             foreach (long s in list)
-                i += Business.Do<IExamQues>().QuesRemove(s);
+            {
+                try
+                {
+                    i += Business.Do<IExamQues>().QuesRemove(s);
+                }
+                catch
+                {
+
+                }
+            }
             return i;
         }
         /// <summary>

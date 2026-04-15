@@ -68,6 +68,12 @@ namespace Song.ServiceInterfaces
         /// <param name="id">实体的主键</param>
         int QuesRemove(long id);
         /// <summary>
+        /// 试题是否存在于试卷
+        /// </summary>
+        /// <param name="qid"></param>
+        /// <returns></returns>
+        bool QuesExistTestpaper(long qid);
+        /// <summary>
         /// 获取随机试题
         /// </summary>
         /// <param name="orgid">机构id</param>
