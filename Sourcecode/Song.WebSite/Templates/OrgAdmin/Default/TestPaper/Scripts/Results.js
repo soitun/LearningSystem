@@ -1,4 +1,4 @@
-﻿$ready(function () {
+﻿$ready(['../Components/score.js',], function () {
 
     window.vapp = new Vue({
         el: '#vapp',
@@ -51,7 +51,7 @@
                 th.form.orgid = th.org.Org_ID;
                 th.testpaper = paper.data.result;
                 th.handleCurrentChange(1);
-                th. getFiles();
+                th.getFiles();
             }).catch(err => console.error(err))
                 .finally(() => th.loading_init = false);
         },
@@ -272,6 +272,46 @@
                     console.error(err);
                 }).finally(() => th.loadingid = -1);
             },
+            //行的右侧下拉菜单的事件
+            handleCommand: function (command, row) {
+                //获取el-dropdown组件中的行数据的id
+                let trid = row.$attrs?.trid;
+                while (!trid && row.$parent) {
+                    row = row.$parent;
+                    trid = row.$attrs?.trid;
+                }
+                //当前行数据的对象
+                const obj = this.datas.find(item => item.Tr_ID === trid);
+                //试卷预览
+                if (command == 'review') {
+                    this.viewresult(obj);
+                }
+                //重新计算
+                if (command == 'calc') {
+                    this.$confirm('学员：' + obj.Ac_Name + '<br/>成绩：' + obj.Tr_Score + ' 分',
+                        '确定要重新计算成绩吗？', {
+                        dangerouslyUseHTMLString: true,
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'info'
+                    }).then(t => {
+                        this.calcscore(obj);
+                    }).catch(action => { });
+                    
+                }
+                //删除
+                if (command == 'delete') {
+                    this.$confirm('学员：' + obj.Ac_Name + '<br/>成绩：' + obj.Tr_Score + ' 分',
+                        '确定要删除当前成绩吗？', {
+                        dangerouslyUseHTMLString: true,
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(t => {
+                        this.$refs.btngroup.delete(obj.Exr_ID);
+                    }).catch(action => { });
+                }
+            },
             //已经导出的文件列表
             getFiles: function () {
                 var th = this;
@@ -291,7 +331,7 @@
                 var th = this;
                 //导出所有参考学员
                 th.fileloading = true;
-                $api.post('TestPaper/ResultsOutput', { 'tpid': th.tpid}).then(function (req) {
+                $api.post('TestPaper/ResultsOutput', { 'tpid': th.tpid }).then(function (req) {
                     if (req.data.success) {
                         th.getFiles();
                     } else {
@@ -333,47 +373,12 @@
                     'stid': data.Ac_ID
                 });
                 var title = data.Ac_Name + '-成绩回顾';
-                this.$refs.btngroup.pagebox(url, title, null, 800, 600, { 'ico': 'e6f1' });
+                this.$refs.btngroup.pagebox(url, title, null, 1000, '80%', { 'ico': 'e6f1' });
                 return false;
             }
         },
         components: {
-            //得分的输出，为了小数点对齐
-            'score': {
-                props: ['number'],
-                data: function () {
-                    return {
-                        prev: '',
-                        dot: '.',
-                        after: ''
-                    }
-                },
-                watch: {
-                    'number': function (nv, ov) {
-                        this.init();
-                    }
-                },
-                created: function () {
-                    this.init();
-                },
-                methods: {
-                    init: function () {
-                        var num = String(Math.round(this.number * 100) / 100);
-                        if (num.indexOf('.') > -1) {
-                            this.prev = num.substring(0, num.indexOf('.'));
-                            this.after = num.substring(num.indexOf('.') + 1);
-                        } else {
-                            this.prev = num;
-                            this.dot = '&nbsp;';
-                        }
-                    }
-                },
-                template: `<div class="score">
-                    <span class="prev">{{prev}}</span>
-                    <span class="dot" v-html="dot"></span>
-                    <span class="after">{{after}}</span>
-                </div>`
-            }
+
         }
     });
 

@@ -1,25 +1,9 @@
 ﻿@charset "utf-8";
-
-/*得分，小数点对齐*/
-.score{
-    width: 80px;
+.scope_column .el-dropdown-link{
+  
     display: flex;
+    justify-content: space-between;
 }
-.score span{
-    display: block;
-}
-.score .after{
-    width: 30px;
-    float: right;
-    text-align: left;
-}
-.score .dot{
-    width: 8px;
-    float: right;
-    text-align: center;
-}
-.score .prev{
-    width: 45px;
-    float: right;
-    text-align: right;
+.scope_column .el-dropdown-link i{
+    margin-top: 5px;
 }
