@@ -172,8 +172,7 @@ window.$succeeded = function (result) {
     }).onmounted(function (s, e) { //加载数据源
         $api.get('ManageMenu/Menus:60').then(function (req) {
             if (req.data.success) {
-                var result = nodeconvert(req.data.result);
-                console.error(result);
+                let result = nodeconvert(req.data.result);            
                 s.add(result[0].childs);
             } else throw req.data.message;
         }).catch(err => {

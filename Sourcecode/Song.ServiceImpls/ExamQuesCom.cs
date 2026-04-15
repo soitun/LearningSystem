@@ -1269,7 +1269,7 @@ namespace Song.ServiceImpls
                 wc.And(wcqp);
             }
             countSum = section.Where(wc).Count();
-            return section.Where(wc).OrderBy(Questions._.Qus_ID.Desc).ToList<Questions>(size, (index - 1) * size);
+            return section.Where(wc).OrderBy(QuesCollect._.Qcl_CrtTime.Desc).ToList<Questions>(size, (index - 1) * size);
         }
         #endregion
 

@@ -1,5 +1,5 @@
 //试题收藏
-
+//事件change：状态，试题
 Vue.component('ques_collect', {
     //ques:试题对象
     //accid:管理员的账户ID    
@@ -7,6 +7,7 @@ Vue.component('ques_collect', {
     data: function () {
         return {
             collected: false,   //是否已收藏
+            qusid: 0,        //当前试题id
             loading: false
         }
     },
@@ -15,6 +16,8 @@ Vue.component('ques_collect', {
         'ques': {
             handler(nv, ov) {
                 if ($api.isnull(nv)) return;
+                if (this.qusid > 0) return;
+                this.qusid = nv.Qus_ID;
                 this.getstate(nv);
             }, immediate: true,
         }
@@ -61,12 +64,19 @@ Vue.component('ques_collect', {
                                 type: 'warning', duration: 1000
                             });
                         }
+                        th.$emit('change', th.ques, th.collected);
                     } else {
                         console.error(req.data.exception);
                         throw req.config.way + ' ' + req.data.message;
                     }
                 }).catch(err => console.error(err))
                 .finally(() => th.loading = false);
+        },
+        //改变显示状态
+        changeshow: function (ques, state) {
+            if (ques.Qus_ID != this.ques.Qus_ID) return;
+            if (this.collecte == state) return;          
+            this.collected = state;
         }
     },
     template: `<div class="ques_collect">

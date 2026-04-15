@@ -36,9 +36,10 @@
                     <div class="queslist">
                         <loading v-if="loadstate.parts"></loading>
                         <el-empty v-else-if="partsques.length<1" description="没有满足条件的数据"></el-empty>
-                        <selectques v-else v-for="(ques,idx) in partsques" :ques="ques" :types="types" :admin="admin"
-                            :search="partsform.search" :serial="(partsform.index - 1) * partsform.size + idx + 1"
-                            @checked="changeselect">
+                        <selectques ref="selectques" v-else v-for="(ques,idx) in partsques" :ques="ques"
+                            :types="types" :admin="admin" :search="partsform.search"
+                            :serial="(partsform.index - 1) * partsform.size + idx + 1" @checked="changeselect"
+                            @collect="collect">
                         </selectques>
                     </div>
                     <div class="pager-box">
@@ -68,9 +69,10 @@
                     <div class="queslist">
                         <loading v-if="loadstate.tags"></loading>
                         <el-empty v-else-if="tagsques.length<1" description="没有满足条件的数据"></el-empty>
-                        <selectques v-else v-for="(ques,idx) in tagsques" :ques="ques" :types="types" :admin="admin"
-                            :search="tagsform.search" :serial="(tagsform.index - 1) * tagsform.size + idx + 1"
-                            @checked="changeselect">
+                        <selectques ref="selectques" v-else v-for="(ques,idx) in tagsques" :ques="ques" :types="types"
+                            :admin="admin" :search="tagsform.search"
+                            :serial="(tagsform.index - 1) * tagsform.size + idx + 1" @checked="changeselect"
+                            @collect="collect">
                         </selectques>
                     </div>
                     <div class="pager-box">
@@ -100,9 +102,10 @@
                     <div class="queslist">
                         <loading v-if="loadstate.knls"></loading>
                         <el-empty v-else-if="knlsques.length<1" description="没有满足条件的数据"></el-empty>
-                        <selectques v-else v-for="(ques,idx) in knlsques" :ques="ques" :types="types" :admin="admin"
-                            :search="knlsform.search" :serial="(knlsform.index - 1) * knlsform.size + idx + 1"
-                            @checked="changeselect">
+                        <selectques ref="selectques" v-else v-for="(ques,idx) in knlsques" :ques="ques" :types="types"
+                            :admin="admin" :search="knlsform.search"
+                            :serial="(knlsform.index - 1) * knlsform.size + idx + 1" @checked="changeselect"
+                            @collect="collect">
                         </selectques>
                     </div>
                     <div class="pager-box">
@@ -116,7 +119,8 @@
             <div v-show="activeName=='collect'" remark="我的收藏" tab="collect">
                 <div class="ques-box">
                     <div class="ques-query">
-                        <query_panel :model="collectform" :width="45" :loading="loadstate.collect" @search="getcollectques(1)">
+                        <query_panel :model="collectform" :width="45" :loading="loadstate.collect"
+                            @search="getcollectques(1)">
                             <el-form-item label="题干">
                                 <el-input v-model.trim="collectform.search" clearable style="width:100px"
                                     placeholder="搜索题干">
@@ -130,9 +134,10 @@
                     <div class="queslist">
                         <loading v-if="loadstate.collect"></loading>
                         <el-empty v-else-if="collectques.length<1" description="没有满足条件的数据"></el-empty>
-                        <selectques v-else v-for="(ques,idx) in collectques" :ques="ques" :types="types" :admin="admin"
-                            :search="collectform.search" :serial="(collectform.index - 1) * collectform.size + idx + 1"
-                            @checked="changeselect">
+                        <selectques ref="selectques" v-else v-for="(ques,idx) in collectques" :ques="ques"
+                            :types="types" :admin="admin" :search="collectform.search"
+                            :serial="(collectform.index - 1) * collectform.size + idx + 1" @checked="changeselect"
+                            @collect="collect">
                         </selectques>
                     </div>
                     <div class="pager-box">

@@ -86,7 +86,7 @@ $ready([
             $api.login.current('admin', d => {
                 th.admin = d;
                 th.collectform.acid = d.Acc_Id;
-                th.getcollectques(1);
+                th.getcollectques(1, true);
             });
 
             this.receive();
@@ -192,8 +192,8 @@ $ready([
                     console.error(err);
                 }).finally(() => th.loadstate.tags = false);
             },
-            //按关键字获取试题
-            getcollectques: function (index) {
+            //收藏的试题
+            getcollectques: function (index, show) {
                 var th = this;
                 th.loadstate.collect = true;
                 if (index != null) this.collectform.index = index;
@@ -211,7 +211,7 @@ $ready([
                         th.collecttotalpages = Number(d.data.totalpages);
                         th.collecttotal = d.data.total;
                         //如果有收藏的试题，则优先显示收藏的试题
-                        if (th.collectques.length > 0) {
+                        if (show == true && th.collectques.length > 0) {
                             th.activeName = 'collect';
                         }
                     } else {
@@ -232,6 +232,19 @@ $ready([
                         resolve(this.entity);
                     }
                 });
+            },
+            //收藏试题状态变更时
+            collect: function (ques, state) {
+                //重新加载收藏的试题列表
+                this.getcollectques(null, false);
+
+                let components=this.$refs['selectques'];
+                if (components && components.length > 0) {
+                    for (let i = 0; i < components.length; i++) {
+                        components[i].setcollect(ques, state);
+                    }
+                }
+                //console.error(components);
             },
             //试题选中内容变更,并向主窗体传值
             changeselect: function (q, checked) {
