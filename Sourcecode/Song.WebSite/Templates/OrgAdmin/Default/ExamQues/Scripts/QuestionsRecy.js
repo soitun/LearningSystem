@@ -161,6 +161,7 @@ $ready([
                                 message: '成功删除' + result + '条数据',
                                 center: true
                             });
+                            th.handleCurrentChange();
                         }
                         //
                         if (arr.length > result) {
@@ -168,7 +169,7 @@ $ready([
                                 type: 'warning'
                             });
                         }
-                        th.handleCurrentChange();
+                        
                     } else {
                         console.error(req.data.exception);
                         throw req.data.message;

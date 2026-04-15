@@ -67,7 +67,10 @@ Vue.component('question', {
             }
         }).catch(function (err) {
             console.error(err);
-        }).finally(() => th.loading = false);
+        }).finally(() => {
+            th.loading = false;
+            th.init = true;
+        });
     },
     methods: {
         //是否显示试题，根据选项卡状态
@@ -240,7 +243,7 @@ Vue.component('question', {
             return false;
         }
     },
-    template: `<card :qid="qans.id" v-if="showQues()" review shadow="hover"  :render="init">
+    template: `<card :qid="qans.id" v-if="showQues()" review shadow="hover" :render="init">
         <card-title :index="calcIndex(index+1)" v-if="loading">
             <loading type="spinner" size="24px" > 加载中...</loading>
         </card-title>        
