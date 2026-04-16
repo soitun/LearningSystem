@@ -223,7 +223,7 @@ $ready(["Components/group_select.js",
                 return [exam, this.entity];
             },
             //接收子窗体（考试场次）的数据
-            receive: function ([exam]) {
+            receive: function ([exam]) {           
                 let index = this.exams.findIndex(el => el.Exam_ID == exam.Exam_ID);
                 if (index < 0) this.exams.push(exam);
                 else this.$set(this.exams, index, exam);

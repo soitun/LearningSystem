@@ -435,3 +435,18 @@ CREATE INDEX "aaaaaExam_Accounts_PK" ON "public"."Exam_Accounts" USING btree ("E
 /*增加学员账号的是否删除字段*/
 ALTER TABLE "Accounts" ADD COLUMN "Ac_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
 CREATE INDEX  IF NOT EXISTS "Accounts_IX_IsDeleted" ON "Accounts"("Ac_IsDeleted");
+
+/*将考试的ID转为雪花ID*/
+ALTER TABLE "ExamResults" ALTER COLUMN "Exam_ID" TYPE BIGINT;
+ALTER TABLE "Examination"  ADD COLUMN "new_id" BIGINT;
+UPDATE "Examination"  set "new_id"="Exam_ID";
+ALTER TABLE "Examination" ALTER COLUMN "Exam_ID" DROP DEFAULT;
+DROP SEQUENCE IF EXISTS "Examination_Exam_ID_seq";
+ALTER TABLE "Examination" DROP CONSTRAINT IF EXISTS "key_examination";
+ALTER TABLE "Examination" ALTER COLUMN "Exam_ID" DROP IDENTITY IF EXISTS;
+-- 删除旧的 Exam_ID 列
+ALTER TABLE "Examination" DROP COLUMN "Exam_ID";
+-- 将 new_id 重命名为 Exam_ID
+ALTER TABLE "Examination" RENAME COLUMN "new_id" TO "Exam_ID";
+-- 生新设置Exam_ID为主键
+ALTER TABLE "Examination" ADD PRIMARY KEY ("Exam_ID");
