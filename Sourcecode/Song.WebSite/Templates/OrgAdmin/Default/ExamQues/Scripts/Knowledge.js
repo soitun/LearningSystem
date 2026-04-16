@@ -227,6 +227,20 @@ $ready(function () {
             },
             //删除节点
             remove: function (node, data) {
+                if (data.children && data.children.length > 0) {
+                    var msg = '当前知识点下还有子级内容，将一并删除';
+                    this.$confirm(msg, '提示', {
+                        dangerouslyUseHTMLString: true,
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.remove_func(node, data)
+                    }).catch(() => { });
+                } else this.remove_func(node, data);
+            },
+            //删除节点的具体方法
+            remove_func: function (node, data) {
                 var th = this;
                 th.loading_sumbit = true;
                 $api.delete('ExamQues/KnlDelete', { 'id': data.Qk_ID }).then(function (req) {
@@ -249,6 +263,7 @@ $ready(function () {
                     console.error(err);
                 });
             },
+
             //当专业数据更改时，刷新缓存数据
             fresh_cache: function () {
                 $api.cache('ExamQues/KnlTreeFront:update', { 'orgid': window.org.Org_ID }, this.getTreeData());

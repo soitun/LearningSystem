@@ -61,7 +61,7 @@ $ready(function () {
                 }).finally(() => th.loadstate.get = false);
             },
             //回收
-            recycle: function (datas) {
+            recycle: function (btn,datas) {
                 var th = this;
                 th.$confirm('是否还原选中的数据?', '提示', {
                     confirmButtonText: '确定',
@@ -179,7 +179,7 @@ $ready(function () {
                     getquestotal: function () {
                         var th = this;
                         th.loading = true;
-                        $api.get("ExamQues/PartQusTotal", { "orgid": -1, "qpid": th.part.Qp_ID, "qtype": "", "isUse": "", "children": true })
+                        $api.get("ExamQues/PartQusTotal", { "orgid": -1, "qpid": th.part.Qp_ID, "qtype": "", "use": "", "children": true })
                             .then(req => {
                                 if (req.data.success) {
                                     th.total = req.data.result;                                   

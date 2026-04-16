@@ -61,26 +61,20 @@ $ready(function () {
                 }).finally(() => th.loadstate.get = false);
             },
             //回收
-            recycle: function (datas) {
+            recycle: function (btn, datas) {
                 var th = this;
-                th.$confirm('是否还原选中的数据?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    th.loadstate.recycle = true;
-                    $api.post("ExamQues/KnlRecycle", { "id": datas })
-                        .then(req => {
-                            if (req.data.success) {
-                                let result = req.data.result;
-                                th.handleCurrentChange();
-                            } else {
-                                console.error(req.data.exception);
-                                throw req.config.way + ' ' + req.data.message;
-                            }
-                        }).catch(err => console.error(err))
-                        .finally(() => th.loadstate.recycle = false);
-                }).catch(() => { });
+                th.loadstate.recycle = true;
+                $api.post("ExamQues/KnlRecycle", { "id": datas })
+                    .then(req => {
+                        if (req.data.success) {
+                            let result = req.data.result;
+                            th.handleCurrentChange();
+                        } else {
+                            console.error(req.data.exception);
+                            throw req.config.way + ' ' + req.data.message;
+                        }
+                    }).catch(err => console.error(err))
+                    .finally(() => th.loadstate.recycle = false);
             },
             //彻底删除
             remove: function (datas) {
@@ -182,7 +176,7 @@ $ready(function () {
                         $api.get("ExamQues/KnlQusTotal", { "orgid": -1, "qkid": th.knl.Qk_ID, "qtype": "", "use": "", "children": true })
                             .then(req => {
                                 if (req.data.success) {
-                                    th.total = req.data.result;                                   
+                                    th.total = req.data.result;
                                 } else {
                                     console.error(req.data.exception);
                                     throw req.config.way + ' ' + req.data.message;
