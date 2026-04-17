@@ -160,8 +160,8 @@ $ready([
         },
         methods: {
             //接收的主窗体数据
-            receive: function () {
-                return new Promise((resolve, reject) => {
+            receive: async function () {
+                //return new Promise((resolve, reject) => {
                     //像主窗体传值，传三个值：选中的分类，选中的试题数，调用函数名
                     var pagebox = window.top.$pagebox;
                     if (pagebox && pagebox.source.top) {
@@ -169,25 +169,45 @@ $ready([
                         this.theme = theme;     //考试主题
                         if (exam == null) {
                             //新增时，创建场次
-                            this.exam = {
-                                Exam_ID: '',
-                                Exam_Name: '',
-                                Tp_Id: '', Etp_Id: '',        //试卷id
-                                Cou_ID: '',      //临时字段，数据实体中并不存在
-                                Exam_DateType: this.theme.Exam_DateType,
-                                Exam_Date: this.theme.Exam_Date,
-                                Exam_DateOver: this.theme.Exam_DateOver,
-                                Exam_GroupType: this.theme.Exam_GroupType,
-                                Exam_UID: this.theme.Exam_UID,
-                                Exam_Span: 0
-                            };
+                            this.exam = await this.createexam();
                         } else this.exam = $api.clone(exam);
                         if (this.exam.Etp_Id != '' && this.exam.Etp_Id != '0') this.papertype = 1;
                         else if (this.exam.Tp_Id != '' && this.exam.Tp_Id != '0') this.papertype = 0;
                         this.exam.Exam_Purpose = this.papertype;
-                        resolve(this.exam);
+                        //resolve(this.exam);
+                        return this.exam;
                     }
-                });
+                    return null;
+                //});
+            },
+            //创建考试对象
+            createexam: async function () {
+                var exam = {
+                    Exam_ID: '',
+                    Exam_Name: '',
+                    Tp_Id: '', Etp_Id: '',        //试卷id
+                    Cou_ID: '',      //临时字段，数据实体中并不存在
+                    Exam_DateType: this.theme.Exam_DateType,
+                    Exam_Date: this.theme.Exam_Date,
+                    Exam_DateOver: this.theme.Exam_DateOver,
+                    Exam_GroupType: this.theme.Exam_GroupType,
+                    Exam_UID: this.theme.Exam_UID,
+                    Exam_Span: 0
+                };
+                try {
+                    const req = await $api.get("Snowflake/Generate");
+                    if (req.data.success) {
+                        let snowid = req.data.result;
+                        exam.Exam_ID = snowid;
+                    } else {
+                        console.error(req.data.exception);
+                        throw req.config.way + ' ' + req.data.message;
+                    }
+                } catch (err) {
+                    console.error(err);
+                    throw err;
+                }
+                return exam;
             },
             //加载考试专用试卷
             getexampapers: function (search) {

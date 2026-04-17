@@ -46,7 +46,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="id">考试id，可以是考试题，也可以是场次</param>
         /// <returns></returns>    
-        public Song.Entities.Examination ForID(int id)
+        public Song.Entities.Examination ForID(long id)
         {
             return Business.Do<IExamination>().ExamSingle(id);
         }
@@ -125,8 +125,8 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<int> list = id.ToList<int>();
-            foreach (int s in list)
+            List<long> list = id.ToList<long>();
+            foreach (long s in list)
                 i += Business.Do<IExamination>().ExamDelete(s);
             return i;
         }
@@ -142,8 +142,8 @@ namespace Song.ViewData.Methods
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(id)) return i;
-            List<int> list = id.ToList<int>();
-            foreach (int s in list)
+            List<long> list = id.ToList<long>();
+            foreach (long s in list)
                 i += Business.Do<IExamination>().ExamUpdate(s,
                     new WeiSha.Data.Field[] { Song.Entities.Examination._.Exam_IsUse },
                     new object[] { use });
@@ -155,7 +155,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="examid"></param>
         /// <returns>id:考试id,manual:是否需要人工批阅，true为需要</returns>
-        public JObject Manual4Exam(int examid)
+        public JObject Manual4Exam(long examid)
         {
             bool manual = false;
             //考生数，如果没有人考试，则不需要批阅
@@ -376,7 +376,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="examid">考试场次的id</param>
         /// <returns></returns>
-        public JObject State(int examid)
+        public JObject State(long examid)
         {
             JObject jo = new JObject();
             //学员是否登录
@@ -525,7 +525,7 @@ namespace Song.ViewData.Methods
         /// <param name="stid">学员id</param>
         /// <returns></returns>
         [HttpGet]
-        public JArray MakeoutPaper(int examid, long tpid,int stid)
+        public JArray MakeoutPaper(long examid, long tpid,int stid)
         {
             Examination exam = Business.Do<IExamination>().ExamSingle(examid);
             if (exam == null || (exam.Exam_IsUse == false || exam.Exam_IsDeleted)) throw new Exception("当前考试不存在");
@@ -709,7 +709,7 @@ namespace Song.ViewData.Methods
         [HttpPost]
         [Student]
         [Upload]
-        public JObject FileUp(int stid, int examid, long qid)
+        public JObject FileUp(int stid, long examid, long qid)
         {
             if (stid <= 0 || examid <= 0 || qid <= 0) throw new Exception("参数错误！");
             Song.Entities.Accounts st = this.User;
@@ -768,7 +768,7 @@ namespace Song.ViewData.Methods
         /// <param name="examid">考试id</param>
         /// <param name="qid">试题id</param>
         /// <returns>qid:试题id;state:是否成功;name:文件名; url:文件完整路径</returns>
-        public JObject FileLoad(int stid, int examid, long qid)
+        public JObject FileLoad(int stid, long examid, long qid)
         {
             JObject jo = new JObject();
             jo.Add("qid", qid.ToString());
@@ -807,7 +807,7 @@ namespace Song.ViewData.Methods
         /// <returns>state:是否成功;qid:试题id</returns>
         [Student]
         [HttpDelete]
-        public JObject FileDelete(int stid, int examid, long qid)
+        public JObject FileDelete(int stid, long examid, long qid)
         {
             JObject jo = new JObject();
             jo.Add("qid", qid.ToString());
@@ -842,7 +842,7 @@ namespace Song.ViewData.Methods
         /// <param name="examid">考试id</param>
         /// <returns>id:考试id,number:参考人数</returns>
         [HttpGet]
-        public JObject AttendCount(int examid)
+        public JObject AttendCount(long examid)
         {            
             int num = Business.Do<IExamination>().Numbertimes4Exam(examid);
             JObject jo = new JObject();
@@ -856,7 +856,7 @@ namespace Song.ViewData.Methods
         /// <param name="examid">考试id</param>
         /// <returns>id:考试id,number:参考人数</returns>
         [HttpGet]
-        public JObject AbsenceCount(int examid)
+        public JObject AbsenceCount(long examid)
         {
             int num = Business.Do<IExamination>().NumberAbsence4Exam(examid);
             JObject jo = new JObject();
@@ -870,7 +870,7 @@ namespace Song.ViewData.Methods
         /// <param name="examid">考试id</param>
         /// <returns>id:考试id,number:参考人数</returns>
         [HttpGet]
-        public JObject StudentTotalTheme(int examid)
+        public JObject StudentTotalTheme(long examid)
         {
             int total = Business.Do<IExamination>().NumberOfStudent(examid);
             JObject jo = new JObject();
@@ -884,7 +884,7 @@ namespace Song.ViewData.Methods
         /// <param name="examid">考试id</param>
         /// <returns>id:考试id,number:参考人数</returns>
         [HttpGet]
-        public JObject AttendTheme(int examid)
+        public JObject AttendTheme(long examid)
         {
             int total = Business.Do<IExamination>().Number4Theme(examid);
             JObject jo = new JObject();
@@ -897,7 +897,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="examid">考试id</param>
         /// <returns></returns>
-        public JObject ExaminingCount(int examid)
+        public JObject ExaminingCount(long examid)
         {
             int count = Business.Do<IExamination>().ResultCacheCount(examid);
             JObject jo = new JObject();
@@ -915,7 +915,7 @@ namespace Song.ViewData.Methods
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public ListResult AttendThemeAccounts(int examid, string name, string idcard, long stsid, int size,int index)
+        public ListResult AttendThemeAccounts(long examid, string name, string idcard, long stsid, int size,int index)
         {
             int total;
             List<Accounts> datas = Business.Do<IExamination>().AttendThemeAccounts(examid, name, idcard, stsid,size, index, out total);
@@ -937,7 +937,7 @@ namespace Song.ViewData.Methods
         /// <param name="index"></param>
         /// <returns></returns>
         [Admin,Teacher]
-        public ListResult AbsenceExamAccounts(int examid, string name, string idcard, string phone, long stsid, int size, int index)
+        public ListResult AbsenceExamAccounts(long examid, string name, string idcard, string phone, long stsid, int size, int index)
         {
             int total;
             List<Accounts> datas = Business.Do<IExamination>().AbsenceExamAccounts(examid, name, idcard, phone, stsid, size, index, out total);
@@ -960,7 +960,7 @@ namespace Song.ViewData.Methods
         /// <param name="examid">考试id</param>
         /// <returns>id:考试id,average:平均数</returns>
         [HttpGet]
-        public JObject Average4Exam(int examid)
+        public JObject Average4Exam(long examid)
         {
             double avg = Business.Do<IExamination>().Avg4Exam(examid);
             avg = Math.Round(Math.Round(avg * 10000) / 10000, 2, MidpointRounding.AwayFromZero);
@@ -976,7 +976,7 @@ namespace Song.ViewData.Methods
         /// <returns>
         /// 示例："id":场次id,"average":平均值,"highest":最高分,"lowest":最低分,"passrate":及格率
         ///</returns>
-        public JObject Score4Exam(int examid)
+        public JObject Score4Exam(long examid)
         {
             double avg = Business.Do<IExamination>().Avg4Exam(examid);
             double hig = Business.Do<IExamination>().Highest4Exam(examid);
@@ -998,7 +998,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="examid">考试主题的id</param>
         /// <returns>Sts_Count列为学员组下的参考人员数量</returns>
-        public List<StudentSort> Sort4Theme(int examid)
+        public List<StudentSort> Sort4Theme(long examid)
         {
             return Business.Do<IExamination>().StudentSort4Theme(examid);
         }
@@ -1007,7 +1007,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="examid"></param>
         /// <returns>Sts_Count列为学员组下的参考人员数量</returns>
-        public List<StudentSort> ResultSort4Exam(int examid)
+        public List<StudentSort> ResultSort4Exam(long examid)
         {
             return Business.Do<IExamination>().ResultSort4Exam(examid);
         }
@@ -1016,7 +1016,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="examid">考试场次id</param>
         /// <returns></returns>
-        public List<StudentSort> AbsenceSort4Exam(int examid)
+        public List<StudentSort> AbsenceSort4Exam(long examid)
         {
             return Business.Do<IExamination>().AbsenceSort4Exam(examid);
         }
@@ -1026,7 +1026,7 @@ namespace Song.ViewData.Methods
         /// <param name="examid">考试主题的id</param>
         /// <param name="sort">分组id</param>
         /// <returns></returns>
-        public DataTable Results(int examid,int sort)
+        public DataTable Results(long examid,int sort)
         {
             DataTable dt = null;    //数据源  
             Song.Entities.Examination theme = Business.Do<IExamination>().ExamSingle(examid);
@@ -1088,7 +1088,7 @@ namespace Song.ViewData.Methods
         /// <param name="tpid">试卷id</param>
         /// <param name="stid">学员id</param>
         /// <returns></returns>
-        public ExamResults Result(int examid,long  tpid,int stid)
+        public ExamResults Result(long examid,long  tpid,int stid)
         {
             Song.Entities.ExamResults exr = Business.Do<IExamination>().ResultForCache(examid, tpid, stid);
             //if(exr==null) exr= Business.Do<IExamination>().ResultSingle(examid, tpid, stid);
@@ -1100,7 +1100,7 @@ namespace Song.ViewData.Methods
         /// <param name="examid">考试场次id</param>
         /// <param name="acid">学员id</param>
         /// <returns>"examid":场次id,"acid":学员id,"score":得分,如果没有考试，返回-1,"testpaper":试题id,"exrid":成绩记录的id,</returns>
-        public JObject ResultScore(int acid,int examid)
+        public JObject ResultScore(int acid, long examid)
         {
             JObject jo = new JObject();
             jo.Add("examid",examid);
@@ -1195,7 +1195,7 @@ namespace Song.ViewData.Methods
         /// <param name="index"></param>
         /// <returns></returns>
         [Admin,Teacher]
-        public ListResult Result4Exam(int examid, string name, string idcard, long stsid, float min, float max, bool? manual, int size, int index)
+        public ListResult Result4Exam(long examid, string name, string idcard, long stsid, float min, float max, bool? manual, int size, int index)
         {
             int count;
             List<ExamResults> datas = Business.Do<IExamination>().ResultsPager(examid, name, idcard, stsid, min, max, manual, size, index, out count);
@@ -1233,7 +1233,7 @@ namespace Song.ViewData.Methods
         /// <param name="examid">考试id</param>
         /// <returns></returns>
         [HttpDelete]
-        public int ResultDelete4Acc(string acid, int examid)
+        public int ResultDelete4Acc(string acid, long examid)
         {
             int i = 0;
             if (string.IsNullOrWhiteSpace(acid)) return i;
@@ -1263,7 +1263,7 @@ namespace Song.ViewData.Methods
         /// <param name="examid">考试id</param>
         /// <returns></returns>
         [HttpDelete]
-        public bool ResultClear(int examid)
+        public bool ResultClear(long examid)
         {
             Business.Do<IExamination>().ResultClear(examid);
             return true;
@@ -1306,7 +1306,7 @@ namespace Song.ViewData.Methods
         /// <param name="time">开始时间</param>
         /// <param name="dura">用时</param>
         [Admin]
-        public ExamResults ResultCreateScore(int examid,int acid, float score, DateTime? time, int dura)
+        public ExamResults ResultCreateScore(long examid,int acid, float score, DateTime? time, int dura)
         {
             return Business.Do<IExamination>().ResultSetScore(examid, acid, score, time, dura);
         }
@@ -1322,7 +1322,7 @@ namespace Song.ViewData.Methods
         /// <param name="maxSpan">最长考试用时</param>
         /// <returns></returns>
         [Admin]
-        public JObject ResultAbsenceBatchScore(int examid, int minScore, int maxScore, DateTime minTime, DateTime maxTime, int minSpan, int maxSpan)
+        public JObject ResultAbsenceBatchScore(long examid, int minScore, int maxScore, DateTime minTime, DateTime maxTime, int minSpan, int maxSpan)
         {
             var task= Business.Do<IExamination>().ResultAbsenceBatchScore(examid, minScore, maxScore, minTime, maxTime, minSpan, maxSpan);
             JObject jo = new JObject();
@@ -1336,7 +1336,7 @@ namespace Song.ViewData.Methods
         /// <param name="examid"></param>
         /// <returns></returns>
         [Admin]
-        public JObject ResultAbsenceBatchScoreLoading(int examid)
+        public JObject ResultAbsenceBatchScoreLoading(long examid)
         {
             var task = Business.Do<IExamination>().ResultAbsenceBatchScore(examid);
             JObject jo = new JObject();
@@ -1349,7 +1349,7 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="examid">考试场次id</param>
         /// <returns></returns>
-        public bool ResultBatchClac(int examid)
+        public bool ResultBatchClac(long examid)
         {
             return Business.Do<IExamination>().ResultBatchClac(examid);
         }
@@ -1386,7 +1386,7 @@ namespace Song.ViewData.Methods
         /// <param name="sorts">学员组的id，多个id用逗号分隔</param>
         /// <returns></returns>
         [HttpPost]
-        public JObject ResultsExport4Eaxm(int examid,string sorts)
+        public JObject ResultsExport4Eaxm(long examid,string sorts)
         {           
             List<long> sortsid = sorts.ToList<long>();
             //导出文件的位置
@@ -1411,7 +1411,7 @@ namespace Song.ViewData.Methods
         /// <param name="sorts">学员组的id</param>
         /// <returns></returns>
         [HttpPost]
-        public JObject ResultsExport4Theme(int examid, string sorts)
+        public JObject ResultsExport4Theme(long examid, string sorts)
         {
             List<long> sortsid = sorts.ToList<long>();
             //导出文件的位置
@@ -1435,7 +1435,7 @@ namespace Song.ViewData.Methods
         /// <param name="examid">考试主题的id</param>
         /// <returns></returns>
         [HttpPost]
-        public JObject ExportAbsences4Exam(int examid)
+        public JObject ExportAbsences4Exam(long examid)
         {
             //导出文件的位置
             string rootpath = WeiSha.Core.Upload.Get["Temp"].Physics + outputPath + "\\" + examid + "\\";
@@ -1459,7 +1459,7 @@ namespace Song.ViewData.Methods
         /// <param name="filename">文件名，带后缀名，不带路径</param>
         /// <returns></returns>
         [HttpDelete]
-        public bool ExcelDelete(int examid, string filename)
+        public bool ExcelDelete(long examid, string filename)
         {
             return Song.ViewData.Helper.Excel.DeleteFile(filename, outputPath + "\\" + examid, "Temp");
         }
@@ -1468,20 +1468,20 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="examid">考试的id，不分考试主题与场次</param>
         /// <returns>file:文件名,url:下载地址,date:创建时间</returns>
-        public JArray ExcelResultsFiles(int examid) => _excelFiles(examid, "Results");
+        public JArray ExcelResultsFiles(long examid) => _excelFiles(examid, "Results");
         /// <summary>
         ///  获取已经生成的缺考学员的Excel文件
         /// </summary>
         /// <param name="examid"></param>
         /// <returns></returns>
-        public JArray ExcelAbsencesFiles(int examid) => _excelFiles(examid, "Absences");
+        public JArray ExcelAbsencesFiles(long examid) => _excelFiles(examid, "Absences");
         /// <summary>
         /// 获取Excel文件
         /// </summary>
         /// <param name="examid"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        private JArray _excelFiles(int examid,string type)
+        private JArray _excelFiles(long examid,string type)
         {
             string rootpath = WeiSha.Core.Upload.Get["Temp"].Physics + outputPath + "\\" + examid + "\\";
             if (!System.IO.Directory.Exists(rootpath))
