@@ -226,19 +226,19 @@ namespace Song.ServiceImpls
         /// <param name="examid">考试主题的ID</param>
         /// <param name="fiels">要修改的字段</param>
         /// <param name="objs">fiels对应的值</param>
-        public int ExamUpdate(int examid, Field[] fiels, object[] objs)
+        public int ExamUpdate(long examid, Field[] fiels, object[] objs)
         {
             return Gateway.Default.Update<Examination>(fiels, objs, Examination._.Exam_ID == examid);
         }
-        public int ExamDelete(int identify)
+        public int ExamDelete(long examid)
         {
             int count = 0;
-            Song.Entities.Examination exam = this.ExamSingle(identify);
+            Song.Entities.Examination exam = this.ExamSingle(examid);
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
                 {
-                    count = tran.Delete<Examination>(Examination._.Exam_ID == identify);
+                    count = tran.Delete<Examination>(Examination._.Exam_ID == examid);
                     tran.Delete<Examination>(Examination._.Exam_UID == exam.Exam_UID && Examination._.Exam_IsTheme == false);
                     tran.Delete<ExamGroup>(ExamGroup._.Exam_UID == exam.Exam_UID);
                     tran.Delete<ExamResults>(ExamResults._.Exam_ID == exam.Exam_ID);
@@ -253,9 +253,9 @@ namespace Song.ServiceImpls
             }
         }
 
-        public Examination ExamSingle(int identify)
+        public Examination ExamSingle(long examid)
         {
-            return Gateway.Default.From<Examination>().Where(Examination._.Exam_ID == identify).ToFirst<Examination>();
+            return Gateway.Default.From<Examination>().Where(Examination._.Exam_ID == examid).ToFirst<Examination>();
         }
         /// <summary>
         /// 通过学员ID与考试ID，获取成绩（最好成绩）
@@ -263,7 +263,7 @@ namespace Song.ServiceImpls
         /// <param name="accid"></param>
         /// <param name="examid"></param>
         /// <returns></returns>
-        public ExamResults ResultSingle(int accid, int examid)
+        public ExamResults ResultSingle(int accid, long examid)
         {
             WhereClip wc = new WhereClip();
             wc.And(ExamResults._.Ac_ID == accid);
@@ -330,7 +330,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="examid">考试场次id</param>
         /// <returns></returns>
-        public bool ResultBatchClac(int examid)
+        public bool ResultBatchClac(long examid)
         {
             List<ExamResults> ers = Gateway.Default.From<ExamResults>().Where(ExamResults._.Exam_ID == examid).ToList<ExamResults>();
             for(int i = 0; i < ers.Count; i++)
@@ -346,9 +346,9 @@ namespace Song.ServiceImpls
                 .OrderBy(Examination._.Exam_Order.Asc).ToList<Examination>();
         }
 
-        public List<Examination> ExamItem(int id)
+        public List<Examination> ExamItem(long examid)
         {
-            Song.Entities.Examination exam = this.ExamSingle(id);
+            Song.Entities.Examination exam = this.ExamSingle(examid);
             if (exam == null) return null;
             return this.ExamItem(exam.Exam_UID);
         }
@@ -519,7 +519,7 @@ namespace Song.ServiceImpls
         /// <param name="examid">考试id</param>
         /// <param name="stid">学生id</param>
         /// <returns></returns>
-        public bool ExamIsForStudent(int examid, int stid)
+        public bool ExamIsForStudent(long examid, int stid)
         {
             List<Examination> list = this.GetSelfExam(stid, null, null, string.Empty);
             foreach (Song.Entities.Examination exam in list)
@@ -670,10 +670,10 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 删除考试成绩
         /// </summary>
-        /// <param name="id"></param>
-        public int ResultDelete(int id)
+        /// <param name="exrid"></param>
+        public int ResultDelete(int exrid)
         {
-            ExamResults exr = Gateway.Default.From<ExamResults>().Where(ExamResults._.Exr_ID == id).ToFirst<ExamResults>();
+            ExamResults exr = Gateway.Default.From<ExamResults>().Where(ExamResults._.Exr_ID == exrid).ToFirst<ExamResults>();
             if (exr == null) return 0;
 
             List<ExamResults> results = Gateway.Default.From<ExamResults>()
@@ -681,14 +681,14 @@ namespace Song.ServiceImpls
                 .ToList<ExamResults>();
             if (results.Count <= 1)return ResultDelete(exr.Ac_ID, exr.Exam_ID);
             else
-                return Gateway.Default.Delete<ExamResults>(ExamResults._.Exr_ID == id);
+                return Gateway.Default.Delete<ExamResults>(ExamResults._.Exr_ID == exrid);
         }
         /// <summary>
         /// 删除某个员工的某个考试的成绩
         /// </summary>
         /// <param name="stid"></param>
         /// <param name="examid"></param>
-        public int ResultDelete(int stid, int examid)
+        public int ResultDelete(int stid, long examid)
         {
             Examination exam = Gateway.Default.From<Examination>().Where(Examination._.Exam_ID == examid).ToFirst<Examination>();
             if (exam != null)
@@ -707,7 +707,7 @@ namespace Song.ServiceImpls
         /// 删除考试下的所有成绩
         /// </summary>
         /// <param name="examid">考试id</param>
-        public void ResultClear(int examid)
+        public void ResultClear(long examid)
         {
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
@@ -736,7 +736,7 @@ namespace Song.ServiceImpls
         /// <param name="tpid">试卷id</param>
         /// <param name="acid">考生id</param>
         /// <returns></returns>
-        public ExamResults ResultSingle(int examid, long tpid, int acid)
+        public ExamResults ResultSingle(long examid, long tpid, int acid)
         {
             WhereClip wc = new WhereClip();
             if (examid > 0) wc.And(ExamResults._.Exam_ID == examid);
@@ -752,7 +752,7 @@ namespace Song.ServiceImpls
         /// <param name="tpid"></param>
         /// <param name="acid"></param>
         /// <returns></returns>
-        public ExamResults ResultForCache(int examid, long tpid, int acid)
+        public ExamResults ResultForCache(long examid, long tpid, int acid)
         {
             ExamResults r = Cache.ExamResultsCache.GetResults(examid, tpid, acid);
             if (r == null) r = this.ResultSingle(examid, tpid, acid);
@@ -773,7 +773,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="examid">考试id</param>
         /// <returns></returns>
-        public int ResultCacheCount(int examid)
+        public int ResultCacheCount(long examid)
         {
             return Cache.ExamResultsCache.Count(examid);
         }
@@ -783,7 +783,7 @@ namespace Song.ServiceImpls
         /// <param name="examid">考试场次id</param>
         /// <param name="acid">学员id</param>
         /// <returns></returns>
-        public double? ResultScore(int acid, int examid)
+        public double? ResultScore(int acid, long examid)
         {
             object obj = Gateway.Default.Max<ExamResults>(ExamResults._.Exr_ScoreFinal, ExamResults._.Exam_ID == examid && ExamResults._.Ac_ID == acid);
             if (obj == null || obj.GetType().FullName == "System.DBNull") return null;
@@ -798,7 +798,7 @@ namespace Song.ServiceImpls
         /// <param name="examid"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public ExamResults[] ResultCount(int examid, int count)
+        public ExamResults[] ResultCount(long examid, int count)
         {
             WhereClip wc = new WhereClip();
             if (examid > 0) wc.And(ExamResults._.Exam_ID == examid);
@@ -819,7 +819,7 @@ namespace Song.ServiceImpls
         /// <param name="stid"></param>
         /// <param name="isCorrect">是否是人工判卷过的，false下一个未判卷的信息</param>
         /// <returns></returns>
-        public ExamResults ResultSingleNext(int examid, int stid, bool? isCorrect)
+        public ExamResults ResultSingleNext(long examid, int stid, bool? isCorrect)
         {
             WhereClip wc = new WhereClip();
             if (examid > 0) wc.And(ExamResults._.Exam_ID == examid);          
@@ -983,19 +983,19 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 考试主题下的所有参考人员成绩
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="examid"></param>
         /// <returns></returns>
-        public DataTable Result4Theme(int id)
+        public DataTable Result4Theme(long examid)
         {
-            return Result4Theme(id, -1);
+            return Result4Theme(examid, -1);
             
         }
         /// <summary>
         /// 考试主题下的所有参考人员的班组
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="examid"></param>
         /// <returns></returns>
-        public List<StudentSort> StudentSort4Theme(int id)
+        public List<StudentSort> StudentSort4Theme(long examid)
         {
             //下述Sql语句，兼容Sqlserver,postgresql,sqlite
             string sql = @"select  sts.""Sts_ID"", ""Sts_Name"",exr.count as Sts_Count from ""StudentSort"" as sts  inner join 
@@ -1012,7 +1012,7 @@ namespace Song.ServiceImpls
                     )  group by ""Ac_ID""
 				)as ac group by sts_id)  as exr
             on sts.""Sts_ID"" = exr.""sts_id"" order by sts.""Sts_Order"" asc";
-            sql = string.Format(sql, id.ToString());
+            sql = string.Format(sql, examid.ToString());
             if (Gateway.Default.DbType != DbProviderType.PostgreSQL)
                 sql = sql.Replace("true", "1").Replace("false", "0");
             return Gateway.Default.FromSql(sql).ToList<StudentSort>();
@@ -1022,7 +1022,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="examid"></param>
         /// <returns></returns>
-        public List<StudentSort> ResultSort4Exam(int examid)
+        public List<StudentSort> ResultSort4Exam(long examid)
         {
             //下述Sql语句，兼容Sqlserver,postgresql,sqlite
             string sql = @"select sts.""Sts_ID"", ""Sts_Name"",exr.count as ""Sts_Count"" from ""StudentSort"" as sts  inner join 
@@ -1036,7 +1036,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="examid">考试场次id</param>
         /// <returns></returns>
-        public List<StudentSort> AbsenceSort4Exam(int examid)
+        public List<StudentSort> AbsenceSort4Exam(long examid)
         {
             //下述Sql语句，兼容Sqlserver,postgresql,sqlite
             string sql = @"select ""StudentSort"".""Sts_ID"", ""Sts_Name"",acc.count as ""Sts_Count"" from ""StudentSort"" inner join 
@@ -1053,7 +1053,7 @@ namespace Song.ServiceImpls
         /// <param name="examid">当前考试主题的ID</param>
         /// <param name="stsid">学生分组的id，为0时取所有，为-1时取不在组的学员，大于0则取当前组学员</param>
         /// <returns></returns>
-        public DataTable Result4Theme(int examid, long stsid)
+        public DataTable Result4Theme(long examid, long stsid)
         {
             Examination theme = this.ExamSingle(examid);
             List<Examination> exams = this.ExamItem(theme.Exam_UID);    //当前考试下的多场考试
@@ -1133,10 +1133,10 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 考试主题下的所有参考人员成绩
         /// </summary>
-        /// <param name="id">当前考试主题的ID</param>
+        /// <param name="examid">当前考试主题的ID</param>
         /// <param name="stsid">学生分组的id，多个组用逗号分隔</param>
         /// <returns></returns>
-        public DataTable Result4Theme(int id, string stsid)
+        public DataTable Result4Theme(long examid, string stsid)
         {
             DataTable dtFirst = null; 
             foreach (string s in stsid.Split(','))
@@ -1146,7 +1146,7 @@ namespace Song.ServiceImpls
                 int.TryParse(s, out sid);
                 //if (sid <= 0) continue;
                 //取每个组的学员的考试成绩
-                DataTable dtSecond = this.Result4Theme(id, sid);
+                DataTable dtSecond = this.Result4Theme(examid, sid);
                 if (dtSecond == null) continue;
                 if (dtFirst == null || dtFirst.Rows.Count < 1) dtFirst = dtSecond;
                 if (!dtFirst.Equals(dtSecond))
@@ -1194,14 +1194,14 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 考试主题下的所有参考人员成绩
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="examid"></param>
         /// <param name="stsid">学生分组的id，为0时取所有，为-1时取不在组的学员，大于0则取当前组学员</param>
         /// <param name="isAll">是否取所有人员（含缺考人员）,false为仅参考人员</param>
         /// <returns></returns>
-        public DataTable Result4Theme(int id, long stsid, bool isAll)
+        public DataTable Result4Theme(long examid, long stsid, bool isAll)
         {
-            if (!isAll) return Result4Theme(id, stsid);
-            Examination theme = this.ExamSingle(id);
+            if (!isAll) return Result4Theme(examid, stsid);
+            Examination theme = this.ExamSingle(examid);
             List<Examination> exams = this.ExamItem(theme.Exam_UID);    //当前考试下的多场考试
             //构建表结构
             DataTable dt = new DataTable("DataBase");
@@ -1264,7 +1264,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="examid"></param>
         /// <returns></returns>
-        public DataTable Result4StudentSort(int examid)
+        public DataTable Result4StudentSort(long examid)
         {
             //下述Sql语句，兼容Sqlserver,postgresql,sqlite
             //当前考试下的所有学员分组
@@ -1435,7 +1435,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="examid"></param>
         /// <returns></returns>
-        public double PassRate4Exam(int examid)
+        public double PassRate4Exam(long examid)
         {
          
             Examination exam = Gateway.Default.From<Examination>().Where(Examination._.Exam_ID == examid).ToFirst<Examination>();
@@ -1479,7 +1479,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="examid"></param>
         /// <returns></returns>
-        public double Avg4Exam(int examid)
+        public double Avg4Exam(long examid)
         {
             object obj = Gateway.Default.Avg<ExamResults>(ExamResults._.Exr_ScoreFinal, ExamResults._.Exam_ID == examid);
             if (obj == null || obj.GetType().FullName == "System.DBNull") return 0;
@@ -1492,7 +1492,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="examid"></param>
         /// <returns></returns>
-        public double Highest4Exam(int examid)
+        public double Highest4Exam(long examid)
         {
             object obj = Gateway.Default.Max<ExamResults>(ExamResults._.Exr_ScoreFinal, ExamResults._.Exam_ID == examid);
             if (obj == null || obj.GetType().FullName == "System.DBNull") return 0;
@@ -1505,7 +1505,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="examid"></param>
         /// <returns></returns>
-        public double Lowest4Exam(int examid)
+        public double Lowest4Exam(long examid)
         {
             object obj = Gateway.Default.Min<ExamResults>(ExamResults._.Exr_ScoreFinal, ExamResults._.Exam_ID == examid);
             if (obj == null || obj.GetType().FullName == "System.DBNull") return 0;
@@ -1524,7 +1524,7 @@ namespace Song.ServiceImpls
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        public List<Accounts> AttendThemeAccounts(int examid, string name, string idcard, long stsid, int size, int index, out int countSum)
+        public List<Accounts> AttendThemeAccounts(long examid, string name, string idcard, long stsid, int size, int index, out int countSum)
         {
             //下述Sql语句，兼容Sqlserver,postgresql,sqlite
             //当前考试主题下的所有参考学员
@@ -1586,7 +1586,7 @@ namespace Song.ServiceImpls
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        public List<Accounts> AbsenceExamAccounts(int examid, string name, string idcard, string phone, long stsid, int size, int index, out int countSum)
+        public List<Accounts> AbsenceExamAccounts(long examid, string name, string idcard, string phone, long stsid, int size, int index, out int countSum)
         {
             Examination exam = this.ExamSingle(examid);
             if (!exam.Exam_IsTheme) exam= this.ExamTheme(exam.Exam_UID);
@@ -1639,7 +1639,7 @@ namespace Song.ServiceImpls
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        public List<ExamResults> ResultsPager(int examid, string name, string idcard, long stsid, float min, float max, bool? manual, int size, int index, out int countSum)
+        public List<ExamResults> ResultsPager(long examid, string name, string idcard, long stsid, float min, float max, bool? manual, int size, int index, out int countSum)
         {
             WhereClip wc = new WhereClip();
             if(examid>0) wc.And(ExamResults._.Exam_ID == examid);
@@ -1669,7 +1669,7 @@ namespace Song.ServiceImpls
         /// <param name="examid">考试场次id</param>
         /// <param name="count">取多少条</param>
         /// <returns></returns>
-        public List<ExamResults> Results(int examid, int count)
+        public List<ExamResults> Results(long examid, int count)
         {
             WhereClip wc = ExamResults._.Exam_ID == examid;
             List<ExamResults> exr = Gateway.Default.From<ExamResults>().Where(wc).OrderBy(ExamResults._.Exr_CrtTime.Desc).ToList<ExamResults>();
@@ -1753,7 +1753,7 @@ namespace Song.ServiceImpls
         /// <param name="time">考试开始时间</param>
         /// <param name="duration">考试用时，单位分钟</param>
         /// <returns></returns>
-        public ExamResults ResultSetScore(int examid, int accid, float score, DateTime? time, int duration)
+        public ExamResults ResultSetScore(long examid, int accid, float score, DateTime? time, int duration)
         {
             //当前考试对象
             Examination exam = Gateway.Default.From<Examination>().Where(Examination._.Exam_ID == examid).ToFirst<Examination>();
@@ -1824,8 +1824,14 @@ namespace Song.ServiceImpls
         /// 批量生成缺考人员的成绩
         /// </summary>
         /// <param name="examid">考试场次id</param>
+        /// <param name="minScore"></param>
+        /// <param name="maxScore"></param>
+        /// <param name="minTime"></param>
+        /// <param name="maxTime"></param>
+        /// <param name="minSpan"></param>
+        /// <param name="maxSpan"></param>
         /// <returns></returns>
-        public (int, int) ResultAbsenceBatchScore(int examid, int minScore, int maxScore, DateTime minTime, DateTime maxTime, int minSpan, int maxSpan)
+        public (int, int) ResultAbsenceBatchScore(long examid, int minScore, int maxScore, DateTime minTime, DateTime maxTime, int minSpan, int maxSpan)
         {
             var task = Exam.BatchResults.GetTask(examid);
             if (task.Item1 > 0) return task;
@@ -1837,7 +1843,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="examid"></param>
         /// <returns></returns>
-        public (int, int) ResultAbsenceBatchScore(int examid)
+        public (int, int) ResultAbsenceBatchScore(long examid)
         {
             var task = Exam.BatchResults.GetTask(examid);
             if (task.Item1 > 0) return task;
@@ -1853,7 +1859,7 @@ namespace Song.ServiceImpls
         /// <param name="examid">考试场次id</param>
         /// <param name="sorts"></param>
         /// <returns></returns>
-        public string ExportResults4Exam(string filePath, int examid, long[] sorts)
+        public string ExportResults4Exam(string filePath, long examid, long[] sorts)
         {
             HSSFWorkbook hssfworkbook = new HSSFWorkbook();
             //xml配置文件
@@ -2003,7 +2009,7 @@ namespace Song.ServiceImpls
         /// <param name="examid">考试主题的id</param>
         /// <param name="sorts">学员组</param>
         /// <returns></returns>
-        public string ExportResults4Theme(string filePath, int examid, long[] sorts)
+        public string ExportResults4Theme(string filePath, long examid, long[] sorts)
         {
             //如果没有指定学员组，则取所有学员组
             if (sorts == null || sorts.Length < 1)
@@ -2058,7 +2064,7 @@ namespace Song.ServiceImpls
         /// <param name="filePath"></param>
         /// <param name="examid">考试场次id</param>
         /// <returns></returns>
-        public string ExportAbsences4Exam(string filePath, int examid)
+        public string ExportAbsences4Exam(string filePath, long examid)
         {
             HSSFWorkbook hssfworkbook = new HSSFWorkbook();
             //xml配置文件
@@ -2141,7 +2147,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="examid">考试主题的ID</param>
         /// <returns></returns>
-        public int NumberOfStudent(int examid)
+        public int NumberOfStudent(long examid)
         {
             Examination exam = this.ExamSingle(examid);
             return NumberOfStudent(exam);
@@ -2178,7 +2184,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="examid"></param>
         /// <returns></returns>
-        public int Numbertimes4Exam(int examid)
+        public int Numbertimes4Exam(long examid)
         {
             return Gateway.Default.Count<ExamResults>(ExamResults._.Exam_ID == examid);
         }
@@ -2187,7 +2193,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="examid">考试场次id</param>
         /// <returns></returns>
-        public int Number4Exam(int examid)
+        public int Number4Exam(long examid)
         {
             return Gateway.Default.From<ExamResults>().Where(ExamResults._.Exam_ID == examid).Select(ExamResults._.Ac_ID)
                 .GroupBy(ExamResults._.Ac_ID.Group).Count();
@@ -2197,7 +2203,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="examid"></param>
         /// <returns></returns>
-        public int NumberAbsence4Exam(int examid)
+        public int NumberAbsence4Exam(long examid)
         {
             Examination exam = this.ExamSingle(examid);
             if (!exam.Exam_IsTheme) exam = this.ExamTheme(exam.Exam_UID);
@@ -2230,7 +2236,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="examid">考试主题的id</param>
         /// <returns></returns>
-        public int Numbertimes4Theme(int examid)
+        public int Numbertimes4Theme(long examid)
         {
             Examination exam = this.ExamSingle(examid);
             if (!exam.Exam_IsTheme) return this.Numbertimes4Exam(examid);
@@ -2246,7 +2252,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="examid">考试主题的id</param>
         /// <returns></returns>
-        public int Number4Theme(int examid)
+        public int Number4Theme(long examid)
         {
             Examination exam = this.ExamSingle(examid);
             if (!exam.Exam_IsTheme) return this.Number4Exam(examid);
@@ -2264,7 +2270,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="examid">考试主题的id</param>
         /// <returns></returns>
-        public int NumberAbsence4Theme(int examid)
+        public int NumberAbsence4Theme(long examid)
         {
             //先计算需要参加考试的人数
             int total = this.NumberOfStudent(examid);

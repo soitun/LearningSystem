@@ -27,8 +27,8 @@ namespace Song.ServiceImpls.Cache
         /// <returns></returns>
         public static string Update(ExamResults exr, int expires)
         {
-            int examid = exr.Exam_ID, acid = exr.Ac_ID;
-            long tpid = exr.Tp_Id;
+            int  acid = exr.Ac_ID;
+            long examid = exr.Exam_ID, tpid = exr.Tp_Id;
             ExamResultsCache_Item erc = GetCache(examid, tpid, acid);
             if (erc != null)
             {
@@ -54,7 +54,7 @@ namespace Song.ServiceImpls.Cache
         /// <param name="examid"></param>
         /// <param name="tpid"></param>
         /// <param name="acid"></param>
-        public static void Delete(int examid, long tpid, int acid)
+        public static void Delete(long examid, long tpid, int acid)
         {
             lock (ExamResultsCache._lock)
             {
@@ -80,7 +80,7 @@ namespace Song.ServiceImpls.Cache
         /// </summary>
         /// <param name="examid"></param>
         /// <returns></returns>
-        public static int Delete(int examid)
+        public static int Delete(long examid)
         {
             lock (ExamResultsCache._lock)
             {
@@ -101,7 +101,7 @@ namespace Song.ServiceImpls.Cache
         /// 获取缓存对象
         /// </summary>    
         /// <returns></returns>
-        public static ExamResultsCache_Item GetCache(int examid, long tpid, int acid)
+        public static ExamResultsCache_Item GetCache(long examid, long tpid, int acid)
         {
             string uid = ExamResultsCache_Item.GenerateUid(examid, tpid, acid);
             //先取缓存试题集
@@ -123,7 +123,7 @@ namespace Song.ServiceImpls.Cache
         /// <param name="tpid"></param>
         /// <param name="acid"></param>
         /// <returns></returns>
-        public static ExamResults GetResults(int examid, long tpid, int acid)
+        public static ExamResults GetResults(long examid, long tpid, int acid)
         {
             ExamResultsCache_Item erc = GetCache(examid, tpid, acid);
             if (erc == null) return null;
@@ -143,7 +143,7 @@ namespace Song.ServiceImpls.Cache
         /// </summary>
         /// <param name="examid"></param>
         /// <returns></returns>
-        public static int Count(int examid)
+        public static int Count(long examid)
         {
             int count = 0;
             for (int i = 0; i < list.Count; i++)
@@ -271,7 +271,7 @@ namespace Song.ServiceImpls.Cache
         /// <summary>
         /// 考试场次ID
         /// </summary>
-        public int ExamID { get; set; }
+        public long ExamID { get; set; }
         /// <summary>
         /// 试卷ID
         /// </summary>
@@ -292,7 +292,7 @@ namespace Song.ServiceImpls.Cache
         /// <param name="examid"></param>
         /// <param name="tpid"></param>
         /// <param name="acid"></param>
-        public ExamResultsCache_Item(int examid, long tpid, int acid)
+        public ExamResultsCache_Item(long examid, long tpid, int acid)
         {
             this.UID = GenerateUid(examid, tpid, acid);
             this.ExamID = examid;
@@ -306,7 +306,7 @@ namespace Song.ServiceImpls.Cache
         /// <param name="tpid"></param>
         /// <param name="acid"></param>
         /// <returns></returns>
-        public static string GenerateUid(int examid, long tpid, int acid)
+        public static string GenerateUid(long examid, long tpid, int acid)
         {
             return string.Format("ExamResults：{0}-{1}-{2}", examid, tpid, acid); 
         }

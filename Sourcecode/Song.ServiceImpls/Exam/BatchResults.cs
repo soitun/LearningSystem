@@ -24,12 +24,12 @@ namespace Song.ServiceImpls.Exam
         /// 构造方法
         /// </summary>
         /// <param name="examid"></param>
-        public BatchResults(int examid)
+        public BatchResults(long examid)
         {
             this.ExamID = examid;
             this.Exam = examCom.ExamSingle(examid);           
         }
-        public BatchResults(int examid, int minScore, int maxScore, DateTime minTime, DateTime maxTime, int minSpan, int maxSpan)
+        public BatchResults(long examid, int minScore, int maxScore, DateTime minTime, DateTime maxTime, int minSpan, int maxSpan)
         {
             this.ExamID = examid;
             this.Exam = examCom.ExamSingle(examid);
@@ -40,7 +40,7 @@ namespace Song.ServiceImpls.Exam
         /// <summary>
         /// 考试场次的ID
         /// </summary>
-        public int ExamID { get; set; }
+        public long ExamID { get; set; }
         /// <summary>
         /// 考试场次
         /// </summary>
@@ -229,7 +229,7 @@ namespace Song.ServiceImpls.Exam
                 }               
             }
         }
-        public static void Start(int examid, int minScore, int maxScore, DateTime minTime, DateTime maxTime, int minSpan, int maxSpan)
+        public static void Start(long examid, int minScore, int maxScore, DateTime minTime, DateTime maxTime, int minSpan, int maxSpan)
         {
             lock (_locktask)
             {
@@ -251,7 +251,7 @@ namespace Song.ServiceImpls.Exam
         /// </summary>
         /// <param name="examid"></param>
         /// <returns>一个参数为学员总数，一个为剩余的数量</returns>
-        public static (int,int) GetTask(int examid)
+        public static (int,int) GetTask(long examid)
         {
             lock (_locktask)
             {
@@ -261,7 +261,7 @@ namespace Song.ServiceImpls.Exam
                 return (0, 0);
             }
         }
-        public static void RomveTask(int examid)
+        public static void RomveTask(long examid)
         {
             lock (_locktask)
             {

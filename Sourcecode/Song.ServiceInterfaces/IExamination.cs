@@ -36,18 +36,18 @@ namespace Song.ServiceInterfaces
         /// <param name="examid">考试主题的ID</param>
         /// <param name="fiels">要修改的字段</param>
         /// <param name="objs">fiels对应的值</param>
-        int ExamUpdate(int examid, Field[] fiels, object[] objs);
+        int ExamUpdate(long examid, Field[] fiels, object[] objs);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
-        /// <param name="identify">实体的主键</param>
-        int ExamDelete(int identify);
+        /// <param name="examid">实体的主键</param>
+        int ExamDelete(long examid);
         /// <summary>
         /// 获取单一实体对象，按主键ID；此处获取的是考试主题或场次
         /// </summary>
-        /// <param name="identify">实体的主键</param>
+        /// <param name="examid">实体的主键</param>
         /// <returns></returns>
-        Examination ExamSingle(int identify);
+        Examination ExamSingle(long examid);
         /// <summary>
         /// 获取单一实体对象，通过全局唯一值，此处获取的是考试主题
         /// </summary>
@@ -70,7 +70,7 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="id">考试主题的id</param>
         /// <returns></returns>
-        List<Examination> ExamItem(int id);
+        List<Examination> ExamItem(long id);
         /// <summary>
         /// 当前考试主题关联的学员组
         /// </summary>
@@ -141,7 +141,7 @@ namespace Song.ServiceInterfaces
         /// <param name="examid">考试id</param>
         /// <param name="stid">学生id</param>
         /// <returns></returns>
-        bool ExamIsForStudent(int examid, int stid);
+        bool ExamIsForStudent(long examid, int stid);
         /// <summary>
         /// 获取指定时间内容的考试,这里是考试主题
         /// </summary>
@@ -211,23 +211,23 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="examid">考试场次id</param>
         /// <returns></returns>
-        bool ResultBatchClac(int examid);
+        bool ResultBatchClac(long examid);
         /// <summary>
         /// 删除考试成绩
         /// </summary>
-        /// <param name="id">成绩记录的id</param>
-        int ResultDelete(int id);
+        /// <param name="exrid">成绩记录的id</param>
+        int ResultDelete(int exrid);
         /// <summary>
         /// 删除某个学生的某个考试的成绩
         /// </summary>
         /// <param name="stid">学员账号id</param>
         /// <param name="examid">考试id</param>
-        int ResultDelete(int stid, int examid);
+        int ResultDelete(int stid, long examid);
         /// <summary>
         /// 删除考试下的所有成绩
         /// </summary>
         /// <param name="examid">考试id</param>
-        void ResultClear(int examid);
+        void ResultClear(long examid);
         /// <summary>
         /// 获取最新的答题信息（正式答题信息）
         /// </summary>
@@ -235,7 +235,7 @@ namespace Song.ServiceInterfaces
         /// <param name="tpid">试卷id</param>
         /// <param name="acid">考生id</param>
         /// <returns></returns>
-        ExamResults ResultSingle(int examid, long tpid, int acid);
+        ExamResults ResultSingle(long examid, long tpid, int acid);
         /// <summary>
         /// 从缓存中获取考试答题信息
         /// </summary>
@@ -243,7 +243,7 @@ namespace Song.ServiceInterfaces
         /// <param name="tpid"></param>
         /// <param name="acid"></param>
         /// <returns></returns>
-        ExamResults ResultForCache(int examid, long tpid, int acid);
+        ExamResults ResultForCache(long examid, long tpid, int acid);
         /// <summary>
         /// 更新答题信息缓存
         /// </summary>
@@ -256,21 +256,21 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="examid">考试id</param>
         /// <returns></returns>
-        int ResultCacheCount(int examid);
+        int ResultCacheCount(long examid);
         /// <summary>
         /// 学员在某个考试场次的得分
         /// </summary>
         /// <param name="examid">考试场次id</param>
         /// <param name="acid">学员id</param>
         /// <returns></returns>
-        double? ResultScore(int acid, int examid);      
+        double? ResultScore(int acid, long examid);      
         /// <summary>
         /// 获取当前考试的所有考生答题信息
         /// </summary>
         /// <param name="examid"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        ExamResults[] ResultCount(int examid, int count);
+        ExamResults[] ResultCount(long examid, int count);
         /// <summary>
         /// 当前考试信息中，下一个
         /// </summary>
@@ -278,7 +278,7 @@ namespace Song.ServiceInterfaces
         /// <param name="stid"></param>
         /// <param name="isCorrect">是否是人工判卷过的，false下一个未判卷的信息</param>
         /// <returns></returns>
-        ExamResults ResultSingleNext(int examid, int stid, bool? isCorrect);
+        ExamResults ResultSingleNext(long examid, int stid, bool? isCorrect);
         /// <summary>
         /// 通过答案id获取答题信息（正式答题信息）
         /// </summary>
@@ -291,7 +291,7 @@ namespace Song.ServiceInterfaces
         /// <param name="accid"></param>
         /// <param name="examid"></param>
         /// <returns></returns>
-        ExamResults ResultSingle(int accid, int examid);
+        ExamResults ResultSingle(int accid, long examid);
         /// <summary>
         /// 根据答题信息，获取试题（针对答题过程中死机，又上线时）
         /// </summary>
@@ -332,7 +332,7 @@ namespace Song.ServiceInterfaces
         /// <param name="time">考试开始时间</param>
         /// <param name="duration">考试用时，单位分钟</param>
         /// <returns></returns>
-        ExamResults ResultSetScore(int examid, int accid, float score, DateTime? time, int duration);
+        ExamResults ResultSetScore(long examid, int accid, float score, DateTime? time, int duration);
         /// <summary>
         /// 自助设置考试成绩得分，如果没有成绩记录，则创建一个
         /// </summary>
@@ -355,68 +355,68 @@ namespace Song.ServiceInterfaces
         /// <param name="minSpan"></param>
         /// <param name="maxSpan"></param>
         /// <returns></returns>
-        (int, int) ResultAbsenceBatchScore(int examid, int minScore, int maxScore, DateTime minTime, DateTime maxTime, int minSpan, int maxSpan);
+        (int, int) ResultAbsenceBatchScore(long examid, int minScore, int maxScore, DateTime minTime, DateTime maxTime, int minSpan, int maxSpan);
         /// <summary>
         /// 批量生成缺考人员的成绩的进度
         /// </summary>
         /// <param name="examid"></param>
         /// <returns></returns>
-        (int, int) ResultAbsenceBatchScore(int examid);
+        (int, int) ResultAbsenceBatchScore(long examid);
         #endregion
 
         #region 成绩统计
         /// <summary>
         /// 考试主题下的所有参考人员成绩
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="examid"></param>
         /// <returns></returns>
-        DataTable Result4Theme(int id);
+        DataTable Result4Theme(long examid);
         /// <summary>
         /// 考试主题下的所有参考人员的班组
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        List<StudentSort> StudentSort4Theme(int id);
+        List<StudentSort> StudentSort4Theme(long examid);
         /// <summary>
         /// 考试场次下，参加考试的学员的学员组,仅统计参加考试的学员
         /// </summary>
         /// <param name="examid">考试场次id</param>
         /// <returns></returns>
-        List<StudentSort> ResultSort4Exam(int examid);
+        List<StudentSort> ResultSort4Exam(long examid);
         /// <summary>
         /// 未参加考试的学员的学员组
         /// </summary>
         /// <param name="examid">考试场次id</param>
         /// <returns></returns>
-        List<StudentSort> AbsenceSort4Exam(int examid);
+        List<StudentSort> AbsenceSort4Exam(long examid);
         /// <summary>
         /// 考试主题下的所有参考人员成绩
         /// </summary>
         /// <param name="examid">当前考试主题的ID</param>
         /// <param name="stsid">学生分组的id，为0时取所有，为-1时取不在组的学员，大于0则取当前组学员</param>
         /// <returns></returns>
-        DataTable Result4Theme(int examid, long stsid);
+        DataTable Result4Theme(long examid, long stsid);
         /// <summary>
         /// 考试主题下的所有参考人员成绩
         /// </summary>
         /// <param name="examid">当前考试主题的ID</param>
         /// <param name="stsid">学生分组的id，为0时取所有，为-1时取不在组的学员，大于0则取当前组学员</param>
         /// <returns></returns>
-        DataTable Result4Theme(int examid, string stsid);
+        DataTable Result4Theme(long examid, string stsid);
         /// <summary>
         /// 考试主题下的所有参考人员成绩
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="examid"></param>
         /// <param name="stsid">学生分组的id，为0时取所有，为-1时取不在组的学员，大于0则取当前组学员</param>
         /// <param name="isAll">是否取所有人员（含缺考人员）,false为仅参考人员</param>
         /// <returns></returns>
-        DataTable Result4Theme(int id, long stsid, bool isAll);
+        DataTable Result4Theme(long examid, long stsid, bool isAll);
         /// <summary>
         /// 当前考试主题下的各学员分组成绩排行
         /// </summary>
         /// <param name="examid"></param>
         /// <returns></returns>
-        DataTable Result4StudentSort(int examid);        
+        DataTable Result4StudentSort(long examid);        
         /// <summary>
         /// 计算某个考试主题的及格率
         /// </summary>
@@ -434,7 +434,7 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="examid"></param>
         /// <returns></returns>
-        double PassRate4Exam(int examid);
+        double PassRate4Exam(long examid);
         /// <summary>
         /// 计算某个考试主题的平均分
         /// </summary>
@@ -446,19 +446,19 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="examid">考试场次id</param>
         /// <returns></returns>
-        double Avg4Exam(int examid);
+        double Avg4Exam(long examid);
         /// <summary>
         /// 某场考试的最高分
         /// </summary>
         /// <param name="examid">考试场次id</param>
         /// <returns></returns>
-        double Highest4Exam(int examid);
+        double Highest4Exam(long examid);
         /// <summary>
         /// 某场考试的最低分
         /// </summary>
         /// <param name="examid">考试场次id</param>
         /// <returns></returns>
-        double Lowest4Exam(int examid);
+        double Lowest4Exam(long examid);
         /// <summary>
         /// 参加考试主题的学员列表
         /// </summary>
@@ -470,19 +470,20 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        List<Accounts> AttendThemeAccounts(int examid, string name, string idcard, long stsid, int size, int index, out int countSum);
+        List<Accounts> AttendThemeAccounts(long examid, string name, string idcard, long stsid, int size, int index, out int countSum);
         /// <summary>
         /// 某个考试场次所缺考的学员列表
         /// </summary>
         /// <param name="examid">考试场次的id</param>
         /// <param name="name">学员姓名</param>
         /// <param name="idcard">身份证号</param>
+        /// <param name="phone"></param>
         /// <param name="stsid">学员组id</param>
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        List<Accounts> AbsenceExamAccounts(int examid, string name, string idcard, string phone, long stsid, int size, int index, out int countSum);
+        List<Accounts> AbsenceExamAccounts(long examid, string name, string idcard, string phone, long stsid, int size, int index, out int countSum);
         /// <summary>
         /// 当前考试场次下的学员成绩
         /// </summary>
@@ -497,7 +498,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        List<ExamResults> ResultsPager(int examid, string name, string idcard, long stsid, float min, float max,bool? manual, int size, int index, out int countSum);
+        List<ExamResults> ResultsPager(long examid, string name, string idcard, long stsid, float min, float max,bool? manual, int size, int index, out int countSum);
       
         /// <summary>
         /// 当前考试场次下的所有人员成绩
@@ -505,7 +506,7 @@ namespace Song.ServiceInterfaces
         /// <param name="examid">考试场次id</param>
         /// <param name="count">取多少条</param>
         /// <returns></returns>
-        List<ExamResults> Results(int examid, int count);
+        List<ExamResults> Results(long examid, int count);
 
         #endregion
 
@@ -517,7 +518,7 @@ namespace Song.ServiceInterfaces
         /// <param name="examid">考试场次id</param>
         /// <param name="sorts">学员组</param>
         /// <returns></returns>
-        string ExportResults4Exam(string filePath, int examid, long[] sorts);
+        string ExportResults4Exam(string filePath, long examid, long[] sorts);
         /// <summary>
         /// 考试主题下的所有成绩
         /// </summary>
@@ -525,14 +526,14 @@ namespace Song.ServiceInterfaces
         /// <param name="examid">考试主题的id</param>
         /// <param name="sorts">学员组</param>
         /// <returns></returns>
-        string ExportResults4Theme(string filePath, int examid, long[] sorts);
+        string ExportResults4Theme(string filePath, long examid, long[] sorts);
         /// <summary>
         /// 导出某场考试的缺考人员
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="examid">考试场次id</param>
         /// <returns></returns>
-        string ExportAbsences4Exam(string filePath, int examid);
+        string ExportAbsences4Exam(string filePath, long examid);
         /// <summary>
         /// 学员在某个课程下的考试成绩
         /// </summary>
@@ -548,7 +549,7 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="examid">考试主题的ID</param>
         /// <returns></returns>
-        int NumberOfStudent(int examid);
+        int NumberOfStudent(long examid);
         /// <summary>
         /// 考试主题下允许参考的学员数量
         /// </summary>
@@ -560,37 +561,37 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="examid">考试场次id</param>
         /// <returns></returns>
-        int Numbertimes4Exam(int examid);
+        int Numbertimes4Exam(long examid);
         /// <summary>
         /// 当前考试的参考人数
         /// </summary>
         /// <param name="examid">考试场次id</param>
         /// <returns></returns>
-        int Number4Exam(int examid);
+        int Number4Exam(long examid);
         /// <summary>
         /// 当前考试的缺考的人数
         /// </summary>
         /// <param name="examid"></param>
         /// <returns></returns>
-        int NumberAbsence4Exam(int examid);
+        int NumberAbsence4Exam(long examid);
         /// <summary>
         /// 当前考试主题的参考人次，如果学员多次考试，则人次大于人数
         /// </summary>
         /// <param name="examid">考试主题的id</param>
         /// <returns></returns>
-        int Numbertimes4Theme(int examid);
+        int Numbertimes4Theme(long examid);
         /// <summary>
         /// 当前考试的参考人数
         /// </summary>
         /// <param name="examid">考试主题的id</param>
         /// <returns></returns>
-        int Number4Theme(int examid);
+        int Number4Theme(long examid);
         /// <summary>
         /// 当前考试的缺考的人数
         /// </summary>
         /// <param name="examid">考试主题的id</param>
         /// <returns></returns>
-        int NumberAbsence4Theme(int examid);
+        int NumberAbsence4Theme(long examid);
         #endregion
     }
 }

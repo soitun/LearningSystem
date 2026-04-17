@@ -8,7 +8,7 @@ namespace Song.Entities {
     	[SerializableAttribute()]
     	public partial class Examination : WeiSha.Data.Entity {
     		
-    		protected Int32 _Exam_ID;
+    		protected Int64 _Exam_ID;
     		
     		protected Int32 _Acc_Id;
     		
@@ -74,7 +74,7 @@ namespace Song.Entities {
     		
     		protected Int64 _Tp_Id;
     		
-    		public Int32 Exam_ID {
+    		public Int64 Exam_ID {
     			get {
     				return this._Exam_ID;
     			}
@@ -412,13 +412,6 @@ namespace Song.Entities {
     		}
     		
     		/// <summary>
-    		/// 获取实体中的标识列
-    		/// </summary>
-    		protected override WeiSha.Data.Field GetIdentityField() {
-    			return _.Exam_ID;
-    		}
-    		
-    		/// <summary>
     		/// 获取实体中的主键列
     		/// </summary>
     		protected override WeiSha.Data.Field[] GetPrimaryKeyFields() {
@@ -511,7 +504,7 @@ namespace Song.Entities {
     		/// </summary>
     		protected override void SetValues(WeiSha.Data.IRowReader reader) {
     			if ((false == reader.IsDBNull(_.Exam_ID))) {
-    				this._Exam_ID = reader.GetInt32(_.Exam_ID);
+    				this._Exam_ID = reader.GetInt64(_.Exam_ID);
     			}
     			if ((false == reader.IsDBNull(_.Acc_Id))) {
     				this._Acc_Id = reader.GetInt32(_.Acc_Id);
@@ -636,7 +629,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.AllField All = new WeiSha.Data.AllField<Examination>();
     			
     			/// <summary>
-    			/// 字段名：Exam_ID - 数据类型：Int32
+    			/// 字段名：Exam_ID - 数据类型：Int64
     			/// </summary>
     			public static WeiSha.Data.Field Exam_ID = new WeiSha.Data.Field<Examination>("Exam_ID");
     			

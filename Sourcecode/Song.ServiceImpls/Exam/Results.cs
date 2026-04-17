@@ -75,7 +75,7 @@ namespace Song.ServiceImpls.Exam
         /// <summary>
         /// 考试场次ID
         /// </summary>
-        public int Examid { get; set; }
+        public long Examid { get; set; }
         /// <summary>
         /// 考试UID，用于获取考试主题，判断是否属于同一场考试
         /// </summary>
