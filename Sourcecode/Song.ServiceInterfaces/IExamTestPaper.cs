@@ -27,31 +27,31 @@ namespace Song.ServiceInterfaces
         /// <summary>
         /// 修改试卷的某些项
         /// </summary>
-        /// <param name="id">试卷的id</param>
+        /// <param name="etpid">试卷的id</param>
         /// <param name="fiels"></param>
         /// <param name="objs"></param>
         /// <returns></returns>
-        bool PaperUpdate(long id, Field[] fiels, object[] objs);
+        bool PaperUpdate(long etpid, Field[] fiels, object[] objs);
         /// <summary>
         /// 删除试卷，按主键ID；
         /// </summary>
-        /// <param name="id">实体的主键</param>
-        int PaperDelete(long id);
+        /// <param name="etpid">实体的主键</param>
+        int PaperDelete(long etpid);
         /// <summary>
         /// 回收，标记删除状态为false
         /// </summary>
-        int PaperRecycle(long id);
+        int PaperRecycle(long etpid);
         /// <summary>
         /// 真正删除，按主键ID；
         /// </summary>
-        /// <param name="id">实体的主键</param>
-        int PaperRemove(long id);
+        /// <param name="etpid">实体的主键</param>
+        int PaperRemove(long etpid);
         /// <summary>
         /// 获取单一试卷实体对象，按主键ID；
         /// </summary>
-        /// <param name="id">实体的主键</param>
+        /// <param name="etpid">实体的主键</param>
         /// <returns></returns>
-        ExamTestPaper PaperSingle(long id);
+        ExamTestPaper PaperSingle(long etpid);
         /// <summary>
         /// 获取单一试卷实体对象，按试卷名称；
         /// </summary>
@@ -61,7 +61,7 @@ namespace Song.ServiceInterfaces
         /// <summary>
         /// 判断是否有简答题
         /// </summary>
-        bool PaperIsManual(long id);
+        bool PaperIsManual(long etpid);
         /// <summary>
         /// 判断是否有简答题
         /// </summary>
@@ -94,6 +94,7 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="orgid"></param>
         /// <param name="diff"></param>
+        /// <param name="isdeleted"></param>
         /// <param name="isUse"></param>
         /// <returns></returns>
         int PaperOfCount(int orgid, int diff, bool? isdeleted, bool? isUse);

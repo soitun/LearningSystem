@@ -78,51 +78,53 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 修改试卷的某些项
         /// </summary>
-        /// <param name="id">试卷的id</param>
+        /// <param name="etpid">试卷的id</param>
         /// <param name="fiels"></param>
         /// <param name="objs"></param>
         /// <returns></returns>
-        public bool PaperUpdate(long id, Field[] fiels, object[] objs)
+        public bool PaperUpdate(long etpid, Field[] fiels, object[] objs)
         {
-            Gateway.Default.Update<ExamTestPaper>(fiels, objs, ExamTestPaper._.Etp_Id == id);
+            Gateway.Default.Update<ExamTestPaper>(fiels, objs, ExamTestPaper._.Etp_Id == etpid);
             return true;
         }
         /// <summary>
         /// 删除试卷，按主键ID；
         /// </summary>
-        /// <param name="id">实体的主键</param>
-        public int PaperDelete(long id)
+        /// <param name="etpid">实体的主键</param>
+        public int PaperDelete(long etpid)
         {
-            return Gateway.Default.Update<ExamTestPaper>(ExamTestPaper._.Etp_IsDeleted, true, ExamTestPaper._.Etp_Id == id && ExamTestPaper._.Etp_IsDeleted == false);
+            return Gateway.Default.Update<ExamTestPaper>(ExamTestPaper._.Etp_IsDeleted, true, ExamTestPaper._.Etp_Id == etpid && ExamTestPaper._.Etp_IsDeleted == false);
         }
         /// <summary>
         /// 回收，标记删除状态为false
         /// </summary>
-        public int PaperRecycle(long id)
+        public int PaperRecycle(long etpid)
         {
-            return Gateway.Default.Update<ExamTestPaper>(ExamTestPaper._.Etp_IsDeleted, false, ExamTestPaper._.Etp_Id == id && ExamTestPaper._.Etp_IsDeleted == true);
+            return Gateway.Default.Update<ExamTestPaper>(ExamTestPaper._.Etp_IsDeleted, false, ExamTestPaper._.Etp_Id == etpid && ExamTestPaper._.Etp_IsDeleted == true);
         }
         /// <summary>
         /// 真正删除，按主键ID；
         /// </summary>
-        /// <param name="id">实体的主键</param>
-        public int PaperRemove(long id)
-        {
-            Song.Entities.ExamTestPaper tp = this.PaperSingle(id);
+        /// <param name="etpid">实体的主键</param>
+        public int PaperRemove(long etpid)
+        {            
+            Song.Entities.ExamTestPaper tp = this.PaperSingle(etpid);
             if (tp == null) return 0;
+            int count = Gateway.Default.From<Examination>().Where(Examination._.Etp_Id == etpid).Count();
+            if (count > 0) throw new WeiSha.Core.ExceptionForPrompt($"当前试卷《“{tp.Etp_Name}”》已被考试采用，不能删除");
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
                 {
-                    Examination exam = Gateway.Default.From<Examination>().Where(Examination._.Etp_Id == id).ToFirst<Examination>();
+                    Examination exam = Gateway.Default.From<Examination>().Where(Examination._.Etp_Id == etpid).ToFirst<Examination>();
                     if (exam != null) throw new WeiSha.Core.ExceptionForPrompt($"试卷“{tp.Etp_Name}”已被考试采用，不能删除");
 
-                    tran.Delete<ExamTestPaper>(ExamTestPaper._.Etp_Id == id);
+                    tran.Delete<ExamTestPaper>(ExamTestPaper._.Etp_Id == etpid);
                     //删除图片文件
                     string img = WeiSha.Core.Upload.Get["ExamTestPaper"].Physics + tp.Etp_Logo;
                     if (System.IO.File.Exists(img)) System.IO.File.Delete(img);
                     //删除成绩
-                    tran.Delete<ExamResults>(ExamResults._.Etp_Id == id);
+                    tran.Delete<ExamResults>(ExamResults._.Etp_Id == etpid);
                     WeiSha.Core.Upload.Get["ExamTestPaper"].DeleteDirectory(tp.Etp_Id.ToString());
                     tran.Commit();
                 }
@@ -137,11 +139,11 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 获取单一试卷实体对象，按主键ID；
         /// </summary>
-        /// <param name="id">实体的主键</param>
+        /// <param name="etpid">实体的主键</param>
         /// <returns></returns>
-        public ExamTestPaper PaperSingle(long id)
+        public ExamTestPaper PaperSingle(long etpid)
         {
-            return  Gateway.Default.From<ExamTestPaper>().Where(ExamTestPaper._.Etp_Id == id).ToFirst<ExamTestPaper>();
+            return  Gateway.Default.From<ExamTestPaper>().Where(ExamTestPaper._.Etp_Id == etpid).ToFirst<ExamTestPaper>();
         }
         /// <summary>
         /// 获取单一试卷实体对象，按试卷名称；
@@ -155,9 +157,9 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 判断是否有简答题
         /// </summary>
-        public bool PaperIsManual(long id)
+        public bool PaperIsManual(long etpid)
         {
-            ExamTestPaper tp=this.PaperSingle(id);
+            ExamTestPaper tp=this.PaperSingle(etpid);
             if (tp == null) return false;
             return PaperIsManual(tp);
         }
@@ -229,6 +231,7 @@ namespace Song.ServiceImpls
         /// </summary>
         /// <param name="orgid"></param>
         /// <param name="diff"></param>
+        /// <param name="isdeleted"></param>
         /// <param name="isUse"></param>
         /// <returns></returns>
         public int PaperOfCount(int orgid, int diff, bool? isdeleted, bool? isUse)
@@ -272,11 +275,11 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 试题数量
         /// </summary>
-        /// <param name="identify"></param>
+        /// <param name="etpid"></param>
         /// <returns></returns>
-        public int QuesCount(long identify)
+        public int QuesCount(long etpid)
         {
-            object obj = Gateway.Default.From<ExamTestPaper>().Where(ExamTestPaper._.Etp_Id == identify).Select(ExamTestPaper._.Etp_Count).ToScalar();
+            object obj = Gateway.Default.From<ExamTestPaper>().Where(ExamTestPaper._.Etp_Id == etpid).Select(ExamTestPaper._.Etp_Count).ToScalar();
             return obj == null ? 0 : Convert.ToInt32(obj);
         }
         #endregion
@@ -285,9 +288,9 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 获取试卷的试题项
         /// </summary>
-        public List<TestPaperItem> PaperItems(long tpid)
+        public List<TestPaperItem> PaperItems(long etpid)
         {
-            ExamTestPaper paper = this.PaperSingle(tpid);
+            ExamTestPaper paper = this.PaperSingle(etpid);
             return this.PaperItems(paper);
         }
         /// <summary>
@@ -317,12 +320,12 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 出卷，输出试卷内容
         /// </summary>
-        /// <param name="tpid">试卷id</param>
+        /// <param name="etpid">试卷id</param>
         /// <param name="isanswer">试题是否带答案，模拟考试一般带答案，方便前端计算成绩</param>
         /// <returns></returns>
-        public Dictionary<TestPaperItem, List<Questions>> Putout(long tpid, bool isanswer)
+        public Dictionary<TestPaperItem, List<Questions>> Putout(long etpid, bool isanswer)
         {
-            ExamTestPaper paper = this.PaperSingle(tpid);
+            ExamTestPaper paper = this.PaperSingle(etpid);
             return Putout(paper, isanswer);
         }
         /// <summary>
