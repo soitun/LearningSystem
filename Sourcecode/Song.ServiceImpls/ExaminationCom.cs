@@ -52,7 +52,7 @@ namespace Song.ServiceImpls
                             it.Exam_DateType = theme.Exam_DateType;
                             if (theme.Exam_DateType == 1)   //	1为固定时间，即准点考试
                             {
-                                if (it.Exam_Date.AddYears(30) > DateTime.Now)
+                                if (it.Exam_Date > DateTime.Now.AddYears(-30))
                                     examDate = it.Exam_Date < examDate ? it.Exam_Date : examDate;
                             }
                             if (theme.Exam_DateType == 2)   //2为区间时间，即一定时间区间内可以随时考试。
@@ -152,7 +152,7 @@ namespace Song.ServiceImpls
                             it.Exam_DateType = theme.Exam_DateType;
                             if (theme.Exam_DateType == 1)
                             {
-                                if (it.Exam_Date.AddYears(30) > DateTime.Now)
+                                if (it.Exam_Date > DateTime.Now.AddYears(-30))
                                     examDate = it.Exam_Date < examDate ? it.Exam_Date : examDate;
                             }
                             if (theme.Exam_DateType == 2)
@@ -608,7 +608,7 @@ namespace Song.ServiceImpls
                     result.Exr_CrtTime = DateTime.Now;
                 result.Exr_Score = -1;
                 //考试主题
-                Examination tm = this.ExamSingle((int)result.Exam_ID);
+                Examination tm = this.ExamSingle(result.Exam_ID);
                 if (tm != null)
                 {
                     result.Exam_Title = tm.Exam_Title;

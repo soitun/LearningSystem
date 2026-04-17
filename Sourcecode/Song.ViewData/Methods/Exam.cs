@@ -260,7 +260,7 @@ namespace Song.ViewData.Methods
             for (int i = 0; i < exams.Count; i++)
             {
                 DateTime examDate = exams[i].Exam_Date < DateTime.Now.AddYears(-100) ? DateTime.Now : (DateTime)exams[i].Exam_Date;
-                exams[i].Exam_Date = examDate.AddYears(100) < DateTime.Now ? DateTime.Now : examDate;
+                exams[i].Exam_Date = examDate < DateTime.Now.AddYears(-100) ? DateTime.Now : examDate;
             }
             return exams;
         }

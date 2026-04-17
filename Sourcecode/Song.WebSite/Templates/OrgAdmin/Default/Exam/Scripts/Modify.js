@@ -58,6 +58,10 @@ $ready(["Components/group_select.js",
         watch: {
             //当考试时间方式更改时
             'entity.Exam_DateType': function (nv, ov) {
+                if (nv == 1) {
+                    this.entity.Exam_Date = new Date();
+                    this.entity.Exam_DateOver = new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000);
+                }
                 if (nv == 2) {
                     var date = this.entity.Exam_Date;
                     var over = this.entity.Exam_DateOver;
@@ -173,7 +177,7 @@ $ready(["Components/group_select.js",
                     let file = 'PaperPreview'; //判断是课程试卷还是考试试卷
                     if (obj.Etp_Id == '0') file = '../TestPaper/PaperPreview';
                     else file = '../ExamTestPaper/PaperPreview';
-                    let tpid = obj.Etp_Id != '0' ? obj.Etp_Id : obj.Tp_Id;                  
+                    let tpid = obj.Etp_Id != '0' ? obj.Etp_Id : obj.Tp_Id;
                     let url = $api.url.set($dom.routepath() + file, { 'tpid': tpid });
                     let boxid = file + "_" + tpid;
                     //创建
@@ -185,10 +189,10 @@ $ready(["Components/group_select.js",
                     box.title = '考试试卷预览“' + obj.Exam_Name + "”";
                     box.open();
                 }
-                 //编辑
-                 if (command == 'modify') this.openitems(examid);
-                 //删除
-                 if (command == 'delete') {
+                //编辑
+                if (command == 'modify') this.openitems(examid);
+                //删除
+                if (command == 'delete') {
                     this.$confirm('确定移除当前场次的考试吗？<br/>场次：《' + obj.Exam_Name + '》', '提示', {
                         dangerouslyUseHTMLString: true,
                         confirmButtonText: '确定',
@@ -198,7 +202,7 @@ $ready(["Components/group_select.js",
                         const idx = this.exams.findIndex(item => item.Exam_ID === examid);
                         this.exams.splice(idx, 1);
                     }).catch(action => { });
-                }      
+                }
             },
             //打开选择试题的子窗体
             openitems: function (examid) {
@@ -223,7 +227,7 @@ $ready(["Components/group_select.js",
                 return [exam, this.entity];
             },
             //接收子窗体（考试场次）的数据
-            receive: function ([exam]) {           
+            receive: function ([exam]) {
                 let index = this.exams.findIndex(el => el.Exam_ID == exam.Exam_ID);
                 if (index < 0) this.exams.push(exam);
                 else this.$set(this.exams, index, exam);
