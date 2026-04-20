@@ -41,20 +41,10 @@ $ready(function () {
         },
         created: function () {
             var th = this;
-            $api.get('Organization/Current').then(function (req) {
-                if (req.data.success) {
-                    th.org = req.data.result;
-                    th.form.orgid = th.org.Org_ID;
-                    //机构配置信息
-                    th.config = $api.organ(th.org).config;
-                    th.getTreeData();
-                } else {
-                    console.error(req.data.exception);
-                    throw req.data.message;
-                }
-            }).catch(err => console.error(err))
-                .finally(() => th.loading_init = false);
-            //$api.storage(this.expanded_storage, null);
+            th.org = window.org;
+            th.config = window.config;
+            th.form.orgid = th.org.Org_ID;
+            th.getTreeData();
         },
         computed: {
         },
