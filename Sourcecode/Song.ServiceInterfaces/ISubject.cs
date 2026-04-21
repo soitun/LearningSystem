@@ -59,6 +59,15 @@ namespace Song.ServiceInterfaces
         /// <param name="identify">实体的主键</param>
         int SubjectDelete(long identify);
         /// <summary>
+        /// 回收，标记删除状态为false
+        /// </summary>
+        int SubjectRecycle(long id);
+        /// <summary>
+        /// 真正删除，按主键ID；
+        /// </summary>
+        /// <param name="id">实体的主键</param>
+        int SubjectRemove(long id);
+        /// <summary>
         /// 清空专业下的所有试题
         /// </summary>
         /// <param name="identify"></param>
@@ -111,17 +120,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index">启始索引</param>
         /// <param name="size">取多少条</param>
         /// <returns></returns>
-        List<Subject> SubjectCount(int orgid, string sear, bool? isUse, long pid, string order, int index, int size);
-        /// <summary>
-        /// 获取学科/专业
-        /// </summary>
-        /// <param name="orgid">机构ID</param>
-        /// <param name="sear">搜索关键字</param>
-        /// <param name="isUse"></param>
-        /// <param name="pid">上级ID</param>
-        /// <param name="count"></param>
-        /// <returns></returns>
-        List<Subject> SubjectCount(int orgid, int depid, string sear, bool? isUse, long pid, int count);
+        List<Subject> SubjectCount(int orgid, string sear, bool? isUse, long pid, string order, int index, int size);        
         /// <summary>
         /// 当前专业的上级父级
         /// </summary>

@@ -159,30 +159,46 @@ namespace Song.ServiceImpls
         {
             return Gateway.Default.Update<Subject>(field, obj, Subject._.Sbj_ID == sbjid);
         }
-        public int SubjectDelete(long identify)
+        public int SubjectDelete(long sbjid)
+        {
+            int count = Gateway.Default.Update<Subject>(Subject._.Sbj_IsDeleted, true, Subject._.Sbj_ID == sbjid);
+            return count;
+        }
+        /// <summary>
+        /// 回收，标记删除状态为false
+        /// </summary>
+        public int SubjectRecycle(long sbjid)
+        {
+            int count = Gateway.Default.Update<Subject>(Subject._.Sbj_IsDeleted, false, Subject._.Sbj_ID == sbjid);
+            return count;
+        }
+        /// <summary>
+        /// 真正删除，按主键ID；
+        /// </summary>
+        /// <param name="sbjid">实体的主键</param>
+        public int SubjectRemove(long sbjid)
         {
             int i = 0;
             //是否存在试题
-            int count = Gateway.Default.Count<Questions>(Questions._.Sbj_ID == identify);
+            int count = Gateway.Default.Count<Questions>(Questions._.Sbj_ID == sbjid);
             if (count > 0) throw new WeiSha.Core.ExceptionForPrompt("当前专业下包括" + count + "道试题，请清空后再删除！");
             //是否存在课程
-            count = Gateway.Default.Count<Course>(Course._.Sbj_ID == identify);
+            count = Gateway.Default.Count<Course>(Course._.Sbj_ID == sbjid);
             if (count > 0) throw new WeiSha.Core.ExceptionForPrompt("当前专业下包括" + count + "个课程，请清空后再删除！");
             //是否有下级
-            count = Gateway.Default.Count<Subject>(Subject._.Sbj_PID == identify);
+            count = Gateway.Default.Count<Subject>(Subject._.Sbj_PID == sbjid);
             if (count > 0) throw new WeiSha.Core.ExceptionForPrompt("当前专业下包括" + count + "个子专业，请清空后再删除！");
             if (count < 1)
             {
-                this.SubjectClear(identify);
-                Subject subject = Gateway.Default.From<Subject>().Where(Subject._.Sbj_ID == identify).ToFirst<Subject>();
+                this.SubjectClear(sbjid);
+                Subject subject = Gateway.Default.From<Subject>().Where(Subject._.Sbj_ID == sbjid).ToFirst<Subject>();
                 WeiSha.Core.Upload.Get["Subject"].DeleteFile(subject.Sbj_Logo);
 
-                i = Gateway.Default.Delete<Subject>(Subject._.Sbj_ID == identify);
-                WeiSha.Core.Upload.Get["Subject"].DeleteDirectory(identify.ToString());
+                i = Gateway.Default.Delete<Subject>(Subject._.Sbj_ID == sbjid);
+                WeiSha.Core.Upload.Get["Subject"].DeleteDirectory(sbjid.ToString());
             }
             return i;
         }
-
         public void SubjectClear(long identify)
         {
             Subject sbj = this.SubjectSingle(identify);
@@ -329,18 +345,7 @@ namespace Song.ServiceImpls
                 list.Add((Subject)obj);
             }
             return list;
-        }
-
-        public List<Subject> SubjectCount(int orgid, int depid, string sear, bool? isUse, long pid, int count)
-        {
-            WhereClip wc = new WhereClip();
-            if (orgid >= 0) wc.And(Subject._.Org_ID == orgid);
-            if (depid > 0) wc.And(Subject._.Dep_Id == depid);
-            if (isUse != null) wc.And(Subject._.Sbj_IsUse == (bool)isUse);
-            if (!string.IsNullOrWhiteSpace(sear)) wc.And(Subject._.Sbj_Name.Contains(sear));
-            if (pid >= 0) wc.And(Subject._.Sbj_PID == pid);
-            return Gateway.Default.From<Subject>().Where(wc).OrderBy(Subject._.Sbj_Order.Asc && Subject._.Sbj_ID.Asc).ToList<Subject>(count);
-        }
+        }      
 
         public int SubjectOfCount(int orgid, long pid, bool? isUse, bool children)
         {

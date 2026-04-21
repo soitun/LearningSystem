@@ -22,8 +22,8 @@ namespace Song.ViewData.Methods
     public class Subject : ViewMethod, IViewAPI
     {
         //资源的虚拟路径和物理路径
-        public static string VirPath = WeiSha.Core.Upload.Get["Subject"].Virtual;
-        public static string PhyPath = WeiSha.Core.Upload.Get["Subject"].Physics;
+        private static string _virPath = WeiSha.Core.Upload.Get["Subject"].Virtual;
+        private static string _phyPath = WeiSha.Core.Upload.Get["Subject"].Physics;
         /// <summary>
         /// 通过专业ID，获取专业信息
         /// </summary>
@@ -109,12 +109,12 @@ namespace Song.ViewData.Methods
                 {
                     HttpPostedFileBase file = this.Files[key];
                     filename = WeiSha.Core.Request.UniqueID() + Path.GetExtension(file.FileName);
-                    file.SaveAs(PhyPath + filename);
+                    file.SaveAs(_phyPath + filename);
                     try
                     {
                         //生成缩略图
                         smallfile = WeiSha.Core.Images.Name.ToSmall(filename);
-                        WeiSha.Core.Images.FileTo.Thumbnail(PhyPath + filename, PhyPath + smallfile, 320, 180, 0);
+                        WeiSha.Core.Images.FileTo.Thumbnail(_phyPath + filename, _phyPath + smallfile, 320, 180, 0);
                     }
                     catch (Exception ex)
                     {
@@ -138,18 +138,11 @@ namespace Song.ViewData.Methods
         [Admin]
         public bool ModifyTaxis(Song.Entities.Subject[] list)
         {
-            try
-            {
-                Business.Do<ISubject>().UpdateTaxis(list);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            Business.Do<ISubject>().UpdateTaxis(list);
+            return true;
         }
         /// <summary>
-        /// 删除课程专业
+        /// 删除课程专业，只是逻辑删除
         /// </summary>
         /// <param name="id">账户id，可以是多个，用逗号分隔</param>
         /// <returns></returns>
@@ -162,6 +155,46 @@ namespace Song.ViewData.Methods
             List<long> list = id.ToList<long>();
             foreach (long s in list)
                 i += Business.Do<ISubject>().SubjectDelete(s);
+            return i;
+        }
+        /// <summary>
+        /// 还原逻辑删除的专业
+        /// </summary>
+        [Admin]
+        [HttpPost, HttpGet(Ignore = true)]
+        public int Recycle(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = id.ToList<long>();
+            foreach (long s in list)
+                i += Business.Do<ISubject>().SubjectRecycle(s);
+            return i;
+        }
+
+        /// <summary>
+        /// 删除专业（物理删除）
+        /// </summary>
+        /// <param name="id">试题id，可以是多个，用逗号分隔</param>
+        /// <returns></returns>
+        [Admin]
+        [HttpDelete, HttpGet(Ignore = true)]
+        public int Remove(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = id.ToList<long>();
+            foreach (long s in list)
+            {
+                try
+                {
+                    i += Business.Do<ISubject>().SubjectRemove(s);
+                }
+                catch
+                {
+
+                }
+            }
             return i;
         }
         /// <summary>
@@ -322,8 +355,8 @@ namespace Song.ViewData.Methods
         private Song.Entities.Subject _tran(Song.Entities.Subject obj)
         {
             if (obj == null) return obj;
-            obj.Sbj_Logo = System.IO.File.Exists(PhyPath + obj.Sbj_Logo) ? VirPath + obj.Sbj_Logo : "";
-            obj.Sbj_LogoSmall = System.IO.File.Exists(PhyPath + obj.Sbj_LogoSmall) ? VirPath + obj.Sbj_LogoSmall : "";
+            obj.Sbj_Logo = System.IO.File.Exists(_phyPath + obj.Sbj_Logo) ? _virPath + obj.Sbj_Logo : "";
+            obj.Sbj_LogoSmall = System.IO.File.Exists(_phyPath + obj.Sbj_LogoSmall) ? _virPath + obj.Sbj_LogoSmall : "";
             if (string.IsNullOrWhiteSpace(obj.Sbj_LogoSmall) && !string.IsNullOrWhiteSpace(obj.Sbj_Logo))
                 obj.Sbj_LogoSmall = obj.Sbj_Logo;
             return obj;
