@@ -79,7 +79,7 @@
                 var th = this;
                 th.loading = true;
                 $api.get('Subject/Tree', {
-                    orgid: this.organ.Org_ID, search: '', isuse: true
+                    orgid: this.organ.Org_ID, search: '', isuse: true, delete: false
                 }).then(function (req) {
                     th.loading = false;
                     if (req.data.success) {

@@ -59,7 +59,7 @@ $ready(function () {
             //获取课程专业的数据
             getTreeData: function () {
                 var th = this;
-                var form = { orgid: th.organ.Org_ID, search: '', isuse: true };
+                var form = { orgid: th.organ.Org_ID, search: '', isuse: true, delete: false };
                 $api.get('Subject/Tree', form).then(function (req) {
                     if (req.data.success) {
                         th.subjects = req.data.result;

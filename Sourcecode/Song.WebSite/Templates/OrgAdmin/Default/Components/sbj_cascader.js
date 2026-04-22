@@ -52,13 +52,13 @@ Vue.component('sbj_cascader', {
         //获取课程专业的数据
         getSubjects: function () {
             var th = this;
-            var form = { orgid: th.orgid, search: '', isuse: true };
+            var form = { orgid: th.orgid, search: '', isuse: true, delete: false };
             $api.get('Subject/Tree', form).then(function (req) {
                 if (req.data.success) {
                     let datas = req.data.result;
-                    for (let i = 0; i < datas.length; i++) 
-                        th.ergodic_clacCourse(datas[i]);               
-                    th.subjects = datas;   
+                    for (let i = 0; i < datas.length; i++)
+                        th.ergodic_clacCourse(datas[i]);
+                    th.subjects = datas;
                 } else {
                     throw req.data.message;
                 }
@@ -71,7 +71,7 @@ Vue.component('sbj_cascader', {
             let count = sbj.Sbj_CourseCount;
             if (sbj.children && sbj.children.length > 0) {
                 let datas = sbj.children;
-                for (let i = 0; i < datas.length; i++) 
+                for (let i = 0; i < datas.length; i++)
                     count += this.ergodic_clacCourse(datas[i]);
             }
             sbj.Sbj_CourseCount = count;

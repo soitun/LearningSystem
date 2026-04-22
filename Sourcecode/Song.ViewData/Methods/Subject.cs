@@ -203,10 +203,11 @@ namespace Song.ViewData.Methods
         /// <param name="orgid">机构id</param>
         /// <param name="search"></param>
         /// <param name="isuse"></param>
+        /// <param name="delete"></param>
         /// <returns>专业列表</returns>
-        public List<Song.Entities.Subject> List(int orgid, string search, bool? isuse)
+        public List<Song.Entities.Subject> List(int orgid, string search, bool? isuse, bool? delete)
         {
-            List<Song.Entities.Subject> sbjs = Business.Do<ISubject>().SubjectCount(orgid, search, isuse, -1, -1);
+            List<Song.Entities.Subject> sbjs = Business.Do<ISubject>().SubjectCount(orgid, search, isuse, delete, -1, -1);
             for (int i = 0; i < sbjs.Count; i++)
             {
                 sbjs[i] = _tran(sbjs[i]);
@@ -221,7 +222,7 @@ namespace Song.ViewData.Methods
         [Cache]
         public JArray TreeFront(int orgid)
         {
-            List<Song.Entities.Subject> sbjs = Business.Do<ISubject>().SubjectCount(orgid, string.Empty, true, -1, -1);
+            List<Song.Entities.Subject> sbjs = Business.Do<ISubject>().SubjectCount(orgid, string.Empty, true, false, -1, -1);
             for (int i = 0; i < sbjs.Count; i++)
             {
                 sbjs[i] = _tran(sbjs[i]);
@@ -234,10 +235,11 @@ namespace Song.ViewData.Methods
         /// <param name="orgid">机构id</param>
         /// <param name="search">按名称检索</param>
         /// <param name="isuse">是否启用</param>
+        /// <param name="delete">是否删除</param>
         /// <returns></returns>
-        public JArray Tree(int orgid, string search, bool? isuse)
+        public JArray Tree(int orgid, string search, bool? isuse,bool? delete)
         {
-            List<Song.Entities.Subject> sbjs = Business.Do<ISubject>().SubjectCount(orgid, search, isuse, -1, -1);
+            List<Song.Entities.Subject> sbjs = Business.Do<ISubject>().SubjectCount(orgid, search, isuse, delete, -1, -1);
             for (int i = 0; i < sbjs.Count; i++) sbjs[i] = _tran(sbjs[i]);          
             return sbjs.Count > 0 ? _SubjectNode(null, sbjs) : null;
         }
@@ -280,7 +282,7 @@ namespace Song.ViewData.Methods
         [Cache]
         public List<Song.Entities.Subject> ShowRoot(int orgid, int count)
         {
-            List<Song.Entities.Subject> sbjs = Business.Do<ISubject>().SubjectCount(orgid, string.Empty, true, 0, count);
+            List<Song.Entities.Subject> sbjs = Business.Do<ISubject>().SubjectCount(orgid, string.Empty, true, false, 0, count);
             string path = WeiSha.Core.Upload.Get["Subject"].Virtual;
             for(int i = 0; i < sbjs.Count; i++)
             {

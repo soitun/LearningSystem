@@ -790,7 +790,7 @@ namespace Song.ServiceImpls
             //异步任务
             List<Task> tasks = new List<Task>();
             //计算专业
-            List<Subject> subjects = Business.Do<ISubject>().SubjectCount(-1, null, null, 0, 0);
+            List<Subject> subjects = Business.Do<ISubject>().SubjectCount(-1, null, null, null, 0, 0);
             foreach (Subject item in subjects)           
                 tasks.Add(Task.Run(() => _update_Subject_StatisticalData_task(item)));
             //计算课程

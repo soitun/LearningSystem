@@ -62,7 +62,7 @@
             //当机构选择框变化时
             orgChange: function (orgid) {
                 var th = this;
-                $api.cache('Subject/list', { 'orgid': orgid, 'search': '', 'isuse': 'true' }).then(function (req) {
+                $api.cache('Subject/list', { 'orgid': orgid, 'search': '', 'isuse': true, delete: false }).then(function (req) {
                     if (req.data.success) {
                         var result = th.buildSbjtree(req.data.result, 0);
                         th.sbjs = result;

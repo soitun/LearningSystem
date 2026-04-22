@@ -51,7 +51,7 @@ Vue.component('exam_items', {
         getSubjects: function (org) {
             if (org == null || !org.Org_ID || org.Org_ID <= 0) return;
             var th = this;
-            var form = { orgid: org.Org_ID, search: '', isuse: null };
+            var form = { orgid: org.Org_ID, search: '', isuse: null, delete: false };
             $api.get('Subject/list', form).then(function (req) {
                 if (req.data.success) {
                     th.subjects = req.data.result;

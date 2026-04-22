@@ -87,7 +87,7 @@ $ready(function () {
             getSubjects: function (organ) {
                 if (organ == null || !organ || !organ.Org_ID) return;
                 var th = this;
-                var form = { orgid: organ.Org_ID, search: '', isuse: null };
+                var form = { orgid: organ.Org_ID, search: '', isuse: null, delete: false };
                 $api.get('Subject/Tree', form).then(function (req) {
                     if (req.data.success) {
                         th.subjects = req.data.result;

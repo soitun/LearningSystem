@@ -296,20 +296,22 @@ namespace Song.ServiceImpls
             int count = Gateway.Default.Count<Subject>(wc && Subject._.Sbj_PID == identify);
             return count > 0;
         }
-        public List<Subject> SubjectCount(int orgid, string sear, bool? isUse, long pid, int count)
+        public List<Subject> SubjectCount(int orgid, string sear, bool? isUse, bool? isdelete, long pid, int count)
         {
             WhereClip wc = new WhereClip();
             if (orgid >= 0) wc.And(Subject._.Org_ID == orgid);
             if (isUse != null) wc.And(Subject._.Sbj_IsUse == (bool)isUse);
+            if (isdelete != null) wc.And(Subject._.Sbj_IsDeleted == (bool)isdelete);
             if (!string.IsNullOrWhiteSpace(sear)) wc.And(Subject._.Sbj_Name.Contains(sear));
             if (pid >= 0) wc.And(Subject._.Sbj_PID == pid);
             return Gateway.Default.From<Subject>().Where(wc).OrderBy(Subject._.Sbj_Order.Asc && Subject._.Sbj_ID.Asc).ToList<Subject>(count);
         }
-        public List<Subject> SubjectCount(int orgid, string sear, bool? isUse, long pid, string order, int index, int count)
+        public List<Subject> SubjectCount(int orgid, string sear, bool? isUse, bool? isdelete, long pid, string order, int index, int count)
         {
             WhereClip wc = new WhereClip();
             if (orgid >= 0) wc.And(Subject._.Org_ID == orgid);
             if (isUse != null) wc.And(Subject._.Sbj_IsUse == (bool)isUse);
+            if (isdelete != null) wc.And(Subject._.Sbj_IsDeleted == (bool)isdelete);
             if (!string.IsNullOrWhiteSpace(sear)) wc.And(Subject._.Sbj_Name.Contains(sear));
             if (pid >= 0) wc.And(Subject._.Sbj_PID == pid);
             OrderByClip wcOrder = new OrderByClip();
@@ -388,7 +390,7 @@ namespace Song.ServiceImpls
         {
             if (orgid > 0)
             {
-                List<Subject> subjects = this.SubjectCount(orgid, null, null, -1, 0);
+                List<Subject> subjects = this.SubjectCount(orgid, null, null, null, -1, 0);
                 if (subjects != null && subjects.Count > 0)
                 {
                     foreach (Subject sbj in subjects)

@@ -98,17 +98,18 @@ namespace Song.ServiceInterfaces
         /// <param name="isUse">是否启用</param>
         /// <returns>有子级，返回true</returns>
         bool SubjectIsChildren(int orgid, long identify, bool? isUse);
-        
+
         /// <summary>
         /// 获取学科/专业
         /// </summary>
         /// <param name="orgid">机构ID</param>
         /// <param name="sear">搜索关键字</param>
         /// <param name="isUse"></param>
+        /// <param name="isdelete"></param>
         /// <param name="pid">上级ID</param>
         /// <param name="count"></param>
         /// <returns></returns>
-        List<Subject> SubjectCount(int orgid, string sear, bool? isUse, long pid, int count);
+        List<Subject> SubjectCount(int orgid, string sear, bool? isUse, bool? isdelete, long pid, int count);
         /// <summary>
         /// 取指定个数的学科或专业
         /// </summary>
@@ -120,7 +121,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index">启始索引</param>
         /// <param name="size">取多少条</param>
         /// <returns></returns>
-        List<Subject> SubjectCount(int orgid, string sear, bool? isUse, long pid, string order, int index, int size);        
+        List<Subject> SubjectCount(int orgid, string sear, bool? isUse, bool? isdelete, long pid, string order, int index, int size);        
         /// <summary>
         /// 当前专业的上级父级
         /// </summary>

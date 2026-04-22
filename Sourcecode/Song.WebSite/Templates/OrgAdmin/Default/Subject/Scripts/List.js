@@ -9,7 +9,7 @@ $ready(function () {
             form: {
                 orgid: '',
                 search: '',
-                isuse: null
+                isuse: null, delete: false
             },
             defaultProps: {
                 children: 'children',

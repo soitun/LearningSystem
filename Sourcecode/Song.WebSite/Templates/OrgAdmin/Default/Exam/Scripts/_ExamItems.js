@@ -235,7 +235,7 @@ $ready([
             //获取专业
             getSubjects: function () {
                 var th = this;
-                var form = { orgid: th.org.Org_ID, search: '', isuse: null };
+                var form = { orgid: th.org.Org_ID, search: '', isuse: null, delete: false };
                 var buildtree = function (data, pid) {
                     var list = data.filter(item => item.Sbj_PID == pid);
                     list.forEach(item => {

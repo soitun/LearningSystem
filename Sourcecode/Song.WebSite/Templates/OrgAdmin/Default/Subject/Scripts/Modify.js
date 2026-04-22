@@ -71,7 +71,7 @@ $ready(function () {
             getTreeData: function (orgid) {
                 var th = this;
                 this.loading = true;
-                $api.get('Subject/Tree', { orgid: orgid, search: '', isuse: null })
+                $api.get('Subject/Tree', { orgid: orgid, search: '', isuse: null, delete: false })
                     .then(function (req) {
                         if (req.data.success) {
                             let datas = req.data.result;
