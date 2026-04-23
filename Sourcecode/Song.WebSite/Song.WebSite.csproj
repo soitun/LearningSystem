@@ -657,8 +657,11 @@
     <Content Include="Templates\OrgAdmin\Default\Components\Styles\sbj_cascader.css" />
     <Content Include="Templates\OrgAdmin\Default\Components\Styles\score.css" />
     <Content Include="Templates\OrgAdmin\Default\Course\AIAgent.html" />
+    <Content Include="Templates\OrgAdmin\Default\Course\Recycle.html" />
     <Content Include="Templates\OrgAdmin\Default\Course\Scripts\AIAgent.js" />
+    <Content Include="Templates\OrgAdmin\Default\Course\Scripts\Recycle.js" />
     <Content Include="Templates\OrgAdmin\Default\Course\Styles\AIAgent.css" />
+    <Content Include="Templates\OrgAdmin\Default\Course\Styles\Recycle.css" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\enter_button.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\general.js" />
     <Content Include="Templates\OrgAdmin\Default\ExamQues\Components\modify_main.js" />
@@ -895,6 +898,9 @@
     <Content Include="Templates\OrgAdmin\Default\Panel\Styles\dropmenu.css" />
     <Content Include="Templates\OrgAdmin\Default\Panel\Styles\pagebox.css" />
     <Content Include="Templates\OrgAdmin\Default\Panel\Styles\verticalbar.css" />
+    <Content Include="Templates\OrgAdmin\Default\Question\Recycle.html" />
+    <Content Include="Templates\OrgAdmin\Default\Question\Scripts\Recycle.js" />
+    <Content Include="Templates\OrgAdmin\Default\Question\Styles\Recycle.css" />
     <Content Include="Templates\OrgAdmin\Default\Scripts\StartBox.js" />
     <Content Include="Templates\OrgAdmin\Default\StartBox.html" />
     <Content Include="Templates\OrgAdmin\Default\Capital\AccountMoney.html" />
@@ -1138,9 +1144,12 @@
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Components\Styles\group.css" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Components\Styles\ques_count.css" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\PaperPreview.html" />
+    <Content Include="Templates\OrgAdmin\Default\TestPaper\Recycle.html" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Scripts\PaperPreview.js" />
+    <Content Include="Templates\OrgAdmin\Default\TestPaper\Scripts\Recycle.js" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Scripts\Results.js" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Styles\PaperPreview.css" />
+    <Content Include="Templates\OrgAdmin\Default\TestPaper\Styles\Recycle.css" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Styles\Results.css" />
     <Content Include="Templates\OrgAdmin\Default\TestPaper\Results.html" />
     <Content Include="Templates\OrgAdmin\Default\Viewport\Components\courses_hot.js" />
