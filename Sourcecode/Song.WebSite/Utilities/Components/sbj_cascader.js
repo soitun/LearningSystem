@@ -71,7 +71,7 @@ Vue.component('sbj_cascader', {
         getSubjects: function () {
             var th = this;
             th.loading = true;
-            var form = { orgid: th.orgid, search: '', isuse: true };
+            var form = { orgid: th.orgid, search: '', isuse: true, delete: false };
             $api.get('Subject/Tree', form).then(function (req) {
                 if (req.data.success) {
                     th.subjects = th.clacCount(req.data.result);
@@ -180,7 +180,7 @@ Vue.component('sbj_cascader', {
             }
             //获取专业路径，从顶级到子级
             const nodes = this.$refs['subject_cascader'].getCheckedNodes();
-            const labels = nodes!=null && nodes.length > 0 ? nodes[0].pathLabels : [];           
+            const labels = nodes != null && nodes.length > 0 ? nodes[0].pathLabels : [];
             //返回参数：当前专业id，当前专业对象,专业路径数组
             this.$emit('change', sbjid, sbj, labels, array);
             //隐藏下拉框
