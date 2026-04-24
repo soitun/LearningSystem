@@ -116,6 +116,7 @@ namespace Song.ServiceInterfaces
         /// <param name="orgid"></param>
         /// <param name="sear"></param>
         /// <param name="isUse"></param>
+        /// <param name="isdelete"></param>
         /// <param name="pid"></param>
         /// <param name="order">排序方式，def默认排序（先推荐，后排序号），tax按排序号,rec按推荐</param>
         /// <param name="index">启始索引</param>
@@ -175,7 +176,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        List<Subject> SubjectPager(int orgid, long pid, bool? isUse, string searTxt, int size, int index, out int countSum);
+        List<Subject> SubjectPager(int orgid, long pid, bool? isUse, bool? isdelete, string searTxt, int size, int index, out int countSum);
         /// <summary>
         /// 更改专业的排序
         /// </summary>

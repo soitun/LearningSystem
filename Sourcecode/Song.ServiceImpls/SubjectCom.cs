@@ -161,7 +161,16 @@ namespace Song.ServiceImpls
         }
         public int SubjectDelete(long sbjid)
         {
-            int count = Gateway.Default.Update<Subject>(Subject._.Sbj_IsDeleted, true, Subject._.Sbj_ID == sbjid);
+            Subject sbj = this.SubjectSingle(sbjid);
+            List<long> list = this.TreeID(sbjid, sbj.Org_ID);
+            int count = 0;
+            if (list.Count > 0)
+            {
+                foreach (long l in list)
+                {
+                    count += Gateway.Default.Update<Subject>(Subject._.Sbj_IsDeleted, true, Subject._.Sbj_ID == l);
+                }
+            }
             return count;
         }
         /// <summary>
@@ -169,7 +178,16 @@ namespace Song.ServiceImpls
         /// </summary>
         public int SubjectRecycle(long sbjid)
         {
-            int count = Gateway.Default.Update<Subject>(Subject._.Sbj_IsDeleted, false, Subject._.Sbj_ID == sbjid);
+            Subject sbj = this.SubjectSingle(sbjid);
+            List<long> list = this.TreeID(sbjid, sbj.Org_ID);
+            int count = 0;
+            if (list.Count > 0)
+            {
+                foreach (long l in list)
+                {
+                    count += Gateway.Default.Update<Subject>(Subject._.Sbj_IsDeleted, false, Subject._.Sbj_ID == l);
+                }
+            }
             return count;
         }
         /// <summary>
@@ -409,12 +427,13 @@ namespace Song.ServiceImpls
             }
             return true;
         }
-        public List<Subject> SubjectPager(int orgid, long pid, bool? isUse, string searTxt, int size, int index, out int countSum)
+        public List<Subject> SubjectPager(int orgid, long pid, bool? isUse, bool? isdelete, string searTxt, int size, int index, out int countSum)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Subject._.Org_ID == orgid);
             if (pid >= 0) wc.And(Subject._.Sbj_PID == pid);
             if (isUse != null) wc.And(Subject._.Sbj_IsUse == (bool)isUse);
+            if (isdelete != null) wc.And(Subject._.Sbj_IsDeleted == (bool)isdelete);
             if (string.IsNullOrWhiteSpace(searTxt)) wc.And(Subject._.Sbj_Name.Contains(searTxt));
             countSum = Gateway.Default.Count<Subject>(wc);
             return Gateway.Default.From<Subject>().Where(wc).OrderBy(Subject._.Sbj_Order.Asc && Subject._.Sbj_ID.Asc).ToList<Subject>(size, (index - 1) * size);

@@ -198,6 +198,13 @@ namespace Song.ViewData.Methods
             return i;
         }
         /// <summary>
+        /// 当前试题分类的上级父级
+        /// </summary>
+        /// <param name="sbjid"></param>
+        /// <param name="isself">是否包括自身</param>
+        /// <returns></returns>
+        public List<Entities.Subject> Parents(long sbjid, bool isself) => Business.Do<ISubject>().Parents(sbjid, isself);
+        /// <summary>
         /// 某个机构下的所有专业
         /// </summary>
         /// <param name="orgid">机构id</param>
@@ -213,6 +220,32 @@ namespace Song.ViewData.Methods
                 sbjs[i] = _tran(sbjs[i]);
             }
             return sbjs;
+        }
+        /// <summary>
+        /// 获取某个机构下的所有专业
+        /// </summary>
+        /// <param name="orgid"></param>
+        /// <param name="search"></param>
+        /// <param name="isuse"></param>
+        /// <param name="delete">是否删除</param>
+        /// <param name="size"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        [Admin]
+        public ListResult Pager(int orgid, string search, bool? isuse, bool? delete, int size, int index)
+        {
+            size = size <= 0 ? int.MaxValue : size;
+            int count;
+            List<Song.Entities.Subject> eas = Business.Do<ISubject>().SubjectPager(orgid, -1, isuse, delete, search,  size, index, out count);
+            for (int i = 0; i < eas.Count; i++)
+            {
+                eas[i] = _tran(eas[i]);               
+            }
+            ListResult result = new ListResult(eas);
+            result.Index = index;
+            result.Size = size;
+            result.Total = count;
+            return result;
         }
         /// <summary>
         /// 某个机构下的专业，用于前端展示，被禁用的专业不显示
@@ -306,7 +339,7 @@ namespace Song.ViewData.Methods
         public ListResult PagerFront(int orgid,long pid,int index, int size)
         {
             int sum;
-            List<Song.Entities.Subject> list = Business.Do<ISubject>().SubjectPager(orgid, pid, true, string.Empty, size, index, out sum);
+            List<Song.Entities.Subject> list = Business.Do<ISubject>().SubjectPager(orgid, pid, true, false, string.Empty, size, index, out sum);
             for (int i = 0; i < list.Count; i++)
                 list[i] = _tran(list[i]);
             Song.ViewData.ListResult result = new ListResult(list);
