@@ -119,7 +119,10 @@ Vue.component('selectpart', {
         <div class="selected_parts">
             <div class="title">
                 <span>已选 {{selected?.length ?? 0}} 个分类</span>
-                <el-link type="warning" @click="removepart(-1)"><icon>&#xe800</icon>清空</el-link>
+                <el-popconfirm confirm-button-text='是的' v-if="selected?.length>0" cancel-button-text='不用' icon="el-icon-info"
+                icon-color="red" title="是否清空，确定吗？" @confirm="removepart(-1)">
+                    <el-link type="warning" slot="reference"><icon>&#xe800</icon>清空</el-link>
+                </el-popconfirm>               
             </div>
             <div class="part_list" v-if="selected?.length>0">
                 <el-tag size="medium" v-for="(p,idx) in selected" closable @close="removepart(idx)">

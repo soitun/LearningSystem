@@ -106,7 +106,10 @@ $ready([], function () {
             },
         },
         filters: {
-
+            //数字转三位带逗号
+            'commas': function (number) {
+                return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
         },
         components: {
             //当前试题分类的路径

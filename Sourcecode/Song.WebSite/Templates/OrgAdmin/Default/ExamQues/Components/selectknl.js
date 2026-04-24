@@ -147,7 +147,10 @@ Vue.component('selectknl', {
                 <el-badge :value="knlslength" :hidden="knlslength<1">
                     <icon>&#xa029</icon>关联的知识点</span>
                 </el-badge>         
-                <el-link type="warning" @click="removeknl(-1)"><icon>&#xe800</icon>清空</el-link>      
+                <el-popconfirm confirm-button-text='是的' v-if="selected?.length>0" cancel-button-text='不用' icon="el-icon-info"
+                icon-color="red" title="是否清空，确定吗？" @confirm="removeknl(-1)">
+                    <el-link type="warning" slot="reference"><icon>&#xe800</icon>清空</el-link>
+                </el-popconfirm>                  
             </div>
             <div class="knls_list" v-if="knlslength>0">
                 <div v-for="(k,idx) in selected" >

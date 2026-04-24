@@ -38,14 +38,15 @@
                     <parents_path :entity="scope.row" separator="->"></parents_path>
                 </template>
             </el-table-column>
-            <el-table-column label="课程数" width="100" align="center">
+            <el-table-column label="课程数" width="100" align="left">
                 <template slot-scope="scope">
-                    {{scope.row.Sbj_CourseCount}}                   
+                    <icon title="课程数" course :zero="scope.row.Sbj_CourseCount<=0">
+                        {{scope.row.Sbj_CourseCount|commas}}</icon>
                 </template>
             </el-table-column>
-            <el-table-column label="试题数" width="100" align="center">
+            <el-table-column label="试题数" width="100" align="left">
                 <template slot-scope="scope">
-                    {{scope.row.Sbj_QuesCount}}                   
+                    <icon title="试题数" question :zero="scope.row.Sbj_QuesCount<=0">{{scope.row.Sbj_QuesCount|commas}} </icon>                  
                 </template>
             </el-table-column>
 
@@ -54,7 +55,8 @@
                     <span class="el-icon-loading" v-if="loadingid==scope.row.Sbj_ID"></span>
                     <el-button-group v-else>
                         <el-popconfirm confirm-button-text='是的' cancel-button-text='不用' icon="el-icon-info"
-                            icon-color="red" title="确定还原吗？" @confirm="$refs.btngroup.events('recycle',scope.row.Sbj_ID)">
+                            icon-color="red" title="确定还原吗？"
+                            @confirm="$refs.btngroup.events('recycle',scope.row.Sbj_ID)">
                             <el-link type="warning" plain slot="reference">
                                 <icon>&#xa014</icon>还原
                             </el-link>
