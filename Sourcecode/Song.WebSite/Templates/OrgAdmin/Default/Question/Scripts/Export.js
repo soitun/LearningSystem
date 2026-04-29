@@ -22,7 +22,7 @@ $ready(function () {
                 'subpath': 'QuestionToExcel',   //导出文件的路径，相对临时路径的子路径
                 'folder': $api.querystring('couid', '0'),
                 'types': [], 'diffs': [], 'part': 1, 'orgid': 0, 'sbjid': '',
-                'couid': $api.querystring('couid', ''), 'olid': ''
+                'couid': $api.querystring('couid', ''), 'olid': '', 'del': false
             },
             rules: {
                 types: [

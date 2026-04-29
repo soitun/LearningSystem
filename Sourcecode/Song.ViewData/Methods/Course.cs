@@ -329,7 +329,7 @@ namespace Song.ViewData.Methods
             int qus = course.Cou_QuesCount;
             if (qus <= 0)
             {
-                qus = Business.Do<IQuestions>().QuesOfCount(-1, -1, couid, -1, 0, -1, null);
+                qus = Business.Do<IQuestions>().QuesOfCount(-1, -1, couid, -1, 0, -1, null, false);
                 if (qus > 0) Business.Do<ICourse>().CourseUpdate(couid, Song.Entities.Course._.Cou_QuesCount, qus);
         }
             //知识点

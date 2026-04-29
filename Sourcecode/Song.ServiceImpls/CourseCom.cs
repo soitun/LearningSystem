@@ -270,6 +270,39 @@ namespace Song.ServiceImpls
         /// <param name="entity">业务实体</param>
         public int CourseDelete(Course entity)
         {
+            return this.CourseDelete(entity.Cou_ID);
+        }
+        /// <summary>
+        /// 删除，按主键ID；
+        /// </summary>
+        /// <param name="couid">实体的主键</param>
+        public int CourseDelete(long couid)
+        {
+            return Gateway.Default.Update<Course>(Course._.Cou_IsDeleted, true, Course._.Cou_ID == couid);
+        }
+        /// <summary>
+        /// 回收，标记删除状态为false
+        /// </summary>
+        public int CourseRecycle(long couid)
+        {
+            return Gateway.Default.Update<Course>(Course._.Cou_IsDeleted, false, Course._.Cou_ID == couid);
+        }
+        /// <summary>
+        /// 真正删除，按主键ID；
+        /// </summary>
+        /// <param name="couid">实体的主键</param>
+        public int CourseRemove(long couid)
+        {
+            Song.Entities.Course course = this.CourseSingle(couid);
+            return this.CourseRemove(course);
+        }
+        /// <summary>
+        /// 真正删除
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public int CourseRemove(Course entity)
+        {
             if (entity == null) return 0;
             int i = 0;
             //是否有下级
@@ -305,15 +338,6 @@ namespace Song.ServiceImpls
                 }
             }
             return i;
-        }
-        /// <summary>
-        /// 删除，按主键ID；
-        /// </summary>
-        /// <param name="identify">实体的主键</param>
-        public int CourseDelete(long identify)
-        {
-            Song.Entities.Course course = this.CourseSingle(identify);
-            return this.CourseDelete(course);
         }
         /// <summary>
         /// 获取单一实体对象，按主键ID；

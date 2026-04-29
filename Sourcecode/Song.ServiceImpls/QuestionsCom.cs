@@ -131,32 +131,23 @@ namespace Song.ServiceImpls
         /// 删除试题
         /// </summary>
         /// <param name="entity">试题实体</param>
-        public void QuesDelete(Questions entity)
+        public int QuesDelete(Questions entity)
         {
-            if (entity == null) return;
-            Gateway.Default.Delete<Questions>(Questions._.Qus_ID == entity.Qus_ID);
+            int count = Gateway.Default.Update<Questions>(Questions._.Qus_IsDeleted, true, Questions._.Qus_ID == entity.Qus_ID);
             this.OnDelete(entity, EventArgs.Empty);
             //更新统计数据
             new Task(() =>
             {
                 Business.Do<IQuestions>().QuesCountUpdate(entity.Org_ID, entity.Sbj_ID, entity.Cou_ID, entity.Ol_ID);
             }).Start();
+            return count;
         }
-        public void QuesDelete(long identify)
-        {
-            Questions ques = this.QuesSingle(identify);
-            this.QuesDelete(ques);            
+        public int QuesDelete(long quesid)
+        {      
+            Questions ques = this.QuesSingle(quesid);
+            return this.QuesDelete(ques);
         }
-        /// <summary>
-        /// 批量删除
-        /// </summary>
-        /// <param name="ids"></param>
-        public void QuesDelete(string[] ids)
-        {
-            long[] arr = ids.Select(long.Parse).ToArray();
-            this.QuesDelete(arr);
-        }
-        public void QuesDelete(long[] idarray)
+        public int QuesDelete(long[] idarray)
         {
             //计算试题的机构id,专业id,课程id,章节id
             List<int> orgids = new List<int>();
@@ -173,17 +164,50 @@ namespace Song.ServiceImpls
                 if (!couids.Contains(q.Cou_ID)) couids.Add(q.Cou_ID);
             }
             //删除并重新统计
-            Gateway.Default.Delete<Questions>(wc);
-            foreach (int orgid in orgids) Business.Do<IQuestions>().QuesCountUpdate(orgid, -1, -1, -1);
-            foreach (int sbjid in sbjids) Business.Do<IQuestions>().QuesCountUpdate(-1, sbjid, -1, -1);
-            foreach (int couid in couids) Business.Do<IQuestions>().QuesCountUpdate(-1, -1, couid, -1);
+            int count = Gateway.Default.Update<Questions>(Questions._.Qus_IsDeleted, true, wc);
+            //Gateway.Default.Delete<Questions>(wc);
+            foreach (int orgid in orgids) this.QuesCountUpdate(orgid, -1, -1, -1);
+            foreach (int sbjid in sbjids) this.QuesCountUpdate(-1, sbjid, -1, -1);
+            foreach (int couid in couids) this.QuesCountUpdate(-1, -1, couid, -1);
+            
+            this.OnDelete(idarray, EventArgs.Empty);
+            return count;
+        }
+        /// <summary>
+        /// 回收，标记删除状态为false
+        /// </summary>
+        public int QuesRecycle(long quesid)
+        {
+            int count = Gateway.Default.Update<Questions>(Questions._.Qus_IsDeleted, false, Questions._.Qus_ID == quesid);
+            return count;
+        }
+        /// <summary>
+        /// 批量删除
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public int QuesRemove(Questions entity)
+        {
+            return this.QuesRemove(new long[] { entity.Qus_ID });
+        }
+        /// <summary>
+        /// 批量删除
+        /// </summary>
+        /// <param name="idarray"></param>
+        /// <returns></returns>
+        public int QuesRemove(long[] idarray)
+        {
+            WhereClip wc = new WhereClip();
+            foreach (long id in idarray)
+                wc.Or(Questions._.Qus_ID == id);
+            int count = Gateway.Default.Delete<Questions>(wc);
             //删除图片等资源
             new Task(() =>
             {
                 foreach (long id in idarray)
-                    WeiSha.Core.Upload.Get["Ques"].DeleteDirectory(id.ToString());               
-            }).Start();          
-           
+                    WeiSha.Core.Upload.Get["Ques"].DeleteDirectory(id.ToString());
+            }).Start();
+
             new Task(() =>
             {
                 //删除笔记
@@ -212,8 +236,15 @@ namespace Song.ServiceImpls
                 Gateway.Default.Delete<Student_Ques>(wcErr);
 
             }).Start();
-            this.OnDelete(idarray, EventArgs.Empty);
-
+            return count;
+        }
+        /// <summary>
+        /// 真正删除，按主键ID；
+        /// </summary>
+        /// <param name="quesid">实体的主键</param>
+        public int QuesRemove(long quesid)
+        {
+            return this.QuesRemove(new long[] { quesid });
         }
         /// <summary>
         /// 修改课程的某些项
@@ -377,8 +408,9 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public List<Questions> QuesSimplify(int orgid, long sbjid, long couid, long olid, int type, int diff, bool? isUse, Field[] fields, int count)
         {
-            WhereClip wc = new WhereClip();
+            WhereClip wc = Questions._.Qus_IsDeleted == false;
             if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
+
             //专业
             if (sbjid > 0 && couid <= 0 && olid <= 0)
             {
@@ -416,7 +448,7 @@ namespace Song.ServiceImpls
         /// <param name="diff">难度等级</param>
         /// <param name="isUse">是否禁用的</param>
         /// <returns></returns>
-        public int QuesOfCount(int orgid, long sbjid, long couid, long olid, int type, int diff, bool? isUse)
+        public int QuesOfCount(int orgid, long sbjid, long couid, long olid, int type, int diff, bool? isUse, bool? isDelete)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
@@ -426,6 +458,7 @@ namespace Song.ServiceImpls
             if (type > 0) wc.And(Questions._.Qus_Type == type);
             if (diff > 0) wc.And(Questions._.Qus_Diff == diff);
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
+            if (isDelete != null) wc.And(Questions._.Qus_IsDeleted == (bool)isDelete);
             return Gateway.Default.Count<Questions>(wc);
         }
         /// <summary>
@@ -441,7 +474,7 @@ namespace Song.ServiceImpls
         /// <param name="isError"></param>
         /// <param name="isWrong"></param>
         /// <returns></returns>
-        public int Total(int orgid, long sbjid, long couid, long olid, int[] types, int[] diff, bool? isUse, bool? isError, bool? isWrong)
+        public int Total(int orgid, long sbjid, long couid, long olid, int[] types, int[] diff, bool? isUse, bool? isError, bool? isWrong, bool? isDelete)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
@@ -479,6 +512,7 @@ namespace Song.ServiceImpls
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
             if (isError != null) wc.And(Questions._.Qus_IsError == (bool)isError);
             if (isWrong != null) wc.And(Questions._.Qus_IsWrong == (bool)isWrong);
+            if (isDelete != null) wc.And(Questions._.Qus_IsDeleted == (bool)isDelete);
             return Gateway.Default.Count<Questions>(wc);
         }
         /// <summary>
@@ -492,7 +526,7 @@ namespace Song.ServiceImpls
         /// <param name="diff">难度等级</param>
         /// <param name="isUse">是否禁用的</param>
         /// <returns></returns>
-        public int Total(int orgid, long sbjid, long couid, long olid, int type, int diff, bool? isUse)
+        public int Total(int orgid, long sbjid, long couid, long olid, int type, int diff, bool? isUse, bool? isDelete)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Questions._.Org_ID == orgid);
@@ -516,6 +550,7 @@ namespace Song.ServiceImpls
             if (type > 0) wc.And(Questions._.Qus_Type == type);
             if (diff > 0) wc.And(Questions._.Qus_Diff == diff);
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
+            if (isDelete != null) wc.And(Questions._.Qus_IsDeleted == (bool)isDelete);
             return Gateway.Default.Count<Questions>(wc);
         }
         /// <summary>
@@ -530,7 +565,7 @@ namespace Song.ServiceImpls
             //课程中的试题数量
             if (couid > 0)
             {
-                int cou_count = this.Total(-1, -1, couid, -1, 0, -1, null);
+                int cou_count = this.Total(-1, -1, couid, -1, 0, -1, null, false);
                 Gateway.Default.Update<Course>(new Field[] { Course._.Cou_QuesCount }, new object[] { cou_count }, Course._.Cou_ID == couid);
             }
             //章节下的试题数量
@@ -552,7 +587,7 @@ namespace Song.ServiceImpls
                 foreach(long id in olist)
                 {
                     //只计算当前章节下的试题，不包括下级
-                    int olcount = this.QuesOfCount(-1, -1, -1, id, -1, -1, null);
+                    int olcount = this.QuesOfCount(-1, -1, -1, id, -1, -1, null, false);
                     Gateway.Default.Update<Outline>(new Field[] { Outline._.Ol_QuesCount }, new object[] { olcount }, Outline._.Ol_ID == id);
                 }
             }
@@ -560,13 +595,13 @@ namespace Song.ServiceImpls
             if (sbjid > 0)
             {
                 //只计算当前专业下的试题，不包括下级
-                int sbj_count = this.QuesOfCount(-1, sbjid, -1, -1, 0, -1, null);
+                int sbj_count = this.QuesOfCount(-1, sbjid, -1, -1, 0, -1, null, false);
                 Gateway.Default.Update<Subject>(new Field[] { Subject._.Sbj_QuesCount }, new object[] { sbj_count }, Subject._.Sbj_ID == sbjid);
             }
             //机构的试题数
             if (orgid > 0)
             {
-                int org_count = this.QuesOfCount(orgid, -1, -1, -1, 0, -1, null);
+                int org_count = this.QuesOfCount(orgid, -1, -1, -1, 0, -1, null, false);
                 Gateway.Default.Update<Organization>(new Field[] { Organization._.Org_QuesCount }, new object[] { org_count }, Organization._.Org_ID == orgid);
             }
         }
@@ -622,6 +657,7 @@ namespace Song.ServiceImpls
         /// <summary>
         /// 分页获取试题
         /// </summary>
+        /// <param name="orgid"></param>
         /// <param name="type">试题类型，1为单选，2为多选</param>
         /// <param name="isUse">试题是否启用的状态，如为null取所有试题</param>
         /// <param name="diff">难度</param>
@@ -630,13 +666,14 @@ namespace Song.ServiceImpls
         /// <param name="index">当前页索引</param>
         /// <param name="countSum">共计多少条</param>
         /// <returns></returns>
-        public List<Questions> QuesPager(int orgid, int type, bool? isUse, int diff,
+        public List<Questions> QuesPager(int orgid, int type, bool? isUse, bool? isDelete, int diff,
             string searTxt, int size, int index, out int countSum)
         {
             WhereClip wc = new WhereClip();
             if (orgid > -1) wc.And(Questions._.Org_ID == orgid);
             if (type > 0) wc.And(Questions._.Qus_Type == type);
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
+            if (isDelete != null) wc.And(Questions._.Qus_IsDeleted == (bool)isDelete);
             if (diff > 0 && diff <= 5) wc.And(Questions._.Qus_Diff == diff);
             if (searTxt != string.Empty && searTxt.ToLower() != "")
                 wc.And(Questions._.Qus_Title.Contains(searTxt.Trim()));
@@ -646,7 +683,7 @@ namespace Song.ServiceImpls
                 .ToList<Questions>(size, (index - 1) * size);
         }
 
-        public List<Questions> QuesPager(int orgid, int type, long sbjid, long couid, long olid, bool? isUse,
+        public List<Questions> QuesPager(int orgid, int type, long sbjid, long couid, long olid, bool? isUse, bool? isDelete,
             bool? isError, bool? isWrong, int diff, string searTxt,
             int size, int index, out int countSum)
         {
@@ -670,6 +707,7 @@ namespace Song.ServiceImpls
                 wc.And(wcOlid);
             }
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
+            if (isDelete != null) wc.And(Questions._.Qus_IsDeleted == (bool)isDelete);
             if (isError != null) wc.And(Questions._.Qus_IsError == (bool)isError);
             if (isWrong != null) wc.And(Questions._.Qus_IsWrong == (bool)isWrong);
             if (diff > 0 && diff <= 5) wc.And(Questions._.Qus_Diff == diff);

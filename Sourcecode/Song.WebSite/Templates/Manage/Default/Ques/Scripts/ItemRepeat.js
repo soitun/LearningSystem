@@ -99,10 +99,10 @@ $ready(function () {
                 var th = this;
                 th.loading = true;
                 $api.bat(
-                    $api.get('Question/Count', { 'orgid': '', 'sbjid': '', 'couid': '', 'olid': '', 'type': '', 'use': '' }),
-                    $api.get('Question/Count', { 'orgid': '', 'sbjid': '', 'couid': '', 'olid': '', 'type': 1, 'use': '' }),
-                    $api.get('Question/Count', { 'orgid': '', 'sbjid': '', 'couid': '', 'olid': '', 'type': 2, 'use': '' }),
-                    $api.get('Question/Count', { 'orgid': '', 'sbjid': '', 'couid': '', 'olid': '', 'type': 5, 'use': '' }),
+                    $api.get('Question/Count', { 'orgid': '', 'sbjid': '', 'couid': '', 'olid': '', 'type': '', 'use': '','del':null }),
+                    $api.get('Question/Count', { 'orgid': '', 'sbjid': '', 'couid': '', 'olid': '', 'type': 1, 'use': '','del':null }),
+                    $api.get('Question/Count', { 'orgid': '', 'sbjid': '', 'couid': '', 'olid': '', 'type': 2, 'use': '','del':null }),
+                    $api.get('Question/Count', { 'orgid': '', 'sbjid': '', 'couid': '', 'olid': '', 'type': 5, 'use': '','del':null }),
                 ).then(([t0, t1, t2, t5]) => {
                     //获取结果
                     th.total.type0 = t0.data.result;
@@ -138,7 +138,7 @@ $ready(function () {
             quespager: function (index, type) {
                 var form = {
                     'orgid': '', 'sbjid': '', 'couid': '', 'olid': '', 'type': type,
-                    'use': '', 'error': '', 'wrong': '', 'search': '',
+                    'use': '', 'del':'','error': '', 'wrong': '', 'search': '',
                     'size': 20, 'index': index
                 };
                 var th = this;

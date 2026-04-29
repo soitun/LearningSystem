@@ -69,21 +69,36 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         int CourseViewNum(long couid, int num);
         /// <summary>
-        /// 删除课程
+        /// 删除课程，标记删除状态为true
         /// </summary>
         /// <param name="entity">业务实体</param>
         int CourseDelete(Course entity);
         /// <summary>
-        /// 删除，按主键ID；
+        /// 删除，标记删除状态为true
         /// </summary>
         /// <param name="couid">课程的主键id</param>
         int CourseDelete(long couid);
         /// <summary>
+        /// 回收，标记删除状态为false
+        /// </summary>
+        int CourseRecycle(long couid);
+        /// <summary>
+        /// 真正删除，按主键ID；
+        /// </summary>
+        /// <param name="couid">实体的主键</param>
+        int CourseRemove(long couid);
+        /// <summary>
+        /// 真正删除
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        int CourseRemove(Course entity);
+        /// <summary>
         /// 获取单一实体对象，按主键ID；
         /// </summary>
-        /// <param name="identify">实体的主键</param>
+        /// <param name="couid">实体的主键</param>
         /// <returns></returns>
-        Course CourseSingle(long identify);
+        Course CourseSingle(long couid);
         /// <summary>
         /// 获取单一实体对象，按UID；
         /// </summary>

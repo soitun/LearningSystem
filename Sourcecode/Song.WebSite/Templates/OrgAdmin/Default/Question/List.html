@@ -23,7 +23,7 @@
                 </template>
                 <template slot="more">
                     <el-form-item label="专业">
-                        <sbj_cascader ref="subject" :orgid="organ.Org_ID" :sbjid="form.sbjid" showitem="ques" @change="id=>form.sbjid=id">
+                        <sbj_cascader ref="subject" :orgid="org.Org_ID" :sbjid="form.sbjid" showitem="ques" @change="id=>form.sbjid=id">
                         </sbj_cascader>                         
                     </el-form-item>
                     <el-form-item label="" v-if="courses">

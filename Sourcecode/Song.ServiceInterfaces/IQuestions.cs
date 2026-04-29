@@ -37,22 +37,38 @@ namespace Song.ServiceInterfaces
         /// 删除试题
         /// </summary>
         /// <param name="entity">试题实体</param>
-        void QuesDelete(Questions entity);
+        int QuesDelete(Questions entity);
         /// <summary>
         /// 删除，按主键ID；
         /// </summary>
-        /// <param name="identify">实体的主键</param>
-        void QuesDelete(long identify);
-        /// <summary>
-        /// 批量删除
-        /// </summary>
-        /// <param name="ids"></param>
-        void QuesDelete(string[] ids);
+        /// <param name="quesid">实体的主键</param>
+        int QuesDelete(long quesid);
         /// <summary>
         /// 批量删除
         /// </summary>
         /// <param name="idarray"></param>
-        void QuesDelete(long[] idarray);
+        int QuesDelete(long[] idarray);
+        /// <summary>
+        /// 回收，标记删除状态为false
+        /// </summary>
+        int QuesRecycle(long quesid);
+        /// <summary>
+        /// 真正删除，按主键ID；
+        /// </summary>
+        /// <param name="quesid">实体的主键</param>
+        int QuesRemove(long quesid);
+        /// <summary>
+        /// 批量删除
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        int QuesRemove(Questions entity);
+        /// <summary>
+        /// 批量删除
+        /// </summary>
+        /// <param name="idarray"></param>
+        /// <returns></returns>
+        int QuesRemove(long[] idarray);
         /// <summary>
         /// 修改试题的某些项
         /// </summary>
@@ -162,7 +178,7 @@ namespace Song.ServiceInterfaces
         /// <param name="diff">难度等级</param>
         /// <param name="isUse">是否禁用的</param>
         /// <returns></returns>
-        int QuesOfCount(int orgid, long  sbjid, long couid, long olid, int type, int diff, bool? isUse);
+        int QuesOfCount(int orgid, long  sbjid, long couid, long olid, int type, int diff, bool? isUse, bool? isDelete);
         /// <summary>
         /// 统计试题数量，不包括专业或章节的下级试题数,只取当前层级
         /// </summary>
@@ -175,8 +191,9 @@ namespace Song.ServiceInterfaces
         /// <param name="isUse"></param>
         /// <param name="isError"></param>
         /// <param name="isWrong"></param>
+        /// <param name="isDelete"></param>
         /// <returns></returns>
-        int Total(int orgid, long sbjid, long couid, long olid, int[] types, int[] diff, bool? isUse, bool? isError, bool? isWrong);
+        int Total(int orgid, long sbjid, long couid, long olid, int[] types, int[] diff, bool? isUse, bool? isError, bool? isWrong, bool? isDelete);
         /// <summary>
         /// 统计题库数量，包含下级的数量
         /// </summary>
@@ -187,8 +204,9 @@ namespace Song.ServiceInterfaces
         /// <param name="type">试题类型</param>
         /// <param name="diff">难度等级</param>
         /// <param name="isUse">是否禁用的</param>
+        /// <param name="isDelete"></param>
         /// <returns></returns>
-        int Total(int orgid, long sbjid, long couid, long olid, int type, int diff, bool? isUse);
+        int Total(int orgid, long sbjid, long couid, long olid, int type, int diff, bool? isUse, bool? isDelete);
         /// <summary>
         /// 试题数量更新到机构、专业、课程、章节，方便展示
         /// </summary>
@@ -235,7 +253,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        List<Questions> QuesPager(int orgid, int type, bool? isUse, int diff, string searTxt, int size, int index, out int countSum);
+        List<Questions> QuesPager(int orgid, int type, bool? isUse, bool? isDelete, int diff, string searTxt, int size, int index, out int countSum);
         /// <summary>
         /// 分页获取所有的试题；
         /// </summary>
@@ -253,7 +271,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        List<Questions> QuesPager(int orgid, int type, long sbjid, long couid, long olid, bool? isUse, bool? isError, bool? isWrong, int diff, string searTxt, int size, int index, out int countSum);
+        List<Questions> QuesPager(int orgid, int type, long sbjid, long couid, long olid, bool? isUse, bool? isDelete, bool? isError, bool? isWrong, int diff, string searTxt, int size, int index, out int countSum);
         /// <summary>
         /// 当前试题的下一个试题，在指定范围内取，例如课程内的试题
         /// </summary>

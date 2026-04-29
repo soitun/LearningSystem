@@ -226,7 +226,7 @@ namespace Song.ViewData.Methods
         /// <param name="couid">课程id</param>
         /// <param name="olid">章节id</param>
         /// <returns></returns>
-        public JObject ExcelExport(string subpath, string folder, string types, string diffs, int part, int orgid, long sbjid, long couid, long olid)
+        public JObject ExcelExport(string subpath, string folder, string types, string diffs, int part, int orgid, long sbjid, long couid, long olid, bool? del)
         {
             JObject jo = null;
             //导出所有
@@ -306,11 +306,12 @@ namespace Song.ViewData.Methods
         /// <param name="olid">章节id</param>
         /// <param name="type">试题类型</param>
         /// <param name="use">启用中的试题，null取所有</param>
+        /// <param name="del">是否删除</param>
         /// <returns></returns>
         [Cache]
-        public int Count(int orgid, long sbjid, long couid, long olid, int type, bool? use)
+        public int Count(int orgid, long sbjid, long couid, long olid, int type, bool? use, bool? del)
         {
-            return Business.Do<IQuestions>().QuesOfCount(orgid, sbjid, couid, olid, type, -1, use);
+            return Business.Do<IQuestions>().QuesOfCount(orgid, sbjid, couid, olid, type, -1, use, del);
         }
         /// <summary>
         /// 计算有多少条试题，如果涉及专业或章节，将计算所有下级的数量
@@ -321,10 +322,11 @@ namespace Song.ViewData.Methods
         /// <param name="olid">章节id</param>
         /// <param name="type">试题类型</param>
         /// <param name="use">启用中的试题，null取所有</param>
+        /// <param name="del">是否是删除的</param>
         /// <returns></returns>       
-        public int Total(int orgid, long sbjid, long couid, long olid, int type, bool? use)
+        public int Total(int orgid, long sbjid, long couid, long olid, int type, bool? use, bool? del)
         {
-            return Business.Do<IQuestions>().Total(orgid, sbjid, couid, olid, type, -1, use);
+            return Business.Do<IQuestions>().Total(orgid, sbjid, couid, olid, type, -1, use, del);
         }
         /// <summary>
         /// 计算有多少条试题
@@ -336,23 +338,23 @@ namespace Song.ViewData.Methods
         /// <param name="types"></param>
         /// <param name="diffs"></param>
         /// <param name="part">试题状态，1为所有，2为正常，即没有错误，没有人反馈错误；3状态为错误的试题，4有人反馈错误的试题</param>
+        /// <param name="use">启用中的试题，null取所有</param>
+        /// <param name="del">是否是删除的</param>
         /// <returns></returns>
-        public int Total(int orgid, long sbjid, long couid, long olid, int[] types, int[] diffs, int part)
+        public int Total(int orgid, long sbjid, long couid, long olid, int[] types, int[] diffs, int part, bool? use, bool? del)
         {
-            //int[] typearr= types.Split(',').Select(x => int.Parse(x)).ToArray();
-            //int[] diffarr= diffs.Split(',').Select(x => int.Parse(x)).ToArray();
             int[] typearr = types;
             int[] diffarr = diffs;
             //所有
-            if (part == 1) return Business.Do<IQuestions>().Total(orgid, sbjid, couid, olid, typearr, diffarr, null, null, null);
+            if (part == 1) return Business.Do<IQuestions>().Total(orgid, sbjid, couid, olid, typearr, diffarr, use, null, null,del);
             //正常的试题，没有错误，没有用户反馈说错误的
-            if (part == 2) return Business.Do<IQuestions>().Total(orgid, sbjid, couid, olid, typearr, diffarr, null, false, false);
+            if (part == 2) return Business.Do<IQuestions>().Total(orgid, sbjid, couid, olid, typearr, diffarr, use, false, false, del);
             //状态为错误的试题
-            if (part == 3) return Business.Do<IQuestions>().Total(orgid, sbjid, couid, olid, typearr, diffarr, null, true, null);
+            if (part == 3) return Business.Do<IQuestions>().Total(orgid, sbjid, couid, olid, typearr, diffarr, use, true, null, del);
             //用户反馈说错误的试题
-            if (part == 4) return Business.Do<IQuestions>().Total(orgid, sbjid, couid, olid, typearr, diffarr, null, null, true);
+            if (part == 4) return Business.Do<IQuestions>().Total(orgid, sbjid, couid, olid, typearr, diffarr, use, null, true, del);
 
-            return Business.Do<IQuestions>().Total(orgid, sbjid, couid, olid, typearr, diffarr, null, null, null);
+            return Business.Do<IQuestions>().Total(orgid, sbjid, couid, olid, typearr, diffarr, use, null, null, del);
         }
         /// <summary>
         /// 获取试题
@@ -406,7 +408,7 @@ namespace Song.ViewData.Methods
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public ListResult Pager(int orgid, long sbjid, long couid, long olid, int type, bool? use, bool? error, bool? wrong, string search, int size, int index)
+        public ListResult Pager(int orgid, long sbjid, long couid, long olid, int type, bool? del, bool? use, bool? error, bool? wrong, string search, int size, int index)
         {
             if (orgid <= 0)
             {
@@ -416,7 +418,7 @@ namespace Song.ViewData.Methods
             //总记录数
             int count;
             List<Questions> ques = Business.Do<IQuestions>().QuesPager
-                (orgid, type, sbjid, couid, olid, use, error, wrong, -1, search, size, index, out count);
+                (orgid, type, sbjid, couid, olid, use,del, error, wrong, -1, search, size, index, out count);
             ListResult result = new ListResult(ques);
             result.Index = index;
             result.Size = size;
@@ -437,7 +439,7 @@ namespace Song.ViewData.Methods
         {
             if (couid <= 0 && olid <= 0) return null;
             int total;
-            total = Business.Do<IQuestions>().QuesOfCount(-1, -1, couid, olid, type, -1, true);
+            total = Business.Do<IQuestions>().QuesOfCount(-1, -1, couid, olid, type, -1, true, false);
             List<Questions> ques = Business.Do<IQuestions>().QuesCount(-1, -1, couid, olid, type, -1, true, 0 - 1, count);
             for (int i = 0; i < ques.Count; i++)
             {

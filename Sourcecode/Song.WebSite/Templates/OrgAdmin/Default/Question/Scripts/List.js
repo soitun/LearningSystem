@@ -5,7 +5,7 @@ $ready([
     window.vapp = new Vue({
         el: '#vapp',
         data: {
-            organ: {},
+            org: {},
             config: {},      //当前机构配置项    
             types: [],        //试题类型，来自web.config中配置项
 
@@ -32,22 +32,12 @@ $ready([
         },
         mounted: function () {
             var th = this;
-            th.loading_init = true;
-            $api.bat(
-                $api.get('Organization/Current'),
-                $api.cache('Question/Types:99999')
-            ).then(([organ, types]) => {
-                //获取结果
-                th.organ = organ.data.result;
-                th.form.orgid = th.organ.Org_ID;
-                th.config = $api.organ(th.organ).config;
-                th.types = types.data.result;
-                th.getCourses();
-                th.handleCurrentChange(1);
-            }).catch(function (err) {
-                alert(err);
-                console.error(err);
-            }).finally(() => th.loading_init = false);
+            th.org = window.org;
+            th.form.orgid = th.org.Org_ID;
+            th.config = window.config;
+            th.types = window.questypes;
+            th.getCourses();
+            th.handleCurrentChange(1);
         },
         created: function () {
 
@@ -101,9 +91,9 @@ $ready([
             getCourses: function (val) {
                 var th = this;
                 th.loading = true;
-                var orgid = th.organ.Org_ID;
+                var orgid = th.org.Org_ID;
                 $api.cache('Course/Pager', {
-                    'orgid': orgid, 'sbjids': 0, 'thid': '', 'use': '', 'live': '', 'free': '',
+                    'orgid': orgid, 'sbjids': 0, 'thid': '', 'use': '','del':'', 'live': '', 'free': '',
                     'search': '', 'order': '', 'size': -1, 'index': 1
                 }).then(function (req) {
                     if (req.data.success) {
