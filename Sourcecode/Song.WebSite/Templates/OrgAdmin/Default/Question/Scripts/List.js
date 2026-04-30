@@ -15,7 +15,7 @@ $ready([
             //试题的查询条件
             form: {
                 'orgid': -1, 'sbjid': '', 'couid': '', 'olid': '',
-                'type': '', 'use': '', 'error': '', 'wrong': '', 'search': '', 'size': 1, 'index': 1
+                'type': '', 'use': '', 'del': false, 'error': '', 'wrong': '', 'search': '', 'size': 1, 'index': 1
             },
 
             datas: [],
@@ -93,7 +93,7 @@ $ready([
                 th.loading = true;
                 var orgid = th.org.Org_ID;
                 $api.cache('Course/Pager', {
-                    'orgid': orgid, 'sbjids': 0, 'thid': '', 'use': '','del':'', 'live': '', 'free': '',
+                    'orgid': orgid, 'sbjids': 0, 'thid': '', 'use': '', 'live': '', 'free': '',
                     'search': '', 'order': '', 'size': -1, 'index': 1
                 }).then(function (req) {
                     if (req.data.success) {

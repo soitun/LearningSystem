@@ -20,7 +20,7 @@
 
             form: {
                 'orgid': -1, 'sbjid': -1, 'couid': '', 'olid': '',
-                'type': '', 'use': '', 'del':'','error': '', 'wrong': '', 'search': '', 'size': 20, 'index': 1
+                'type': '', 'use': '', 'del': false, 'error': '', 'wrong': '', 'search': '', 'size': 20, 'index': 1
             },
 
             datas: [],
