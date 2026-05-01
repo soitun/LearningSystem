@@ -1,13 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head resource>
     <meta charset="UTF-8">
-    <include file="../inc/meta.inc" /> 
+    <include file="../inc/meta.inc" />
     <title>试题回收站</title>
 </head>
+
 <body>
-    <div id="vapp" v-cloak> 
-     <icon null>试题回收站，功能暂未开发...</icon>
-    </div> 
+    <div id="vapp" v-cloak>
+        <div class="toolsbar">
+            <btngroup show="还原,删除,全选/取消" ref='btngroup' @recycle="recycle" :disabled="loading" @delete="btnbatdel"
+                @select="selectall">
+            </btngroup>
+            <query_panel :model="form" :width="45" :loading="!loading" @search="handleCurrentChange(1)">
+                <template>
+                    <el-form-item label="题干">
+                        <el-input v-model.trim="form.search" clearable style="width:245px" placeholder="搜索"></el-input>
+                    </el-form-item>
+                </template>
+                <template slot="more">
+                    <el-form-item label="专业">
+                        <sbj_cascader ref="subject" :orgid="org.Org_ID" :sbjid="form.sbjid" showitem="ques"
+                            @change="id=>form.sbjid=id">
+                        </sbj_cascader>
+                    </el-form-item>
+                    <el-form-item label="" v-if="courses">
+                        <el-select v-model="form.couid" style="width: 100%;" filterable clearable
+                            placeholder="-- 课程 --">
+                            <el-option v-for="(item,i) in courses" :key="item.Cou_ID" :label="item.Cou_Name"
+                                :value="item.Cou_ID">
+                                <span>{{i+1}} . </span>
+                                <span>{{item.Cou_Name}}</span>
+                                <icon question v-if="item.Cou_QuesCount>0" class="ques">{{ item.Cou_QuesCount }}</icon>
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="题型">
+                        <el-radio-group v-model="form.type" class="types">
+                            <el-radio-button label="">
+                                <icon ques_type="" title="所有" showname="true"></icon>
+                            </el-radio-button>
+                            <el-radio-button v-for="(item,i) in types" :label="i+1">
+                                <ques_type :type="i+1" :types="types" :showname="true"></ques_type>
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+
+                    <el-form-item label="状态">
+                        <!--是否试题有错误-->
+                        <el-radio-group v-model="form.error">
+                            <el-radio-button label="">所有</el-radio-button>
+                            <el-radio-button label="false">
+                                <icon>&#xe634</icon>正常
+                            </el-radio-button>
+                            <el-radio-button label="true">
+                                <icon>&#xe70e</icon>存在错误
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="反馈">
+                        <!--学员反馈有问题的试题-->
+                        <el-radio-group v-model="form.wrong">
+                            <el-radio-button label="">所有</el-radio-button>
+                            <el-radio-button label="false">
+                                <icon>&#xe634</icon>正常
+                            </el-radio-button>
+                            <el-radio-button label="true">
+                                <icon>&#xe61f</icon>报错
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="启用">
+                        <!--试题是否允许显示-->
+                        <el-radio-group v-model="form.use">
+                            <el-radio-button label="">所有</el-radio-button>
+                            <el-radio-button label="true">
+                                <icon>&#xa030</icon>启用
+                            </el-radio-button>
+                            <el-radio-button label="false">
+                                <icon>&#xe7ad</icon>禁用
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+
+                </template>
+            </query_panel>
+        </div>
+    </div>
 </body>
+
 </html>
