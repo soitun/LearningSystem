@@ -5,7 +5,7 @@
         data: {
             form:
             {
-                'orgid': '', 'sbjids': '', 'thid': '', 'use': '', 'live': '', 'free': '',
+                'orgid': '', 'sbjids': '', 'thid': '', 'use': '', 'del':false,'live': '', 'free': '',
                 'search': '', 'order': 'def',
                 'size': 1, 'index': 1
             },
