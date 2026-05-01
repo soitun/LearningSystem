@@ -353,11 +353,12 @@ namespace Song.ViewData.Methods
         /// </summary>
         /// <param name="sbjid">专业id</param>
         /// <param name="use">是否包括启用的课程,null取所有，true取启用的，false取未启用的</param>
+        /// <param name="del">是否删除的课程</param>
         /// <returns></returns>
         [Cache(AdminDisable = true)]
-        public int CountOfCourse(long sbjid, bool? use)
-        {           
-            return Business.Do<ICourse>().CourseOfCount(-1, sbjid, -1, use, null);
+        public int CountOfCourse(long sbjid, bool? use, bool? del)
+        {
+            return Business.Do<ICourse>().CourseOfCount(-1, sbjid, -1, use, del, null);
         }
         /// <summary>
         /// 更新专业的统计数据

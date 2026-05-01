@@ -532,11 +532,11 @@ namespace Song.ViewData.Methods
         /// <param name="size">每页几条</param>
         /// <param name="index">第几页</param>
         /// <returns></returns>
-        public ListResult Pager(int orgid, string sbjids, int thid, bool? use, bool? live, bool? free,string search, string order,int size, int index)
+        public ListResult Pager(int orgid, string sbjids, int thid, bool? use, bool? del, bool? live, bool? free,string search, string order,int size, int index)
         {
             size = size <= 0 ? int.MaxValue : size;
             int count;
-            List<Song.Entities.Course> eas = Business.Do<ICourse>().CoursePager(orgid, sbjids, thid, use, live, free, search, order, size, index, out count);
+            List<Song.Entities.Course> eas = Business.Do<ICourse>().CoursePager(orgid, sbjids, thid, use, del, live, free, search, order, size, index, out count);
             for (int i = 0; i < eas.Count; i++)
             {
                 eas[i] = _tran(eas[i]);
@@ -570,7 +570,7 @@ namespace Song.ViewData.Methods
                 if (string.IsNullOrWhiteSpace(sbjids) || sbjids == "0")
                     order = "rec";
             }
-            eas = Business.Do<ICourse>().CoursePager(orgid, sbjids, 0, true, search, order, size, index, out count);
+            eas = Business.Do<ICourse>().CoursePager(orgid, sbjids, 0, true, false, search, order, size, index, out count);
             for (int i = 0; i < eas.Count; i++)
             {
                 Song.Entities.Course c = _tran(eas[i]);
@@ -599,7 +599,7 @@ namespace Song.ViewData.Methods
             List<Song.Entities.Course> eas;
             if (string.IsNullOrWhiteSpace(order))
                 order = "rec";
-            eas = Business.Do<ICourse>().CourseCount(orgid, sbjid, search, true, order, count);
+            eas = Business.Do<ICourse>().CourseCount(orgid, sbjid, search, true, false, order, count);
             for (int i = 0; i < eas.Count; i++)
             {
                 Song.Entities.Course c = _tran(eas[i]);
@@ -1535,7 +1535,7 @@ namespace Song.ViewData.Methods
                 HttpRuntime.Cache.Remove(orgid.ToString() + ".progress.json");
             }
             //开始生成
-            List<Song.Entities.Course> courses = Business.Do<ICourse>().CourseAll(orgid, -1, -1, null);
+            List<Song.Entities.Course> courses = Business.Do<ICourse>().CourseAll(orgid, -1, -1, null, false);
             //List<Song.Entities.Course> courses = Business.Do<ICourse>().CourseCount(orgid, -1, -1, -1, null, null, 20);
             studentsLogBatExcel battoexcel = new studentsLogBatExcel(orgid, courses, outputPath_StudentsLogBat, start, end);
             battoexcel.DeleteExcel();

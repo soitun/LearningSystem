@@ -519,7 +519,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public Song.Entities.Course[] Courses(int thid)
         {
-            List<Song.Entities.Course> cours = Business.Do<ICourse>().CourseAll(-1, -1, thid, true);
+            List<Song.Entities.Course> cours = Business.Do<ICourse>().CourseAll(-1, -1, thid, true, false);
             if (cours == null || cours.Count < 1) return null;
             for (int i = 0; i < cours.Count; i++)
             {
@@ -536,7 +536,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public Song.Entities.Course[] LiveCourses(int thid, int count)
         {
-            List<Song.Entities.Course> cours = Business.Do<ICourse>().CourseCount(-1, -1, thid, true, null, true, count);
+            List<Song.Entities.Course> cours = Business.Do<ICourse>().CourseCount(-1, -1, thid, true, null, true,false, count);
             if (cours == null || cours.Count < 1) return null;
             for (int i = 0; i < cours.Count; i++)
             {
@@ -564,7 +564,7 @@ namespace Song.ViewData.Methods
             List<Outline_LiveInfo> list = new List<Outline_LiveInfo>();
             if (cour == null)
             {
-                List<Song.Entities.Course> courses = Business.Do<ICourse>().CourseCount(-1, -1, thid, true, null, true, 0);
+                List<Song.Entities.Course> courses = Business.Do<ICourse>().CourseCount(-1, -1, thid, true, null, true,false, 0);
                 foreach(Song.Entities.Course cou in courses)
                     this._Lives(cou, list);
             }

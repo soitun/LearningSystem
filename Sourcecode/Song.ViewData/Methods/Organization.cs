@@ -56,9 +56,9 @@ namespace Song.ViewData.Methods
 
             //课程
             JObject jcoud = new JObject();
-            jcoud.Add("total", Business.Do<ICourse>().CourseOfCount(orgid, -1, -1, null, null));   //课程总数
+            jcoud.Add("total", Business.Do<ICourse>().CourseOfCount(orgid, -1, -1, null,false, null));   //课程总数
             jcoud.Add("usecount", Business.Do<ITeacher>().TeacherOfCount(orgid, true));   //可用课程数
-            jcoud.Add("free", Business.Do<ICourse>().CourseOfCount(orgid, -1, -1, null, true));   //免费的课程数  
+            jcoud.Add("free", Business.Do<ICourse>().CourseOfCount(orgid, -1, -1, null, false,true));   //免费的课程数  
             jcoud.Add("buycount", Business.Do<IStudent>().ForCourseCount(orgid, true));     //课程的选修人次
             jo.Add("course", jcoud);
 

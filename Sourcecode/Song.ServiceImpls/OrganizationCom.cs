@@ -794,7 +794,7 @@ namespace Song.ServiceImpls
             foreach (Subject item in subjects)           
                 tasks.Add(Task.Run(() => _update_Subject_StatisticalData_task(item)));
             //计算课程
-            List<Course> courses = Business.Do<ICourse>().CourseCount(-1, -1, -1, -1, null, null, 0);
+            List<Course> courses = Business.Do<ICourse>().CourseCount(-1, -1, -1, -1, null, null, false, 0);
             foreach (Course item in courses)           
                 tasks.Add(Task.Run(() => _update_Course_StatisticalData_task(item)));
             // 逐个等待任务完成

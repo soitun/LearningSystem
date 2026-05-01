@@ -484,9 +484,9 @@ namespace Song.ServiceImpls
         /// <param name="thid">教师id</param>
         /// <param name="isUse"></param>
         /// <returns></returns>
-        public List<Course> CourseAll(int orgid, long sbjid, int thid, bool? isUse)
+        public List<Course> CourseAll(int orgid, long sbjid, int thid, bool? isUse, bool? isDelete)
         {
-            return CourseCount(orgid, sbjid, thid, -1, null, isUse, -1);
+            return CourseCount(orgid, sbjid, thid, -1, null, isUse, isDelete, -1);
         }
         /// <summary>
         /// 某个课程的学习人数
@@ -582,7 +582,7 @@ namespace Song.ServiceImpls
         /// <param name="isuse">是否包括启用的课程,null取所有，true取启用的，false取未启用的</param>
         /// <param name="isfree">是否免费</param>
         /// <returns></returns>
-        public int CourseOfCount(int orgid, long sbjid, int thid, bool? isuse, bool? isfree)
+        public int CourseOfCount(int orgid, long sbjid, int thid, bool? isuse, bool? isDelete, bool? isfree)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Course._.Org_ID == orgid);
@@ -597,6 +597,7 @@ namespace Song.ServiceImpls
             //}
             if (thid > 0) wc.And(Course._.Th_ID == thid);
             if (isuse != null) wc.And(Course._.Cou_IsUse == (bool)isuse);
+            if (isDelete != null) wc.And(Course._.Cou_IsDeleted == (bool)isDelete);
             if (isfree != null) wc.And(Course._.Cou_IsFree == (bool)isfree);
             return Gateway.Default.Count<Course>(wc);
         }
@@ -636,7 +637,7 @@ namespace Song.ServiceImpls
         {
             if (orgid > 0)
             {
-                List<Course> courses = this.CourseCount(orgid, -1, string.Empty, string.Empty, null, 0);
+                List<Course> courses = this.CourseCount(orgid, -1, string.Empty, string.Empty, null, false, 0);
                 if (courses != null && courses.Count > 0)
                 {
                     foreach (Course cou in courses)
@@ -668,7 +669,7 @@ namespace Song.ServiceImpls
         /// <param name="isUse"></param>
         /// <param name="count">取多少条记录，如果小于等于0，则取所有</param>
         /// <returns></returns>
-        public List<Course> CourseCount(int orgid, long sbjid, int thid, int pid, string sear, bool? isUse, int count)
+        public List<Course> CourseCount(int orgid, long sbjid, int thid, int pid, string sear, bool? isUse, bool? isDelete, int count)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Course._.Org_ID == orgid);
@@ -684,6 +685,7 @@ namespace Song.ServiceImpls
             if (thid > 0) wc.And(Course._.Th_ID == thid);
             if (pid > 0) wc.And(Course._.Cou_ID == pid);
             if (isUse != null) wc.And(Course._.Cou_IsUse == (bool)isUse);
+            if (isDelete != null) wc.And(Course._.Cou_IsDeleted == (bool)isDelete);
             return Gateway.Default.From<Course>().Where(wc)
                 .OrderBy(Course._.Cou_ID.Desc).ToList<Course>(count);
             //如果是采用多个教师对应一个课程，用下面的方法
@@ -700,7 +702,7 @@ namespace Song.ServiceImpls
             //    .OrderBy(Course._.Cou_Order.Desc).ToList<Course>();
 
         }
-        public List<Course> CourseCount(int orgid, long sbjid, string sear, string order, bool? isUse, int count)
+        public List<Course> CourseCount(int orgid, long sbjid, string sear, string order, bool? isUse, bool? isDelete, int count)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Course._.Org_ID == orgid);
@@ -720,6 +722,7 @@ namespace Song.ServiceImpls
             if (order == "rec") wcOrder = Course._.Cou_IsRec.Desc & Course._.Cou_Order.Desc & Course._.Cou_CrtTime.Desc;
             if (!string.IsNullOrWhiteSpace(sear)) wc.And(Course._.Cou_Name.Contains(sear));
             if (isUse != null) wc.And(Course._.Cou_IsUse == (bool)isUse);
+            if (isDelete != null) wc.And(Course._.Cou_IsDeleted == (bool)isDelete);
             wcOrder = wcOrder & Course._.Cou_ID.Desc;
             return Gateway.Default.From<Course>().Where(wc)
                .OrderBy(wcOrder).ToList<Course>(count);
@@ -735,7 +738,7 @@ namespace Song.ServiceImpls
         /// <param name="isUse"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public List<Course> CourseCount(int orgid, long sbjid, int thid, bool? islive, string sear, bool? isUse, int count)
+        public List<Course> CourseCount(int orgid, long sbjid, int thid, bool? islive, string sear, bool? isUse, bool? isDelete, int count)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Course._.Org_ID == orgid);
@@ -751,6 +754,7 @@ namespace Song.ServiceImpls
             if (islive != null) wc.And(Course._.Cou_ExistLive == (bool)islive);
             if (!string.IsNullOrWhiteSpace(sear)) wc.And(Course._.Cou_Name.Contains(sear));
             if (isUse != null) wc.And(Course._.Cou_IsUse == (bool)isUse);
+            if (isDelete != null) wc.And(Course._.Cou_IsDeleted == (bool)isDelete);
             return Gateway.Default.From<Course>().Where(wc)
                .OrderBy(Course._.Cou_ID.Desc).ToList<Course>(count);
         }
@@ -764,7 +768,7 @@ namespace Song.ServiceImpls
         /// <param name="order">排序方式，默认null按排序顺序，flux流量最大优先,def推荐、流量，tax排序号，new最新,rec推荐</param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public List<Course> CourseCount(int orgid, long sbjid, string sear, bool? isUse, string order, int count)
+        public List<Course> CourseCount(int orgid, long sbjid, string sear, bool? isUse, bool? isDelete, string order, int count)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Course._.Org_ID == orgid);
@@ -778,6 +782,7 @@ namespace Song.ServiceImpls
             }
             if (!string.IsNullOrWhiteSpace(sear)) wc.And(Course._.Cou_Name.Contains(sear));
             if (isUse != null) wc.And(Course._.Cou_IsUse == (bool)isUse);
+            if (isDelete != null) wc.And(Course._.Cou_IsDeleted == (bool)isDelete);
             OrderByClip wcOrder = new OrderByClip();
             if (order == "flux") wcOrder = Course._.Cou_ViewNum.Desc;
             if (order == "def") wcOrder = Course._.Cou_CrtTime.Desc;
@@ -796,7 +801,7 @@ namespace Song.ServiceImpls
             return count > 0;
         }
 
-        public List<Course> CoursePager(int orgid, long sbjid, int thid, bool? isUse, string searTxt, string order, int size, int index, out int countSum)
+        public List<Course> CoursePager(int orgid, long sbjid, int thid, bool? isUse, bool? isDelete, string searTxt, string order, int size, int index, out int countSum)
         {
             WhereClip wc = Course._.Org_ID == orgid;
             if (sbjid > 0)
@@ -809,6 +814,7 @@ namespace Song.ServiceImpls
             }
             if (thid > 0) wc.And(Course._.Th_ID == thid);
             if (isUse != null) wc.And(Course._.Cou_IsUse == (bool)isUse);
+            if (isDelete != null) wc.And(Course._.Cou_IsDeleted == (bool)isDelete);
             if (!string.IsNullOrWhiteSpace(searTxt)) wc.And(Course._.Cou_Name.Contains(searTxt));
             countSum = Gateway.Default.Count<Course>(wc);
             OrderByClip wcOrder = new OrderByClip();
@@ -833,9 +839,9 @@ namespace Song.ServiceImpls
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        public List<Course> CoursePager(int orgid, string sbjid, int thid, bool? isUse, string searTxt, string order, int size, int index, out int countSum)
+        public List<Course> CoursePager(int orgid, string sbjid, int thid, bool? isUse, bool? isDelete, string searTxt, string order, int size, int index, out int countSum)
         {
-            return this.CoursePager(orgid, sbjid, thid, isUse, null, null, searTxt, order, size, index, out countSum);
+            return this.CoursePager(orgid, sbjid, thid, isUse,isDelete, null, null, searTxt, order, size, index, out countSum);
         }
 
         /// <summary>
@@ -852,7 +858,7 @@ namespace Song.ServiceImpls
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        public List<Course> CoursePager(int orgid, string sbjid, int thid, bool? isUse, bool? isLive, bool? isFree, string searTxt, string order, int size, int index, out int countSum)
+        public List<Course> CoursePager(int orgid, string sbjid, int thid, bool? isUse, bool? isDelete, bool? isLive, bool? isFree, string searTxt, string order, int size, int index, out int countSum)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(Course._.Org_ID == orgid);
@@ -875,6 +881,7 @@ namespace Song.ServiceImpls
                 wc.And(wcSbjid);
             }
             if (isUse != null) wc.And(Course._.Cou_IsUse == (bool)isUse);
+            if (isDelete != null) wc.And(Course._.Cou_IsDeleted == (bool)isDelete);
             if (isFree != null) wc.And(Course._.Cou_IsFree == (bool)isFree);
             if (order == "live") isLive = true;
             if (isLive != null) wc.And(Course._.Cou_ExistLive == (bool)isLive);

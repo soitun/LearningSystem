@@ -115,10 +115,11 @@ namespace Song.ServiceInterfaces
         /// 获取所有课程
         /// </summary>
         /// <param name="orgid">所在机构id</param>
+        /// <param name="sbjid"></param>
         /// <param name="thid">教师id</param>
         /// <param name="isUse"></param>
         /// <returns></returns>
-        List<Course> CourseAll(int orgid, long  sbjid, int thid, bool? isUse);
+        List<Course> CourseAll(int orgid, long  sbjid, int thid, bool? isUse, bool? isDelete);
         /// <summary>
         /// 某个课程的学习人数
         /// </summary>
@@ -148,11 +149,11 @@ namespace Song.ServiceInterfaces
         /// <param name="isUse"></param>
         /// <param name="count">取多少条记录，如果小于等于0，则取所有</param>
         /// <returns></returns>
-        List<Course> CourseCount(int orgid, long  sbjid, int thid, int pid, string sear, bool? isUse, int count);
+        List<Course> CourseCount(int orgid, long  sbjid, int thid, int pid, string sear, bool? isUse, bool? isDelete, int count);
         /// <summary>
         /// 获取指定个数的课程列表
         /// </summary>
-        List<Course> CourseCount(int orgid, long  sbjid, string sear, string order, bool? isUse, int count);
+        List<Course> CourseCount(int orgid, long  sbjid, string sear, string order, bool? isUse, bool? isDelete, int count);
         /// <summary>
         /// 获取指定个数的课程列表
         /// </summary>
@@ -164,7 +165,7 @@ namespace Song.ServiceInterfaces
         /// <param name="isUse"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        List<Course> CourseCount(int orgid, long  sbjid, int thid, bool? islive, string sear, bool? isUse, int count);
+        List<Course> CourseCount(int orgid, long  sbjid, int thid, bool? islive, string sear, bool? isUse, bool? isDelete, int count);
         /// <summary>
         /// 获取指定个数的课程列表
         /// </summary>
@@ -175,7 +176,7 @@ namespace Song.ServiceInterfaces
         /// <param name="order">排序方式，def:默认，先推荐，然后按访问量倒序;flux：按访问量倒序;tax：按自定义排序要求;new:按创建时间，最新发布在前面;rec:按推荐，先推荐，然后按tax排序</param>
         /// <param name="count"></param>
         /// <returns></returns>
-        List<Course> CourseCount(int orgid, long  sbjid, string sear, bool? isUse, string order, int count);
+        List<Course> CourseCount(int orgid, long  sbjid, string sear, bool? isUse, bool? isDelete, string order, int count);
         /// <summary>
         /// 课程数量,如果计算专业下的课程数，会计算专业所有子级专业的课程数
         /// </summary>
@@ -185,7 +186,7 @@ namespace Song.ServiceInterfaces
         /// <param name="isuse">是否包括启用的课程,null取所有，true取启用的，false取未启用的</param>
         /// <param name="isfree">是否免费</param>
         /// <returns></returns>
-        int CourseOfCount(int orgid, long sbjid, int thid, bool? isuse, bool? isfree);
+        int CourseOfCount(int orgid, long sbjid, int thid, bool? isUse, bool? isDelete, bool? isfree);
         /// <summary>
         /// 专业下的课程数，包括启用、不启用的，所有课程
         /// </summary>
@@ -212,7 +213,7 @@ namespace Song.ServiceInterfaces
         /// <param name="isUse"></param>
         /// <returns></returns>
         bool CourseIsChildren(int orgid, long couid, bool? isUse);
-       
+
         /// <summary>
         /// 分页获取
         /// </summary>
@@ -220,13 +221,14 @@ namespace Song.ServiceInterfaces
         /// <param name="sbjid"></param>
         /// <param name="thid"></param>
         /// <param name="isUse"></param>
+        /// <param name="isDelete"></param>
         /// <param name="searTxt"></param>
         /// <param name="order">排序方式，默认null按排序顺序，flux流量最大优先</param>
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        List<Course> CoursePager(int orgid, long  sbjid, int thid, bool? isUse, string searTxt, string order, int size, int index, out int countSum);
+        List<Course> CoursePager(int orgid, long  sbjid, int thid, bool? isUse, bool? isDelete, string searTxt, string order, int size, int index, out int countSum);
         /// <summary>
         /// 分页获取
         /// </summary>
@@ -234,6 +236,7 @@ namespace Song.ServiceInterfaces
         /// <param name="sbjid">专业id,多个id用逗号分隔</param>
         /// <param name="thid">教师id</param>
         /// <param name="isUse">是否启用</param>
+        /// <param name="isDelete"></param>
         /// <param name="searTxt"></param>
         /// <param name="order">排序方式，
         /// def:默认，按创建时间倒序;
@@ -251,7 +254,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        List<Course> CoursePager(int orgid, string sbjid, int thid, bool? isUse, string searTxt, string order, int size, int index, out int countSum);
+        List<Course> CoursePager(int orgid, string sbjid, int thid, bool? isUse, bool? isDelete, string searTxt, string order, int size, int index, out int countSum);
         /// <summary>
         /// 分页获取
         /// </summary>
@@ -259,6 +262,7 @@ namespace Song.ServiceInterfaces
         /// <param name="sbjid">专业id</param>
         /// <param name="thid">教师id</param>
         /// <param name="isUse">是否启用</param>
+        /// <param name="isDelete"></param>
         /// <param name="isLive">是否是直播课</param>
         /// <param name="isFree">是否免费</param>
         /// <param name="searTxt">按课程名称检查</param>
@@ -267,7 +271,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        List<Course> CoursePager(int orgid, string sbjid, int thid, bool? isUse, bool? isLive,bool? isFree, string searTxt, string order, int size, int index, out int countSum);
+        List<Course> CoursePager(int orgid, string sbjid, int thid, bool? isUse, bool? isDelete, bool? isLive,bool? isFree, string searTxt, string order, int size, int index, out int countSum);
         /// <summary>
         /// 将当前项目向上移动；仅在当前对象的同层移动，即同一父节点下的对象这前移动；
         /// </summary>
