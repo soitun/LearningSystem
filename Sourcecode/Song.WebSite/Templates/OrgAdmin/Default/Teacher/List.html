@@ -65,7 +65,7 @@
                         <span>{{(form.index - 1) * form.size + scope.$index + 1}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column label="姓名/电话" width="300">
+                <el-table-column label="姓名/电话" width="250">
                     <template slot-scope="scope">
                         <avatar :teacher="scope.row" circle="true" size="45"></avatar>                       
                         <div class="info" :class="{'woman': scope.row.Th_Gender==2,'man': scope.row.Th_Gender==1}">

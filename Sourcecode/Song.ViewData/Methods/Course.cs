@@ -286,7 +286,7 @@ namespace Song.ViewData.Methods
             }
         }
         /// <summary>
-        /// 删除课程
+        /// 删除课程，逻辑删除，可以从回收站恢复
         /// </summary>
         /// <param name="id">课程id，可以是多个，用逗号分隔</param>
         /// <returns></returns>
@@ -299,6 +299,40 @@ namespace Song.ViewData.Methods
             List<long> list = id.ToList<long>();
             foreach (long s in list)
                 i += Business.Do<ICourse>().CourseDelete(s);
+            return i;
+        }
+        /// <summary>
+        /// 还原删除的课程
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Admin, Teacher]
+        [HttpPost]
+        public int Recycle(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = id.ToList<long>();
+            foreach (long s in list)
+                i += Business.Do<ICourse>().CourseRecycle(s);
+            return i;
+        }
+        /// <summary>
+        /// 删除专业（物理删除）
+        /// </summary>
+        /// <param name="id">试题id，可以是多个，用逗号分隔</param>
+        /// <returns></returns>
+        [Admin]
+        [HttpDelete, HttpGet(Ignore = true)]
+        public int Remove(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = id.ToList<long>();
+            foreach (long s in list)
+            {               
+               i += Business.Do<ICourse>().CourseRemove(s);
+            }
             return i;
         }
         /// <summary>
