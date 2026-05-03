@@ -10,8 +10,7 @@
 <body>
     <div id="vapp" v-cloak>
         <div class="toolsbar">
-            <btngroup show="还原,删除,全选/取消" ref='btngroup' @recycle="recycle" :disabled="loading" @delete="btnbatdel"
-                @select="selectall">
+            <btngroup show="还原,删除" ref='btngroup' @recycle="recycle" :disabled="loading">
             </btngroup>
             <query_panel :model="form" :width="45" :loading="!loading" @search="handleCurrentChange(1)">
                 <template>

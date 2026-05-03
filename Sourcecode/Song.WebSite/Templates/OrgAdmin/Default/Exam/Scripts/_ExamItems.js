@@ -266,7 +266,7 @@ $ready([
                 if (val.length > 0) currid = val[val.length - 1];
                 var th = this;
                 var orgid = th.org.Org_ID;
-                $api.cache('Course/Pager', { 'orgid': orgid, 'sbjids': currid, 'thid': '', 'use': '', 'live': '', 'free': '', 'search': '', 'order': '', 'size': -1, 'index': 1 })
+                $api.cache('Course/Pager', { 'orgid': orgid, 'sbjids': currid, 'thid': '', 'use': '','del':false, 'live': '', 'free': '', 'search': '', 'order': '', 'size': -1, 'index': 1 })
                     .then(function (req) {
                         if (req.data.success) {
                             th.courses = req.data.result;

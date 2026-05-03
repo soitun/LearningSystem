@@ -149,7 +149,7 @@ $ready([],
                 return {
                     showpanel: false,        //是否显示面板
                     //查询课程
-                    form: { 'orgid': 0, 'sbjids': 0, 'thid': '', 'use': '', 'live': '', 'free': '', 'search': '', 'order': '', 'size': 10, 'index': 1 },
+                    form: { 'orgid': 0, 'sbjids': 0, 'thid': '', 'use': '', 'del':false,'live': '', 'free': '', 'search': '', 'order': '', 'size': 10, 'index': 1 },
                     datas: [],
                     total: 1, //总记录数
                     totalpages: 1, //总页数

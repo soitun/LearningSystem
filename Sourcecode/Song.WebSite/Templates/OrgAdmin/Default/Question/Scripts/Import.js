@@ -92,7 +92,7 @@ $ready(function () {
                 $api.cache('Course/Pager',
                     {
                         'orgid': orgid, 'sbjids': sbjid, 'thid': '',
-                        'use': '', 'live': '', 'free': '', 'search': '', 'order': '',
+                        'use': '','del':false, 'live': '', 'free': '', 'search': '', 'order': '',
                         'size': -1, 'index': 1
                     }).then(function (req) {
                         if (req.data.success) {
