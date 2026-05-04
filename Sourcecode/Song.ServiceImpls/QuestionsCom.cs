@@ -22,15 +22,15 @@ namespace Song.ServiceImpls
 {
     public class QuestionsCom : IQuestions
     {
-         
+
         #region 试题管理
 
         public long QuesAdd(Questions entity)
         {
             if (entity.Qus_ID <= 0) entity.Qus_ID = WeiSha.Core.Request.SnowID();
-   
+
             entity.Qus_CrtTime = DateTime.Now;
-            entity.Qus_LastTime = DateTime.Now;           
+            entity.Qus_LastTime = DateTime.Now;
             if (entity.Org_ID <= 0)
             {
                 Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
@@ -46,14 +46,14 @@ namespace Song.ServiceImpls
                     entity.Sbj_Name = course.Sbj_Name;
                 }
             }
-            if(entity.Sbj_ID>0 && string.IsNullOrWhiteSpace(entity.Sbj_Name))
+            if (entity.Sbj_ID > 0 && string.IsNullOrWhiteSpace(entity.Sbj_Name))
             {
                 Subject sbj = Business.Do<ISubject>().SubjectSingle(entity.Sbj_ID);
                 if (sbj != null) entity.Sbj_Name = sbj.Sbj_Name;
             }
 
             if (string.IsNullOrWhiteSpace(entity.Qus_UID))
-                entity.Qus_UID = WeiSha.Core.Request.UniqueID();          
+                entity.Qus_UID = WeiSha.Core.Request.UniqueID();
             Gateway.Default.Save<Questions>(entity);
             this.OnAdd(entity, EventArgs.Empty);
             return entity.Qus_ID;
@@ -62,7 +62,7 @@ namespace Song.ServiceImpls
         public void QuesSave(Questions entity)
         {
             entity.Qus_LastTime = DateTime.Now;
-            entity.Qus_IsError = false;         
+            entity.Qus_IsError = false;
             //获取科目名称
             if (entity.Sbj_ID > 0 && string.IsNullOrWhiteSpace(entity.Sbj_Name))
             {
@@ -90,7 +90,7 @@ namespace Song.ServiceImpls
         }
 
         public void QuesInput(Questions entity, List<Song.Entities.QuesAnswer> ansItem)
-        {           
+        {
             //获取科目名称
             if (entity.Sbj_ID > 0 && string.IsNullOrWhiteSpace(entity.Sbj_Name))
             {
@@ -105,7 +105,7 @@ namespace Song.ServiceImpls
                 {
                     for (int i = 0; i < ansItem.Count; i++)
                         ansItem[i].Qus_ID = entity.Qus_ID;
-                } 
+                }
                 entity.Qus_Items = this.AnswerToItems(ansItem);
             }
             //判断是否存在
@@ -143,7 +143,7 @@ namespace Song.ServiceImpls
             return count;
         }
         public int QuesDelete(long quesid)
-        {      
+        {
             Questions ques = this.QuesSingle(quesid);
             return this.QuesDelete(ques);
         }
@@ -157,7 +157,7 @@ namespace Song.ServiceImpls
             foreach (long id in idarray)
                 wc.Or(Questions._.Qus_ID == id);
             List<Questions> ques = Gateway.Default.From<Questions>().Where(wc).ToList<Questions>();
-            foreach(Questions q in ques)
+            foreach (Questions q in ques)
             {
                 if (!orgids.Contains(q.Org_ID)) orgids.Add(q.Org_ID);
                 if (!sbjids.Contains(q.Sbj_ID)) sbjids.Add(q.Sbj_ID);
@@ -169,7 +169,7 @@ namespace Song.ServiceImpls
             foreach (int orgid in orgids) this.QuesCountUpdate(orgid, -1, -1, -1);
             foreach (int sbjid in sbjids) this.QuesCountUpdate(-1, sbjid, -1, -1);
             foreach (int couid in couids) this.QuesCountUpdate(-1, -1, couid, -1);
-            
+
             this.OnDelete(idarray, EventArgs.Empty);
             return count;
         }
@@ -179,6 +179,30 @@ namespace Song.ServiceImpls
         public int QuesRecycle(long quesid)
         {
             int count = Gateway.Default.Update<Questions>(Questions._.Qus_IsDeleted, false, Questions._.Qus_ID == quesid);
+            return count;
+        }
+        public int QuesRecycle(long[] idarray)
+        {
+            //计算试题的机构id,专业id,课程id,章节id
+            List<int> orgids = new List<int>();
+            List<long> sbjids = new List<long>();
+            List<long> couids = new List<long>();
+            WhereClip wc = new WhereClip();
+            foreach (long id in idarray)
+                wc.Or(Questions._.Qus_ID == id);
+            List<Questions> ques = Gateway.Default.From<Questions>().Where(wc).ToList<Questions>();
+            foreach (Questions q in ques)
+            {
+                if (!orgids.Contains(q.Org_ID)) orgids.Add(q.Org_ID);
+                if (!sbjids.Contains(q.Sbj_ID)) sbjids.Add(q.Sbj_ID);
+                if (!couids.Contains(q.Cou_ID)) couids.Add(q.Cou_ID);
+            }
+            //删除并重新统计
+            int count = Gateway.Default.Update<Questions>(Questions._.Qus_IsDeleted, false, wc);
+            //Gateway.Default.Delete<Questions>(wc);
+            foreach (int orgid in orgids) this.QuesCountUpdate(orgid, -1, -1, -1);
+            foreach (int sbjid in sbjids) this.QuesCountUpdate(-1, sbjid, -1, -1);
+            foreach (int couid in couids) this.QuesCountUpdate(-1, -1, couid, -1);
             return count;
         }
         /// <summary>

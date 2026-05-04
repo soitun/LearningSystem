@@ -10,9 +10,9 @@
 <body>
     <div id="vapp" v-cloak>
         <div class="toolsbar">
-            <btngroup show="还原,删除" ref='btngroup' @recycle="recycle" :disabled="loading">
+            <btngroup show="还原,删除" ref='btngroup' @recycle="recycle"  @delete="remove" :disabled="loading">
             </btngroup>
-            <query_panel :model="form" :width="45" :loading="!loading" @search="handleCurrentChange(1)">
+            <query_panel :model="form" :width="45" :loading="loading" @search="handleCurrentChange(1)">
                 <template>
                     <el-form-item label="题干">
                         <el-input v-model.trim="form.search" clearable style="width:245px" placeholder="搜索"></el-input>
@@ -86,6 +86,68 @@
                 </template>
             </query_panel>
         </div>
+          <!-- 数据列表-->
+          <el-table ref="datatables" border resizable :data="datas" tooltip-effect="dark" style="width: 100%" stripe
+          @selection-change="val=>selects=val" @row-dblclick="row=>$refs.btngroup.modify(row[$refs.btngroup.idkey])"
+          row-key="Qus_ID" :row-class-name="data=>{return data.row.Qus_IsUse ? 'enable' : 'disabled';}">
+          <div slot="empty">
+              <span v-if="!loading">未查询到数据</span>
+          </div>
+          <el-table-column type="selection" width="35">
+          </el-table-column>
+          <el-table-column label="#" type="index" width="80" align="center">
+              <template slot-scope="scope">
+                  <span>{{(form.index - 1) * form.size + scope.$index + 1}}</span>
+              </template>
+          </el-table-column>
+
+          <el-table-column label="试题" class-name="ques_title" min-width="300px">
+              <template slot-scope="scope">
+                  <ques_type :type="scope.row.Qus_Type" :types="types"></ques_type>
+                  <alert v-if="scope.row.Qus_IsError" title="存在错误">存在错误</alert>
+                  <alert v-if="scope.row.Qus_IsWrong" title="学员反馈试题有错误">报错</alert>
+                  <span v-html="showsearch(scope.row.Qus_Title,form.search)" class="medium"></span>
+              </template>
+          </el-table-column>
+          <el-table-column label="难度" width="70">
+              <template slot-scope="scope">
+                  <el-tag type="info" title="难度等级"> {{scope.row.Qus_Diff}}</el-tag>
+              </template>
+          </el-table-column>
+          <el-table-column label="课程">
+              <template slot-scope="scope">
+                  <course_name :couid="scope.row.Cou_ID" :ref="'couname_'+scope.$index" :courses="courses_all"
+                      :index="scope.$index"></course_name>
+              </template>
+          </el-table-column>
+          <el-table-column label="操作" width="120" align="center">
+            <template slot-scope="scope">
+                <span class="el-icon-loading" v-if="loadingid==scope.row.Question"></span>
+                <el-button-group v-else>
+                    <el-popconfirm confirm-button-text='是的' cancel-button-text='不用' icon="el-icon-info"
+                        icon-color="red" title="确定还原吗？"
+                        @confirm="$refs.btngroup.events('recycle',scope.row.Qus_ID)">
+                        <el-link type="warning" plain slot="reference">
+                            <icon>&#xa014</icon>还原
+                        </el-link>
+                    </el-popconfirm>
+
+                    <el-popconfirm confirm-button-text='是的' cancel-button-text='不用' icon="el-icon-info"
+                        icon-color="red" title="将永久删除该数据，确定吗？" @confirm="$refs.btngroup.delete(scope.row.Qus_ID)">
+                        <el-link type="danger" plain icon="el-icon-delete" slot="reference"> 删除
+                        </el-link>
+                    </el-popconfirm>
+                </el-button-group>
+            </template>
+          </el-table-column>
+      </el-table>
+
+
+      <div id="pager-box">
+          <el-pagination v-on:current-change="handleCurrentChange" :current-page="form.index" 
+              :page-size="form.size" :pager-count="12" layout="total, prev, pager, next, jumper" :total="total">
+          </el-pagination>
+      </div>
     </div>
 </body>
 

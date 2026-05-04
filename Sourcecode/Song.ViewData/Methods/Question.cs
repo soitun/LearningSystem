@@ -56,6 +56,39 @@ namespace Song.ViewData.Methods
             return qusid.Length;
         }
         /// <summary>
+        /// 回收试题
+        /// </summary>
+        /// <param name="qusid"></param>
+        /// <param name="olid"></param>
+        /// <returns></returns>
+        [Admin, Teacher]
+        [HttpPost]
+        public int Recycle(string qusid)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(qusid)) return i;
+            long[] list = qusid.ToArray<long>();
+            return Business.Do<IQuestions>().QuesRecycle(list);
+        }
+        /// <summary>
+        /// 删除专业（物理删除）
+        /// </summary>
+        /// <param name="qusid">试题id，可以是多个，用逗号分隔</param>
+        /// <returns></returns>
+        [Admin]
+        [HttpDelete, HttpGet(Ignore = true)]
+        public int Remove(string qusid)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(qusid)) return i;
+            List<long> list = qusid.ToList<long>();
+            foreach (long s in list)
+            {
+                i += Business.Do<IQuestions>().QuesRemove(s);
+            }
+            return i;
+        }
+        /// <summary>
         /// 添加试题
         /// </summary>
         /// <param name="entity">试题</param>

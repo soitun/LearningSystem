@@ -53,6 +53,10 @@ namespace Song.ServiceInterfaces
         /// </summary>
         int QuesRecycle(long quesid);
         /// <summary>
+        /// 批量回收
+        /// </summary>
+        int QuesRecycle(long[] idarray);
+        /// <summary>
         /// 真正删除，按主键ID；
         /// </summary>
         /// <param name="quesid">实体的主键</param>

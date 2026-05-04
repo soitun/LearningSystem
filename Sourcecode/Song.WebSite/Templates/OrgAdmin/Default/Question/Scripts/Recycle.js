@@ -1,29 +1,47 @@
-$ready([], function () {
+$ready([
+    'Components/ques_type.js',
+], function () {
     window.vapp = new Vue({
         el: '#vapp',
         data: {
             org: {},
-            form:
-            {
-                'orgid': '', 'sbjids': '', 'thid': '', 'use': '', 'del': true, 'live': '', 'free': '',
-                'search': '', 'order': 'def',
-                'size': 1, 'index': 1
+            config: {},      //当前机构配置项    
+            types: [],        //试题类型，来自web.config中配置项
+
+            //所有课程
+            courses_all: [],
+            couid: '',
+            //试题的查询条件
+            form: {
+                'orgid': -1, 'sbjid': '', 'couid': '', 'olid': '',
+                'type': '', 'use': '', 'del': true, 'error': '', 'wrong': '', 'search': '', 'size': 1, 'index': 1
             },
+
             datas: [],
             total: 1, //总记录数
             totalpages: 1, //总页数
             selects: [], //数据表中选中的行
             exception: '',
 
+            loadingid: 0,
             loadstate: {
                 recycle: false,         //还原
-                get: false,         //加载数据     
-
+                course: false,
+                get: false,         //加载数据 
                 remove: false          //删除数据
             }
         },
+        updated: function () {
+            this.$mathjax();
+        },
         mounted: function () {
-
+            var th = this;
+            th.org = window.org;
+            th.form.orgid = th.org.Org_ID;
+            th.config = window.config;
+            th.types = window.questypes;
+            th.getCourses();
+            th.handleCurrentChange(1);
         },
         created: function () {
             var th = this;
@@ -41,8 +59,8 @@ $ready([], function () {
                 }
                 return false;
             },
-             //当前选择的课程
-             'courses': function () {
+            //当前选择的课程
+            'courses': function () {
                 if (this.form.sbjid == '') return this.courses_all;
                 //获取选中的所有专业id
                 var sbjid = this.form.sbjid;
@@ -86,13 +104,13 @@ $ready([], function () {
 
         },
         methods: {
-             //获取课程
-             getCourses: function (val) {
+            //获取课程
+            getCourses: function (val) {
                 var th = this;
-                th.loading = true;
+                th.loadstate.course = true;
                 var orgid = th.org.Org_ID;
                 $api.cache('Course/Pager', {
-                    'orgid': orgid, 'sbjids': 0, 'thid': '', 'use': '', 'del':false,'live': '', 'free': '',
+                    'orgid': orgid, 'sbjids': 0, 'thid': '', 'use': '', 'del': false, 'live': '', 'free': '',
                     'search': '', 'order': '', 'size': -1, 'index': 1
                 }).then(function (req) {
                     if (req.data.success) {
@@ -105,7 +123,7 @@ $ready([], function () {
                     alert(err);
                     console.error(err);
                 }).finally(function () {
-                    //th.handleCurrentChange(1);
+                    th.loadstate.course = false;
                 });
             },
             //加载数据页
@@ -117,10 +135,13 @@ $ready([], function () {
                 th.form.size = Math.floor(area / 57);
                 th.loadstate.get = true;
                 th.exception = '';
-                $api.get("Course/Pager", th.form).then(function (d) {
+                $api.get("Question/Pager", th.form).then(function (d) {
                     if (d.data.success) {
-                        th.datas = d.data.result;
-                        //console.log(th.datas);
+                        var result = d.data.result;
+                        for (let i = 0; i < result.length; i++) {
+                            result[i].Qus_Title = result[i].Qus_Title.replace(/(<([^>]+)>)/ig, "");
+                        }
+                        th.datas = result;
                         th.totalpages = Number(d.data.totalpages);
                         th.total = d.data.total;
                     } else {
@@ -140,7 +161,7 @@ $ready([], function () {
                     type: 'warning'
                 }).then(() => {
                     th.loadstate.recycle = true;
-                    $api.post("Course/Recycle", { "id": datas })
+                    $api.post("Question/Recycle", { "qusid": datas })
                         .then(req => {
                             if (req.data.success) {
                                 let result = req.data.result;
@@ -162,7 +183,7 @@ $ready([], function () {
                     type: 'error'
                 }).then(() => {
                     th.loadstate.remove = true;
-                    $api.delete("Course/Remove", { "id": datas })
+                    $api.delete("Question/Remove", { "qusid": datas })
                         .then(req => {
                             if (req.data.success) {
                                 let result = req.data.result;
@@ -182,5 +203,69 @@ $ready([], function () {
         components: {
 
         }
+    });
+    //显示课程名称
+    Vue.component('course_name', {
+        //couid:当前试题的id
+        //courses：所有课程
+        props: ["couid", "courses", "index"],
+        data: function () {
+            return {
+                course: {},
+                loading: false
+            }
+        },
+        watch: {
+            'couid': {
+                handler: function (nv) {
+                    if (!$api.isnull(nv)) {
+                        if (this.index == 0) this.startInit();
+                    }
+                }, immediate: true
+            }
+        },
+        computed: {},
+        mounted: function () { },
+        methods: {
+            //初始加载
+            startInit: function () {
+                //加载完成，则加载后一个组件，实现逐个加载的效果
+                this.getcourse().finally(() => {
+                    var vapp = window.vapp;
+                    var ctr = vapp.$refs['couname_' + (this.index + 1)];
+                    if (ctr != null) {
+                        window.setTimeout(ctr.startInit, 50);
+                    }
+                });
+            },
+            //获取课程信息
+            getcourse: function () {
+                var th = this;
+                return new Promise(function (res, rej) {
+                    if (th.courses) {
+                        th.course = th.courses.find(item => item.Cou_ID == th.couid);
+                        if (th.course != undefined) return res();
+                    }
+                    th.loading = true;
+                    $api.cache('Course/ForID', { 'id': th.couid }).then(function (req) {
+                        if (req.data.success) {
+                            th.course = req.data.result;
+                        } else {
+                            th.loading = false;
+                            console.error(req.data.exception);
+                            throw req.config.way + ' ' + req.data.message;
+                        }
+                    }).catch(err => console.error(err))
+                        .finally(() => {
+                            th.loading = false;
+                            return res();
+                        });
+                });
+            }
+        },
+        template: `<span>
+            <i class="el-icon-loading" v-if="loading"></i>
+            <template v-else-if="course">{{course.Cou_Name}}</template>
+        </span>`
     });
 });
