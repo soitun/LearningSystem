@@ -9,7 +9,7 @@ $ready(function () {
 
             form: {
                 'orgid': '', 'sbjid': '', 'couid': $api.querystring('id'),
-                'search': '', 'isuse': '', 'diff': '', 'size': 20, 'index': 1
+                'search': '', 'isuse': '', 'del': false, 'diff': '', 'size': 20, 'index': 1
             },
 
             datas: [],
@@ -22,21 +22,14 @@ $ready(function () {
 
             loading: false,
             loadingid: 0,
-            loading_init: true
         },
         mounted: function () {
             var th = this;
-            $api.bat(
-                $api.get('Organization/Current')
-            ).then(([org]) => {
-                //获取结果             
-                th.org = org.data.result;
-                //机构配置信息
-                th.config = $api.organ(th.org).config;
-                th.form.orgid = th.org.Org_ID;
-                th.handleCurrentChange(1);
-            }).catch(err => console.error(err))
-                .finally(() => th.loading_init = false);
+            this.org = window.org;
+            //机构配置信息
+            th.config = window.config;
+            th.form.orgid = th.org.Org_ID;
+            th.handleCurrentChange(1);
         },
         created: function () {
 

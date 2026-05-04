@@ -9,7 +9,7 @@
 
             form: {
                 'orgid': '', 'sbjid': '', 'couid': $api.querystring('id'),
-                'search': '', 'isuse': '', 'diff': '', 'size': 20, 'index': 1
+                'search': '', 'isuse': '', 'del':false,'diff': '', 'size': 20, 'index': 1
             },
 
             datas: [],

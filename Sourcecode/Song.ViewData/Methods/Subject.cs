@@ -297,7 +297,7 @@ namespace Song.ViewData.Methods
             JArray jarr = new JArray();
             for (int i = 0; i < childs.Count; i++)
             {
-                string j = childs[i].ToJson("", "Sbj_CrtTime");
+                string j = childs[i].ToJson("", "Sbj_CrtTime,Sbj_DeleteTime");
                 JObject jo = JObject.Parse(j);
                 jarr.Add(jo);
                 //计算下级

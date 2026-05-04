@@ -133,7 +133,14 @@ namespace Song.ServiceImpls
         }
         public int PaperDelete(long identify)
         {
-            return Gateway.Default.Update<TestPaper>(new Field[] { TestPaper._.Tp_IsDeleted, TestPaper._.Tp_DeleteTime }, new object[] { true, DateTime.Now }, TestPaper._.Tp_Id == identify);
+            int count= Gateway.Default.Update<TestPaper>(new Field[] { TestPaper._.Tp_IsDeleted, TestPaper._.Tp_DeleteTime }, new object[] { true, DateTime.Now }, TestPaper._.Tp_Id == identify);
+            //更新统计信息
+            new Task(() =>
+            {
+                TestPaper tp = testPaperCom.PaperSingle(identify);
+                testPaperCom.PaperCountUpdate(tp.Sbj_ID, tp.Cou_ID);
+            }).Start();
+            return count;
         }
         /// <summary>
         /// 还原试卷
@@ -142,7 +149,14 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public int PaperRecycle(long tpid)
         {
-            return Gateway.Default.Update<TestPaper>(TestPaper._.Tp_IsDeleted, true, TestPaper._.Tp_Id == tpid);
+            int count = Gateway.Default.Update<TestPaper>(TestPaper._.Tp_IsDeleted, true, TestPaper._.Tp_Id == tpid);
+            //更新统计信息
+            new Task(() =>
+            {
+                TestPaper tp = testPaperCom.PaperSingle(tpid);
+                testPaperCom.PaperCountUpdate(tp.Sbj_ID, tp.Cou_ID);
+            }).Start();
+            return count;
         }
         /// <summary>
         /// 真正删除，按主键ID；
@@ -167,11 +181,7 @@ namespace Song.ServiceImpls
                     tran.Delete<TestResults>(TestResults._.Tp_Id == tpid);
                     WeiSha.Core.Upload.Get["TestPaper"].DeleteDirectory(tp.Tp_Id.ToString());
                     tran.Commit();
-                    //更新统计信息
-                    new Task(() =>
-                    {
-                        testPaperCom.PaperCountUpdate(tp.Sbj_ID, tp.Cou_ID);
-                    }).Start();
+                   
                 }
                 catch (Exception ex)
                 {
@@ -203,11 +213,12 @@ namespace Song.ServiceImpls
             wc.And(TestPaper._.Tp_IsFinal == true);
             if (use != null)
             {
-                wc.And(TestPaper._.Tp_IsUse == (bool)use);
+                wc.And(TestPaper._.Tp_IsUse == use);
+                wc.And(TestPaper._.Tp_IsDeleted == false);
             }
             return Gateway.Default.From<TestPaper>().Where(wc).OrderBy(TestPaper._.Tp_Id.Desc).ToFirst<TestPaper>();
         }
-        public List<TestPaper> PaperCount(int orgid, long sbjid, long couid, int diff, bool? isUse, int count)
+        public List<TestPaper> PaperCount(int orgid, long sbjid, long couid, int diff, bool? isUse, bool? isDelete, int count)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(TestPaper._.Org_ID == orgid);
@@ -223,10 +234,13 @@ namespace Song.ServiceImpls
             if (diff > 0) wc.And(TestPaper._.Tp_Diff == diff);
             if (isUse != null) wc.And(TestPaper._.Tp_IsUse == (bool)isUse);
             count = count > 0 ? count : int.MaxValue;
-            return Gateway.Default.From<TestPaper>().Where(wc).OrderBy(TestPaper._.Tp_CrtTime.Desc).ToList<TestPaper>(count);
+            OrderByClip orderBy = new OrderByClip();
+            if (isDelete != null && isDelete == true) orderBy &= TestPaper._.Tp_DeleteTime.Desc;
+            orderBy &= TestPaper._.Tp_CrtTime.Desc;
+            return Gateway.Default.From<TestPaper>().Where(wc).OrderBy(orderBy).ToList<TestPaper>(count);
         }
 
-        public List<TestPaper> PaperCount(string search, int orgid, long sbjid, long couid, int diff, bool? isUse, int count)
+        public List<TestPaper> PaperCount(string search, int orgid, long sbjid, long couid, int diff, bool? isUse, bool? isDelete, int count)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc.And(TestPaper._.Org_ID == orgid);
@@ -243,7 +257,11 @@ namespace Song.ServiceImpls
             if (isUse != null) wc.And(TestPaper._.Tp_IsUse == (bool)isUse);
             if (search != null && search.Trim() != "") wc.And(TestPaper._.Tp_Name.Contains(search));
             count = count > 0 ? count : int.MaxValue;
-            return Gateway.Default.From<TestPaper>().Where(wc).OrderBy(TestPaper._.Tp_CrtTime.Desc).ToList<TestPaper>(count);
+
+            OrderByClip orderBy = new OrderByClip();
+            if (isDelete != null && isDelete == true) orderBy &= TestPaper._.Tp_DeleteTime.Desc;
+            orderBy &= TestPaper._.Tp_CrtTime.Desc;
+            return Gateway.Default.From<TestPaper>().Where(wc).OrderBy(orderBy).ToList<TestPaper>(count);
         }
 
         public int PaperOfCount(int orgid, long sbjid, long couid, int diff, bool? isUse)
@@ -265,16 +283,16 @@ namespace Song.ServiceImpls
         {
             if (sbjid > 0)
             {
-                int sbj_count = Gateway.Default.Count<TestPaper>(TestPaper._.Sbj_ID == sbjid);
+                int sbj_count = Gateway.Default.Count<TestPaper>(TestPaper._.Sbj_ID == sbjid && TestPaper._.Tp_IsDeleted == false);
                 Gateway.Default.Update<Subject>(new Field[] { Subject._.Sbj_TestCount }, new object[] { sbj_count }, Subject._.Sbj_ID == sbjid);
             }
             if (couid > 0)
             {
-                int cou_count = Gateway.Default.Count<TestPaper>(TestPaper._.Cou_ID == couid);
+                int cou_count = Gateway.Default.Count<TestPaper>(TestPaper._.Cou_ID == couid && TestPaper._.Tp_IsDeleted == false);
                 Gateway.Default.Update<Course>(new Field[] { Course._.Cou_TestCount }, new object[] { cou_count }, Course._.Cou_ID == couid);
             }
         }
-        public List<TestPaper> PaperPager(int orgid, long sbjid, long couid, int diff, bool? isUse, string sear, int size, int index, out int countSum)
+        public List<TestPaper> PaperPager(int orgid, long sbjid, long couid, int diff, bool? isUse, bool? isDelete, string sear, int size, int index, out int countSum)
         {
             WhereClip wc = new WhereClip();
             if (orgid > 0) wc &= TestPaper._.Org_ID == orgid;
@@ -291,7 +309,11 @@ namespace Song.ServiceImpls
             if (isUse != null) wc.And(TestPaper._.Tp_IsUse == (bool)isUse);
             if (string.IsNullOrWhiteSpace(sear) && sear.Trim() != "") wc.And(TestPaper._.Tp_Name.Contains(sear));
             countSum = Gateway.Default.Count<TestPaper>(wc);
-            return Gateway.Default.From<TestPaper>().Where(wc).OrderBy(TestPaper._.Tp_CrtTime.Desc).ToList<TestPaper>(size, (index - 1) * size);
+
+            OrderByClip orderBy = new OrderByClip();
+            if (isDelete != null && isDelete == true) orderBy &= TestPaper._.Tp_DeleteTime.Desc;
+            orderBy &= TestPaper._.Tp_CrtTime.Desc;
+            return Gateway.Default.From<TestPaper>().Where(wc).OrderBy(orderBy).ToList<TestPaper>(size, (index - 1) * size);
         }
 
         /// <summary>

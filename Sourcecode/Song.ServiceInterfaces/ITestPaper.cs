@@ -77,7 +77,7 @@ namespace Song.ServiceInterfaces
         /// <param name="isUse"></param>
         /// <param name="count">指定数量</param>
         /// <returns></returns>
-        List<TestPaper> PaperCount(int orgid, long sbjid, long couid, int diff, bool? isUse, int count);
+        List<TestPaper> PaperCount(int orgid, long sbjid, long couid, int diff, bool? isUse, bool? isDelete, int count);
         /// <summary>
         /// 获取指定数据的试卷
         /// </summary>
@@ -89,7 +89,7 @@ namespace Song.ServiceInterfaces
         /// <param name="isUse"></param>
         /// <param name="count">指定数量</param>
         /// <returns></returns>
-        List<TestPaper> PaperCount(string search, int orgid, long sbjid, long couid, int diff, bool? isUse, int count);
+        List<TestPaper> PaperCount(string search, int orgid, long sbjid, long couid, int diff, bool? isUse, bool? isDelete, int count);
         /// <summary>
         /// 计算有多少个试卷
         /// </summary>
@@ -119,7 +119,7 @@ namespace Song.ServiceInterfaces
         /// <param name="index"></param>
         /// <param name="countSum"></param>
         /// <returns></returns>
-        List<TestPaper> PaperPager(int orgid, long sbjid, long couid, int diff, bool? isUse, string sear, int size, int index, out int countSum);
+        List<TestPaper> PaperPager(int orgid, long sbjid, long couid, int diff, bool? isUse, bool? isDelete, string sear, int size, int index, out int countSum);
 
         #endregion
 

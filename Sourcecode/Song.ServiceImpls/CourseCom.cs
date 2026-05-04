@@ -715,6 +715,8 @@ namespace Song.ServiceImpls
                 wc.And(wcSbjid);
             }
             OrderByClip wcOrder = new OrderByClip();
+            if (isDelete != null && isDelete == true) order = "del";
+            if (order == "del") wcOrder = Course._.Cou_DeleteTime.Desc;
             if (order == "flux") wcOrder = Course._.Cou_ViewNum.Desc;
             if (order == "def") wcOrder = Course._.Cou_CrtTime.Desc;
             if (order == "tax") wcOrder = Course._.Cou_Order.Desc & Course._.Cou_CrtTime.Desc;
@@ -784,6 +786,8 @@ namespace Song.ServiceImpls
             if (isUse != null) wc.And(Course._.Cou_IsUse == (bool)isUse);
             if (isDelete != null) wc.And(Course._.Cou_IsDeleted == (bool)isDelete);
             OrderByClip wcOrder = new OrderByClip();
+            if (isDelete != null && isDelete == true) order = "del";
+            if (order == "del") wcOrder = Course._.Cou_DeleteTime.Desc;
             if (order == "flux") wcOrder = Course._.Cou_ViewNum.Desc;
             if (order == "def") wcOrder = Course._.Cou_CrtTime.Desc;
             if (order == "tax") wcOrder = Course._.Cou_Order.Desc & Course._.Cou_CrtTime.Desc;
@@ -818,6 +822,8 @@ namespace Song.ServiceImpls
             if (!string.IsNullOrWhiteSpace(searTxt)) wc.And(Course._.Cou_Name.Contains(searTxt));
             countSum = Gateway.Default.Count<Course>(wc);
             OrderByClip wcOrder = new OrderByClip();
+            if (isDelete != null && isDelete == true) order = "del";
+            if (order == "del") wcOrder = Course._.Cou_DeleteTime.Desc;
             if (order == "flux") wcOrder = Course._.Cou_ViewNum.Desc;
             if (order == "def") wcOrder = Course._.Cou_CrtTime.Desc;
             if (order == "tax") wcOrder = Course._.Cou_Order.Desc && Course._.Cou_CrtTime.Desc;
@@ -888,6 +894,8 @@ namespace Song.ServiceImpls
             if (!string.IsNullOrWhiteSpace(searTxt)) wc.And(Course._.Cou_Name.Contains(searTxt.Trim()));
             countSum = Gateway.Default.Count<Course>(wc);
             OrderByClip wcOrder = new OrderByClip();
+            if (isDelete != null && isDelete == true) order = "del";
+            if (order == "del") wcOrder = Course._.Cou_DeleteTime.Desc;
             if (order == "flux") wcOrder = Course._.Cou_ViewNum.Desc;
             if (order == "hot") wcOrder = Course._.Cou_ViewNum.Desc;
             if (order == "def") wcOrder = Course._.Cou_CrtTime.Desc;

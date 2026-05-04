@@ -436,7 +436,10 @@ namespace Song.ServiceImpls
             if (isdelete != null) wc.And(Subject._.Sbj_IsDeleted == (bool)isdelete);
             if (string.IsNullOrWhiteSpace(searTxt)) wc.And(Subject._.Sbj_Name.Contains(searTxt));
             countSum = Gateway.Default.Count<Subject>(wc);
-            return Gateway.Default.From<Subject>().Where(wc).OrderBy(Subject._.Sbj_Order.Asc && Subject._.Sbj_ID.Asc).ToList<Subject>(size, (index - 1) * size);
+            OrderByClip orderBy = new OrderByClip();
+            if (isdelete != null && isdelete == true) orderBy &= Subject._.Sbj_DeleteTime.Desc;
+            orderBy &= Subject._.Sbj_Order.Asc;
+            return Gateway.Default.From<Subject>().Where(wc).OrderBy(orderBy && Subject._.Sbj_ID.Asc).ToList<Subject>(size, (index - 1) * size);
         }
 
         public List<Questions> QusForSubject(int orgid, long sbjid, int qusType, bool? isUse, int count)

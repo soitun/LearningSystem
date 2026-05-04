@@ -173,7 +173,7 @@ namespace Song.ViewData.Methods
             Song.Entities.Organization org = Business.Do<IOrganization>().OrganCurrent();
             int orgid = org.Org_ID;
             int count;
-            List<Song.Entities.TestPaper> tps = Business.Do<ITestPaper>().PaperPager(orgid, -1, couid, diff, true, search, size, index, out count);
+            List<Song.Entities.TestPaper> tps = Business.Do<ITestPaper>().PaperPager(orgid, -1, couid, diff, true, false, search, size, index, out count);
             for (int i = 0; i < tps.Count; i++)
                 tps[i] = _tran(tps[i]);
             ListResult result = new ListResult(tps);
@@ -207,11 +207,11 @@ namespace Song.ViewData.Methods
         /// <param name="size">每页几条</param>
         /// <param name="index">第几页</param>
         /// <returns></returns>
-        public ListResult Pager(int orgid, long sbjid, long couid, string search, bool? isuse, int diff, int size, int index)
+        public ListResult Pager(int orgid, long sbjid, long couid, string search, bool? isuse, bool? del, int diff, int size, int index)
         {
             int count;
             List<Song.Entities.TestPaper> tps = Business.Do<ITestPaper>()
-                .PaperPager(orgid, sbjid, couid, diff, isuse, search, size, index, out count);
+                .PaperPager(orgid, sbjid, couid, diff, isuse,del, search, size, index, out count);
             for (int i = 0; i < tps.Count; i++)
                 tps[i] = _tran(tps[i]);
             ListResult result = new ListResult(tps);

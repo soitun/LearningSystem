@@ -181,6 +181,7 @@ namespace Song.ServiceInterfaces
         /// <param name="type">试题类型</param>
         /// <param name="diff">难度等级</param>
         /// <param name="isUse">是否禁用的</param>
+        /// <param name="isDelete"></param>
         /// <returns></returns>
         int QuesOfCount(int orgid, long  sbjid, long couid, long olid, int type, int diff, bool? isUse, bool? isDelete);
         /// <summary>

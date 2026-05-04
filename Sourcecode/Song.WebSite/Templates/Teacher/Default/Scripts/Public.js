@@ -41,6 +41,8 @@
         //查询面板与控件面板
         arr.push('/Utilities/Components/query_panel.js');
         arr.push('/Utilities/Components/panel.js');
+         //专业
+         arr.push('/Utilities/Components/sbj_cascader.js');
         //日期区间选择器
         arr.push('/Utilities/Components/date_range.js');
         return jsfile.concat(arr);

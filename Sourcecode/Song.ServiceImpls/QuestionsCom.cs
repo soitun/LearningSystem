@@ -379,7 +379,7 @@ namespace Song.ServiceImpls
             if (type > 0) wc.And(Questions._.Qus_Type == type);
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
             return Gateway.Default.From<Questions>().Where(wc)
-                .OrderBy(Questions._.Qus_Type.Asc && Questions._.Qus_ID.Desc)
+                .OrderBy(Questions._.Qus_Type.Asc && Questions._.Qus_Order.Asc && Questions._.Qus_ID.Desc)
                 .ToList<Questions>(count);
         }
         /// <summary>
@@ -414,7 +414,7 @@ namespace Song.ServiceImpls
             if (diff > 0) wc.And(Questions._.Qus_Diff == diff);
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
             return Gateway.Default.From<Questions>().Where(wc)
-                .OrderBy(Questions._.Qus_Type.Asc && Questions._.Qus_ID.Desc)
+                .OrderBy(Questions._.Qus_Type.Asc && Questions._.Qus_Order.Asc && Questions._.Qus_ID.Desc)
                 .ToList<Questions>(count, index);
         }
         /// <summary>
@@ -458,7 +458,7 @@ namespace Song.ServiceImpls
             if (isUse != null) wc.And(Questions._.Qus_IsUse == (bool)isUse);
             if (fields == null) fields = new Field[] { };
             return Gateway.Default.From<Questions>().Where(wc)
-                .OrderBy(Questions._.Qus_Type.Asc && Questions._.Qus_ID.Desc).Select(fields)
+                .OrderBy(Questions._.Qus_Type.Asc && Questions._.Qus_Order.Asc && Questions._.Qus_ID.Desc).Select(fields)
                 .ToList<Questions>(count);
         }
         /// <summary>
@@ -702,8 +702,13 @@ namespace Song.ServiceImpls
             if (searTxt != string.Empty && searTxt.ToLower() != "")
                 wc.And(Questions._.Qus_Title.Contains(searTxt.Trim()));
             countSum = Gateway.Default.Count<Questions>(wc);
+
+            OrderByClip orderBy = new OrderByClip();
+            if (isDelete != null && isDelete == true) orderBy &= Questions._.Qus_DeleteTime.Desc;
+            orderBy &= Questions._.Qus_Order.Asc & Questions._.Qus_ID.Desc;
+
             return Gateway.Default.From<Questions>()
-                .Where(wc).OrderBy(Questions._.Qus_ID.Desc)
+                .Where(wc).OrderBy(orderBy)
                 .ToList<Questions>(size, (index - 1) * size);
         }
 
@@ -739,8 +744,13 @@ namespace Song.ServiceImpls
                 wc.And(Questions._.Qus_Title.Contains(searTxt.Trim()));
          
             countSum = Gateway.Default.Count<Questions>(wc);
+
+            OrderByClip orderBy = new OrderByClip();
+            if (isDelete != null && isDelete == true) orderBy &= Questions._.Qus_DeleteTime.Desc;
+            orderBy &= Questions._.Qus_Order.Asc;
+
             return Gateway.Default.From<Questions>().Where(wc)
-                .OrderBy(Questions._.Qus_ID.Desc)
+                .OrderBy(orderBy & Questions._.Qus_ID.Desc)
                 .ToList<Questions>(size, (index - 1) * size);
         }
         /// <summary>
@@ -934,7 +944,7 @@ namespace Song.ServiceImpls
         /// <param name="index"></param>
         private void _buildExcelSql_1(HSSFWorkbook hssfworkbook, WhereClip where, string sbjname, string couname, string folder, int total, int size, int index)
         {
-            Song.Entities.Questions[] ques = Gateway.Default.From<Questions>().Where(where).OrderBy(Questions._.Qus_ID.Asc).ToArray<Questions>(size, (index - 1) * size);
+            Song.Entities.Questions[] ques = Gateway.Default.From<Questions>().Where(where).OrderBy(Questions._.Qus_Order.Asc && Questions._.Qus_ID.Asc).ToArray<Questions>(size, (index - 1) * size);
             //创建工作簿对象
             string sheetname = "单选题";
             ISheet sheet = hssfworkbook.CreateSheet(total <= size ? sheetname : sheetname + "_" + index.ToString("D2"));
@@ -988,7 +998,7 @@ namespace Song.ServiceImpls
         //多选题导出
         private void _buildExcelSql_2(HSSFWorkbook hssfworkbook,WhereClip where, string sbjname, string couname, string folder, int total, int size, int index)
         {
-            Song.Entities.Questions[] ques = Gateway.Default.From<Questions>().Where(where).OrderBy(Questions._.Qus_ID.Asc).ToArray<Questions>(size, (index - 1) * size);
+            Song.Entities.Questions[] ques = Gateway.Default.From<Questions>().Where(where).OrderBy(Questions._.Qus_Order.Asc && Questions._.Qus_ID.Asc).ToArray<Questions>(size, (index - 1) * size);
             //创建工作簿对象
             string sheetname = "多选题";
             ISheet sheet = hssfworkbook.CreateSheet(total <= size ? sheetname : sheetname + "_" + index.ToString("D2"));  
@@ -1045,7 +1055,7 @@ namespace Song.ServiceImpls
         //判断题导出
         private void _buildExcelSql_3(HSSFWorkbook hssfworkbook, WhereClip where, string sbjname, string couname, string folder, int total, int size, int index)
         {
-            Song.Entities.Questions[] ques = Gateway.Default.From<Questions>().Where(where).OrderBy(Questions._.Qus_ID.Asc).ToArray<Questions>(size, (index - 1) * size);
+            Song.Entities.Questions[] ques = Gateway.Default.From<Questions>().Where(where).OrderBy(Questions._.Qus_Order.Asc && Questions._.Qus_ID.Asc).ToArray<Questions>(size, (index - 1) * size);
             //创建工作簿对象
             string sheetname = "判断题";
             ISheet sheet = hssfworkbook.CreateSheet(total <= size ? sheetname : sheetname + "_" + index.ToString("D2"));
@@ -1088,7 +1098,7 @@ namespace Song.ServiceImpls
         //简答题导出
         private void _buildExcelSql_4(HSSFWorkbook hssfworkbook, WhereClip where, string sbjname, string couname, string folder, int total, int size, int index)
         {
-            Song.Entities.Questions[] ques = Gateway.Default.From<Questions>().Where(where).OrderBy(Questions._.Qus_ID.Asc).ToArray<Questions>(size, (index - 1) * size);
+            Song.Entities.Questions[] ques = Gateway.Default.From<Questions>().Where(where).OrderBy(Questions._.Qus_Order.Asc && Questions._.Qus_ID.Asc).ToArray<Questions>(size, (index - 1) * size);
             //创建工作簿对象
             string sheetname = "简答题";
             ISheet sheet = hssfworkbook.CreateSheet(total <= size ? sheetname : sheetname + "_" + index.ToString("D2"));
@@ -1131,7 +1141,7 @@ namespace Song.ServiceImpls
         //填空题导出
         private void _buildExcelSql_5(HSSFWorkbook hssfworkbook, WhereClip where, string sbjname, string couname, string folder, int total, int size, int index)
         {
-             Song.Entities.Questions[] ques = Gateway.Default.From<Questions>().Where(where).OrderBy(Questions._.Qus_ID.Asc).ToArray<Questions>(size, (index - 1) * size);
+             Song.Entities.Questions[] ques = Gateway.Default.From<Questions>().Where(where).OrderBy(Questions._.Qus_Order.Asc && Questions._.Qus_ID.Asc).ToArray<Questions>(size, (index - 1) * size);
              //创建工作簿对象
             string sheetname = "填空题";
             ISheet sheet = hssfworkbook.CreateSheet(total <= size ? sheetname : sheetname + "_" + index.ToString("D2"));
