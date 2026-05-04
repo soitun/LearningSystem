@@ -278,7 +278,7 @@ namespace Song.ServiceImpls
         /// <param name="couid">实体的主键</param>
         public int CourseDelete(long couid)
         {
-            return Gateway.Default.Update<Course>(Course._.Cou_IsDeleted, true, Course._.Cou_ID == couid);
+            return Gateway.Default.Update<Course>(new Field[] { Course._.Cou_IsDeleted, Course._.Cou_DeleteTime }, new object[] { true, DateTime.Now }, Course._.Cou_ID == couid);
         }
         /// <summary>
         /// 回收，标记删除状态为false

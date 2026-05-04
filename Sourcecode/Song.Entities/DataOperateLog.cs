@@ -42,7 +42,7 @@ namespace Song.Entities {
     		
     		protected Int32? _Dlog_Timespan;
     		
-    		protected Int32 _Dlog_Type;
+    		protected Int16 _Dlog_Type;
     		
     		protected String _MM_Link;
     		
@@ -222,7 +222,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32 Dlog_Type {
+    		public Int16 Dlog_Type {
     			get {
     				return this._Dlog_Type;
     			}
@@ -401,7 +401,7 @@ namespace Song.Entities {
     				this._Dlog_Timespan = reader.GetInt32(_.Dlog_Timespan);
     			}
     			if ((false == reader.IsDBNull(_.Dlog_Type))) {
-    				this._Dlog_Type = reader.GetInt32(_.Dlog_Type);
+    				this._Dlog_Type = reader.GetInt16(_.Dlog_Type);
     			}
     			if ((false == reader.IsDBNull(_.MM_Link))) {
     				this._MM_Link = reader.GetString(_.MM_Link);
@@ -527,7 +527,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Dlog_Timespan = new WeiSha.Data.Field<DataOperateLog>("Dlog_Timespan");
     			
     			/// <summary>
-    			/// 字段名：Dlog_Type - 数据类型：Int32
+    			/// 字段名：Dlog_Type - 数据类型：Int16
     			/// </summary>
     			public static WeiSha.Data.Field Dlog_Type = new WeiSha.Data.Field<DataOperateLog>("Dlog_Type");
     			

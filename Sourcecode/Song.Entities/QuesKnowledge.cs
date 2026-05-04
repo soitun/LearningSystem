@@ -16,6 +16,8 @@ namespace Song.Entities {
     		
     		protected DateTime _Qk_CrtTime;
     		
+    		protected DateTime _Qk_DeleteTime;
+    		
     		protected String _Qk_Details;
     		
     		protected String _Qk_Intro;
@@ -71,6 +73,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Qk_CrtTime, _Qk_CrtTime, value);
     				this._Qk_CrtTime = value;
+    			}
+    		}
+    		
+    		public DateTime Qk_DeleteTime {
+    			get {
+    				return this._Qk_DeleteTime;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Qk_DeleteTime, _Qk_DeleteTime, value);
+    				this._Qk_DeleteTime = value;
     			}
     		}
     		
@@ -188,6 +200,7 @@ namespace Song.Entities {
     					_.Org_ID,
     					_.Qk_Count,
     					_.Qk_CrtTime,
+    					_.Qk_DeleteTime,
     					_.Qk_Details,
     					_.Qk_Intro,
     					_.Qk_IsDeleted,
@@ -208,6 +221,7 @@ namespace Song.Entities {
     					this._Org_ID,
     					this._Qk_Count,
     					this._Qk_CrtTime,
+    					this._Qk_DeleteTime,
     					this._Qk_Details,
     					this._Qk_Intro,
     					this._Qk_IsDeleted,
@@ -234,6 +248,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Qk_CrtTime))) {
     				this._Qk_CrtTime = reader.GetDateTime(_.Qk_CrtTime);
+    			}
+    			if ((false == reader.IsDBNull(_.Qk_DeleteTime))) {
+    				this._Qk_DeleteTime = reader.GetDateTime(_.Qk_DeleteTime);
     			}
     			if ((false == reader.IsDBNull(_.Qk_Details))) {
     				this._Qk_Details = reader.GetString(_.Qk_Details);
@@ -307,6 +324,11 @@ namespace Song.Entities {
     			/// 字段名：Qk_CrtTime - 数据类型：DateTime
     			/// </summary>
     			public static WeiSha.Data.Field Qk_CrtTime = new WeiSha.Data.Field<QuesKnowledge>("Qk_CrtTime");
+    			
+    			/// <summary>
+    			/// 字段名：Qk_DeleteTime - 数据类型：DateTime
+    			/// </summary>
+    			public static WeiSha.Data.Field Qk_DeleteTime = new WeiSha.Data.Field<QuesKnowledge>("Qk_DeleteTime");
     			
     			/// <summary>
     			/// 字段名：Qk_Details - 数据类型：String

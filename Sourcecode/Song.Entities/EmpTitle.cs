@@ -20,7 +20,7 @@ namespace Song.Entities {
     		
     		protected String _Title_Name;
     		
-    		protected Int32? _Title_Order;
+    		protected Int32 _Title_Order;
     		
     		public Int32 Title_Id {
     			get {
@@ -82,7 +82,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32? Title_Order {
+    		public Int32 Title_Order {
     			get {
     				return this._Title_Order;
     			}
@@ -224,7 +224,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Title_Name = new WeiSha.Data.Field<EmpTitle>("Title_Name");
     			
     			/// <summary>
-    			/// 字段名：Title_Order - 数据类型：Int32(可空)
+    			/// 字段名：Title_Order - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Title_Order = new WeiSha.Data.Field<EmpTitle>("Title_Order");
     		}

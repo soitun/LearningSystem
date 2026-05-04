@@ -168,7 +168,7 @@ namespace Song.ServiceImpls
             {
                 foreach (long l in list)
                 {
-                    count += Gateway.Default.Update<Subject>(Subject._.Sbj_IsDeleted, true, Subject._.Sbj_ID == l);
+                    count += Gateway.Default.Update<Subject>(new Field[] { Subject._.Sbj_IsDeleted, Subject._.Sbj_DeleteTime }, new object[] { true, DateTime.Now }, Subject._.Sbj_ID == l);
                 }
             }
             return count;

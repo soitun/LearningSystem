@@ -128,48 +128,59 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public bool PaperUpdate(long id, Field[] fiels, object[] objs)
         {
-            try
-            {
-                Gateway.Default.Update<TestPaper>(fiels, objs, TestPaper._.Tp_Id == id);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+             int count=Gateway.Default.Update<TestPaper>(fiels, objs, TestPaper._.Tp_Id == id);
+            return count > 0;           
         }
         public int PaperDelete(long identify)
         {
-            Song.Entities.TestPaper tp = this.PaperSingle(identify);
+            return Gateway.Default.Update<TestPaper>(new Field[] { TestPaper._.Tp_IsDeleted, TestPaper._.Tp_DeleteTime }, new object[] { true, DateTime.Now }, TestPaper._.Tp_Id == identify);
+        }
+        /// <summary>
+        /// 还原试卷
+        /// </summary>
+        /// <param name="tpid"></param>
+        /// <returns></returns>
+        public int PaperRecycle(long tpid)
+        {
+            return Gateway.Default.Update<TestPaper>(TestPaper._.Tp_IsDeleted, true, TestPaper._.Tp_Id == tpid);
+        }
+        /// <summary>
+        /// 真正删除，按主键ID；
+        /// </summary>
+        /// <param name="tpid">实体的主键</param>
+        public int PaperRemove(long tpid)
+        {
+            Song.Entities.TestPaper tp = this.PaperSingle(tpid);
             if (tp == null) return 0;
+            int count = 0;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
                 {
-                    Examination exam = Gateway.Default.From<Examination>().Where(Examination._.Tp_Id == identify).ToFirst<Examination>();
+                    Examination exam = Gateway.Default.From<Examination>().Where(Examination._.Tp_Id == tpid).ToFirst<Examination>();
                     if (exam != null) throw new WeiSha.Core.ExceptionForPrompt("该试卷已被考试采用，不能删除");
-                    tran.Delete<TestPaper>(TestPaper._.Tp_Id == identify);
+                    count = tran.Delete<TestPaper>(TestPaper._.Tp_Id == tpid);
                     //删除图片文件
                     string img = WeiSha.Core.Upload.Get["TestPaper"].Physics + tp.Tp_Logo;
                     if (System.IO.File.Exists(img)) System.IO.File.Delete(img);
                     //删除成绩
-                    tran.Delete<TestResults>(TestResults._.Tp_Id == identify);
+                    tran.Delete<TestResults>(TestResults._.Tp_Id == tpid);
                     WeiSha.Core.Upload.Get["TestPaper"].DeleteDirectory(tp.Tp_Id.ToString());
                     tran.Commit();
                     //更新统计信息
-                    new Task(() => {
+                    new Task(() =>
+                    {
                         testPaperCom.PaperCountUpdate(tp.Sbj_ID, tp.Cou_ID);
                     }).Start();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     tran.Rollback();
                     throw ex;
                 }
             }
-            return 1;
+            return count;
         }
-
         public TestPaper PaperSingle(long identify)
         {
             TestPaper pager = Gateway.Default.From<TestPaper>().Where(TestPaper._.Tp_Id == identify).ToFirst<TestPaper>();

@@ -38,11 +38,11 @@ namespace Song.Entities {
     		
     		protected String _Sp_Name;
     		
-    		protected Int32? _Sp_Order;
+    		protected Int32 _Sp_Order;
     		
     		protected String _Sp_OutUrl;
     		
-    		protected Int32? _Sp_PatId;
+    		protected Int32 _Sp_PatId;
     		
     		protected DateTime? _Sp_PushTime;
     		
@@ -202,7 +202,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32? Sp_Order {
+    		public Int32 Sp_Order {
     			get {
     				return this._Sp_Order;
     			}
@@ -222,7 +222,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32? Sp_PatId {
+    		public Int32 Sp_PatId {
     			get {
     				return this._Sp_PatId;
     			}
@@ -524,7 +524,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Sp_Name = new WeiSha.Data.Field<Special>("Sp_Name");
     			
     			/// <summary>
-    			/// 字段名：Sp_Order - 数据类型：Int32(可空)
+    			/// 字段名：Sp_Order - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Sp_Order = new WeiSha.Data.Field<Special>("Sp_Order");
     			
@@ -534,7 +534,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Sp_OutUrl = new WeiSha.Data.Field<Special>("Sp_OutUrl");
     			
     			/// <summary>
-    			/// 字段名：Sp_PatId - 数据类型：Int32(可空)
+    			/// 字段名：Sp_PatId - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Sp_PatId = new WeiSha.Data.Field<Special>("Sp_PatId");
     			

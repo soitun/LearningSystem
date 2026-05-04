@@ -14,15 +14,15 @@ namespace Song.Entities {
     		
     		protected String _Org_Name;
     		
-    		protected Int32? _Qk_Id;
+    		protected Int32 _Qk_Id;
     		
     		protected Int64 _Tp_Id;
     		
-    		protected Single? _Tq_Number;
+    		protected Single _Tq_Number;
     		
-    		protected Int32? _Tq_Percent;
+    		protected Int32 _Tq_Percent;
     		
-    		protected Int32? _Tq_Type;
+    		protected Int32 _Tq_Type;
     		
     		public Int32 Tq_Id {
     			get {
@@ -54,7 +54,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32? Qk_Id {
+    		public Int32 Qk_Id {
     			get {
     				return this._Qk_Id;
     			}
@@ -74,7 +74,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Single? Tq_Number {
+    		public Single Tq_Number {
     			get {
     				return this._Tq_Number;
     			}
@@ -84,7 +84,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32? Tq_Percent {
+    		public Int32 Tq_Percent {
     			get {
     				return this._Tq_Percent;
     			}
@@ -94,7 +94,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32? Tq_Type {
+    		public Int32 Tq_Type {
     			get {
     				return this._Tq_Type;
     			}
@@ -226,7 +226,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Org_Name = new WeiSha.Data.Field<TestPaperQues>("Org_Name");
     			
     			/// <summary>
-    			/// 字段名：Qk_Id - 数据类型：Int32(可空)
+    			/// 字段名：Qk_Id - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Qk_Id = new WeiSha.Data.Field<TestPaperQues>("Qk_Id");
     			
@@ -236,17 +236,17 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Tp_Id = new WeiSha.Data.Field<TestPaperQues>("Tp_Id");
     			
     			/// <summary>
-    			/// 字段名：Tq_Number - 数据类型：Single(可空)
+    			/// 字段名：Tq_Number - 数据类型：Single
     			/// </summary>
     			public static WeiSha.Data.Field Tq_Number = new WeiSha.Data.Field<TestPaperQues>("Tq_Number");
     			
     			/// <summary>
-    			/// 字段名：Tq_Percent - 数据类型：Int32(可空)
+    			/// 字段名：Tq_Percent - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Tq_Percent = new WeiSha.Data.Field<TestPaperQues>("Tq_Percent");
     			
     			/// <summary>
-    			/// 字段名：Tq_Type - 数据类型：Int32(可空)
+    			/// 字段名：Tq_Type - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Tq_Type = new WeiSha.Data.Field<TestPaperQues>("Tq_Type");
     		}

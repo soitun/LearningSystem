@@ -26,6 +26,8 @@ namespace Song.Entities {
     		
     		protected DateTime _Qus_CrtTime;
     		
+    		protected DateTime _Qus_DeleteTime;
+    		
     		protected Int32 _Qus_Diff;
     		
     		protected String _Qus_ErrorInfo;
@@ -155,6 +157,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Qus_CrtTime, _Qus_CrtTime, value);
     				this._Qus_CrtTime = value;
+    			}
+    		}
+    		
+    		public DateTime Qus_DeleteTime {
+    			get {
+    				return this._Qus_DeleteTime;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Qus_DeleteTime, _Qus_DeleteTime, value);
+    				this._Qus_DeleteTime = value;
     			}
     		}
     		
@@ -397,6 +409,7 @@ namespace Song.Entities {
     					_.Qt_ID,
     					_.Qus_Answer,
     					_.Qus_CrtTime,
+    					_.Qus_DeleteTime,
     					_.Qus_Diff,
     					_.Qus_ErrorInfo,
     					_.Qus_Errornum,
@@ -434,6 +447,7 @@ namespace Song.Entities {
     					this._Qt_ID,
     					this._Qus_Answer,
     					this._Qus_CrtTime,
+    					this._Qus_DeleteTime,
     					this._Qus_Diff,
     					this._Qus_ErrorInfo,
     					this._Qus_Errornum,
@@ -487,6 +501,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Qus_CrtTime))) {
     				this._Qus_CrtTime = reader.GetDateTime(_.Qus_CrtTime);
+    			}
+    			if ((false == reader.IsDBNull(_.Qus_DeleteTime))) {
+    				this._Qus_DeleteTime = reader.GetDateTime(_.Qus_DeleteTime);
     			}
     			if ((false == reader.IsDBNull(_.Qus_Diff))) {
     				this._Qus_Diff = reader.GetInt32(_.Qus_Diff);
@@ -621,6 +638,11 @@ namespace Song.Entities {
     			/// 字段名：Qus_CrtTime - 数据类型：DateTime
     			/// </summary>
     			public static WeiSha.Data.Field Qus_CrtTime = new WeiSha.Data.Field<Questions>("Qus_CrtTime");
+    			
+    			/// <summary>
+    			/// 字段名：Qus_DeleteTime - 数据类型：DateTime
+    			/// </summary>
+    			public static WeiSha.Data.Field Qus_DeleteTime = new WeiSha.Data.Field<Questions>("Qus_DeleteTime");
     			
     			/// <summary>
     			/// 字段名：Qus_Diff - 数据类型：Int32

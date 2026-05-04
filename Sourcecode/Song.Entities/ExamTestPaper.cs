@@ -20,6 +20,8 @@ namespace Song.Entities {
     		
     		protected DateTime _Etp_CrtTime;
     		
+    		protected DateTime _Etp_DeleteTime;
+    		
     		protected Int32 _Etp_Diff;
     		
     		protected Int32 _Etp_Diff2;
@@ -117,6 +119,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Etp_CrtTime, _Etp_CrtTime, value);
     				this._Etp_CrtTime = value;
+    			}
+    		}
+    		
+    		public DateTime Etp_DeleteTime {
+    			get {
+    				return this._Etp_DeleteTime;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Etp_DeleteTime, _Etp_DeleteTime, value);
+    				this._Etp_DeleteTime = value;
     			}
     		}
     		
@@ -346,6 +358,7 @@ namespace Song.Entities {
     					_.Etp_Author,
     					_.Etp_Count,
     					_.Etp_CrtTime,
+    					_.Etp_DeleteTime,
     					_.Etp_Diff,
     					_.Etp_Diff2,
     					_.Etp_FromConfig,
@@ -379,6 +392,7 @@ namespace Song.Entities {
     					this._Etp_Author,
     					this._Etp_Count,
     					this._Etp_CrtTime,
+    					this._Etp_DeleteTime,
     					this._Etp_Diff,
     					this._Etp_Diff2,
     					this._Etp_FromConfig,
@@ -422,6 +436,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Etp_CrtTime))) {
     				this._Etp_CrtTime = reader.GetDateTime(_.Etp_CrtTime);
+    			}
+    			if ((false == reader.IsDBNull(_.Etp_DeleteTime))) {
+    				this._Etp_DeleteTime = reader.GetDateTime(_.Etp_DeleteTime);
     			}
     			if ((false == reader.IsDBNull(_.Etp_Diff))) {
     				this._Etp_Diff = reader.GetInt32(_.Etp_Diff);
@@ -538,6 +555,11 @@ namespace Song.Entities {
     			/// 字段名：Etp_CrtTime - 数据类型：DateTime
     			/// </summary>
     			public static WeiSha.Data.Field Etp_CrtTime = new WeiSha.Data.Field<ExamTestPaper>("Etp_CrtTime");
+    			
+    			/// <summary>
+    			/// 字段名：Etp_DeleteTime - 数据类型：DateTime
+    			/// </summary>
+    			public static WeiSha.Data.Field Etp_DeleteTime = new WeiSha.Data.Field<ExamTestPaper>("Etp_DeleteTime");
     			
     			/// <summary>
     			/// 字段名：Etp_Diff - 数据类型：Int32

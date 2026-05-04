@@ -143,7 +143,7 @@ namespace Song.ServiceImpls
         /// <param name="entity">试题实体</param>
         public int QuesDelete(Questions entity)
         {
-            int count = Gateway.Default.Update<Questions>(Questions._.Qus_IsDeleted, true, Questions._.Qus_ID == entity.Qus_ID);
+            int count = Gateway.Default.Update<Questions>(new Field[] { Questions._.Qus_IsDeleted, Questions._.Qus_DeleteTime }, new object[] { true, DateTime.Now }, Questions._.Qus_ID == entity.Qus_ID);
             this.PartQusTotalUpdate(entity);
             return count;
         }
@@ -374,7 +374,10 @@ namespace Song.ServiceImpls
             }
             wc.And(wcrange);
             countSum = section.Where(wc).Count();
-            return section.Where(wc).OrderBy(Questions._.Qus_ID.Desc).ToList<Questions>(size, (index - 1) * size);
+            OrderByClip orderBy=new OrderByClip();
+            if (isdeleted != null && isdeleted == true) orderBy &= Questions._.Qus_DeleteTime.Desc;
+            orderBy &= Questions._.Qus_Order.Asc;
+            return section.Where(wc).OrderBy(orderBy & Questions._.Qus_ID.Desc).ToList<Questions>(size, (index - 1) * size);
         }
         /// <summary>
         /// 试题统计更新，例如当试题被修改时，需要更新试题分类下的试题数量
@@ -671,7 +674,8 @@ namespace Song.ServiceImpls
                 try
                 {
                     foreach (long qpid in list)
-                        tran.Update<QuesPart>(QuesPart._.Qp_IsDeleted, true, QuesPart._.Qp_ID == qpid);
+                        tran.Update<QuesPart>(new Field[] { QuesPart._.Qp_IsDeleted, QuesPart._.Qp_DeleteTime }, new object[] { true, DateTime.Now }, QuesPart._.Qp_ID == qpid);
+
                     tran.Commit();
                 }
                 catch (Exception ex)
@@ -1085,7 +1089,11 @@ namespace Song.ServiceImpls
             if (isdeleted != null) wc.And(QuesPart._.Qp_IsDeleted == (bool)isdeleted);
             if (!string.IsNullOrWhiteSpace(searTxt)) wc.And(QuesPart._.Qp_Name.Contains(searTxt));
             countSum = Gateway.Default.Count<QuesPart>(wc);
-            return Gateway.Default.From<QuesPart>().Where(wc).OrderBy(QuesPart._.Qp_Order.Asc).ToList<QuesPart>(size, (index - 1) * size);
+            OrderByClip orderBy = new OrderByClip();
+            if (isdeleted != null && isdeleted == true) orderBy &= QuesPart._.Qp_DeleteTime.Desc;
+            orderBy &= QuesPart._.Qp_Order.Asc;
+
+            return Gateway.Default.From<QuesPart>().Where(wc).OrderBy(orderBy).ToList<QuesPart>(size, (index - 1) * size);
         }
         /// <summary>
         /// 更改试题分类的排序
@@ -1452,7 +1460,7 @@ namespace Song.ServiceImpls
                 try
                 {
                     foreach (long qkid in list)
-                        tran.Update<QuesKnowledge>(QuesKnowledge._.Qk_IsDeleted, true, QuesKnowledge._.Qk_ID == qkid);
+                        tran.Update<QuesKnowledge>(new Field[] { QuesKnowledge._.Qk_IsDeleted, QuesKnowledge._.Qk_DeleteTime }, new object[] { true, DateTime.Now }, QuesKnowledge._.Qk_ID == qkid);
                     tran.Commit();
                 }
                 catch (Exception ex)
@@ -1899,7 +1907,11 @@ namespace Song.ServiceImpls
             if (isdeleted != null) wc.And(QuesKnowledge._.Qk_IsDeleted == (bool)isdeleted);
             if (!string.IsNullOrWhiteSpace(searTxt)) wc.And(QuesKnowledge._.Qk_Name.Contains(searTxt));
             countSum = Gateway.Default.Count<QuesKnowledge>(wc);
-            return Gateway.Default.From<QuesKnowledge>().Where(wc).OrderBy(QuesKnowledge._.Qk_Order.Asc).ToList<QuesKnowledge>(size, (index - 1) * size);
+            OrderByClip orderBy = new OrderByClip();
+            if (isdeleted != null && isdeleted == true) orderBy &= QuesKnowledge._.Qk_DeleteTime.Desc;
+            orderBy &= QuesKnowledge._.Qk_Order.Asc;
+
+            return Gateway.Default.From<QuesKnowledge>().Where(wc).OrderBy(orderBy).ToList<QuesKnowledge>(size, (index - 1) * size);
         }
         /// <summary>
         /// 更改试题知识点的排序
@@ -2083,7 +2095,7 @@ namespace Song.ServiceImpls
         /// <param name="id">实体的主键</param>
         public int TagDelete(long id)
         {
-            return Gateway.Default.Update<QuesTags>(QuesTags._.Qtag_IsDeleted, true, QuesTags._.Qtag_ID == id);
+            return Gateway.Default.Update<QuesTags>(new Field[] { QuesTags._.Qtag_IsDeleted, QuesTags._.Qtag_DeleteTime }, new object[] { true, DateTime.Now }, QuesTags._.Qtag_ID == id);
         }
         /// <summary>
         /// 回收，标记删除状态为false
@@ -2396,7 +2408,10 @@ namespace Song.ServiceImpls
             if (isdeleted != null) wc.And(QuesTags._.Qtag_IsDeleted == (bool)isdeleted);
             if (!string.IsNullOrWhiteSpace(searTxt)) wc.And(QuesTags._.Qtag_Name.Contains(searTxt));
             countSum = Gateway.Default.Count<QuesTags>(wc);
-            return Gateway.Default.From<QuesTags>().Where(wc).OrderBy(QuesTags._.Qtag_Order.Asc).ToList<QuesTags>(size, (index - 1) * size);
+            OrderByClip orderBy = new OrderByClip();
+            if (isdeleted != null && isdeleted == true) orderBy &= QuesTags._.Qtag_DeleteTime.Desc;
+            orderBy &= QuesTags._.Qtag_Order.Asc;
+            return Gateway.Default.From<QuesTags>().Where(wc).OrderBy(orderBy).ToList<QuesTags>(size, (index - 1) * size);
         }
         #endregion
 

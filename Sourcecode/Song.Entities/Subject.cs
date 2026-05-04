@@ -24,6 +24,8 @@ namespace Song.Entities {
     		
     		protected DateTime _Sbj_CrtTime;
     		
+    		protected DateTime _Sbj_DeleteTime;
+    		
     		protected String _Sbj_Details;
     		
     		protected String _Sbj_Intro;
@@ -131,6 +133,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Sbj_CrtTime, _Sbj_CrtTime, value);
     				this._Sbj_CrtTime = value;
+    			}
+    		}
+    		
+    		public DateTime Sbj_DeleteTime {
+    			get {
+    				return this._Sbj_DeleteTime;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Sbj_DeleteTime, _Sbj_DeleteTime, value);
+    				this._Sbj_DeleteTime = value;
     			}
     		}
     		
@@ -312,6 +324,7 @@ namespace Song.Entities {
     					_.Sbj_ByName,
     					_.Sbj_CourseCount,
     					_.Sbj_CrtTime,
+    					_.Sbj_DeleteTime,
     					_.Sbj_Details,
     					_.Sbj_Intro,
     					_.Sbj_IsDeleted,
@@ -342,6 +355,7 @@ namespace Song.Entities {
     					this._Sbj_ByName,
     					this._Sbj_CourseCount,
     					this._Sbj_CrtTime,
+    					this._Sbj_DeleteTime,
     					this._Sbj_Details,
     					this._Sbj_Intro,
     					this._Sbj_IsDeleted,
@@ -386,6 +400,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Sbj_CrtTime))) {
     				this._Sbj_CrtTime = reader.GetDateTime(_.Sbj_CrtTime);
+    			}
+    			if ((false == reader.IsDBNull(_.Sbj_DeleteTime))) {
+    				this._Sbj_DeleteTime = reader.GetDateTime(_.Sbj_DeleteTime);
     			}
     			if ((false == reader.IsDBNull(_.Sbj_Details))) {
     				this._Sbj_Details = reader.GetString(_.Sbj_Details);
@@ -497,6 +514,11 @@ namespace Song.Entities {
     			/// 字段名：Sbj_CrtTime - 数据类型：DateTime
     			/// </summary>
     			public static WeiSha.Data.Field Sbj_CrtTime = new WeiSha.Data.Field<Subject>("Sbj_CrtTime");
+    			
+    			/// <summary>
+    			/// 字段名：Sbj_DeleteTime - 数据类型：DateTime
+    			/// </summary>
+    			public static WeiSha.Data.Field Sbj_DeleteTime = new WeiSha.Data.Field<Subject>("Sbj_DeleteTime");
     			
     			/// <summary>
     			/// 字段名：Sbj_Details - 数据类型：String

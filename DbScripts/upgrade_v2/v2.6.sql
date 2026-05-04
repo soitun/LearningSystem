@@ -405,9 +405,9 @@ CREATE INDEX  IF NOT EXISTS "ExamResults_IX_Etp_Id" ON "ExamResults"("Etp_Id");
 
 
 /*课程，专业，增加是否删除的字段*/
-ALTER TABLE "Course" ADD COLUMN "Cou_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE "Course" ADD COLUMN IF NOT EXISTS "Cou_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
 CREATE INDEX  IF NOT EXISTS "Course_IX_IsDeleted" ON "Course"("Cou_IsDeleted");
-ALTER TABLE "Subject" ADD COLUMN "Sbj_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE "Subject" ADD COLUMN IF NOT EXISTS "Sbj_IsDeleted" BOOLEAN NOT NULL DEFAULT FALSE;
 CREATE INDEX  IF NOT EXISTS "Subject_IX_IsDeleted" ON "Subject"("Sbj_IsDeleted");
 
 /*增加考试与学员组关联的索引*/
@@ -450,3 +450,5 @@ ALTER TABLE "Examination" DROP COLUMN "Exam_ID";
 ALTER TABLE "Examination" RENAME COLUMN "new_id" TO "Exam_ID";
 -- 生新设置Exam_ID为主键
 ALTER TABLE "Examination" ADD PRIMARY KEY ("Exam_ID");
+
+

@@ -18,6 +18,8 @@ namespace Song.Entities {
     		
     		protected DateTime _Qtag_CrtTime;
     		
+    		protected DateTime _Qtag_DeleteTime;
+    		
     		protected Boolean _Qtag_IsDeleted;
     		
     		protected String _Qtag_Name;
@@ -77,6 +79,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Qtag_CrtTime, _Qtag_CrtTime, value);
     				this._Qtag_CrtTime = value;
+    			}
+    		}
+    		
+    		public DateTime Qtag_DeleteTime {
+    			get {
+    				return this._Qtag_DeleteTime;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Qtag_DeleteTime, _Qtag_DeleteTime, value);
+    				this._Qtag_DeleteTime = value;
     			}
     		}
     		
@@ -165,6 +177,7 @@ namespace Song.Entities {
     					_.Org_ID,
     					_.Qtag_Count,
     					_.Qtag_CrtTime,
+    					_.Qtag_DeleteTime,
     					_.Qtag_IsDeleted,
     					_.Qtag_Name,
     					_.Qtag_Order,
@@ -183,6 +196,7 @@ namespace Song.Entities {
     					this._Org_ID,
     					this._Qtag_Count,
     					this._Qtag_CrtTime,
+    					this._Qtag_DeleteTime,
     					this._Qtag_IsDeleted,
     					this._Qtag_Name,
     					this._Qtag_Order,
@@ -209,6 +223,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Qtag_CrtTime))) {
     				this._Qtag_CrtTime = reader.GetDateTime(_.Qtag_CrtTime);
+    			}
+    			if ((false == reader.IsDBNull(_.Qtag_DeleteTime))) {
+    				this._Qtag_DeleteTime = reader.GetDateTime(_.Qtag_DeleteTime);
     			}
     			if ((false == reader.IsDBNull(_.Qtag_IsDeleted))) {
     				this._Qtag_IsDeleted = reader.GetBoolean(_.Qtag_IsDeleted);
@@ -278,6 +295,11 @@ namespace Song.Entities {
     			/// 字段名：Qtag_CrtTime - 数据类型：DateTime
     			/// </summary>
     			public static WeiSha.Data.Field Qtag_CrtTime = new WeiSha.Data.Field<QuesTags>("Qtag_CrtTime");
+    			
+    			/// <summary>
+    			/// 字段名：Qtag_DeleteTime - 数据类型：DateTime
+    			/// </summary>
+    			public static WeiSha.Data.Field Qtag_DeleteTime = new WeiSha.Data.Field<QuesTags>("Qtag_DeleteTime");
     			
     			/// <summary>
     			/// 字段名：Qtag_IsDeleted - 数据类型：Boolean

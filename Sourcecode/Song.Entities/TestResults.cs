@@ -36,11 +36,11 @@ namespace Song.Entities {
     		
     		protected String _Tp_Name;
     		
-    		protected Single? _Tr_Colligate;
+    		protected Single _Tr_Colligate;
     		
     		protected DateTime? _Tr_CrtTime;
     		
-    		protected Single? _Tr_Draw;
+    		protected Single _Tr_Draw;
     		
     		protected String _Tr_IP;
     		
@@ -54,7 +54,7 @@ namespace Song.Entities {
     		
     		protected Single _Tr_Score;
     		
-    		protected Single? _Tr_ScoreFinal;
+    		protected Single _Tr_ScoreFinal;
     		
     		protected String _Tr_UID;
     		
@@ -198,7 +198,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Single? Tr_Colligate {
+    		public Single Tr_Colligate {
     			get {
     				return this._Tr_Colligate;
     			}
@@ -218,7 +218,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Single? Tr_Draw {
+    		public Single Tr_Draw {
     			get {
     				return this._Tr_Draw;
     			}
@@ -288,7 +288,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Single? Tr_ScoreFinal {
+    		public Single Tr_ScoreFinal {
     			get {
     				return this._Tr_ScoreFinal;
     			}
@@ -570,7 +570,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Tp_Name = new WeiSha.Data.Field<TestResults>("Tp_Name");
     			
     			/// <summary>
-    			/// 字段名：Tr_Colligate - 数据类型：Single(可空)
+    			/// 字段名：Tr_Colligate - 数据类型：Single
     			/// </summary>
     			public static WeiSha.Data.Field Tr_Colligate = new WeiSha.Data.Field<TestResults>("Tr_Colligate");
     			
@@ -580,7 +580,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Tr_CrtTime = new WeiSha.Data.Field<TestResults>("Tr_CrtTime");
     			
     			/// <summary>
-    			/// 字段名：Tr_Draw - 数据类型：Single(可空)
+    			/// 字段名：Tr_Draw - 数据类型：Single
     			/// </summary>
     			public static WeiSha.Data.Field Tr_Draw = new WeiSha.Data.Field<TestResults>("Tr_Draw");
     			
@@ -615,7 +615,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Tr_Score = new WeiSha.Data.Field<TestResults>("Tr_Score");
     			
     			/// <summary>
-    			/// 字段名：Tr_ScoreFinal - 数据类型：Single(可空)
+    			/// 字段名：Tr_ScoreFinal - 数据类型：Single
     			/// </summary>
     			public static WeiSha.Data.Field Tr_ScoreFinal = new WeiSha.Data.Field<TestResults>("Tr_ScoreFinal");
     			

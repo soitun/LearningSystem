@@ -76,13 +76,6 @@ namespace Song.Entities {
     		}
     		
     		/// <summary>
-    		/// 获取实体中的标识列
-    		/// </summary>
-    		protected override WeiSha.Data.Field GetIdentityField() {
-    			return _.Ans_ID;
-    		}
-    		
-    		/// <summary>
     		/// 获取列信息
     		/// </summary>
     		protected override WeiSha.Data.Field[] GetFields() {

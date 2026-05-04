@@ -93,7 +93,9 @@ namespace Song.ServiceImpls
         /// <param name="etpid">实体的主键</param>
         public int PaperDelete(long etpid)
         {
-            return Gateway.Default.Update<ExamTestPaper>(ExamTestPaper._.Etp_IsDeleted, true, ExamTestPaper._.Etp_Id == etpid && ExamTestPaper._.Etp_IsDeleted == false);
+            return Gateway.Default.Update<ExamTestPaper>(new Field[] { ExamTestPaper._.Etp_IsDeleted, ExamTestPaper._.Etp_DeleteTime },
+                new object[] { true, DateTime.Now },
+                ExamTestPaper._.Etp_Id == etpid && ExamTestPaper._.Etp_IsDeleted == false);
         }
         /// <summary>
         /// 回收，标记删除状态为false
@@ -266,7 +268,10 @@ namespace Song.ServiceImpls
             if (isUse != null) wc &= ExamTestPaper._.Etp_IsUse == (bool)isUse;
             if (!string.IsNullOrWhiteSpace(sear)) wc &= ExamTestPaper._.Etp_Name.Contains(sear);
             countSum = Gateway.Default.Count<ExamTestPaper>(wc);
-            return Gateway.Default.From<ExamTestPaper>().Where(wc).OrderBy(ExamTestPaper._.Etp_Id.Desc).ToList<ExamTestPaper>(size, (index - 1) * size);
+            OrderByClip orderBy = new OrderByClip();
+            if (isdeleted != null && isdeleted == true) orderBy &= ExamTestPaper._.Etp_DeleteTime.Desc;
+            orderBy &= ExamTestPaper._.Etp_Id.Desc;
+            return Gateway.Default.From<ExamTestPaper>().Where(wc).OrderBy(orderBy).ToList<ExamTestPaper>(size, (index - 1) * size);
         }
 
         #endregion

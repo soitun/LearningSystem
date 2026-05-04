@@ -10,7 +10,7 @@ namespace Song.Entities {
     		
     		protected Int32 _MMP_Id;
     		
-    		protected Int32? _FPI_Id;
+    		protected Int32 _FPI_Id;
     		
     		protected String _MMP_FileName;
     		
@@ -18,7 +18,7 @@ namespace Song.Entities {
     		
     		protected Boolean _MMP_IsUse;
     		
-    		protected Int32? _MM_Id;
+    		protected Int32 _MM_Id;
     		
     		public Int32 MMP_Id {
     			get {
@@ -30,7 +30,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32? FPI_Id {
+    		public Int32 FPI_Id {
     			get {
     				return this._FPI_Id;
     			}
@@ -70,7 +70,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32? MM_Id {
+    		public Int32 MM_Id {
     			get {
     				return this._MM_Id;
     			}
@@ -182,7 +182,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field MMP_Id = new WeiSha.Data.Field<ManageMenu_Point>("MMP_Id");
     			
     			/// <summary>
-    			/// 字段名：FPI_Id - 数据类型：Int32(可空)
+    			/// 字段名：FPI_Id - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field FPI_Id = new WeiSha.Data.Field<ManageMenu_Point>("FPI_Id");
     			
@@ -202,7 +202,7 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field MMP_IsUse = new WeiSha.Data.Field<ManageMenu_Point>("MMP_IsUse");
     			
     			/// <summary>
-    			/// 字段名：MM_Id - 数据类型：Int32(可空)
+    			/// 字段名：MM_Id - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field MM_Id = new WeiSha.Data.Field<ManageMenu_Point>("MM_Id");
     		}

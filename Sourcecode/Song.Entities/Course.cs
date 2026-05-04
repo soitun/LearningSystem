@@ -20,6 +20,8 @@ namespace Song.Entities {
     		
     		protected DateTime _Cou_CrtTime;
     		
+    		protected DateTime _Cou_DeleteTime;
+    		
     		protected Boolean _Cou_EnabledAI;
     		
     		protected Boolean _Cou_ExistExam;
@@ -165,6 +167,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Cou_CrtTime, _Cou_CrtTime, value);
     				this._Cou_CrtTime = value;
+    			}
+    		}
+    		
+    		public DateTime Cou_DeleteTime {
+    			get {
+    				return this._Cou_DeleteTime;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Cou_DeleteTime, _Cou_DeleteTime, value);
+    				this._Cou_DeleteTime = value;
     			}
     		}
     		
@@ -634,6 +646,7 @@ namespace Song.Entities {
     					_.Cou_Allowedit,
     					_.Cou_Content,
     					_.Cou_CrtTime,
+    					_.Cou_DeleteTime,
     					_.Cou_EnabledAI,
     					_.Cou_ExistExam,
     					_.Cou_ExistLive,
@@ -691,6 +704,7 @@ namespace Song.Entities {
     					this._Cou_Allowedit,
     					this._Cou_Content,
     					this._Cou_CrtTime,
+    					this._Cou_DeleteTime,
     					this._Cou_EnabledAI,
     					this._Cou_ExistExam,
     					this._Cou_ExistLive,
@@ -758,6 +772,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Cou_CrtTime))) {
     				this._Cou_CrtTime = reader.GetDateTime(_.Cou_CrtTime);
+    			}
+    			if ((false == reader.IsDBNull(_.Cou_DeleteTime))) {
+    				this._Cou_DeleteTime = reader.GetDateTime(_.Cou_DeleteTime);
     			}
     			if ((false == reader.IsDBNull(_.Cou_EnabledAI))) {
     				this._Cou_EnabledAI = reader.GetBoolean(_.Cou_EnabledAI);
@@ -946,6 +963,11 @@ namespace Song.Entities {
     			/// 字段名：Cou_CrtTime - 数据类型：DateTime
     			/// </summary>
     			public static WeiSha.Data.Field Cou_CrtTime = new WeiSha.Data.Field<Course>("Cou_CrtTime");
+    			
+    			/// <summary>
+    			/// 字段名：Cou_DeleteTime - 数据类型：DateTime
+    			/// </summary>
+    			public static WeiSha.Data.Field Cou_DeleteTime = new WeiSha.Data.Field<Course>("Cou_DeleteTime");
     			
     			/// <summary>
     			/// 字段名：Cou_EnabledAI - 数据类型：Boolean

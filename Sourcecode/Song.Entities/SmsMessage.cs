@@ -18,17 +18,17 @@ namespace Song.Entities {
     		
     		protected DateTime? _Sms_CrtTime;
     		
-    		protected Int32? _Sms_MailBox;
+    		protected Int32 _Sms_MailBox;
     		
-    		protected Int32? _Sms_SendId;
+    		protected Int32 _Sms_SendId;
     		
     		protected String _Sms_SendName;
     		
     		protected DateTime? _Sms_SendTime;
     		
-    		protected Int32? _Sms_State;
+    		protected Int32 _Sms_State;
     		
-    		protected Int32? _Sms_Type;
+    		protected Int32 _Sms_Type;
     		
     		public Int32 SMS_Id {
     			get {
@@ -80,7 +80,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32? Sms_MailBox {
+    		public Int32 Sms_MailBox {
     			get {
     				return this._Sms_MailBox;
     			}
@@ -90,7 +90,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32? Sms_SendId {
+    		public Int32 Sms_SendId {
     			get {
     				return this._Sms_SendId;
     			}
@@ -120,7 +120,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32? Sms_State {
+    		public Int32 Sms_State {
     			get {
     				return this._Sms_State;
     			}
@@ -130,7 +130,7 @@ namespace Song.Entities {
     			}
     		}
     		
-    		public Int32? Sms_Type {
+    		public Int32 Sms_Type {
     			get {
     				return this._Sms_Type;
     			}
@@ -287,12 +287,12 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Sms_CrtTime = new WeiSha.Data.Field<SmsMessage>("Sms_CrtTime");
     			
     			/// <summary>
-    			/// 字段名：Sms_MailBox - 数据类型：Int32(可空)
+    			/// 字段名：Sms_MailBox - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Sms_MailBox = new WeiSha.Data.Field<SmsMessage>("Sms_MailBox");
     			
     			/// <summary>
-    			/// 字段名：Sms_SendId - 数据类型：Int32(可空)
+    			/// 字段名：Sms_SendId - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Sms_SendId = new WeiSha.Data.Field<SmsMessage>("Sms_SendId");
     			
@@ -307,12 +307,12 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Sms_SendTime = new WeiSha.Data.Field<SmsMessage>("Sms_SendTime");
     			
     			/// <summary>
-    			/// 字段名：Sms_State - 数据类型：Int32(可空)
+    			/// 字段名：Sms_State - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Sms_State = new WeiSha.Data.Field<SmsMessage>("Sms_State");
     			
     			/// <summary>
-    			/// 字段名：Sms_Type - 数据类型：Int32(可空)
+    			/// 字段名：Sms_Type - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Sms_Type = new WeiSha.Data.Field<SmsMessage>("Sms_Type");
     		}

@@ -35,8 +35,19 @@ namespace Song.ServiceInterfaces
         /// <summary>
         /// 删除试卷，按主键ID；
         /// </summary>
-        /// <param name="identify">实体的主键</param>
-        int PaperDelete(long identify);
+        /// <param name="tpid">实体的主键</param>
+        int PaperDelete(long tpid);
+        /// <summary>
+        /// 还原试卷
+        /// </summary>
+        /// <param name="tpid"></param>
+        /// <returns></returns>
+        int PaperRecycle(long tpid);
+        /// <summary>
+        /// 真正删除，按主键ID；
+        /// </summary>
+        /// <param name="tpid">实体的主键</param>
+        int PaperRemove(long tpid);
         /// <summary>
         /// 获取单一试卷实体对象，按主键ID；
         /// </summary>

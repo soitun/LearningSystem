@@ -16,6 +16,8 @@ namespace Song.Entities {
     		
     		protected DateTime _Qp_CrtTime;
     		
+    		protected DateTime _Qp_DeleteTime;
+    		
     		protected String _Qp_Intro;
     		
     		protected Boolean _Qp_IsDeleted;
@@ -67,6 +69,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Qp_CrtTime, _Qp_CrtTime, value);
     				this._Qp_CrtTime = value;
+    			}
+    		}
+    		
+    		public DateTime Qp_DeleteTime {
+    			get {
+    				return this._Qp_DeleteTime;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Qp_DeleteTime, _Qp_DeleteTime, value);
+    				this._Qp_DeleteTime = value;
     			}
     		}
     		
@@ -164,6 +176,7 @@ namespace Song.Entities {
     					_.Org_ID,
     					_.QP_Count,
     					_.Qp_CrtTime,
+    					_.Qp_DeleteTime,
     					_.Qp_Intro,
     					_.Qp_IsDeleted,
     					_.Qp_IsUse,
@@ -182,6 +195,7 @@ namespace Song.Entities {
     					this._Org_ID,
     					this._QP_Count,
     					this._Qp_CrtTime,
+    					this._Qp_DeleteTime,
     					this._Qp_Intro,
     					this._Qp_IsDeleted,
     					this._Qp_IsUse,
@@ -206,6 +220,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Qp_CrtTime))) {
     				this._Qp_CrtTime = reader.GetDateTime(_.Qp_CrtTime);
+    			}
+    			if ((false == reader.IsDBNull(_.Qp_DeleteTime))) {
+    				this._Qp_DeleteTime = reader.GetDateTime(_.Qp_DeleteTime);
     			}
     			if ((false == reader.IsDBNull(_.Qp_Intro))) {
     				this._Qp_Intro = reader.GetString(_.Qp_Intro);
@@ -273,6 +290,11 @@ namespace Song.Entities {
     			/// 字段名：Qp_CrtTime - 数据类型：DateTime
     			/// </summary>
     			public static WeiSha.Data.Field Qp_CrtTime = new WeiSha.Data.Field<QuesPart>("Qp_CrtTime");
+    			
+    			/// <summary>
+    			/// 字段名：Qp_DeleteTime - 数据类型：DateTime
+    			/// </summary>
+    			public static WeiSha.Data.Field Qp_DeleteTime = new WeiSha.Data.Field<QuesPart>("Qp_DeleteTime");
     			
     			/// <summary>
     			/// 字段名：Qp_Intro - 数据类型：String

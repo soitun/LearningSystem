@@ -133,7 +133,7 @@ namespace Song.ServiceImpls
         /// <param name="entity">试题实体</param>
         public int QuesDelete(Questions entity)
         {
-            int count = Gateway.Default.Update<Questions>(Questions._.Qus_IsDeleted, true, Questions._.Qus_ID == entity.Qus_ID);
+            int count = Gateway.Default.Update<Questions>(new Field[] { Questions._.Qus_IsDeleted, Questions._.Qus_DeleteTime }, new object[] { true, DateTime.Now }, Questions._.Qus_ID == entity.Qus_ID);
             this.OnDelete(entity, EventArgs.Empty);
             //更新统计数据
             new Task(() =>
@@ -164,7 +164,7 @@ namespace Song.ServiceImpls
                 if (!couids.Contains(q.Cou_ID)) couids.Add(q.Cou_ID);
             }
             //删除并重新统计
-            int count = Gateway.Default.Update<Questions>(Questions._.Qus_IsDeleted, true, wc);
+            int count = Gateway.Default.Update<Questions>(new Field[] { Questions._.Qus_IsDeleted, Questions._.Qus_DeleteTime }, new object[] { true, DateTime.Now },wc);
             //Gateway.Default.Delete<Questions>(wc);
             foreach (int orgid in orgids) this.QuesCountUpdate(orgid, -1, -1, -1);
             foreach (int sbjid in sbjids) this.QuesCountUpdate(-1, sbjid, -1, -1);
