@@ -123,7 +123,7 @@
             </el-table-column>
             <el-table-column label="操作" width="120" align="center">
                 <template slot-scope="scope">
-                    <span class="el-icon-loading" v-if="loadingid==scope.row.Question"></span>
+                    <span class="el-icon-loading" v-if="loadingid==scope.row.Qus_ID"></span>
                     <el-button-group v-else>
                         <el-popconfirm confirm-button-text='是的' cancel-button-text='不用' icon="el-icon-info"
                             icon-color="red" title="确定还原吗？"

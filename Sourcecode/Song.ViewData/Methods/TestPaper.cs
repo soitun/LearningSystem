@@ -124,7 +124,42 @@ namespace Song.ViewData.Methods
                 i += Business.Do<ITestPaper>().PaperDelete(s);
             return i;           
         }
-
+        /// <summary>
+        /// 回收试题
+        /// </summary>
+        /// <param name="id">试卷id，可以是多个，用逗号分隔</param>
+        /// <returns></returns>
+        [Admin, Teacher]
+        [HttpPost]
+        public int Recycle(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = id.ToList<long>();
+            foreach (long s in list)
+            {
+                i += Business.Do<ITestPaper>().PaperRecycle(s);
+            }
+            return i;
+        }
+        /// <summary>
+        /// 删除专业（物理删除）
+        /// </summary>
+        /// <param name="id">试卷id，可以是多个，用逗号分隔</param>
+        /// <returns></returns>
+        [Admin]
+        [HttpDelete, HttpGet(Ignore = true)]
+        public int Remove(string id)
+        {
+            int i = 0;
+            if (string.IsNullOrWhiteSpace(id)) return i;
+            List<long> list = id.ToList<long>();
+            foreach (long s in list)
+            {
+                i += Business.Do<ITestPaper>().PaperRemove(s);
+            }
+            return i;
+        }
         /// <summary>
         /// 修改试卷的状态
         /// </summary>

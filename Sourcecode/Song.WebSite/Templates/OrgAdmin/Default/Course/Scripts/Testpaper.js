@@ -9,7 +9,7 @@
 
             form: {
                 'orgid': '', 'sbjid': '', 'couid': $api.querystring('id'),
-                'search': '', 'isuse': '', 'del':false,'diff': '', 'size': 20, 'index': 1
+                'search': '', 'isuse': '', 'del': false, 'diff': '', 'size': 20, 'index': 1
             },
 
             datas: [],
@@ -53,9 +53,7 @@
                     if (d.data.success) {
                         var result = d.data.result;
                         th.datas = result;
-                        th.$nextTick(function () {
-                            loading.close();
-                        });
+                     
                         th.totalpages = Number(d.data.totalpages);
                         th.total = d.data.total;
                     } else {
@@ -64,7 +62,12 @@
                 }).catch(function (err) {
                     alert(err);
                     console.error(err);
-                }).finally(() => th.loading = false);
+                }).finally(() => {
+                    th.loading = false;
+                    th.$nextTick(function () {
+                        loading.close();
+                    });
+                });
             },
             //删除
             deleteData: function (datas) {

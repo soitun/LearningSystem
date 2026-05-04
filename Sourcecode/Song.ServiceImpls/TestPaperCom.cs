@@ -149,7 +149,7 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public int PaperRecycle(long tpid)
         {
-            int count = Gateway.Default.Update<TestPaper>(TestPaper._.Tp_IsDeleted, true, TestPaper._.Tp_Id == tpid);
+            int count = Gateway.Default.Update<TestPaper>(TestPaper._.Tp_IsDeleted, false, TestPaper._.Tp_Id == tpid);
             //更新统计信息
             new Task(() =>
             {
@@ -233,6 +233,7 @@ namespace Song.ServiceImpls
             if (couid > 0) wc.And(TestPaper._.Cou_ID == couid);
             if (diff > 0) wc.And(TestPaper._.Tp_Diff == diff);
             if (isUse != null) wc.And(TestPaper._.Tp_IsUse == (bool)isUse);
+            if (isDelete != null) wc.And(TestPaper._.Tp_IsDeleted == (bool)isDelete);
             count = count > 0 ? count : int.MaxValue;
             OrderByClip orderBy = new OrderByClip();
             if (isDelete != null && isDelete == true) orderBy &= TestPaper._.Tp_DeleteTime.Desc;
@@ -255,6 +256,7 @@ namespace Song.ServiceImpls
             if (couid > 0) wc.And(TestPaper._.Cou_ID == couid);
             if (diff > 0) wc.And(TestPaper._.Tp_Diff == diff);
             if (isUse != null) wc.And(TestPaper._.Tp_IsUse == (bool)isUse);
+            if (isDelete != null) wc.And(TestPaper._.Tp_IsDeleted == (bool)isDelete);
             if (search != null && search.Trim() != "") wc.And(TestPaper._.Tp_Name.Contains(search));
             count = count > 0 ? count : int.MaxValue;
 
@@ -307,6 +309,7 @@ namespace Song.ServiceImpls
             if (couid > 0) wc.And(TestPaper._.Cou_ID == couid);
             if (diff > 0) wc.And(TestPaper._.Tp_Diff == diff);
             if (isUse != null) wc.And(TestPaper._.Tp_IsUse == (bool)isUse);
+            if (isDelete != null) wc.And(TestPaper._.Tp_IsDeleted == (bool)isDelete);
             if (string.IsNullOrWhiteSpace(sear) && sear.Trim() != "") wc.And(TestPaper._.Tp_Name.Contains(sear));
             countSum = Gateway.Default.Count<TestPaper>(wc);
 
