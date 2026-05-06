@@ -115,13 +115,12 @@ namespace Song.ViewData.Methods
             for (int i = 0; i < childs.Count; i++)
             {
                 Entities.GuideColumns m = childs[i];
-                string j = m.ToJson("", "Gc_CrtTime");
-                JObject jo = JObject.Parse(j);
-                jarr.Add(jo);
+                JObject jo = m.ToJObject();                
                 //计算下级
                 JArray charray = _childrenNode(m, items);
                 if (charray.Count > 0)
                     jo.Add("children", charray);
+                jarr.Add(jo);
             }
             return jarr;
         }

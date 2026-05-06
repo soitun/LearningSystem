@@ -92,8 +92,7 @@ namespace Song.ViewData.Methods
             JArray jarr = new JArray();
             for (int i = 0; i < childs.Count; i++)
             {
-                string j = childs[i].ToJson("", "Col_CrtTime");
-                JObject jo = JObject.Parse(j);
+                JObject jo = childs[i].ToJObject();
                 jarr.Add(jo);
                 //计算下级
                 JArray charray = _columnsNode(childs[i], items);

@@ -563,8 +563,7 @@ namespace Song.ViewData.Methods
                 JArray ques = new JArray();
                 foreach (Song.Entities.Questions q in questions)
                 {
-                    string json = q.ToJson("", "Qus_CrtTime,Qus_LastTime");
-                    ques.Add(JObject.Parse(json));
+                    ques.Add(q.ToJObject("", "Qus_CrtTime,Qus_LastTime"));
                 }
                 jo.Add("ques", ques);
                 jarr.Add(jo);

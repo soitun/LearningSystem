@@ -297,12 +297,11 @@ namespace Song.ViewData.Methods
             JArray jarr = new JArray();
             for (int i = 0; i < childs.Count; i++)
             {
-                string j = childs[i].ToJson("", "Sbj_CrtTime,Sbj_DeleteTime");
-                JObject jo = JObject.Parse(j);
-                jarr.Add(jo);
+                JObject jo = childs[i].ToJObject();              
                 //计算下级
                 JArray charray = _SubjectNode(childs[i], items);
                 if (charray.Count > 0) jo.Add("children", charray);
+                jarr.Add(jo);
             }
             return jarr;
         }

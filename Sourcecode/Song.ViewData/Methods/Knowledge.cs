@@ -67,8 +67,7 @@ namespace Song.ViewData.Methods
             for (int i = 0; i < childs.Count; i++)
             {
                 Entities.KnowledgeSort m = childs[i];
-                string j = m.ToJson("", "Kns_CrtTime");
-                JObject jo = JObject.Parse(j);
+                JObject jo = m.ToJObject("", "Kns_CrtTime");
                 jarr.Add(jo);
                 //计算下级
                 JArray charray = _sortTree(m, items);

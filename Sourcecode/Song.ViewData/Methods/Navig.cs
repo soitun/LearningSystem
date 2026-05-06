@@ -131,8 +131,7 @@ namespace Song.ViewData.Methods
             for (int i = 0; i < childs.Count; i++)
             {
                 Navigation m= childs[i];
-                string j = m.ToJson("", "Nav_CrtTime");
-                JObject jo = JObject.Parse(j);
+                JObject jo = m.ToJObject();
                 jo.Add("id", "node_" + m.Nav_ID.ToString());
                 jo.Add("label", m.Nav_Name);
                 //字体样式
@@ -143,8 +142,7 @@ namespace Song.ViewData.Methods
 
                 //计算下级
                 JArray charray = _MenuNode(m, items);
-                if (charray.Count > 0)
-                    jo.Add("children", charray);
+                if (charray.Count > 0) jo.Add("children", charray);
                 jarr.Add(jo);
             }
             return jarr;

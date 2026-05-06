@@ -259,12 +259,10 @@ namespace Song.ViewData.Methods
                 //如果不是本机id，则显示项单项完成（因为完成度只是为了在开发时记录一下完成状态）
                 if (!islocal) m.MM_Complete = 100;
 
-                string j = m.ToJson(string.Empty, simplify ? @"MM_UID,MM_Marker,MM_IsFixed,MM_Func,MM_Order,MM_IsChilds,MM_IsShow,
+                JObject jo = m.ToJObject(string.Empty, simplify ? @"MM_UID,MM_Marker,MM_IsFixed,MM_Func,MM_Order,MM_IsChilds,MM_IsShow,
                                                     MM_PatId,MM_Root,
                                                     MM_Font,MM_IsBold,MM_IsItalic,MM_Color,
                                                     MM_IcoCode,MM_IcoSize,MM_IcoColor,MM_IcoX,MM_IcoY" : string.Empty);
-
-                JObject jo = JObject.Parse(j);
                 jo.Add("id", "node_" + m.MM_UID.ToString());
                 jo.Add("label", m.MM_Name);
                 jo.Add("ico", string.IsNullOrWhiteSpace(m.MM_IcoCode) ? "" : m.MM_IcoCode);
