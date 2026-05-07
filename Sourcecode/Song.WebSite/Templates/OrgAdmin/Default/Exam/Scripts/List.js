@@ -69,6 +69,44 @@ $ready(function () {
                 //调用,table的方法,展开/折叠 行
                 this.$refs.datatable.toggleRowExpansion(row)
             },
+            //操作下拉菜单的事件
+            handleCommand: function (command, row) {
+                //获取el-dropdown组件中的行数据的id
+                let objid = row.$attrs?.objid;
+                while (!objid && row.$parent) {
+                    row = row.$parent;
+                    objid = row.$attrs?.objid;
+                }
+                //当前行数据的对象
+                const obj = this.datas.find(item => item.Exam_ID === objid);
+                //分享
+                if (command == 'sharp') {
+                    let file = 'PaperPreview';
+                    let url = $api.url.set($dom.routepath() + file, { 'tpid': tpid });
+                    let boxid = file + "_" + tpid; 
+                    //创建
+                    var box = window.top.$pagebox.create({
+                        width: 1000, height: '80%', ico: 'e810',
+                        resize: true, full: false, id: boxid, pid: window.name,
+                        url: url
+                    });
+                    box.title = '试卷预览“' + obj.Etp_Name + "”";
+                    box.open();
+                }
+                //编辑
+                if (command == 'modify') this.$refs.btngroup.modify(objid);
+                //删除
+                if (command == 'delete') {
+                    this.$confirm('确定要删除当前考试吗？<br/>考试主题：《' + obj.Exam_Title + '》', '提示', {
+                        dangerouslyUseHTMLString: true,
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(t => {                          
+                        this.deleteExam(obj.Exam_ID);
+                    }).catch(action => { });
+                }                    
+            },
             //更改状态
             changeState: function (row) {
                 var th = this;

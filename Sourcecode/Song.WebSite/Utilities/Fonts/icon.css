@@ -281,12 +281,23 @@ icon[paste]::before {
 /*删除*/
 icon[delete]::before {
     content: '\e800';
+    transform: scale(1.1);
+    display: inline-block;
+    padding-left: 2px;
 }
 
-icon[delete] {
+icon[delete],icon[modify],icon[sharp] {
     cursor: pointer;
 }
 
+/*编辑*/
+icon[modify]::before {
+    content: '\e64d';
+}
+/*分享*/
+icon[sharp]::before {
+    content: '\e612';
+}
 /*QQ*/
 icon[qq]::before {
     content: '\e82a';
