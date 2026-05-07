@@ -40,3 +40,13 @@ card-content>div>div.item:not(:first-child) {
     display: flex;
     justify-content: space-between;
 }
+
+a[type="button"] {
+    color: #fff;
+    background-color: #07c160;
+    border: 1px solid #07c160;
+    font-size: 12px;
+    line-height: 20px;
+    padding: 3px 10px;
+    height: 20px;
+}
