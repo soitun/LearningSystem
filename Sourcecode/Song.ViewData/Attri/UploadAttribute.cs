@@ -52,6 +52,8 @@ namespace Song.ViewData.Attri
                 if (_prohibit == null)
                 {
                     _prohibit = WeiSha.Core.FileUp.Attr("prohibit").Split(',');
+                    for(int i = 0; i < _prohibit.Length; i++)                    
+                        _prohibit[i] = _prohibit[i].Replace(".", "").Trim().ToLower();                    
                 }
             }
             //
