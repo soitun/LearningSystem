@@ -93,20 +93,28 @@ card-title {
 	display: flex;
 	justify-content: space-between;
 }
-.theme card-title>*:first-child{
+
+.theme card-title>*:first-child {
 	margin-right: auto;
-} 
-.theme card-title>*:last-child{
-	margin-left: 20px;
 }
-card.my_exam card-title a {	
-	color: #fff;
-	background-color: #07c160;
-	border: 1px solid #07c160;
-	font-size: 12px;
-	line-height: 20px;
-	padding: 3px 10px;
-	height: 20px;
+
+.theme card-title>header {
+	margin-left: 10px;
+    margin-right: 10px !important;
+	display: flex;
+	flex-direction: column;
+}
+
+.theme card-title>header span {
+	color: #777;
+}
+.grouptype{
+    width: 60px;
+}
+
+card-content {
+	font-size: 16px;
+	padding-left: 30px;
 }
 
 card-content {
