@@ -81,16 +81,16 @@ $ready(function () {
                 const obj = this.datas.find(item => item.Exam_ID === objid);
                 //分享
                 if (command == 'sharp') {
-                    let file = 'PaperPreview';
-                    let url = $api.url.set($dom.routepath() + file, { 'tpid': tpid });
-                    let boxid = file + "_" + tpid; 
+                    let file = 'Sharp';
+                    let url = $api.url.set($dom.routepath() + file, { 'id': objid });
+                    let boxid = file + "_" + objid; 
                     //创建
                     var box = window.top.$pagebox.create({
-                        width: 1000, height: '80%', ico: 'e810',
+                        width: 800, height: 600, ico: 'e810',
                         resize: true, full: false, id: boxid, pid: window.name,
                         url: url
                     });
-                    box.title = '试卷预览“' + obj.Etp_Name + "”";
+                    box.title = '分享 - 考试主题：“' + obj.Exam_Title + "”";
                     box.open();
                 }
                 //编辑

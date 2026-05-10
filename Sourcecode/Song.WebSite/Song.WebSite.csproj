@@ -851,7 +851,9 @@
     <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\ResultsManual.js" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\ResultsReview.js" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\ResultsSummarize.js" />
+    <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\Sharp.js" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\_ExamItems.js" />
+    <Content Include="Templates\OrgAdmin\Default\Exam\Sharp.html" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Styles\AbsenceList.css" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Styles\Analysis.css" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Styles\Archives.css" />
@@ -864,6 +866,7 @@
     <Content Include="Templates\OrgAdmin\Default\Exam\Styles\ResultsManual.css" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Styles\ResultsReview.css" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Styles\ResultsSummarize.css" />
+    <Content Include="Templates\OrgAdmin\Default\Exam\Styles\Sharp.css" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Styles\_ExamItems.css" />
     <Content Include="Templates\OrgAdmin\Default\Exam\_ExamItems.html" />
     <Content Include="Templates\OrgAdmin\Default\Images\学员中心-mobi.png" />

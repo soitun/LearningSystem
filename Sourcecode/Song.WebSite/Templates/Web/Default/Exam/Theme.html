@@ -16,15 +16,17 @@
 
             <card class="theme" shadow="hover">
                 <card-title>
-                    <header>{{theme.Exam_Title}}</header>
-                    <section>{{theme.Exam_Intro}}</section>
+                    <header>
+                        <b>{{theme.Exam_Title}}</b>
+                        <span small>{{theme.Exam_Intro}}</span>
+                    </header>              
                     <el-tag v-if="theme.Exam_GroupType == 1">全体学员</el-tag>
                     <el-tag type="success" v-if="theme.Exam_GroupType == 2">限定学员组</el-tag>
                     <el-tag type="warning" v-if="theme.Exam_GroupType == 3">指定学员</el-tag>
                     <el-tooltip effect="light" content="Bottom Right 提示文字" placement="bottom-end">
-                        <icon large>&#xa053</icon>
+                        <icon large class="qrcode-icon">&#xa053</icon>
                         <div slot="content">
-                            <div :id="'course-qrcode'+theme.Exam_ID"></div>
+                            <div :id="'exam-qrcode'+theme.Exam_ID" class="qrcode"></div>
                         </div>
                     </el-tooltip>
                 </card-title>

@@ -91,7 +91,7 @@ $ready(['/Utilities/Scripts/qrcode.js'], function () {
             //生成二维码
             qrcode: function () {
                 var th = this;
-                var box = $dom("#course-qrcode" + th.theme.Exam_ID);
+                var box = $dom("#exam-qrcode" + th.theme.Exam_ID);
                 if (box.length < 1) window.setTimeout(this.qrcode, 200);
                 box.each(function () {
                     if ($dom(this).find("img").length > 0) return;
@@ -105,9 +105,9 @@ $ready(['/Utilities/Scripts/qrcode.js'], function () {
             },
             //生成链接
             builderurl: function () {
-                let path = window.location.origin + $dom.route();
-                path = path.substring(0, path.lastIndexOf('/') + 1) + 'theme';
-                return $api.url.set(path, { "id": this.theme.Exam_ID });
+                let path = window.location.origin + "/web/exam/theme";                
+                let url= $api.url.set(path, { "id": this.theme.Exam_ID });                
+                return url;
             }
         },
         filters: {
