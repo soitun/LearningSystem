@@ -2,6 +2,7 @@ $ready(['/Utilities/Scripts/qrcode.js'], function () {
     window.vapp = new Vue({
         el: '#vapp',
         data: {
+            account: {},     //当前登录账号
             org: {},
             config: {},      //当前机构配置项 
             examid: $api.querystring("id"),      //考试ID
