@@ -61,6 +61,6 @@
 /*左侧菜单树的选项卡，垂直居中*/
 .treemenu tree_tags{
     justify-content: center;
-    padding-bottom: 40px;
+    padding-bottom: calc(20% + 40px);
     box-sizing: border-box;
 }
