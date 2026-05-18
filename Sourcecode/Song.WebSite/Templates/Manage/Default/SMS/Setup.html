@@ -32,7 +32,7 @@
                     </el-link>
                 </template>
             </el-table-column>
-            <el-table-column label="余额（条）">
+            <el-table-column label="余额（条）" align="center" >
                 <template slot-scope="scope">
                     <sms_count :mark="scope.row.Mark" :user="scope.row.User" :pw="scope.row.Password"></sms_count>
                 </template>
@@ -40,12 +40,12 @@
             <el-table-column label="短信模板" width="60" align="center">
                 <template slot-scope="scope">
                     <el-link type="primary"
-                        @click="openbox('Message?mark='+scope.row.Mark,'Message','短信模板',600,400,'e808')">
+                        @click="openbox('Message?mark='+scope.row.Mark,'Message','短信模板',800,600,'e808')">
                         <icon>&#xe817</icon>设置
                     </el-link>
                 </template>
             </el-table-column>
-            <el-table-column label="注册/充值" width="120" align="center">
+            <el-table-column label="注册/充值" width="120" align="center" v-if="false">
                 <template slot-scope="scope">
                     <el-link type="primary" :disabled="scope.row.RegisterUrl ==''"
                         :href="ishyperlink(scope.row.RegisterUrl) ? scope.row.RegisterUrl : ''"

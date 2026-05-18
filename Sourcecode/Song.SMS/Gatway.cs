@@ -61,7 +61,7 @@ namespace Song.SMS
             //库名
             string ddlName = type.Substring(type.IndexOf(",") + 1);
             //创建反射
-            Type info = System.Type.GetType(className);
+            Type info = System.Type.GetType(type);
             if (info == null) return null;
             //实例化标签对象
             object obj = System.Activator.CreateInstance(info);

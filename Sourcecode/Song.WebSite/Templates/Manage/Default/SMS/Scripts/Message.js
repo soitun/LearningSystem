@@ -12,7 +12,9 @@ $ready(function () {
             rules: {
                 text: [{ required: true, message: '不得为空', trigger: 'blur' }]
             },
-            loading: false
+            phone: '',   //手机号
+            loading: false,
+            loading_send: false
         },
         watch: {
             'entity.text': {
@@ -30,6 +32,7 @@ $ready(function () {
         },
         mounted: function () {
             var th = this;
+            this.loading = true;
             $api.bat(
                 $api.get('Sms/getItem', { 'mark': th.mark }),
                 $api.get('Sms/TemplateSMS', { 'mark': th.mark }),
@@ -45,7 +48,7 @@ $ready(function () {
             }).catch(function (err) {
                 alert(err);
                 console.error(err);
-            });
+            }).finally(() => th.loading = false);
         },
         computed: {
 
@@ -88,6 +91,23 @@ $ready(function () {
                         return false;
                     }
                 });
+            },
+            send: function () {
+                var th = this;
+                this.loading_send = true;
+                $api.post('Sms/SendVcode', { 'phone': th.phone, 'len': 6 }).then(function (req) {
+                    if (req.data.success) {
+                        var result = req.data.result;   //校验码
+                        console.error(result);
+
+                    } else {
+                        console.error(req.data.exception);
+                        throw req.data.message;
+                    }
+                }).catch(function (err) {
+                    alert(err);
+                    console.error(err);
+                }).finally(() => th.loading_send = false);
             },
             //操作成功
             operateSuccess: function () {

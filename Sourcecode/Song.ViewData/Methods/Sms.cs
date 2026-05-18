@@ -134,6 +134,7 @@ namespace Song.ViewData.Methods
             int num = -1;         
             //短信平台操作对象
             Song.SMS.ISMS sms = Song.SMS.Gatway.GetService(mark);
+            if (sms == null) throw new Exception("短信接口“" + mark + "”不存在");
             //设置账号与密码
             sms.Current.User = smsacc;
             sms.Current.Password = smspw;
@@ -264,5 +265,6 @@ namespace Song.ViewData.Methods
             string vcode = Business.Do<ISMS>().SendVcode(phone, len);
             return ViewData.Helper.ConvertToAnyValue.Create(org.Org_PlatformName + vcode).SHA256;
         }
+
     }
 }

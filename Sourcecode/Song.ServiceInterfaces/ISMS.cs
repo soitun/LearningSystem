@@ -53,7 +53,8 @@ namespace Song.ServiceInterfaces
         /// <summary>
         /// 发送短信验证码
         /// </summary>
-        /// <param name="phone">手机号</param>   
+        /// <param name="phone">手机号</param>
+        /// <param name="len"></param>   
         /// <returns>被发送的验证码</returns>
         string SendVcode(string phone,int len);
         /// <summary>

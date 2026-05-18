@@ -8,13 +8,13 @@
 
 <body>
     <div id="vapp" v-cloak>
-        <el-form ref="entity" :model="entity" :rules="rules" @submit.native.prevent label-width="80px">
+        <el-form ref="entity" :model="entity" :rules="rules" :loading="loading" @submit.native.prevent label-width="80px">
             <el-form-item label="短信平台">
                 <el-tag type="success">{{entity.Name}}</el-tag>
             </el-form-item>
             <el-form-item label="模板" prop="text">
                 <el-input type="textarea" :rows="3" placeholder="请输入内容" v-model.trim="entity.text"> </el-input>
-            
+
             </el-form-item>
             <el-form-item label="实际效果">
                 {{format_text}}
@@ -25,6 +25,20 @@
                     2、替代符：{vcode}验证码，{platform}平台名称，{org}机构简称,{date}日期,{time}时间。<br />
                     3、案例：您正在登录{plate},验证码：{vcode}。转发可能导致账号被盗。{date},【{org}】
                 </help>
+            </el-form-item>
+            <el-form-item label="测试">
+                <el-row>
+                    <el-col :span="12">
+                        <el-input placeholder="手机号" v-model.trim="phone">
+                            <template slot="prepend">
+                                <icon mobile></icon>
+                            </template>
+                        </el-input>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-button type="primary" @click="send" :loading="loading_send">发送</el-button>
+                    </el-col>
+                </el-row>
             </el-form-item>
         </el-form>
 
