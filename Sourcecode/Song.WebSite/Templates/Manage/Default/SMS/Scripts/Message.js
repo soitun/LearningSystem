@@ -57,8 +57,8 @@ $ready(function () {
             //替换，参数：被替换的标签，文本
             replace: function (tag, text) {
                 if (tag == "{vcode}") {
-                    var rnd = Math.floor(Math.random(0, 9999) * 10000);
-                    while (rnd < 1000) rnd *= 10;
+                    var rnd = Math.floor(Math.random(0, 999999) * 1000000);
+                    while (rnd < 100000) rnd *= 10;
                     return text.replace(tag, rnd);
                 }
                 if (tag == "{plate}") return text.replace(tag, this.platinfo.title);
@@ -98,8 +98,7 @@ $ready(function () {
                 $api.post('Sms/SendVcode', { 'phone': th.phone, 'len': 6 }).then(function (req) {
                     if (req.data.success) {
                         var result = req.data.result;   //校验码
-                        console.error(result);
-
+                        //console.error(result);
                     } else {
                         console.error(req.data.exception);
                         throw req.data.message;

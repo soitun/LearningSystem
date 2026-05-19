@@ -59,7 +59,7 @@ namespace Song.SMS.Object
             {
                 if (string.IsNullOrWhiteSpace(mobile)) continue;
                 JObject o = new JObject();
-                o.Add("phone", mobile);
+                o.Add("phone", mobile);             
                 o.Add("content", content);
                 array.Add(o);
             }
@@ -69,8 +69,8 @@ namespace Song.SMS.Object
             jo.Add("sign", DataConvert.MD5(sign));
 
             //
-            string json = jo.ToString();
-            string result = WeiSha.Core.Request.HttpPost(url, json);
+            string json = jo.ToString();          
+            string result = HttpPost(url, json);
             JObject rjson = JObject.Parse(result);
             int code = rjson["code"].ToString().Convert<int>();
             if (code != 0) throw new Exception(rjson["message"].ToString());
@@ -114,41 +114,47 @@ namespace Song.SMS.Object
 
             //
             string json = jo.ToString();
-            string result = WeiSha.Core.Request.HttpPost(url, json);
+            string result = HttpPost(url, json);
             JObject rjson = JObject.Parse(result);
             int code = rjson["code"].ToString().Convert<int>();
             if (code == 0) return int.Parse(rjson["balance"].ToString());
             else throw new Exception(rjson["message"].ToString());
         }
-        /// <summary>
-        /// 获取参数
-        /// </summary>
-        /// <param name="url"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        private string _getPara(string url, string key)
-        {
-            string value = string.Empty;
-            if (url.IndexOf("?") > -1) url = url.Substring(url.LastIndexOf("?") + 1);
-            string[] paras = url.Split('&');
-            foreach (string para in paras)
-            {
-                if (string.IsNullOrWhiteSpace(para)) continue;
-                string[] arr = para.Split('=');
-                if (arr.Length < 2) continue;
-                if (String.Equals(arr[0], key, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    value = arr[1];
-                    break;
-                }
-            }
-            return value;
-        }
+        
         public string ReceiveSMS(DateTime from, string readflag)
         {
             throw new Exception("The method or operation is not implemented.");
         }
 
+        /// <summary>
+        /// Post方式获取网页的返回结果
+        /// </summary>
+        /// <param name="url">网址</param>
+        /// <param name="json">json格式参数</param>
+        /// <returns></returns>
+        public static string HttpPost(string url, string json)
+        {
+            HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(url);
+            req.Method = "POST";
+            req.Accept = "application/json";
+            req.ContentType = "application/json;charset=utf-8";
+            if (!string.IsNullOrWhiteSpace(json))
+            {
+                byte[] utf8Bytes = Encoding.UTF8.GetBytes(json);
+                req.ContentLength = utf8Bytes.Length;
+                using (Stream reqStream = req.GetRequestStream())
+                {
+                    reqStream.Write(utf8Bytes, 0, utf8Bytes.Length);
+                }
+            }
+            string result = string.Empty;
+            using (HttpWebResponse hwr = req.GetResponse() as HttpWebResponse)
+            {
+                System.IO.StreamReader reader = new System.IO.StreamReader(hwr.GetResponseStream(), Encoding.UTF8);
+                result = reader.ReadToEnd();
+            }         
+            return result;
+        }
         #endregion
     }
 }
