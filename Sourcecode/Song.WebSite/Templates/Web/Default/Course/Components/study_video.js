@@ -186,16 +186,18 @@ Vue.component('study_video', {
         },
         //播放器加载后的事件
         videoready: function () {
-            //隐藏全屏按钮
-            var fullbtn = document.getElementsByClassName("qplayer-fullscreen");
-            for (var i = 0; i < fullbtn.length; i++) {
-                //fullbtn[i].style.display = "none";
-            }
-            //隐藏设置按钮(播放倍速也禁用了)
-            var setbtn = document.getElementsByClassName("qplayer-settings-btn");
-            for (var i = 0; i < setbtn.length; i++) {
-                //setbtn[i].style.display = "none";
-            }
+             //隐藏全屏按钮
+             let dis_fullplay = this.config.Disenable_Web_Fullplay ?? false;
+             if (dis_fullplay) {
+                 let fullbtn = document.getElementsByClassName("qplayer-fullscreen");
+                 for (let i = 0; i < fullbtn.length; i++)fullbtn[i].style.display = "none";
+             }
+             //隐藏设置按钮(播放倍速也禁用了)
+             let dis_fastplay = this.config.Disenable_Web_Fastplay ?? false;
+             if (dis_fastplay) {
+                 let setbtn = document.getElementsByClassName("qplayer-settings-btn");
+                 for (let i = 0; i < setbtn.length; i++)setbtn[i].style.display = "none";
+             }
             //给video对象增加属性
             var video = document.querySelector("video");
             if (video != null) {

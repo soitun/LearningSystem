@@ -3,23 +3,15 @@ $ready(function () {
     window.vapp = new Vue({
         el: '#vapp',
         data: {
-            organ: {},
+            org: {},
             config: {},      //当前机构配置项
             rules: {},
             loading: false
         },
         mounted: function () {
             var th = this;
-            th.loading = true;
-            $api.bat(
-                $api.get('Organization/Current')
-            ).then(([organ]) => {
-                //获取结果             
-                th.organ = organ.data.result;
-                //机构配置信息
-                th.config = $api.organ(th.organ).config;
-            }).catch(err => console.error(err))
-                .finally(() => th.loading = false);
+            th.org = window.org;
+            th.config = window.config;
         },
         created: function () { },
         computed: {},
@@ -36,7 +28,7 @@ $ready(function () {
                 if (th.loading) return;
                 th.loading = true;
                 $api.post('Organization/ConfigUpdate', {
-                    "orgid": th.organ.Org_ID, 'config': data
+                    "orgid": th.org.Org_ID, 'config': data
                 }).then(function (req) {
                     if (req.data.success && req.data.result) {
                         th.$message({
