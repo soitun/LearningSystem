@@ -132,7 +132,7 @@ namespace Song.SMS.Object
         /// <param name="url">网址</param>
         /// <param name="json">json格式参数</param>
         /// <returns></returns>
-        public static string HttpPost(string url, string json)
+        private static string HttpPost(string url, string json)
         {
             HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(url);
             req.Method = "POST";
