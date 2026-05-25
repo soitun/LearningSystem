@@ -87,7 +87,7 @@ $ready(function () {
                 var th = this;
                 if (!th.islogin) {
                     window.setTimeout(function () {
-                        vapp.onload();
+                        th.onload();
                     }, 100);
                     return;
                 }

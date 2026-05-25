@@ -61,7 +61,8 @@ namespace Song.ViewData.QuestionHandler
             RegexOptions option = RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace;
             //删除HTML           
             text = Regex.Replace(text, @"([\r\n])[\s]+", "", option);
-            text = Regex.Replace(text, @"<(.[^>]*)>", "", option);
+            //text = Regex.Replace(text, @"<(.[^>]*)>", "", option);
+            text = ViewData.Html.ClearAttr(text, "p", "div", "font", "span", "a");
             text = Regex.Replace(text, @"-->", "", option);
             text = Regex.Replace(text, @"<!--.*", "", option);
             return text;

@@ -126,7 +126,9 @@ dl.quesArea dd card-title {
 	word-break: normal;
 }
 
-
+dl.quesArea dd card-title a{
+	word-break: break-all;
+}
 
 /*未答题的样式*/
 dl.quesArea dd card[correct="null"], card[correct="null"] * {
