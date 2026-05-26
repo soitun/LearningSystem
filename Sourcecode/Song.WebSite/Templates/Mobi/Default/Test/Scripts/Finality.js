@@ -1,6 +1,7 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['../Course/Components/topbar.js',
+    'Components/final_condition.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             couid: $api.querystring("couid"),
@@ -182,6 +183,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['../Course/Components/topbar.js',
-    'Components/final_condition.js']);
+});

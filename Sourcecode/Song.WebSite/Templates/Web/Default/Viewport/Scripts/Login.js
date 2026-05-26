@@ -1,6 +1,8 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['/Utilities/echarts/echarts.min.js',
+    '/Utilities/baiduMap/map_show.js',
+    '/Utilities/Components/date_range.js',], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             org: {}, //当前机构
@@ -425,7 +427,4 @@ $ready(function () {
               
           </div>`
     });
-
-}, ['/Utilities/echarts/echarts.min.js',
-    '/Utilities/baiduMap/map_show.js',
-    '/Utilities/Components/date_range.js',]);
+});

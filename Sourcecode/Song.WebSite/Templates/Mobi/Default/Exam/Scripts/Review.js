@@ -1,6 +1,10 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['/Utilities/Components/question/review.js',
+    '/Utilities/Components/question/function.js',
+    '/Utilities/panel/scripts/ctrls.js',
+    '/Utilities/panel/scripts/pagebox.js',
+    'Components/group.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             //考试id和成绩id
@@ -178,10 +182,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['/Utilities/Components/question/review.js',
-    '/Utilities/Components/question/function.js',
-    '/Utilities/panel/scripts/ctrls.js',
-    '/Utilities/panel/scripts/pagebox.js',
-    'Components/group.js']);
-$dom.load.css(['/Utilities/panel/Skins/Education/pagebox.css']);
+});

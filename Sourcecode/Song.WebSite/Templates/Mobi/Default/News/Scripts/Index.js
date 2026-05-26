@@ -1,5 +1,7 @@
-$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['Components/Articles.js',
+    'Components/SearchInput.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {         
             account: {},     //当前登录账号
@@ -37,5 +39,4 @@ $ready(function () {
         },
         methods: {}
     });
-}, ['Components/Articles.js',
-    'Components/SearchInput.js']);
+});

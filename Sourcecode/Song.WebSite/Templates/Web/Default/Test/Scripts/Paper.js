@@ -1,9 +1,10 @@
 document.oncontextmenu = function () {
     return false;
 }
-$ready(function () {
-
-    window.vapp = new Vue({
+$ready(["../Components/courses.js",
+    '../scripts/pagebox.js',
+    "Components/final_condition.js"], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             id: $api.dot(),      //试卷id
@@ -248,8 +249,4 @@ $ready(function () {
             }
         }
     });
-
-}, ["../Components/courses.js",
-    '../scripts/pagebox.js',
-    "Components/final_condition.js"]);
-$dom.load.css([$dom.path() + 'styles/pagebox.css']);
+});

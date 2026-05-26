@@ -1,6 +1,14 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['Viewport/Components/piece.js',
+    'Viewport/Components/dataitem.js',
+    'Viewport/Components/studentage.js',
+    'Viewport/Components/studentlogin.js',
+    'Viewport/Components/courses_hot.js',
+
+    '/Utilities/echarts/echarts.min.js',
+    'Viewport/Components/map_display.js',
+], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             platinfo: {},
@@ -75,14 +83,4 @@ $ready(function () {
             }
         }
     });
-
-
-}, ['Viewport/Components/piece.js',
-    'Viewport/Components/dataitem.js',
-    'Viewport/Components/studentage.js',
-    'Viewport/Components/studentlogin.js',
-    'Viewport/Components/courses_hot.js',
-
-    '/Utilities/echarts/echarts.min.js',
-    'Viewport/Components/map_display.js',
-]);
+});

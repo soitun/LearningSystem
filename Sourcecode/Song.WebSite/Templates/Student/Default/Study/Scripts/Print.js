@@ -1,6 +1,7 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['Components/progress_value.js',
+    '/Utilities/Scripts/qrcode.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             stid: $api.dot(),   //学员Id
@@ -178,6 +179,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['Components/progress_value.js',
-    '/Utilities/Scripts/qrcode.js']);
+});

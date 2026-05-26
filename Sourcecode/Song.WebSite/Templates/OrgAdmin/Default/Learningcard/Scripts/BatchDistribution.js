@@ -1,5 +1,6 @@
-﻿$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['/Utilities/Components/student_batch.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             lsid: $api.querystring('id'),
@@ -160,5 +161,4 @@
             }
         }
     });
-
-}, ['/Utilities/Components/student_batch.js']);
+});

@@ -1,6 +1,9 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(["Components/largebutton.js",        //购买课程的按钮
+    "Components/breadcrumb.js",         //顶部面包屑    
+    "../Components/courses.js",
+    '/Utilities/Scripts/qrcode.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             couid: $api.querystring("couid") == "" ? $api.dot() : $api.querystring("couid"),        //课程id
@@ -304,8 +307,4 @@ $ready(function () {
             }
         }
     });
-
-}, ["Components/largebutton.js",        //购买课程的按钮
-    "Components/breadcrumb.js",         //顶部面包屑    
-    "../Components/courses.js",
-    '/Utilities/Scripts/qrcode.js']);
+});

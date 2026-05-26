@@ -1,6 +1,8 @@
-﻿$ready(function () {
 
-    window.vapp = new Vue({
+$ready(["Components/video_list.js",
+    "/Utilities/Components/upload-chunked.js",
+    '/Utilities/Qiniuyun/qiniu-web-player-1.2.3.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             couid: $api.querystring('couid'),
@@ -330,7 +332,4 @@
             }
         }
     });
-
-}, ["Components/video_list.js",
-    "/Utilities/Components/upload-chunked.js",
-    '/Utilities/Qiniuyun/qiniu-web-player-1.2.3.js']);
+});

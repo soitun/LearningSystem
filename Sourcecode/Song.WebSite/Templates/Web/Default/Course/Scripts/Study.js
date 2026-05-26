@@ -1,5 +1,16 @@
-$ready(function () {
-    //var couid = $api.querystring("couid");
+
+$ready(['/Utilities/Qiniuyun/qiniu-web-player-1.2.3.js',
+    'Components/study_tabs.js',         //学习界面顶部选项卡
+    'Components/study_float.js',         //飘浮信息
+    'Components/study_outline.js',      //学习界面右侧的章节列表
+    'Components/study_video.js',        //视频点播
+    'Components/study_event.js',        //视频事件
+    'Components/study_live.js',         //直播
+    'Components/study_chat.js',         //交流咨询
+    'Components/progress_video.js',     //章节视频的学习进度
+    'Components/accessory.js',      //课程附件
+    '../scripts/pagebox.js'], function () {
+//var couid = $api.querystring("couid");
     window.vapp = new Vue({
         el: '#vapp',
         data: {
@@ -134,15 +145,4 @@ $ready(function () {
 
     }
     //
-
-}, ['/Utilities/Qiniuyun/qiniu-web-player-1.2.3.js',
-    'Components/study_tabs.js',         //学习界面顶部选项卡
-    'Components/study_float.js',         //飘浮信息
-    'Components/study_outline.js',      //学习界面右侧的章节列表
-    'Components/study_video.js',        //视频点播
-    'Components/study_event.js',        //视频事件
-    'Components/study_live.js',         //直播
-    'Components/study_chat.js',         //交流咨询
-    'Components/progress_video.js',     //章节视频的学习进度
-    'Components/accessory.js',      //课程附件
-    '../scripts/pagebox.js']);
+});

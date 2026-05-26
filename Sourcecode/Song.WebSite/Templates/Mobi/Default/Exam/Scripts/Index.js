@@ -1,6 +1,6 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['Components/exam_tabs.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             account: {},     //当前登录账号
@@ -376,4 +376,4 @@ $ready(function () {
         </card-content>
       </card>`
     });
-}, ['Components/exam_tabs.js']);
+});

@@ -1,6 +1,7 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['Components/Articles.js',
+'Components/SearchInput.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             uid: $api.dot(),        //新闻栏目uid         
@@ -78,6 +79,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['Components/Articles.js',
-'Components/SearchInput.js']);
+});

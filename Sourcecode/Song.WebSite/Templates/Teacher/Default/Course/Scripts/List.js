@@ -1,6 +1,7 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['Components/course_data.js',
+    'Components/course_prices.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             form:
@@ -286,6 +287,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['Components/course_data.js',
-    'Components/course_prices.js']);
+});

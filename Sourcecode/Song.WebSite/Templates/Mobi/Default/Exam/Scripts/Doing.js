@@ -1,5 +1,9 @@
-$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['/Utilities/Components/question/function.js',
+    '/Utilities/Components/question/exam.js',
+    '/Utilities/Components/upload-file.js',
+    'Components/result.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             examid: $api.querystring('id', 0),
@@ -662,7 +666,4 @@ $ready(function () {
             }
         }
     });
-}, ['/Utilities/Components/question/function.js',
-    '/Utilities/Components/question/exam.js',
-    '/Utilities/Components/upload-file.js',
-    'Components/result.js']);
+});

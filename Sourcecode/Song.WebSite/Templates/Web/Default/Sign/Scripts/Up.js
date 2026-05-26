@@ -1,6 +1,6 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['/Utilities/Components/Sign/Login.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             account: {},
@@ -401,5 +401,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['/Utilities/Components/Sign/Login.js']);
+});

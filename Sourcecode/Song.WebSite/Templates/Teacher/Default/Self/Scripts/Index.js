@@ -1,5 +1,7 @@
-$ready(function () {
-    window.vapp = new Vue({
+
+$ready(["/Utilities/Scripts/hanzi2pinyin.js",
+    "/Utilities/Components/education.js"], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             organ: {},
@@ -133,6 +135,4 @@ $ready(function () {
             }
         }
     });
-
-}, ["/Utilities/Scripts/hanzi2pinyin.js",
-    "/Utilities/Components/education.js"]);
+});

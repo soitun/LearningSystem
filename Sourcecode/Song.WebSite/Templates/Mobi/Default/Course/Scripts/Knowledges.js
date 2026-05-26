@@ -1,6 +1,6 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['Components/knlheader.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             sortid: $api.querystring("sortid"),
@@ -88,5 +88,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['Components/knlheader.js']);
+});

@@ -1,5 +1,7 @@
-﻿$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['/Utilities/echarts/echarts.min.js',
+    'Components/monthlychart.js',], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             orgid: 0,
@@ -174,6 +176,4 @@
             }
         }
     });
-
-}, ['/Utilities/echarts/echarts.min.js',
-    'Components/monthlychart.js',]);
+});

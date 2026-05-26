@@ -1,6 +1,6 @@
-﻿$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['../Components/outline_cascader.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             couid: $api.querystring('id'),
@@ -149,5 +149,4 @@
             }
         }
     });
-
-}, ['../Components/outline_cascader.js']);
+});

@@ -1,5 +1,8 @@
-﻿$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['Components/page_header.js',
+    '/Utilities/baiduMap/map_show.js'
+], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             center: { lng: 0, lat: 0 },
@@ -34,7 +37,4 @@
 
         }
     });
-
-}, ['Components/page_header.js',
-    '/Utilities/baiduMap/map_show.js'
-]);
+});

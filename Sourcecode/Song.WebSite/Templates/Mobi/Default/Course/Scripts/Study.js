@@ -1,6 +1,14 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['/Utilities/Qiniuyun/qiniu-web-player-1.2.3.js',
+    'Components/study_footer.js',
+    'Components/course_message.js',
+    'Components/outline_tree.js',
+    'Components/progress_video.js',
+    'Components/accessory.js',
+    'Components/study_video.js',
+    'Components/study_live.js',
+    'Components/study_float.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             couid: $api.querystring("couid") == "" ? $api.dot() : $api.querystring("couid"),
@@ -165,14 +173,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['/Utilities/Qiniuyun/qiniu-web-player-1.2.3.js',
-    'Components/study_footer.js',
-    'Components/course_message.js',
-    'Components/outline_tree.js',
-    'Components/progress_video.js',
-    'Components/accessory.js',
-    'Components/study_video.js',
-    'Components/study_live.js',
-    'Components/study_float.js']);
-
+});

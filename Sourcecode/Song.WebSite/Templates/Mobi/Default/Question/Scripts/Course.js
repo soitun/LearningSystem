@@ -1,5 +1,7 @@
-$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['Components/ExerciseState.js',
+    'Components/OutlineList.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             couid: $api.querystring("couid"),        //课程id
@@ -202,5 +204,4 @@ $ready(function () {
                     </div> 
                 </div> `
     });
-}, ['Components/ExerciseState.js',
-    'Components/OutlineList.js']);
+});

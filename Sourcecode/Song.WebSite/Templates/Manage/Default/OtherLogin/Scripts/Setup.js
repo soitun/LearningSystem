@@ -1,6 +1,6 @@
-﻿$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['/Utilities/OtherLogin/config.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {},
         watch: {},
@@ -55,5 +55,4 @@
             }
         }
     });
-
-}, ['/Utilities/OtherLogin/config.js']);
+});

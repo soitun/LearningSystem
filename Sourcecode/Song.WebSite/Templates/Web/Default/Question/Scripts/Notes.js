@@ -1,7 +1,16 @@
-﻿
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['/Utilities/Components/question/function.js',
+    '/Utilities/Components/question/learnmode.js', //练习模式，答题或背题
+    '/Utilities/Scripts/marked.min.js', //markdown的处理，用于AI解析生成文件的处理
+    'Components/SetupMenu.js',          //右上角的设置项菜单 
+    'Components/AnswerSheet.js',        //答题卡
+    'Components/QuesArea.js',           //试题区域
+    '/Utilities/Components/question/exercise.js',           //单个试题的展示
+    //'Components/PromptPanel.js',        //刚打开时的提示面板，手式操作的指引
+    'Components/Quesbuttons.js',        //试题右上角的按钮，报错、笔记、收藏
+    'Components/ExerciseState.js'       //记录学习状态
+], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             couid: $api.querystring("couid", 0),
@@ -188,14 +197,4 @@ $ready(function () {
             }
         }
     });
-}, ['/Utilities/Components/question/function.js',
-    '/Utilities/Components/question/learnmode.js', //练习模式，答题或背题
-    '/Utilities/Scripts/marked.min.js', //markdown的处理，用于AI解析生成文件的处理
-    'Components/SetupMenu.js',          //右上角的设置项菜单 
-    'Components/AnswerSheet.js',        //答题卡
-    'Components/QuesArea.js',           //试题区域
-    '/Utilities/Components/question/exercise.js',           //单个试题的展示
-    //'Components/PromptPanel.js',        //刚打开时的提示面板，手式操作的指引
-    'Components/Quesbuttons.js',        //试题右上角的按钮，报错、笔记、收藏
-    'Components/ExerciseState.js'       //记录学习状态
-]);
+});

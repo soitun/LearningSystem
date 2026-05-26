@@ -1,6 +1,6 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(["/Utilities/Components/upload-chunked.js"], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             organ: {},
@@ -112,5 +112,4 @@ $ready(function () {
 
         }
     });
-
-}, ["/Utilities/Components/upload-chunked.js"]);
+});

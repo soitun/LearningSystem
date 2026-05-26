@@ -1,7 +1,6 @@
 
-$ready(function () {
-
-    window.vapp = new Vue({
+$ready(['Components/ques_type.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             couid: $api.querystring('couid', '0'),        //课程id
@@ -315,5 +314,4 @@ $ready(function () {
             },
         },
     });
-
-}, ['Components/ques_type.js']);
+});

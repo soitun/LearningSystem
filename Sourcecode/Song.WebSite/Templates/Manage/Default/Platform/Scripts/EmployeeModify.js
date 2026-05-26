@@ -1,7 +1,6 @@
-﻿
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(["../Scripts/hanzi2pinyin.js"], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             id: $api.querystring('id'),
@@ -166,5 +165,4 @@ $ready(function () {
             }
         },
     });
-
-}, ["../Scripts/hanzi2pinyin.js"]);
+});

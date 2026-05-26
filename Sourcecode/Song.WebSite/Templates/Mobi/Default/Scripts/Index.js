@@ -1,6 +1,7 @@
 
-$ready(function () {
-    window.vapp = new Vue({
+$ready(['Components/courses.js',
+    "/Utilities/Components/popup-notice.js"], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             platinfo: {},
@@ -77,9 +78,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['Components/courses.js',
-    "/Utilities/Components/popup-notice.js"]);
-
-
-
+});

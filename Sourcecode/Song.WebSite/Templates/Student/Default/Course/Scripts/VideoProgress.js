@@ -1,6 +1,6 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['Components/outline_progress.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             couid: $api.dot(),
@@ -85,5 +85,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['Components/outline_progress.js']);
+});

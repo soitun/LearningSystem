@@ -1,6 +1,6 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['Components/TestHeader.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             tpid: $api.dot(),   //试卷id
@@ -193,5 +193,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['Components/TestHeader.js']);
+});

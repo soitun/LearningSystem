@@ -1,6 +1,6 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['/Utilities/Components/avatar.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             //微信授权code，通过它获取access_token和openid
@@ -179,5 +179,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['/Utilities/Components/avatar.js']);
+});

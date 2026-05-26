@@ -1,6 +1,10 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['Components/Question.js',
+    'Components/Quesbuttons.js',
+    'Components/AnswerCard.js',
+    '/Utilities/Components/question/function.js',
+    'Components/ExercisesState.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             couid: $api.querystring("couid", 0),
@@ -201,8 +205,4 @@ $ready(function () {
             }
         }
     });
-}, ['Components/Question.js',
-    'Components/Quesbuttons.js',
-    'Components/AnswerCard.js',
-    '/Utilities/Components/question/function.js',
-    'Components/ExercisesState.js']);
+});

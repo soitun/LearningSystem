@@ -1,6 +1,7 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['Components/account_header.js',
+    '/Utilities/OtherLogin/config.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             account: {},     //当前登录账号
@@ -107,5 +108,4 @@ $ready(function () {
             </template>
     </div>`
     });
-}, ['Components/account_header.js',
-    '/Utilities/OtherLogin/config.js']);
+});

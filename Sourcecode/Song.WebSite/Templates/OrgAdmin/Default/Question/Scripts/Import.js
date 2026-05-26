@@ -1,6 +1,7 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(["/Utilities/Components/upload-excel.js",
+    'Components/ques_type.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             couid: $api.querystring('couid', 0),        //课程id
@@ -142,6 +143,4 @@ $ready(function () {
 
         }
     });
-
-}, ["/Utilities/Components/upload-excel.js",
-    'Components/ques_type.js']);
+});

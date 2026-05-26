@@ -1,5 +1,7 @@
-﻿$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['/Utilities/Components/question/review.js',
+    '/Utilities/Components/question/function.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             id: $api.querystring('id'),
@@ -323,6 +325,4 @@
             }
         }
     });
-
-}, ['/Utilities/Components/question/review.js',
-    '/Utilities/Components/question/function.js']);
+});

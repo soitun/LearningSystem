@@ -1,6 +1,8 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['../Course/Components/course_data.js',
+    '../Course/Components/course_income.js',
+    '../Course/Components/course_prices.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             organ: {},
@@ -91,7 +93,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['../Course/Components/course_data.js',
-    '../Course/Components/course_income.js',
-    '../Course/Components/course_prices.js']);
+});

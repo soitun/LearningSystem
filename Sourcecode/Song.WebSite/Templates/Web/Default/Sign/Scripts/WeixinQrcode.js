@@ -1,5 +1,6 @@
-$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             tag: $api.querystring('tag'),
@@ -30,5 +31,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js']);
+});

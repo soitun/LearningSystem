@@ -1,6 +1,6 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['Components/progress_value.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             account: {},     //当前登录账号
@@ -125,5 +125,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['Components/progress_value.js']);
+});

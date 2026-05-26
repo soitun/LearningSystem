@@ -1,5 +1,6 @@
-﻿$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['/Utilities/Scripts/qrcode.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             id: $api.querystring('id'),
@@ -88,4 +89,4 @@
             });
         }
     });
-}, ['/Utilities/Scripts/qrcode.js']);
+});

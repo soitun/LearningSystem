@@ -1,6 +1,6 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['Components/knlheader.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             'id': $api.querystring("id", 0),    //知识id
@@ -44,5 +44,4 @@ $ready(function () {
         methods: {
         }
     });
-
-}, ['Components/knlheader.js']);
+});

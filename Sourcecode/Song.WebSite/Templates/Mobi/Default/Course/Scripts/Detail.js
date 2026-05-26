@@ -1,6 +1,7 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(["Components/course_menus.js",
+    "Components/progress_video.js"], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             couid: $api.querystring("id") == "" ? $api.dot() : $api.querystring("id"),        //课程id
@@ -147,5 +148,4 @@ $ready(function () {
             },
         }
     });
-}, ["Components/course_menus.js",
-    "Components/progress_video.js"]);
+});

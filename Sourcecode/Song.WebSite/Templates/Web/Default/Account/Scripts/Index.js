@@ -1,9 +1,9 @@
 document.oncontextmenu = function () {
     return false;
 }
-$ready(function () {
-
-    window.vapp = new Vue({
+$ready(['../scripts/pagebox.js',
+    '/Utilities/Components/upload-img.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             uid: $api.querystring('uid'),
@@ -352,5 +352,4 @@ $ready(function () {
             </menu_node>
         </div>`
     });
-}, ['../scripts/pagebox.js',
-    '/Utilities/Components/upload-img.js']);
+});

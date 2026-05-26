@@ -1,6 +1,7 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['Components/page_header.js',
+    '/Utilities/Scripts/mobile-detect.min.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             platinfo: {},
@@ -75,6 +76,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['Components/page_header.js',
-    '/Utilities/Scripts/mobile-detect.min.js']);
+});

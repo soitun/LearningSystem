@@ -1,5 +1,6 @@
-﻿$ready(function () {
-    window.vue = new Vue({
+
+$ready(['/Utilities/Scripts/qrcode.js'], function () {
+window.vue = new Vue({
         el: '#app',
         data: {
             id: $api.querystring('id'),
@@ -86,4 +87,4 @@
             });
         }
     });
-}, ['/Utilities/Scripts/qrcode.js']);
+});

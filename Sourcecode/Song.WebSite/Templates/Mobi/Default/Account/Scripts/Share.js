@@ -1,6 +1,6 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['/Utilities/Scripts/qrcode.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             account: {},     //当前登录账号
@@ -139,5 +139,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['/Utilities/Scripts/qrcode.js']);
+});

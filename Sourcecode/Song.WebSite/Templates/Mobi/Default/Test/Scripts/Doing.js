@@ -1,5 +1,9 @@
-﻿$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['/Utilities/Components/question/test.js',
+    '/Utilities/Components/question/function.js',
+    'Components/Quesbuttons.js',
+    'Components/AnswerCard.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             tpid: $api.querystring('tpid', 0),
@@ -386,7 +390,4 @@
             }
         }
     });
-}, ['/Utilities/Components/question/test.js',
-    '/Utilities/Components/question/function.js',
-    'Components/Quesbuttons.js',
-    'Components/AnswerCard.js']);
+});

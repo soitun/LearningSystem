@@ -1,6 +1,12 @@
-﻿$ready(function () {
 
-    window.vapp = new Vue({
+$ready([
+    '../Student/Components/purchase_data.js',      // 课程购买信息
+    'Components/video_progress.js',
+    '../Student/Components/ques_progress.js',
+    'Components/exam_test.js',       //结课考试
+    'Components/courimg.js'         //课程图片
+], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             id: $api.querystring('id'),      //学员id
@@ -121,11 +127,4 @@
             },
         }
     });
-
-}, [
-    '../Student/Components/purchase_data.js',      // 课程购买信息
-    'Components/video_progress.js',
-    '../Student/Components/ques_progress.js',
-    'Components/exam_test.js',       //结课考试
-    'Components/courimg.js'         //课程图片
-]);
+});

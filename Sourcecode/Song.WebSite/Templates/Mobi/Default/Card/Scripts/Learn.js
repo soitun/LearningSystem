@@ -1,6 +1,7 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['../Components/page_header.js',
+    '/Utilities/Scripts/reqrcode.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             account: {},     //当前登录账号
@@ -279,18 +280,4 @@ $ready(function () {
                 </template>              
             </div>`
     });
-}, ['../Components/page_header.js',
-    '/Utilities/Scripts/reqrcode.js']);
-
-
-window.getObjectURL = function (file) {
-    var url = null;
-    if (window.createObjectURL != undefined) { // basic
-        url = window.createObjectURL(file);
-    } else if (window.URL != undefined) { // mozilla(firefox)
-        url = window.URL.createObjectURL(file);
-    } else if (window.webkitURL != undefined) { // webkit or chrome
-        url = window.webkitURL.createObjectURL(file);
-    }
-    return url;
-}
+});

@@ -1,5 +1,6 @@
-$ready(function () {
-    window.vapp = new Vue({
+
+$ready(["/Utilities/Components/education.js"], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             form: {
@@ -208,5 +209,4 @@ $ready(function () {
             }
         }
     });
-
-}, ["/Utilities/Components/education.js"]);
+});

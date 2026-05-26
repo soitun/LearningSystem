@@ -1,6 +1,6 @@
-﻿
-$ready(function () {
-    window.vapp = new Vue({
+
+$ready([ '../Question/Components/ques_type.js',], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             id: $api.querystring('id'),           
@@ -62,4 +62,4 @@ $ready(function () {
         },
 
     });
-}, [ '../Question/Components/ques_type.js',]);
+});

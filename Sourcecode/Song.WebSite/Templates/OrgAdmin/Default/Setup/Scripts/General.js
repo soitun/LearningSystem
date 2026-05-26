@@ -1,5 +1,6 @@
-$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['/Utilities/baiduMap/map_setup.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             org: {},
@@ -120,5 +121,4 @@ $ready(function () {
             },
         }
     });
-
-}, ['/Utilities/baiduMap/map_setup.js']);
+});

@@ -1,7 +1,6 @@
-﻿
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(["/Utilities/Viewport/datav.min.vue.js"], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             platinfo: {},
@@ -54,5 +53,4 @@ $ready(function () {
             }
         }
     });
-
-}, ["/Utilities/Viewport/datav.min.vue.js"]);
+});

@@ -1,7 +1,6 @@
-﻿
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(["../Scripts/hanzi2pinyin.js"], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             account: {}, //当前登录账号对象
@@ -86,5 +85,4 @@ $ready(function () {
             }
         },
     });
-
-}, ["../Scripts/hanzi2pinyin.js"]);
+});

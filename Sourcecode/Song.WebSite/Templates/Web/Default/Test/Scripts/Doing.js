@@ -1,5 +1,10 @@
-﻿$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['/Utilities/Components/question/test.js',
+    '/Utilities/Components/question/function.js',
+    'Components/Quesbuttons.js',
+    'Components/AnswerCard.js',
+    "Components/final_condition.js"], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             tpid: $api.querystring('tpid', 0),      //试卷id
@@ -498,8 +503,4 @@
             }
         }
     });
-}, ['/Utilities/Components/question/test.js',
-    '/Utilities/Components/question/function.js',
-    'Components/Quesbuttons.js',
-    'Components/AnswerCard.js',
-    "Components/final_condition.js"]);
+});

@@ -1,5 +1,7 @@
-$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['../Components/page_header.js',
+    '/Utilities/Scripts/marked.min.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             account: {},     //当前登录账号
@@ -264,7 +266,4 @@ $ready(function () {
                 </div >`
             }
         }
-    });
-
-}, ['../Components/page_header.js',
-    '/Utilities/Scripts/marked.min.js']);
+});

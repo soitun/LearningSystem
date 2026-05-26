@@ -1,6 +1,7 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['/Utilities/OtherLogin/weixin.js',
+    '/Utilities/Components/Sign/Login.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             //1为绑定，2为登录
@@ -145,6 +146,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['/Utilities/OtherLogin/weixin.js',
-    '/Utilities/Components/Sign/Login.js']);
+});

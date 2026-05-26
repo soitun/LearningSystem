@@ -1,6 +1,7 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['Components/Articles.js',
+    'Components/SearchInput.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             search: $api.querystring("s"),
@@ -60,6 +61,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['Components/Articles.js',
-    'Components/SearchInput.js']);
+});

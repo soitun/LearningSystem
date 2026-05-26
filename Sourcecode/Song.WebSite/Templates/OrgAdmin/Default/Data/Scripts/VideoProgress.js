@@ -1,5 +1,6 @@
-$ready(function () {
-    window.vapp = new Vue({
+
+$ready([], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             orgid: 0,
@@ -75,5 +76,4 @@ $ready(function () {
             },
         }
     });
-
-}, []);
+});

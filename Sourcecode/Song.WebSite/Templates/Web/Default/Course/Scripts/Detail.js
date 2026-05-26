@@ -1,5 +1,12 @@
-$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['../scripts/pagebox.js',
+    'Components/largebutton.js',        //购买课程的按钮
+    'Components/breadcrumb.js',         //顶部面包屑
+    'Components/guides.js',
+    'Components/progress_video.js',
+    '../Components/courses.js',
+    '/Utilities/Scripts/qrcode.js',], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             couid: $api.dot(),        //课程id
@@ -264,11 +271,4 @@ $ready(function () {
             </el-tab-pane>        
         </el-tabs>`
     });
-}, ['../scripts/pagebox.js',
-    'Components/largebutton.js',        //购买课程的按钮
-    'Components/breadcrumb.js',         //顶部面包屑
-    'Components/guides.js',
-    'Components/progress_video.js',
-    '../Components/courses.js',
-    '/Utilities/Scripts/qrcode.js',]);
-$dom.load.css([$dom.path() + 'styles/pagebox.css']);
+});

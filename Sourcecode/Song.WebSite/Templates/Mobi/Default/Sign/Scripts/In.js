@@ -1,5 +1,8 @@
-$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['/Utilities/OtherLogin/config.js',      //第三方登录的配置项
+    '/Utilities/Components/Sign/Login.js'
+], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             account: {},
@@ -71,7 +74,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['/Utilities/OtherLogin/config.js',      //第三方登录的配置项
-    '/Utilities/Components/Sign/Login.js'
-]);
+});

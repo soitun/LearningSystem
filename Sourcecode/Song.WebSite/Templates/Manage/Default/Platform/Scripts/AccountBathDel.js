@@ -1,7 +1,6 @@
 
-$ready(function () {
-
-    window.vue = new Vue({
+$ready(['/Utilities/Components/student_batch.js'], function () {
+window.vue = new Vue({
         el: '#vapp',
         data: {
             accounts: [],     //要删除的账号列表
@@ -111,5 +110,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['/Utilities/Components/student_batch.js']);
+});

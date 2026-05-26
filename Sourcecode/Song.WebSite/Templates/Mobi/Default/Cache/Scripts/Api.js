@@ -1,6 +1,6 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['../Components/page_header.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             active: 0,         //选项卡索引 
@@ -157,5 +157,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['../Components/page_header.js']);
+});

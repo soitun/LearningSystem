@@ -1,6 +1,16 @@
-﻿
-$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['/Utilities/Components/question/function.js',
+    '/Utilities/Scripts/marked.min.js', //markdown的处理，用于AI解析生成文件的处理
+    'Components/ques_type.js',
+    'Components/modify_main.js',
+    'Components/knowledge.js',
+    'Components/general.js',
+    'Components/ques_error.js',
+    'Components/ques_wrong.js',
+    'Components/ques_ansitem.js',
+    'Components/ques_ansedit.js',
+    'Components/enter_button.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             id: $api.dot(),
@@ -42,14 +52,4 @@ $ready(function () {
             },
         },
     });
-}, ['/Utilities/Components/question/function.js',
-    '/Utilities/Scripts/marked.min.js', //markdown的处理，用于AI解析生成文件的处理
-    'Components/ques_type.js',
-    'Components/modify_main.js',
-    'Components/knowledge.js',
-    'Components/general.js',
-    'Components/ques_error.js',
-    'Components/ques_wrong.js',
-    'Components/ques_ansitem.js',
-    'Components/ques_ansedit.js',
-    'Components/enter_button.js']);
+});

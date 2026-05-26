@@ -1,5 +1,11 @@
-$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['/Utilities/Components/avatar.js',
+    '/Utilities/OtherLogin/config.js',      //第三方登录的配置项
+    '/Utilities/Components/Sign/Login.js',
+    "../Components/subject_rec.js",
+    '../scripts/pagebox.js',
+], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             account: {},
@@ -126,11 +132,4 @@ $ready(function () {
             </div>
         </div>`
     });
-
-}, ['/Utilities/Components/avatar.js',
-    '/Utilities/OtherLogin/config.js',      //第三方登录的配置项
-    '/Utilities/Components/Sign/Login.js',
-    "../Components/subject_rec.js",
-    '../scripts/pagebox.js',
-]);
-$dom.load.css([$dom.path() + 'styles/pagebox.css']);
+});

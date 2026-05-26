@@ -1,5 +1,6 @@
-﻿$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['../Components/page_header.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             platinfo: {},
@@ -149,5 +150,4 @@
             }
         }
     });
-
-}, ['../Components/page_header.js']);
+});

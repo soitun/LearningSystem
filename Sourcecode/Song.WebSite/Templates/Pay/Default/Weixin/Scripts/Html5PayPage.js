@@ -1,6 +1,6 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['/Utilities/Components/avatar.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             pid: $api.querystring('pi'),    //接口id
@@ -122,5 +122,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['/Utilities/Components/avatar.js']);
+});

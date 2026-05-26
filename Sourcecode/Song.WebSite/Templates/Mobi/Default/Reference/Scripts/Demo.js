@@ -1,6 +1,7 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready([
+    '/Utilities/baiduMap/map_show.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             account: {},     //当前登录账号
@@ -81,6 +82,4 @@ $ready(function () {
             }
         }
     });
-
-}, [
-    '/Utilities/baiduMap/map_show.js']);
+});

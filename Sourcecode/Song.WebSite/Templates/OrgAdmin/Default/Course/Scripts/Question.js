@@ -1,6 +1,6 @@
-﻿$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['../Question/Components/ques_type.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             couid: $api.querystring('id'),
@@ -314,4 +314,4 @@
         <template v-else>{{oultine.Ol_Name}}</template>
         </span>`
     });
-}, ['../Question/Components/ques_type.js']);
+});

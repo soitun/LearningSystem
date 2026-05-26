@@ -1,6 +1,6 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready([], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             org: {},
@@ -119,5 +119,4 @@ $ready(function () {
             }
         }
     });
-
-}, []);
+});

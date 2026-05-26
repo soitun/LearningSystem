@@ -1,6 +1,7 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(["../Components/links.js",
+    '../Components/page_header.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             account: {},     //当前登录账号
@@ -25,6 +26,4 @@ $ready(function () {
         methods: {
         }
     });
-
-}, ["../Components/links.js",
-    '../Components/page_header.js']);
+});

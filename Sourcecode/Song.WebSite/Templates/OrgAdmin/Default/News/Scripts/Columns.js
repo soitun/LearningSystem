@@ -1,5 +1,6 @@
-$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['Components/article_count.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             organ: {},
@@ -159,5 +160,4 @@ $ready(function () {
             },
         }
     });
-
-}, ['Components/article_count.js']);
+});

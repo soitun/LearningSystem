@@ -1,5 +1,6 @@
-﻿$ready(function () {
-    window.vapp = new Vue({
+
+$ready(["/Utilities/Components/education.js"], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             acid: $api.querystring('acid'),      //刚注册的学员id
@@ -187,5 +188,4 @@
             }
         }
     });
-
-}, ["/Utilities/Components/education.js"]);
+});

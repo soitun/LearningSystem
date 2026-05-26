@@ -1,6 +1,8 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(["../Components/page_header.js",
+    "../Components/page_footer.js",
+    "../Components/subject_show.js"], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             account: {},     //当前登录账号
@@ -236,7 +238,4 @@ $ready(function () {
         </el-breadcrumb>
     </div>`
     });
-
-}, ["../Components/page_header.js",
-    "../Components/page_footer.js",
-    "../Components/subject_show.js"]);
+});

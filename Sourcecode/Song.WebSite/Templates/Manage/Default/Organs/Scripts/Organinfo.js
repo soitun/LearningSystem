@@ -1,7 +1,7 @@
-﻿
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['/Utilities/baiduMap/convertor.js',
+    '/Utilities/baiduMap/map_setup.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             id: $api.querystring('id'),
@@ -89,6 +89,4 @@ $ready(function () {
             }
         },
     });
-
-}, ['/Utilities/baiduMap/convertor.js',
-    '/Utilities/baiduMap/map_setup.js']);
+});

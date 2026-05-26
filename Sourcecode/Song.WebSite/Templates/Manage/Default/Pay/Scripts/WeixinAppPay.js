@@ -1,7 +1,7 @@
-﻿
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['Components/interface_type.js',
+    'Components/modifybox.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: function () {
             //config的字段是否为空
@@ -65,6 +65,4 @@ $ready(function () {
         mounted: function () {},   
         methods: {},
     });
-
-}, ['Components/interface_type.js',
-    'Components/modifybox.js']);
+});

@@ -1,6 +1,6 @@
-﻿
-$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['/Utilities/Components/question/function.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             checkList: ['1', '2', '5'],   //选中的值
@@ -254,4 +254,4 @@ $ready(function () {
             }
         }
     });
-}, ['/Utilities/Components/question/function.js']);
+});

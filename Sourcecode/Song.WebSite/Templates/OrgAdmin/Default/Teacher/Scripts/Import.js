@@ -1,6 +1,6 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(["/Utilities/Components/upload-excel.js"], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             organ: {},
@@ -38,5 +38,4 @@ $ready(function () {
             },
         }
     });
-
-}, ["/Utilities/Components/upload-excel.js"]);
+});

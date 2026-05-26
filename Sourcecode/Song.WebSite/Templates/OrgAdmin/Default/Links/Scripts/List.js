@@ -1,6 +1,6 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['Components/links_count.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             form: {
@@ -134,5 +134,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['Components/links_count.js']);
+});

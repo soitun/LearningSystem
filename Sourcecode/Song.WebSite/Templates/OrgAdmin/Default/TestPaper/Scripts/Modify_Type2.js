@@ -1,5 +1,9 @@
-$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['Components/ques_count.js',
+    'Components/fromtype0.js',
+    'Components/fromtype1.js',
+    '../Question/Components/ques_type.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             id: $api.querystring('id'),     //试卷id
@@ -277,8 +281,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['Components/ques_count.js',
-    'Components/fromtype0.js',
-    'Components/fromtype1.js',
-    '../Question/Components/ques_type.js']);
+});

@@ -1,5 +1,8 @@
-$ready(function () {
-    window.vapp = new Vue({
+
+$ready(['Components/Articles.js',
+    "../Components/subject_rec.js",
+    'Components/SearchInput.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             account: {},
@@ -41,6 +44,4 @@ $ready(function () {
             },
         }
     });
-}, ['Components/Articles.js',
-    "../Components/subject_rec.js",
-    'Components/SearchInput.js']);
+});

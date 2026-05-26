@@ -1,5 +1,6 @@
-$ready(function () {
-    //禁用鼠标右键
+
+$ready(['Components/outline_progress.js'], function () {
+//禁用鼠标右键
     document.addEventListener('contextmenu', function (e) {
         //设置章节学习进度为完成
         window.vapp.updatePercentConfirm();
@@ -105,5 +106,4 @@ $ready(function () {
             },
         }
     });
-
-}, ['Components/outline_progress.js']);
+});

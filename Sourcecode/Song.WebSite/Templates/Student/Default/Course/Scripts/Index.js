@@ -1,6 +1,10 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['Components/course_data.js',
+    'Components/purchase_data.js',
+    'Components/video_progress.js',
+    'Components/ques_progress.js',
+    'Components/exam_test.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             account: {},     //当前登录账号
@@ -121,9 +125,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['Components/course_data.js',
-    'Components/purchase_data.js',
-    'Components/video_progress.js',
-    'Components/ques_progress.js',
-    'Components/exam_test.js']);
+});

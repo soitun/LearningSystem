@@ -1,6 +1,7 @@
-$ready(function () {
 
-    window.vapp = new Vue({
+$ready(['Components/btns.js',
+    'Components/topayment.js'], function () {
+window.vapp = new Vue({
         el: '#vapp',
         data: {
             account: {},      //当前账户
@@ -99,6 +100,4 @@ $ready(function () {
             }
         }
     });
-
-}, ['Components/btns.js',
-    'Components/topayment.js']);
+});
