@@ -39,7 +39,7 @@
             </el-form-item>
             <el-divider content-position="left">采用的试卷</el-divider>
             <el-form-item label="">
-                <el-radio-group v-model="papertype" :disabled="exam.Exam_ID!=''">
+                <el-radio-group v-model="papertype" >
                     <el-radio-button :label="1">考试专用试卷</el-radio-button>
                     <el-radio-button :label="0">课程模拟测试的试卷</el-radio-button>
                 </el-radio-group>

@@ -206,7 +206,8 @@ $ready(["Components/group_select.js",
             },
             //打开选择试题的子窗体
             openitems: function (examid) {
-                if (!window.top.$pagebox) return;
+                if (!window.top.$pagebox) return;              
+                if (examid == null) examid = 0;
                 //let item = this.qtypeitems.find(el => el.type == type);
                 let page = '_ExamItems';
                 let suburl = $dom.routepath() + page;    //子窗口页面路径      

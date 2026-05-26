@@ -4,7 +4,7 @@ $ready([
     window.vapp = new Vue({
         el: '#vapp',
         data: {
-            examid: $api.querystring('examid'),
+            examid: $api.querystring('examid', '0'),
             exam: {},       //当前场次
             theme: {},             //考试主题
             org: {},     //当前机构
@@ -146,7 +146,7 @@ $ready([
                 this.exam.Exam_PassScore = paper.Tp_PassScore;
                 this.exam.Exam_Span = paper.Tp_Span;
                 this.exam.Sbj_ID = paper.Sbj_ID;
-                this.exam.Sbj_Name = paper.Sbj_Name;
+                this.exam.Sbj_Name = paper.Sbj_Name;              
                 this.Etp_Id = '';
             },
             //当选择试卷是课程试卷时，加载专业等信息
@@ -162,22 +162,22 @@ $ready([
             //接收的主窗体数据
             receive: async function () {
                 //return new Promise((resolve, reject) => {
-                    //像主窗体传值，传三个值：选中的分类，选中的试题数，调用函数名
-                    var pagebox = window.top.$pagebox;
-                    if (pagebox && pagebox.source.top) {
-                        let [exam, theme] = pagebox.source.box(window.name, 'vapp.transmit', false, this.examid);
-                        this.theme = theme;     //考试主题
-                        if (exam == null) {
-                            //新增时，创建场次
-                            this.exam = await this.createexam();
-                        } else this.exam = $api.clone(exam);
-                        if (this.exam.Etp_Id != '' && this.exam.Etp_Id != '0') this.papertype = 1;
-                        else if (this.exam.Tp_Id != '' && this.exam.Tp_Id != '0') this.papertype = 0;
-                        this.exam.Exam_Purpose = this.papertype;
-                        //resolve(this.exam);
-                        return this.exam;
-                    }
-                    return null;
+                //像主窗体传值，传三个值：选中的分类，选中的试题数，调用函数名
+                var pagebox = window.top.$pagebox;
+                if (pagebox && pagebox.source.top) {
+                    let [exam, theme] = pagebox.source.box(window.name, 'vapp.transmit', false, this.examid);
+                    this.theme = theme;     //考试主题
+                    if (exam == null) {
+                        //新增时，创建场次
+                        this.exam = await this.createexam();
+                    } else this.exam = $api.clone(exam);
+                    if (this.exam.Etp_Id != '' && this.exam.Etp_Id != '0') this.papertype = 1;
+                    else if (this.exam.Tp_Id != '' && this.exam.Tp_Id != '0') this.papertype = 0;
+                    this.exam.Exam_Purpose = this.papertype;
+                    //resolve(this.exam);
+                    return this.exam;
+                }
+                return null;
                 //});
             },
             //创建考试对象
@@ -266,7 +266,7 @@ $ready([
                 if (val.length > 0) currid = val[val.length - 1];
                 var th = this;
                 var orgid = th.org.Org_ID;
-                $api.cache('Course/Pager', { 'orgid': orgid, 'sbjids': currid, 'thid': '', 'use': '','del':false, 'live': '', 'free': '', 'search': '', 'order': '', 'size': -1, 'index': 1 })
+                $api.cache('Course/Pager', { 'orgid': orgid, 'sbjids': currid, 'thid': '', 'use': '', 'del': false, 'live': '', 'free': '', 'search': '', 'order': '', 'size': -1, 'index': 1 })
                     .then(function (req) {
                         if (req.data.success) {
                             th.courses = req.data.result;

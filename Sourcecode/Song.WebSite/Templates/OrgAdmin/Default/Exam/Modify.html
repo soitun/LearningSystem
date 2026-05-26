@@ -78,7 +78,7 @@
                                         <icon>&#xe84d</icon>共 {{exams.length}} 场考试
                                     </el-tag>
                                     <el-divider direction="vertical"></el-divider>
-                                    <el-link type="primary" class="el-icon-plus" @click="openitems">添加场次</el-link>
+                                    <el-link type="primary" class="el-icon-plus" @click="openitems()">添加场次</el-link>
                                 </span>
                             </template>
                             <el-empty v-if="exams.length<1" description="未设置考试场次"></el-empty>
