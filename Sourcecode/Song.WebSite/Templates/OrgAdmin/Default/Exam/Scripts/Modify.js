@@ -206,7 +206,7 @@ $ready(["Components/group_select.js",
             },
             //打开选择试题的子窗体
             openitems: function (examid) {
-                if (!window.top.$pagebox) return;              
+                if (!window.top.$pagebox) return;
                 if (examid == null) examid = 0;
                 //let item = this.qtypeitems.find(el => el.type == type);
                 let page = '_ExamItems';
@@ -372,10 +372,18 @@ $ready(["Components/group_select.js",
                         if ($api.isnull(this.paper)) return 0;
                         return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Type : this.paper.Etp_Type;
                     },
+                    //试卷名称
                     tpname: function () {
                         if ($api.isnull(this.paper)) return '';
                         return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Name : this.paper.Etp_Name;
                     },
+                    //试卷是否存在
+                    tpexist: function () {
+                        if ($api.isnull(this.paper)) return false;
+                        return this.exam.Exam_Purpose == 0 ? 
+                        this.paper.Tp_Id > 0  && this.paper.Tp_IsUse && !this.paper.Tp_IsDeleted  : 
+                        this.paper.Etp_Id > 0  && this.paper.Etp_IsUse && !this.paper.Etp_IsDeleted ;
+                    }
                 },
                 methods: {
                     //获取试卷
@@ -398,14 +406,14 @@ $ready(["Components/group_select.js",
                     },
                 },
                 template: `<div>
-                    <el-tag type="info" v-if="false">
-                        <span v-if="exam.Exam_Purpose == 0">课程试卷</span>
-                        <span v-else>考试试卷</span>
-                    </el-tag>
-                        <papertype :type="tptype" :showname="false">
+                        <el-tag type="info" v-if="false">
+                            <span v-if="exam.Exam_Purpose == 0">课程试卷</span>
+                            <span v-else>考试试卷</span>
+                        </el-tag>                        
+                        <papertype :type="tptype" :showname="false" v-if="tpexist">
                             试卷：{{tpname}}
                         </papertype>
-
+                        <el-tag v-else type="danger">试卷不存在，或被禁用</el-tag>
                     </div>`
             }
         }

@@ -158,5 +158,15 @@
     "mark": "是否需要人工批阅",
     "intro": "如果有简答题则需要人工批阅",
     "relation": ""
+  },
+  "Tp_DeleteTime": {
+    "mark": "",
+    "intro": "",
+    "relation": ""
+  },
+  "Tp_IsDeleted": {
+    "mark": "删除",
+    "intro": "是否已经删除",
+    "relation": ""
   }
 }
