@@ -38,24 +38,16 @@
                 </el-input>
             </el-form-item>
             <el-divider content-position="left">采用的试卷</el-divider>
-            <el-form-item label="">
+            <el-form-item label="" prop="paper">
                 <el-radio-group v-model="papertype" >
                     <el-radio-button :label="1">考试专用试卷</el-radio-button>
                     <el-radio-button :label="0">课程模拟测试的试卷</el-radio-button>
                 </el-radio-group>
             </el-form-item>
-            <div v-show="papertype==1">
-                <el-form-item label="选择试卷" prop="paper">
-                    <el-select v-model="exam.Etp_Id" style="width: 100%;" filterable clearable remote
-                        :remote-method="getexampapers" placeholder="-- 考试专用试卷 --">
-                        <el-option v-for="(p,i) in exampapers" :key="p.Etp_Id" :label="p.Etp_Name" :value="p.Etp_Id">
-                            <span>{{i+1}} . {{p.Etp_Name}}</span>
-                            <papertype :type="p.Etp_Type" :showname="false">
-                                题量 {{p.Etp_Count}}
-                            </papertype>
-                    </el-select>
-                </el-form-item>
-            </div>
+         
+            <select_papertype1 v-show="papertype==1" :org="org" :exam="exam" @change="selectexampaper"></select_papertype1>
+            <select_papertype0 v-show="papertype==0"></select_papertype0>
+          
             <div v-show="papertype==0">
                 <el-form-item label="专业">
                     <el-cascader ref="subjects" style="width: 100%;" clearable v-model="sbjids" placeholder="请选择课程专业"

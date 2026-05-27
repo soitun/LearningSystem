@@ -409,8 +409,9 @@ $ready(["Components/group_select.js",
                         <el-tag type="info" v-if="false">
                             <span v-if="exam.Exam_Purpose == 0">课程试卷</span>
                             <span v-else>考试试卷</span>
-                        </el-tag>                        
-                        <papertype :type="tptype" :showname="false" v-if="tpexist">
+                        </el-tag>  
+                        <loading v-if="loading"></loading>                      
+                        <papertype :type="tptype" :showname="false" v-else-if="tpexist">
                             试卷：{{tpname}}
                         </papertype>
                         <el-tag v-else type="danger">试卷不存在，或被禁用</el-tag>

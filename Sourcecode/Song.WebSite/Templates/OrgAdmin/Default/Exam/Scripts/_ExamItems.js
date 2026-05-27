@@ -17,8 +17,7 @@ $ready([
                 checkStrictly: true
             },
             papertype: 1,          //试卷类型,默认是考试专用试卷
-            //考试专用试卷
-            exampapers: [],
+
             currpaper: {},      //当前试卷
 
             sbjTree: [],        //专业树
@@ -90,14 +89,6 @@ $ready([
                     });
                 }
             });
-
-            //考试专用试卷相关
-            this.getexampapers();
-            //课程试卷相关
-            //this.getSubjects();
-            if (this.exam.Tp_Id != '' && this.exam.Tp_Id != '0') {
-
-            }
         },
         created: function () {
 
@@ -127,28 +118,6 @@ $ready([
             },
         },
         watch: {
-            //选择考试专用试卷时
-            'exam.Etp_Id': function (val) {
-                let paper = this.exampapers.find(x => x.Etp_Id == val);
-                if (paper == null) return;
-                this.currpaper = paper;
-                this.exam.Exam_Total = paper.Etp_Total;
-                this.exam.Exam_PassScore = paper.Etp_PassScore;
-                this.exam.Exam_Span = paper.Etp_Span;
-                this.Tp_Id = '';
-            },
-            //选择课程试卷时
-            'exam.Tp_Id': function (val) {
-                let paper = this.courpapers.find(x => x.Tp_Id == val);
-                if (paper == null) return;
-                this.currpaper = paper;
-                this.exam.Exam_Total = paper.Tp_Total;
-                this.exam.Exam_PassScore = paper.Tp_PassScore;
-                this.exam.Exam_Span = paper.Tp_Span;
-                this.exam.Sbj_ID = paper.Sbj_ID;
-                this.exam.Sbj_Name = paper.Sbj_Name;              
-                this.Etp_Id = '';
-            },
             //当选择试卷是课程试卷时，加载专业等信息
             'papertype': {
                 handler: function (val) {
@@ -209,24 +178,9 @@ $ready([
                 }
                 return exam;
             },
-            //加载考试专用试卷
-            getexampapers: function (search) {
-                //试卷的查询条件
-                let form = {
-                    "orgid": this.org.Org_ID, "accid": "", "search": search,
-                    "isdeleted": false, "diff": "", "use": true, "size": 999, "index": 1
-                };
-                var th = this;
-                th.loadstate.exampaper = true;
-                $api.get("ExamTestPaper/Pager", form).then(function (d) {
-                    if (d.data.success) {
-                        var result = d.data.result;
-                        th.exampapers = result;
-                        //th.totalpages = Number(d.data.totalpages);
-                        //th.total = d.data.total;
-                    } else throw d.data.message;
-                }).catch(err => alert(err))
-                    .finally(() => th.loadstate.exampaper = false);
+            //选择考试试卷
+            selectexampaper: function (tpid,paper,exam) { 
+                this.exam.Tp_Id='';
             },
 
             /**
@@ -358,7 +312,131 @@ $ready([
 
         },
         components: {
-
+            //选择考试试卷
+            //事件:
+            //chanage:返回 试卷id,试卷对象，考试对象
+            'select_papertype1': {
+                props: ['exam', 'org'],
+                data: function () {
+                    return {
+                        //试卷的查询条件
+                        form: {
+                            "orgid": -1, "accid": "", "search": '',
+                            "isdeleted": false, "diff": "", "use": true, "size": 999, "index": 1
+                        },
+                        //考试专用试卷(所有)
+                        exampapers: [],
+                        paper: {},      //当前试卷
+                        examtpid: '',   //当前考试选择的试卷id
+                        loading: false,
+                    }
+                },
+                watch: {
+                    //初始加载
+                    'org': {
+                        handler: function (val) {
+                            if (val == null) return;
+                            this.form.orgid = val.Org_ID;
+                            //考试专用试卷相关
+                            this.getexampapers();
+                        }, immediate: true,
+                    },
+                    'exam': {
+                        handler: function (val) {
+                            if (val == null) return;
+                            //this.examtpid = val.Etp_Id;
+                            this.gettestpaper(val.Etp_Id);
+                            //this.change(this.examtpid);
+                        }, immediate: true,
+                    }
+                },
+                computed: {
+                    //试卷是否存在
+                    tpexist: function () {
+                        if ($api.isnull(this.paper)) return false;
+                        return this.paper.Etp_Id > 0 && this.paper.Etp_IsUse && !this.paper.Etp_IsDeleted;
+                    },
+                    //当前考试选择的试卷id
+                    examtpid: function () {
+                        return this.exam.Etp_Id;
+                    }
+                },
+                methods: {
+                    //加载考试专用试卷
+                    getexampapers: function (search) {
+                        var th = this;
+                        th.form.search = search;
+                        th.loading = true;
+                        $api.get("ExamTestPaper/Pager", th.form).then(function (d) {
+                            if (d.data.success) {
+                                var result = d.data.result;
+                                th.exampapers = result;
+                                //th.totalpages = Number(d.data.totalpages);
+                                //th.total = d.data.total;
+                            } else throw d.data.message;
+                        }).catch(err => alert(err))
+                            .finally(() => th.loading = false);
+                    },
+                    //获取试卷
+                    gettestpaper: function (tpid) {
+                        var th = this;
+                        th.loading = true;
+                        $api.get("ExamTestPaper/ForID", { "id": tpid })
+                            .then(req => {
+                                if (req.data.success) {
+                                    th.paper = req.data.result;
+                                    if (th.paper == null) return;
+                                    if (th.tpexist)
+                                        th.examtpid = tpid;
+                                }
+                            })
+                    },
+                    //当选择变化时
+                    change: function (val) {
+                        this.exam.Etp_Id = val;
+                        let paper = this.exampapers.find(x => x.Etp_Id == val);
+                        if (paper != null) {
+                            this.paper = paper;
+                            this.exam.Exam_Total = paper.Etp_Total;
+                            this.exam.Exam_PassScore = paper.Etp_PassScore;
+                            this.exam.Exam_Span = paper.Etp_Span;
+                            this.exam.Etp_Id = paper.Etp_Id;
+                            this.examtpid = paper.Etp_Id;
+                        } else {
+                            this.paper = {};
+                            this.exam.Exam_Total = 0;
+                            this.exam.Exam_PassScore = 0;
+                            this.exam.Exam_Span = 0;
+                            this.examtpid = '';
+                        }
+                        this.$emit('change', val, paper, this.exam);
+                    }
+                },
+                template: `<el-form-item label="考试试卷" prop="paper">
+                    <el-select v-model="examtpid" @change="change" style="width: 100%;" filterable clearable remote
+                            :remote-method="getexampapers" placeholder="-- 考试专用试卷 --">
+                            <el-option v-for="(p,i) in exampapers" :key="p.Etp_Id" :label="p.Etp_Name" :value="p.Etp_Id">
+                                <span>{{i+1}} . {{p.Etp_Name}}</span>
+                                <papertype :type="p.Etp_Type" :showname="false">
+                                    题量 {{p.Etp_Count}}
+                                </papertype>
+                        </el-select>
+                </el-form-item>`
+            },
+            //选择课程试卷
+            'select_papertype0': {
+                props: ['value'],
+                data: function () {
+                    return {
+                        loading: false,
+                    }
+                },
+                watch: {},
+                methods: {},
+                template: `<div>
+                        
+                    </div>`
+            }
         }
     });
 });
