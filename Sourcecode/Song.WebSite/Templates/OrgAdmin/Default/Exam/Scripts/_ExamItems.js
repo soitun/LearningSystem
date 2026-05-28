@@ -59,8 +59,9 @@ $ready([
         mounted: function () {
             this.org = window.org;
             var th = this;
-            this.receive().then((d) => {
-
+            //接收的主窗体数据完成
+            this.receive().then(exam => {
+                //console.error(th.papertype);
             });
         },
         created: function () {
@@ -94,7 +95,7 @@ $ready([
             //当选择试卷是课程试卷时，加载专业等信息
             'papertype': {
                 handler: function (val) {
-                    this.exam.Exam_Purpose = val;
+                    if (val != null) this.exam.Exam_Purpose = val;
                 }
             }, immediate: true,
         },
@@ -106,14 +107,10 @@ $ready([
                 if (pagebox && pagebox.source.top) {
                     let [exam, theme] = pagebox.source.box(window.name, 'vapp.transmit', false, this.examid);
                     this.theme = theme;     //考试主题
-                    if (exam == null) {
-                        //新增时，创建场次
-                        this.exam = await this.createexam();
-                    } else this.exam = $api.clone(exam);
-                    //if (this.exam.Etp_Id != '' && this.exam.Etp_Id != '0') this.papertype = 1;
-                    //else if (this.exam.Tp_Id != '' && this.exam.Tp_Id != '0') this.papertype = 0;
+                    //新增时，创建场次
+                    if (exam == null) this.exam = await this.createexam();
+                    else this.exam = $api.clone(exam);                 
                     this.papertype = this.exam.Exam_Purpose;
-                    //resolve(this.exam);
                     return this.exam;
                 }
                 return null;
@@ -130,7 +127,8 @@ $ready([
                     Exam_DateOver: this.theme.Exam_DateOver,
                     Exam_GroupType: this.theme.Exam_GroupType,
                     Exam_UID: this.theme.Exam_UID,
-                    Exam_Span: 0
+                    Exam_Span: 0,
+                    Exam_Purpose: 1,
                 };
                 try {
                     const req = await $api.get("Snowflake/Generate");
@@ -351,7 +349,7 @@ $ready([
                         }, immediate: true,
                     }
                 },
-                  computed: {
+                computed: {
                     //试卷是否存在
                     tpexist: function () {
                         if ($api.isnull(this.paper)) return false;
@@ -445,7 +443,7 @@ $ready([
                                     if (req.data.success) {
                                         th.paper = req.data.result;
                                         if (th.paper == null) return;
-                                          if (th.tpexist) th.examtpid = tpid;
+                                        if (th.tpexist) th.examtpid = tpid;
                                         resolve(th.paper);
                                         //
                                         th.couid = th.paper.Cou_ID;

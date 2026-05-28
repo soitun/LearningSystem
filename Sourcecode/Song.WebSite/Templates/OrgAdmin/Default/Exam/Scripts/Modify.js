@@ -18,7 +18,7 @@ $ready(["Components/group_select.js",
             entity: {
                 Exam_ID: 0,
                 Exam_IsTheme: true,
-                Exam_DateType: 1,
+                Exam_DateType: 1,                
                 Exam_IsRightClick: true,
                 Exam_IsUse: true,
                 Exam_GroupType: 1,
