@@ -12,6 +12,7 @@ $ready(function () {
             formadd: { "Org_ID": "", "Qtag_Name": "", "Qtag_Weight": 6, "Qtag_IsDeleted": false },
             formaddrules: {
                 "Qtag_Name": [{ required: true, message: '不得为空', trigger: 'blur' },
+                { min: 1, max: 500, message: '长度在 1 到 500 个字符', trigger: 'blur' },
                 {
                     validator: function (rule, value, callback) {
                         var pat = /^[a-zA-Z0-9\u4e00-\u9fa5\s,，]*$/;
@@ -21,12 +22,13 @@ $ready(function () {
                     }, trigger: 'blur'
                 },
                 { validator: validate.name.proh, trigger: 'change' },   //禁止使用特殊字符
-                { validator: validate.name.danger, trigger: 'change' }
+                { validator: validate.name.danger, trigger: 'change' },
                 ]
             },
             //编辑表单的验证
             editrules: {
                 "Qtag_Name": [{ required: true, message: '不得为空', trigger: 'blur' },
+                { min: 1, max: 500, message: '长度在 1 到 500 个字符', trigger: 'blur' },
                 {
                     validator: function (rule, value, callback) {
                         var pat = /^[\u4e00-\u9fa5a-zA-Z0-9\s]*$/;
