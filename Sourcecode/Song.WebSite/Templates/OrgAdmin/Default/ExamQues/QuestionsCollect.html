@@ -12,7 +12,7 @@
         <div class="toolsbar">
             <btngroup show="取消收藏,全选/取消" ref='btngroup' :disabled="loading" path="Modify" width="960" height="80%"
                 @select="selectall" @cancel="cancelselected" idkey='Qus_ID' table="datatables"></btngroup>
-            <query_panel :model="form" :width="45" :loading="loading" @search="handleCurrentChange(1)"
+            <query_panel ref="query_panel" :model="form" :width="45" :loading="loading" @search="handleCurrentChange(1)"
                 @reset="queryreset">
                 <template>
                     <el-form-item label="题干">

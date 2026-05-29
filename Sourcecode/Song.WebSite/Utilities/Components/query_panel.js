@@ -75,12 +75,17 @@ Vue.component('query_panel', {
                 }
             });
         },
-        //重置表单
+        //重置表单为初始
         reset_model: function () {
             var model = this.model_init;
             for (var m in model)
                 this.$set(this.model, m, model[m]);
             this.$emit('reset', this.model);
+        },
+        //重新设置查询面板的初始参数
+        setmodel: function (model) {
+            for (var m in model)
+                this.$set(this.model_init, m, model[m]);
         }
     },
     template: `<div :class="{'query_panel':true,'query_panel_expand':expanded}">

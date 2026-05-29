@@ -55,6 +55,8 @@ $ready([
             $api.login.current('admin', d => {
                 th.admin = d;
                 th.form.acid = d.Acc_Id;
+                //重新设置查询面板的初始参数
+                th.$refs['query_panel'].setmodel(th.form);
                 th.handleCurrentChange(1);
             });
         },
@@ -80,7 +82,7 @@ $ready([
             handleCurrentChange: function (index) {
                 var th = this;
                 if (index != null) this.form.index = index;
-                var loading = this.$fulloading();
+                var loading = this.$fulloading();            
                 th.loadstate.get = true;
                 $api.get("ExamQues/CollectPager", th.form).then(function (d) {
                     if (d.data.success) {
