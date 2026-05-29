@@ -11,7 +11,7 @@ $ready([
             types: [],        //试题类型，来自web.config中配置项
             admin: {},          //当前登录用户
             //试题的查询条件
-            form: {"acid":"","search":"","qpid":"","tagid":"","knlid":"","type":"","diff":"","use":"","error":"","wrong":"","size":10,"index":1},
+            form: {"acid":"","search":"","qpid":"","tagid":"","knlid":"","type":"","diff":"","use":true,"error":"","wrong":"","size":10,"index":1},
             datas: [],
             total: 1, //总记录数
             totalpages: 1, //总页数

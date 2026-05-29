@@ -27,6 +27,20 @@ namespace Song.ServiceImpls
             return Gateway.Default.From<Questions>().Where(Questions._.Qus_ID == id).ToFirst<Questions>();
         }
         /// <summary>
+        /// 可用的试题，用于出卷时抽题，所谓可用，即存在，use为true,deleted为false,没有错误
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Questions QuesAvailable(long id)
+        {
+            //用于考试的试题
+            WhereClip wc = Questions._.Qus_Purpose == 1 && Questions._.Qus_IsDeleted == false;
+            wc.And(Questions._.Qus_IsUse == true);
+            wc &= Questions._.Qus_IsError == false;
+            wc &= Questions._.Qus_IsWrong == false;
+            return Gateway.Default.From<Questions>().Where(Questions._.Qus_ID == id && wc).ToFirst<Questions>();
+        }
+        /// <summary>
         /// 添加试题
         /// </summary>
         /// <param name="entity">业务实体</param>

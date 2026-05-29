@@ -58,7 +58,7 @@ $ready([
             //收藏试题的查询条件
             collectform: {
                 "acid": "", "search": "", "qpid": "", "tagid": "", "knlid": "", "type": $api.querystring('type'),
-                "diff": "", "use": "", "error": "", "wrong": "", "size": 10, "index": 1
+                "diff": "", "use": true, "error": false, "wrong": false, "size": 10, "index": 1
             },
             collectques: [],
             collecttotal: 1, //总记录数

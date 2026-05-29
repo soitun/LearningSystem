@@ -21,6 +21,12 @@ namespace Song.ServiceInterfaces
         /// <returns></returns>
         Questions QuesSingle(long id);
         /// <summary>
+        /// 可用的试题，用于出卷时抽题，所谓可用，即存在，use为true,deleted为false,没有错误
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Questions QuesAvailable(long id);
+        /// <summary>
         /// 添加试题
         /// </summary>
         /// <param name="entity">业务实体</param>
