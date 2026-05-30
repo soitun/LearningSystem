@@ -22,6 +22,7 @@ $ready(function () {
             $api.login.current('account', acc => {
                 th.account = acc;
                 th.form.acid = th.account.Ac_ID;
+                 th.$refs['query_panel'].setmodel(th.form);
                 th.handleCurrentChange(1);
             }, err => { });
 

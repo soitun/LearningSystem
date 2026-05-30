@@ -1,6 +1,6 @@
 
 $ready(['Components/exam_tabs.js'], function () {
-window.vapp = new Vue({
+    window.vapp = new Vue({
         el: '#vapp',
         data: {
             account: {},     //当前登录账号
@@ -332,10 +332,29 @@ window.vapp = new Vue({
             }
         },
         watch: {},
-        computed: {},
+        computed: {
+            tpcount: function () {
+                return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Count : this.paper.Etp_Count;
+            },
+            tpname: function () {
+                return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Name : this.paper.Etp_Name;
+            }
+        },
         mounted: function () {
             var th = this;
-            $api.cache('Exam/ForID', { 'id': this.result.Exam_ID }).then(req => th.exam = req.data.result);           
+            $api.cache('Exam/ForID', { 'id': th.result.Exam_ID }).then(req => {
+                if (req.data.success) {
+                    th.exam = req.data.result;
+                    if (th.exam.Exam_Purpose == 0) {
+                        $api.cache('TestPaper/ForID', { 'id': th.exam.Tp_Id }).then(req => th.paper = req.data.result);
+                        $api.cache('Subject/ForID', { 'id': th.result.Sbj_ID }).then(req => th.subject = req.data.result);
+                    } else
+                        $api.cache('ExamTestPaper/ForID', { 'id': th.exam.Etp_Id }).then(req => th.paper = req.data.result);
+                } else {
+                    console.error(req.data.exception);
+                    throw req.data.message;
+                }
+            });
         },
         methods: {
             //得分样式
@@ -363,7 +382,12 @@ window.vapp = new Vue({
         <score :class="scoreStyle(result.Exr_ScoreFinal)">{{result.Exr_ScoreFinal}} 分</score>
         </card-title>
         <card-content>
-        <div class="item" v-if="exam"> {{exam.Exam_Title}}</div>          
+          <div class="item" v-if="exam">考试：{{exam.Exam_Title}}</div>      
+           <div class="item">试卷： {{tpname}}</div>  
+            <template v-if="exam.Exam_Purpose==0">  
+                <div class="item">专业：{{subject.Sbj_Name}}</div>  
+                <div class="item">课程：{{paper.Cou_Name}}</div>  
+            </template>        
           <div class="item" v-if="exam">限时：{{exam.Exam_Span}}分钟 &nbsp; 题量：{{exam.Exam_QuesCount}}道</div>
           <div class="item">交卷时间：{{result.Exr_SubmitTime|date("yyyy-MM-dd HH:mm:ss")}}</div>
           <div class="item">得分：{{result.Exr_ScoreFinal}} 分

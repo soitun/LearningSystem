@@ -31,7 +31,7 @@ $ready(["../Components/courses.js",
 
             },
             created: function () {
-                
+
             },
             computed: {
                 //是否登录
@@ -140,8 +140,8 @@ $ready(["../Components/courses.js",
                 }
             },
             computed: {
-                 //题量
-                 tpcount: function () {
+                //题量
+                tpcount: function () {
                     return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Count : this.paper.Etp_Count;
                 }
             },
@@ -360,20 +360,29 @@ $ready(["../Components/courses.js",
                 }
             },
             watch: {},
-            computed: {},
+            computed: {
+                tpcount: function () {
+                    return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Count : this.paper.Etp_Count;
+                },
+                tpname: function () {
+                     return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Name : this.paper.Etp_Name;
+                }
+            },
             mounted: function () {
                 var th = this;
-                //获取“试卷详情”
-                $api.bat(
-                    $api.cache('Exam/ForID', { 'id': this.result.Exam_ID }),
-                    $api.cache('TestPaper/ForID', { 'id': this.result.Tp_Id }),
-                    $api.cache('Subject/ForID', { 'id': this.result.Sbj_ID })
-                ).then(([exam, paper, subject]) => {
-                    //获取结果
-                    th.exam = exam.data.result;
-                    th.paper = paper.data.result;
-                    th.subject = subject.data.result;
-                }).catch(err => console.error(err));
+                $api.cache('Exam/ForID', { 'id': th.result.Exam_ID }).then(req => {
+                    if (req.data.success) {
+                        th.exam = req.data.result;
+                        if (th.exam.Exam_Purpose == 0) { 
+                            $api.cache('TestPaper/ForID', { 'id': th.exam.Tp_Id }).then(req =>th.paper = req.data.result);
+                            $api.cache('Subject/ForID', { 'id': th.result.Sbj_ID }).then(req =>th.subject = req.data.result);
+                        }else
+                            $api.cache('ExamTestPaper/ForID', { 'id': th.exam.Etp_Id }).then(req =>th.paper = req.data.result);
+                    } else {
+                        console.error(req.data.exception);
+                        throw req.data.message;
+                    }
+                });
             },
             methods: {
                 //得分样式
@@ -404,15 +413,19 @@ $ready(["../Components/courses.js",
                 }
             },
             template: `<card shadow="hover">
-        <card-title style="cursor: pointer" @click="gourl">{{index+1}}.《{{exam.Exam_Name}}》
-        <score :class="scoreStyle(result.Exr_ScoreFinal)">{{result.Exr_ScoreFinal}} 分</score>
+        <card-title style="cursor: pointer" @click="gourl">{{index+1}}.《 {{exam.Exam_Title}} 》- {{exam.Exam_Name}}
+            <score :class="scoreStyle(result.Exr_ScoreFinal)">{{result.Exr_ScoreFinal}} 分</score>
         </card-title>
         <card-content>
-            <div class="item"> {{exam.Exam_Title}}</div>          
-            <div class="item">限时：{{exam.Exam_Span}}分钟 &nbsp; 题量：{{paper.Tp_Count}}道</div>
+            <div class="item">试卷： {{tpname}}</div>  
+            <template v-if="exam.Exam_Purpose==0">  
+                <div class="item">专业：{{subject.Sbj_Name}}</div>  
+                <div class="item">课程：{{paper.Cou_Name}}</div>  
+            </template>          
+            <div class="item">限时：{{exam.Exam_Span}}分钟 &nbsp; 题量：{{tpcount}}道</div>
             <div class="item">交卷时间：{{result.Exr_SubmitTime|date("yyyy-MM-dd HH:mm:ss")}}</div>
             <div class="item">得分：{{result.Exr_ScoreFinal}} 分
-            （满分{{exam.Exam_Total}}分，{{exam.Tp_PassScore}}分及格）</div>           
+            （满分{{exam.Exam_Total}}分，{{exam.Exam_PassScore}}分及格）</div>           
         </card-content>
       </card>`
         });
