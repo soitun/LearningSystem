@@ -11,7 +11,7 @@
             <btngroup show="新增,修改,删除" ref='btngroup' :disabled="loading" :selects='selects' idkey='Etp_Id'
                 @delete="deleteData" table="datatables" path="Modify" width="900" height="500">
             </btngroup>
-            <query_panel :model="form" :width="45" :loading="loading" @search="handleCurrentChange(1)">
+            <query_panel ref="query_panel" :model="form" :width="45" :loading="loading" @search="handleCurrentChange(1)">
                 <template>
                     <el-form-item label="标题">
                         <el-input v-model.trim="form.search" clearable style="width:245px" placeholder="搜索试卷标题">

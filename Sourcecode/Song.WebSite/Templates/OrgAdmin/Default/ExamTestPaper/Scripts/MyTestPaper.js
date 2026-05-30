@@ -29,6 +29,8 @@ $ready(['Components/papertype.js'],
                 $api.login.current('admin', d => {
                     th.admin = d;
                     th.form.accid = d.Acc_Id;
+                    //重新设置查询面板的初始参数
+                    th.$refs['query_panel'].setmodel(th.form);
                     th.handleCurrentChange(1);
                 });
             },
@@ -92,7 +94,7 @@ $ready(['Components/papertype.js'],
                     if (command == 'preview') {
                         let file = 'PaperPreview';
                         let url = $api.url.set($dom.routepath() + file, { 'tpid': tpid });
-                        let boxid = file + "_" + tpid; 
+                        let boxid = file + "_" + tpid;
                         //创建
                         var box = window.top.$pagebox.create({
                             width: 1000, height: '80%', ico: 'e810',
@@ -115,7 +117,7 @@ $ready(['Components/papertype.js'],
                             console.error(t);
                             this.deleteData(obj.Etp_Id);
                         }).catch(action => { });
-                    }                    
+                    }
                 },
                 //双击事件
                 rowdblclick: function (row, column, event) {
