@@ -129,10 +129,18 @@ $ready(function () {
                 }).catch(() => { });
             },
             //回收
-            recycle: function (datas) {
+            recycle: function (btn, datas) {
                 if (datas == null || datas == '') datas = this.getselectid().join(",");
+                if (datas == null || datas == '') {
+                    this.$message({
+                        message: '请选中要操作的数据项',
+                        type: 'error'
+                    });
+                    return false;
+                }
                 var th = this;
-                th.$confirm('是否还原选中的数据?', '提示', {
+                let count = datas.split(",").length;
+                th.$confirm('是否还原选中的 ' + count + ' 条数据?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'

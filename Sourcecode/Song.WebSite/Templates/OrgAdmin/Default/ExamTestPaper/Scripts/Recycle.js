@@ -73,7 +73,7 @@ $ready(['Components/papertype.js'],
                     });
                 },
                 //回收
-                recycle: function (datas) {                 
+                recycle: function (btn,datas) {                 
                     var th = this;
                     th.$confirm('是否还原选中的数据?', '提示', {
                         confirmButtonText: '确定',
