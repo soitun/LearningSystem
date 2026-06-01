@@ -553,6 +553,8 @@ namespace Song.ServiceImpls
                 Organization org = Business.Do<IOrganization>().OrganCurrent();
                 if (org != null) entity.Org_ID = org.Org_ID;
             }
+            QuesPart existpart = this.PartIsExist(entity.Org_ID, entity.Qp_PID, entity.Qp_Name);
+            if (existpart != null) throw new Exception("当前层级下已经存在该分类名称！");
             //如果没有排序号，则自动计算
             if (entity.Qp_Order < 1)
             {
@@ -630,8 +632,10 @@ namespace Song.ServiceImpls
         /// <param name="entity">业务实体</param>
         public QuesPart PartSave(QuesPart entity)
         {
-            //专业的id与pid不能相等
+            //分类的id与pid不能相等
             if (entity.Qp_PID == entity.Qp_ID) throw new Exception("QuesPart table PID Can not be equal to ID");
+            QuesPart existpart = this.PartIsExist(entity);
+            if (existpart != null) throw new Exception("当前层级下已经存在该分类名称！");
             QuesPart old = this.PartSingle(entity.Qp_ID);
             if (old.Qp_PID != entity.Qp_PID)
             {
@@ -1340,6 +1344,8 @@ namespace Song.ServiceImpls
                 Organization org = Business.Do<IOrganization>().OrganCurrent();
                 if (org != null) entity.Org_ID = org.Org_ID;
             }
+            QuesKnowledge knl = this.KnlIsExist(entity.Org_ID, entity.Qk_PID, entity.Qk_Name);
+            if (knl != null) throw new Exception("当前层级下的该知识点已存在！");
             //如果没有排序号，则自动计算
             if (entity.Qk_Order < 1)
             {
@@ -1425,6 +1431,8 @@ namespace Song.ServiceImpls
                 object obj = Gateway.Default.Max<QuesKnowledge>(QuesKnowledge._.Qk_Order, QuesKnowledge._.Org_ID == entity.Org_ID && QuesKnowledge._.Qk_PID == entity.Qk_PID);
                 entity.Qk_Order = obj != null ? Convert.ToInt32(obj) + 1 : 0;
             }
+            QuesKnowledge knl = this.KnlIsExist(entity);
+            if (knl != null) throw new Exception("当前层级下的该知识点已存在！");
             entity.Qk_UpdateTime = DateTime.Now;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
@@ -2018,6 +2026,8 @@ namespace Song.ServiceImpls
                 Organization org = Business.Do<IOrganization>().OrganCurrent();
                 if (org != null) entity.Org_ID = org.Org_ID;
             }
+            bool isexits = TagIsExist(entity.Org_ID, entity.Qtag_PID, entity.Qtag_Name);
+            if (isexits) throw new Exception("关键字已经存在！");
             //如果没有排序号，则自动计算
             if (entity.Qtag_Order < 1)
             {
@@ -2089,6 +2099,8 @@ namespace Song.ServiceImpls
         public void TagSave(QuesTags entity)
         {
             entity.Qtag_UpdateTime = DateTime.Now;
+            bool isexits = TagIsExist(entity);
+            if (isexits) throw new Exception("关键字已经存在！");
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
