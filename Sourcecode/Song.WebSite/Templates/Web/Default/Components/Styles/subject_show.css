@@ -46,7 +46,7 @@ weisha.subject_show courses {
     width: calc(100% - 220px);
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    gap: 0px 60px; 
     box-sizing: border-box;
     padding-left: 65px;
 }

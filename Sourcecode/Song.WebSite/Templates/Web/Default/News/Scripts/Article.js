@@ -24,6 +24,8 @@ $ready(function () {
             $api.cache('News/Article', { 'id': this.arid }).then(function (req) {
                 if (req.data.success) {
                     th.article = req.data.result;
+                    //如果内容中有图片，则格式化内容
+                    th.isformat = th.ispicture(th.article.Art_Details);
                     document.title = th.article.Art_Title;
                     $api.bat(
                         $api.cache('News/ColumnsForUID', { 'uid': th.article.Col_UID }),
@@ -60,8 +62,7 @@ $ready(function () {
             //是否格式化
             'isformat': {
                 handler: function (nv, ov) {
-                    if (nv != null)
-                        $api.storage('article_isformat', nv);
+                    if (nv != null) $api.storage('article_isformat', nv);
                 }, immediate: false,
             }
         },
@@ -78,7 +79,14 @@ $ready(function () {
                         throw req.data.message;
                     }
                 }).catch(err => console.error(err));
-            }
+            },
+            //是否图片
+            ispicture: function (htmlStr) {
+                if (!htmlStr) return false
+                //正则匹配img标签
+                let reg = /<img\s+[^>]*src=["']?[^"']+["']?/i
+                return reg.test(htmlStr)
+            },
         }
     });
 

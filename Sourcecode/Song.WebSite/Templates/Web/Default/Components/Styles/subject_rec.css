@@ -21,7 +21,7 @@ weisha.subject_rec courses {
     width: calc(100%);
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    gap: 0px 51px; 
     box-sizing: border-box;
 }
 

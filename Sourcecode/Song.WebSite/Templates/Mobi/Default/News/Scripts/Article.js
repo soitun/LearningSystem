@@ -1,6 +1,6 @@
 
 $ready(['Components/SearchInput.js'], function () {
-window.vapp = new Vue({
+    window.vapp = new Vue({
         el: '#vapp',
         data: {
             account: {},     //当前登录账号
@@ -21,6 +21,8 @@ window.vapp = new Vue({
             $api.cache('News/Article', { 'id': this.arid }).then(function (req) {
                 if (req.data.success) {
                     th.article = req.data.result;
+                    //如果内容中有图片，则格式化内容
+                    th.isformat = th.ispicture(th.article.Art_Details);
                     document.title = th.article.Art_Title;
                     $api.bat(
                         $api.cache('News/ColumnsForUID', { 'uid': th.article.Col_UID }),
@@ -54,6 +56,14 @@ window.vapp = new Vue({
                 }, immediate: false,
             }
         },
-        methods: {}
+        methods: {
+            //是否图片
+            ispicture: function (htmlStr) {
+                if (!htmlStr) return false
+                //正则匹配img标签
+                let reg = /<img\s+[^>]*src=["']?[^"']+["']?/i
+                return reg.test(htmlStr)
+            },
+        }
     });
 });

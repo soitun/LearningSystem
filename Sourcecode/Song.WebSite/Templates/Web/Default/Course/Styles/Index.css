@@ -52,8 +52,7 @@ context.coursebox {
     padding-top: 30px;
     display: flex;
     flex-direction: row; 
-    flex-wrap: wrap;
-    justify-content: space-between;
+    flex-wrap: wrap;   
     align-items:flex-start;
     align-content: flex-start;
     overflow-x: hidden;
