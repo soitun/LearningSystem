@@ -287,8 +287,8 @@ Vue.component('question', {
                     </div>               
                     <div class="result_score" :success="qans.success">得分：{{qans.score}} 分</div>
                 </div>
-                <div v-if="ques.Qus_Explain!='' && false">试题解析：<span v-if="ques.Qus_Explain!=''" v-html="ques.Qus_Explain"></span>
-                    <span v-else>无</span>
+                <div v-if="ques.Qus_Explain!='' && true">
+                    试题解析：<span v-html="ques.Qus_Explain"></span>                   
                 </div>
             </div>
             <div v-else class="resultBox">
