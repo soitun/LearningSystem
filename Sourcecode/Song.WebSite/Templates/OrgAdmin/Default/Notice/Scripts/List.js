@@ -3,7 +3,7 @@ $ready(function () {
     window.vapp = new Vue({
         el: '#vapp',
         data: {
-            organ: {},
+            org: {},
             config: {},      //当前机构配置项 
             //iscontext:是否输出内容，有时为了方便列表展示，可以不输出通知的内容部分，以方便快速加载
             form: { 'orgid': 0, 'search': '', 'size': 20, 'iscontext': false, 'index': 1 },
@@ -19,17 +19,10 @@ $ready(function () {
         },
         mounted: function () {
             var th = this;
-            $api.bat(
-                $api.get('Organization/Current')
-            ).then(([organ]) => {
-                //获取结果             
-                th.organ = organ.data.result;
-                //机构配置信息
-                th.config = $api.organ(th.organ).config;
-                th.form.orgid = th.organ.Org_ID;
-                th.handleCurrentChange(1);
-            }).catch(err => console.error(err))
-                .finally(() => th.loading_init = false);
+            th.org = window.org;
+            th.config = window.config;
+            th.form.orgid = th.org.Org_ID;
+            th.handleCurrentChange(1);
         },
         created: function () {
 
@@ -146,11 +139,11 @@ $ready(function () {
                         this.$nextTick(function () {
                             this.datas = arr;
                             let tmarr = [];
-                            for (let i = 0; i < this.datas.length; i++) 
-                                tmarr.push(this.datas[i][indexkey]);                            
+                            for (let i = 0; i < this.datas.length; i++)
+                                tmarr.push(this.datas[i][indexkey]);
                             tmarr.sort((a, b) => b - a);
                             for (let i = 0; i < this.datas.length; i++)
-                                this.datas[i][indexkey] = tmarr[i];                    
+                                this.datas[i][indexkey] = tmarr[i];
                             this.changeTax();
                         });
                     }

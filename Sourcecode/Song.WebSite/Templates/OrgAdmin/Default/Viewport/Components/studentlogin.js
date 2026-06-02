@@ -47,15 +47,15 @@ Vue.component('studentlogin', {
         getdata: function () {
             var th = this;
             var orgid = this.org ? th.org.Org_ID : 0;
-            let start = new Date();
-            start.setMonth(start.getMonth() - th.datalen);
+            const now = new Date();
+            let start =  new Date(now.setMonth(now.getMonth() - 12));           
             th.loading = true;
             $api.bat(
                 $api.get('Account/LoginTimeGroup', { 'orgid': orgid, 'interval': 'm', 'start': start, 'end': new Date() }),
                 $api.get('Account/RegTimeGroup', { 'orgid': orgid, 'interval': 'm', 'start': start, 'end': new Date() }),
             ).then(([login, reg]) => {
                 th.logindata = login.data.result;
-                th.regdata = reg.data.result;
+                th.regdata = reg.data.result;              
             }).catch(err => console.error(err))
                 .finally(() => th.loading = false);
         },

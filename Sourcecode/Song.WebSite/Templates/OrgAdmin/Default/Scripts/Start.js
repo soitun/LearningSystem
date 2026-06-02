@@ -8,7 +8,7 @@ $ready(['Viewport/Components/piece.js',
     '/Utilities/echarts/echarts.min.js',
     'Viewport/Components/map_display.js',
 ], function () {
-window.vapp = new Vue({
+    window.vapp = new Vue({
         el: '#vapp',
         data: {
             platinfo: {},
@@ -21,32 +21,23 @@ window.vapp = new Vue({
                 studentCount: 0,     //购买过课程的学生总数，购买多次也算一次
                 courseSum: 0,           //课程购买的人次，一个学员买多个课程，算多次              
             },
-            loading_init: true,
             loading_stat: true,
             loading_buy: false
         },
         mounted: function () {
             var th = this;
-            $api.bat(
-                $api.cache('Platform/PlatInfo:60'),
-                $api.get('Organization/Current')
-            ).then(([platinfo, org]) => {
-                //获取结果           
-                th.platinfo = platinfo.data.result;
-                th.org = org.data.result;
-                //机构配置信息
-                th.config = $api.organ(th.org).config;
-                th.getStatistics(th.org);
-                th.getBuydata(th.org);
-            }).catch(err => console.error(err))
-                .finally(() => th.loading_init = false);
+            th.org = window.org;
+            th.platinfo = window.platinfo;
+            th.config = window.config;
+            th.getStatistics(th.org);
+            th.getBuydata(th.org);
         },
         created: function () { },
         computed: {},
         watch: {},
         methods: {
             //获取统计数据
-            getStatistics: function (org) {                
+            getStatistics: function (org) {
                 var th = this;
                 th.loading_stat = true;
                 $api.cache('Organization/Statistics', { 'orgid': org.Org_ID }).then(function (req) {

@@ -79,7 +79,7 @@ namespace Song.DataQuery.PostgreSQL
                     (
 	                    select TO_CHAR(""Ac_LastTime"", '{d}')  AS dt from ""Accounts"" 
 
-                        where ""Org_ID"" = 5 and ""Ac_LastTime"" > '2023-06-09' and ""Ac_LastTime"" <= '2024-06-09'
+                        where ""Org_ID"" = 5 and ""Ac_LastTime"" > '{start}' and ""Ac_LastTime"" <= '{end}'
                     ) as ym
                     group by dt order by dt asc";
             sql = sql.Replace("{orgid}", orgid > 0 ? "Org_ID=" + orgid : "1=1");
