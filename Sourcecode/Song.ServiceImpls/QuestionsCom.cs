@@ -351,7 +351,7 @@ namespace Song.ServiceImpls
             wc.And(Questions._.Qus_ID != qus.Qus_ID);
 
             //单选题和多选题
-            if (qus.Qus_Type == 1 || qus.Qus_Type == 2)
+            if (qus.Qus_Type == 1 || qus.Qus_Type == 2 || qus.Qus_Type == 5)
             {
                 List<Questions> list = Gateway.Default.From<Questions>().Where(wc && Questions._.Qus_Title == qus.Qus_Title).ToList<Questions>();
                 if (list == null || list.Count < 1) return null;
@@ -363,7 +363,6 @@ namespace Song.ServiceImpls
                     List<QuesAnswer> tmlist = this.QuestionsAnswer(tm, null);
                     if (string.Join("", tmlist.Select(a => a.Ans_Context)) == answer) return tm;                    
                 }
-
             }
             else return Gateway.Default.From<Questions>().Where(wc && Questions._.Qus_Title == qus.Qus_Title).ToFirst<Questions>();
             return null;

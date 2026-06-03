@@ -425,7 +425,7 @@ namespace Song.ViewData.QuestionHandler
             //
             obj.Qus_IsError = error != "";
             obj.Qus_ErrorInfo = error;
-            ExamQuesImport.QuesInput(obj, null, parts, tags, knls);
+            ExamQuesImport.QuesInput(obj, ansItem, parts, tags, knls);
         }
         /// <summary>
         /// 处理题干

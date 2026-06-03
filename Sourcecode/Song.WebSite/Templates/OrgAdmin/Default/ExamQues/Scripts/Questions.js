@@ -324,7 +324,7 @@ $ready([
                         let func = 'type' + q.Qus_Type;
                         return this[func] != null ? this[func](q) : '';
                     },
-                    type1: q => String.fromCharCode(65 + q.Qus_Items.findIndex(m => m.Ans_IsCorrect)),
+                    type1: q => q.Qus_Items.length > 0 ? String.fromCharCode(65 + q.Qus_Items.findIndex(m => m.Ans_IsCorrect)) : '',
                     type2: q => q.Qus_Items.map((m, i) => m.Ans_IsCorrect ? String.fromCharCode(65 + i) : null)
                         .filter(m => m !== null).join('、'),
                     type3: q => q.Qus_IsCorrect ? "正确" : "错误",
@@ -335,7 +335,7 @@ $ready([
                 template: `<div class="answer">
                         正确答案：<span v-html="answer(ques)"></span>
                     </div>`
-            },          
+            },
         }
     });
 });
