@@ -94,7 +94,7 @@ $ready(function () {
                 var obj = {
                     'url': url,
                     'pid': window.name,
-                    'ico': 'e75e', 'min': false, 'max': false, 'resize': false,
+                    'ico': 'e75e', 'min': false, 'max': false, 'resize': true,
                     'title': '错题回顾 - ' + cour.Cou_Name,
                     'width': 500,
                     'height': '80%'

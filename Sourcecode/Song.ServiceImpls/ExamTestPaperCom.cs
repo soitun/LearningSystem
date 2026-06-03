@@ -93,6 +93,8 @@ namespace Song.ServiceImpls
         /// <param name="etpid">实体的主键</param>
         public int PaperDelete(long etpid)
         {
+            int count = Gateway.Default.From<Examination>().Where(Examination._.Etp_Id == etpid).Count();
+            if (count > 0) throw new WeiSha.Core.ExceptionForPrompt($"当前试卷已被考试采用，不能删除");
             return Gateway.Default.Update<ExamTestPaper>(new Field[] { ExamTestPaper._.Etp_IsDeleted, ExamTestPaper._.Etp_DeleteTime },
                 new object[] { true, DateTime.Now },
                 ExamTestPaper._.Etp_Id == etpid && ExamTestPaper._.Etp_IsDeleted == false);
