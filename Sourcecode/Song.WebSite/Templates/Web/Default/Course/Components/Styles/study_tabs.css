@@ -57,6 +57,9 @@
 	padding-top: 4px;
 	transform: scale(1.1);
 }
+#study_tabs dl dd.tabCurrent loading{
+	color: #fff;
+}
 #study_tabs dl dd.tabCurrent icon{
 	font-size: 17px;
 }

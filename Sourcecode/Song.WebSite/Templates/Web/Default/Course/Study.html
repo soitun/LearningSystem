@@ -27,7 +27,8 @@
                     </p>
                 </div>
                 <div remark="提示" v-show="titState=='isNull' || !state.canStudy || !islogin ">
-                    <div class="noSelect" v-if="!islogin"> <a :href="gourl('/web/sign/in')">未登录，点击此处登录！</a> </div>
+                    <loading v-if="loading"></loading>
+                    <div class="noSelect" v-else-if="!islogin"> <a :href="gourl('/web/sign/in')">未登录，点击此处登录！</a> </div>
                     <div class="noContent" v-else-if="!!account.Ac_ID"> 当前章节没有内容！</div>
                     <div class="noSelect" v-else-if="state.canStudy && state.LiveStart && state.LiveOver">直播已经结束
                     </div>
@@ -56,7 +57,7 @@
         </div>
         <fold remark="此为分隔线"><span @click="fold = !fold" :class="{'open':fold}"></span> </fold>
         <!--开始右侧菜单区域-->
-        <study_outline ref="rightArea" :account="account" :config="config" :owned="owned" @switch="(tag,index)=>{}"
+        <study_outline ref="rightArea" :account="account" :config="config" :owned="owned" @switch="(tag,index)=>{loading=true;}"
             @init="(c,o)=>{course=c;outline=o;}" @change="changeOutline" :style="!fold ? 'width: 25%;' : 'width: 0%'"
             v-show="!fold">
         </study_outline>
