@@ -474,7 +474,7 @@ namespace Song.ServiceImpls
         {
             List<long> list = new List<long>();
             if (id > 0) list.Add(id);
-            List<long> childs = ols.Where(s => s.Ol_PID == id).Select(s => s.Sbj_ID).ToList();
+            List<long> childs = ols.Where(s => s.Ol_PID == id).Select(s => s.Ol_ID).ToList();
             ols.RemoveAll(s => s.Ol_PID == id);
             for (int i = 0; i < childs.Count; i++)
             {

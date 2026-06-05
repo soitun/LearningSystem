@@ -446,11 +446,10 @@ namespace Song.ServiceImpls
             //当前章节，以及当前章节之下的所有试题
             if (olid > 0)
             {
-                WhereClip wcSbjid = new WhereClip();
+                WhereClip wcOlid = new WhereClip();
                 List<long> list = Business.Do<IOutline>().TreeID(olid);
-                foreach (long l in list)
-                    wcSbjid.Or(Questions._.Ol_ID == l);
-                wc.And(wcSbjid);
+                foreach (long l in list) wcOlid.Or(Questions._.Ol_ID == l);
+                wc.And(wcOlid);
             }
             if (type > 0) wc.And(Questions._.Qus_Type == type);
             if (diff > 0) wc.And(Questions._.Qus_Diff == diff);
