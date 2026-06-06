@@ -280,6 +280,8 @@
 				if (crtobj == null) return;
 				crtobj.querypanel = true;
 			});
+			if (obj.datas.filter(item => !(item.type && item.type === 'loading')).length < 1)
+				obj.dom.find('tree_tags').find('tree_tag[type=query]').hide();
 			//创建选项卡的html
 			function createTag(tag, data) {
 				tag.attr('title', data.title).attr('treeid', data.id);
@@ -568,8 +570,11 @@
 		let list = childs == null ? this.datas : childs;
 		let count = 0;
 		for (let i = 0; i < list.length; i++) {
-			if (isall || list[i].childs.length < 1) count++;
-			count += this.getNodeCount(isall, list[i].childs);
+			// 满足条件就计数
+			if (isall || list[i]?.childs?.length < 1) count++;
+			// ✅ 关键修复：只有子节点存在且不为空，才递归！
+			if (list[i].childs && list[i].childs.length > 0)
+				count += this.getNodeCount(isall, list[i].childs);
 		}
 		return count;
 	}
