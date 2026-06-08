@@ -4,12 +4,13 @@
 Vue.component('question', {
     //qid:当前试题的id
     //state:答题状态
-    //index:索引号，
+    //index:试题的索引号，
+    //curindex:当前显示的试题索引
     //total:试题总数
     //types:试题类型，
     //mode:0为练习模式，1为背题模式
-    //current:当前显示的试题，即滑动到这个试题
-    props: ['qid', 'state', 'index', 'total', 'types', 'mode', 'current', 'account', 'fontsize'],
+    //iscurrent:当前显示的试题，即滑动到这个试题
+    props: ['qid', 'state', 'index', 'curindex', 'total', 'types', 'mode', 'iscurrent', 'account', 'fontsize'],
     data: function () {
         return {
             init: false,         //初始化完成     
@@ -34,17 +35,26 @@ Vue.component('question', {
         },
         //试题总数变化时（例如删除错题），重新处理当前试题
         'total': function (nv, ov) {
-            if (nv && this.current) {
+            if (nv && this.iscurrent) {
                 this.initialization();
             }
         },
+        //当前显示的试题索引变化时
+        curindex: {
+            handler: function (nv, ov) {
+                if (this.index < nv - 3 || this.index > nv + 3)
+                    this.init = false;
+            },
+            immediate: true
+        },
         //是否是当前显示的试题
-        'current': {
+        'iscurrent': {
             handler: function (nv, ov) {
                 if (!ov && nv && !this.init)
                     this.initialization();
                 if (!nv) {
-                    this.init = false;
+                    if (this.index < this.curindex - 3 || this.index > this.curindex + 3)
+                        this.init = false;
                 }
             },
             immediate: true
@@ -376,7 +386,7 @@ Vue.component('question', {
             return correct;
         }
     },
-    template: `<dd :qid="qid" :current="current" :render="init">
+    template: `<dd :qid="qid" :current="iscurrent" :render="init">
     <template v-if="init">     
         <div loading="p1" v-if="loading"></div>  
         <div v-else-if="error!=''" class="error"> 

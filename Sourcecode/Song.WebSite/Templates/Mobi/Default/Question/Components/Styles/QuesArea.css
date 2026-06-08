@@ -9,6 +9,10 @@ dl.quesArea {
     position: relative;
     transition: left 0.5s;
     overflow: hidden;
+    /* 禁止iOS浏览器默认双击缩放、滚动回弹，交给Hammer接管 */
+    touch-action: manipulation;
+    /* 允许触摸事件穿透子元素冒泡 */
+    pointer-events: auto;
 }
 
 dl.quesArea, .quesArea dd {
@@ -16,8 +20,15 @@ dl.quesArea, .quesArea dd {
     margin: 0px;
 }
 
+.quesArea dd {
+    touch-action: manipulation;
+    /* 仅允许垂直原生滚动，水平滑动交给父swipe */
+    touch-action: pan-y;
+    
+}
+
 /*没有试题的提示*/
-dl.quesArea .noques {   
+dl.quesArea .noques {
     font-size: 18px;
     text-align: center;
     color: #999;
@@ -28,7 +39,8 @@ dl.quesArea .noques {
     justify-content: center;
     flex-direction: column;
 }
-dl.quesArea .noques icon{
+
+dl.quesArea .noques icon {
     display: block;
     margin: 10px 0px !important;
     font-size: 80px;

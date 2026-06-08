@@ -163,9 +163,9 @@ Vue.component('quesarea', {
     },
     template: `<dl :class="{'quesArea':true}" :style="'width:'+(list.length<=1 ? 1 : list.length)*100+'vw'" v-swipe="swipe">
            <div v-if="!$parent.loading && list.length<1" class="noques"><icon>&#xe849</icon>没有试题</div>
-           <question v-else v-for="(qid,i) in list" :qid="qid" :state="state.getitem(qid,i)" :index="i"
+           <question v-else v-for="(qid,i) in list" :qid="qid" :state="state.getitem(qid,i)" :index="i" :curindex="index"
             :total="list.length" :types="types" :account="account" :fontsize="fontsize"
-            :mode="mode" :current="i==index" @answer="answer">
+            :mode="mode" :iscurrent="i==index" @answer="answer">
                 <template v-slot:buttons="btn">
                     <quesbuttons :question="btn.ques" :account="account" :couid="0" :current="i==index"></quesbuttons>
                 </template>

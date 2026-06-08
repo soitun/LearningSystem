@@ -85,7 +85,7 @@ Vue.component('quesarea', {
             //向右滑动
             if (e.direction == 4 && this.index > 0) this.index--;
             //触发滑动事件,返回当前索引
-            this.$emit('swipe', this.index);
+            this.$emit('swipe', this.index);           
         },
         //试题答题状态变更时
         answer: function (state, ques) {
@@ -167,14 +167,14 @@ Vue.component('quesarea', {
                 th.index = index;
             });
             //this.$parent.data = this.$parent.state.data.count;
-            console.log(index);
+            //console.log(index);
         }
     },
     template: `<dl :class="{'quesArea':true}" :style="'width:'+(list.length<=1 ? 1 : list.length)*screenWidth+'px'" v-swipe="swipe">   
            <div v-if="!$parent.loading && list.length<1" class="noques"><icon>&#xe849</icon>没有试题</div>
-           <question v-else v-for="(qid,i) in list" :qid="qid" :state="state.getitem(qid,i)" :index="i"
+           <question v-else v-for="(qid,i) in list" :qid="qid" :state="state.getitem(qid,i)" :index="i" :curindex="index"
             :total="list.length" :types="types" :account="account" :fontsize="fontsize"
-            :mode="mode" :current="i==index" @answer="answer">
+            :mode="mode" :iscurrent="i==index" @answer="answer">
                 <template v-slot:buttons="btn">
                     <quesbuttons :question="btn.ques" :account="account" :couid="0" :current="i==index"></quesbuttons>
                 </template>

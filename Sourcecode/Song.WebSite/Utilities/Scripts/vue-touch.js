@@ -29,6 +29,18 @@ Vue.directive("press", {
 Vue.directive("swipe", {
   bind: function (el, binding) {
     new vueTouch(el, "swipe", binding);
+  },
+  unbind: function (el, binding) {
+    if (el._hammerManager) {
+      // 解绑当前手势回调
+      el._hammerManager.off("swipe", binding.value);
+      // 无任何手势监听时销毁实例
+      const events = el._hammerManager.handlers;
+      if (!events || Object.keys(events).length === 0) {
+        el._hammerManager.destroy();
+        delete el._hammerManager;
+      }
+    }
   }
 });
 //向左滑动, direction=2
