@@ -7,6 +7,8 @@ html, body, #vapp {
 	padding: 0px;
 	overflow: hidden;
 	position: relative;
+		overscroll-behavior: none;
+	-webkit-overflow-scrolling: touch;
 }
 
 * {

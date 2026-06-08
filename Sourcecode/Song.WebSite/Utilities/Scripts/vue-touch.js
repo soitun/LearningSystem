@@ -5,8 +5,9 @@ function vueTouch(el, type, binding) {
   this.type = type;
   this.binding = binding;
   var hammertime = new Hammer(this.el);
-  hammertime.on(this.type, this.binding.value);
   hammertime.get('pinch').set({ enable: true });
+  hammertime.on(this.type, this.binding.value);
+
 };
 
 //在指定的 DOM 区域内，一个手指轻拍或点击时触发该事件（类似 PC 端的 click），

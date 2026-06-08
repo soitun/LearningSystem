@@ -19,12 +19,11 @@ dl.quesArea, .quesArea dd {
     padding: 0px;
     margin: 0px;
 }
-
-.quesArea dd {
-    touch-action: manipulation;
-    /* 仅允许垂直原生滚动，水平滑动交给父swipe */
+ .quesArea dd {
     touch-action: pan-y;
-    
+}
+.quesArea * {
+    touch-action: manipulation;     
 }
 
 /*没有试题的提示*/
