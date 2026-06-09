@@ -18,7 +18,7 @@ Vue.component('question', {
             knowledge: {},        //试题关联的知识点
 
             error: '',           //错误信息
-            loading: false,       //试题加载中
+            loading: false,       //试题加载中          
 
             //强制渲染，当答题时加一，不知道为什么有些题答题后页面没有渲染，只好采这种变态的方法
             forced_rendering: 0,
@@ -42,18 +42,24 @@ Vue.component('question', {
         //当前显示的试题索引变化时
         curindex: {
             handler: function (nv, ov) {
-                if (this.index < nv - 3 || this.index > nv + 3)
+                //超出指定区间的试题，不再渲染
+                if (this.index < nv - this.render_maxcount
+                    || this.index > nv + this.render_maxcount)
                     this.init = false;
+                else
+                    this.initialization();
             },
             immediate: true
         },
         //是否是当前显示的试题
         'iscurrent': {
             handler: function (nv, ov) {
-                if (!ov && nv && !this.init)
+                if (!ov && nv && !this.init) {
                     this.initialization();
+                }
                 if (!nv) {
-                    if (this.index < this.curindex - 3 || this.index > this.curindex + 3)
+                    if (this.index < this.curindex - this.render_maxcount
+                        || this.index > this.curindex + this.render_maxcount)
                         this.init = false;
                 }
             },
@@ -67,6 +73,11 @@ Vue.component('question', {
     computed: {
         //是否存在知识点
         existknl: t => !$api.isnull(t.knowledge),
+        //渲染的数量，当前索引之前或之后的数量
+        render_maxcount: t => {
+            let count = 3;
+            return Math.floor(count / 2);
+        }
     },
     updated: function () {
         //this.$mathjax();
@@ -97,7 +108,6 @@ Vue.component('question', {
                             th.setfontsize(th.fontsize);
                             th.$mathjax([dom[0]]);
                         }, 200);
-
                     });
                 } else {
                     console.error(req);

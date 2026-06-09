@@ -23,7 +23,7 @@ dl.quesArea, .quesArea dd {
     touch-action: pan-y;
 }
 .quesArea * {
-    touch-action: manipulation;     
+    touch-action:none;     
 }
 
 /*没有试题的提示*/
