@@ -2,6 +2,8 @@
 Vue.component('question', {
     //ques:当前试题
     //groups:试题按题型分类的试题组
+    //index:当前试题在试题分类中的索引
+    //swipeindex:滑动到当前展示的试题的索引
     //groupindex:试题题型的分组，用于排序号
     props: ['ques', 'groups', 'index', 'swipeindex', 'groupindex', 'total', 'types'],
     data: function () {
@@ -33,7 +35,7 @@ Vue.component('question', {
         'swipeindex': {
             handler: function (nv, ov) {
                 if (nv == null) return;
-                var index = this.calcIndex(this.index);
+                var index = this.quesindex;
                 this.current = index == nv;
             }, immediate: true
         },
@@ -61,20 +63,20 @@ Vue.component('question', {
         //是否试题加载完成
         existques: function () {
             return JSON.stringify(this.ques) != '{}' && this.ques != null;
-        }
-    },
-    mounted: function () { },
-    methods: {
-        //计算序号，整个试卷采用一个序号，跨题型排序
-        calcIndex: function (index) {
-            var gindex = this.groupindex - 1;
-            var initIndex = 0;
+        },
+        //试题在试卷中的索引,整个试卷采用一个序号，跨题型排序
+        quesindex: function () {
+            let gindex = this.groupindex - 1;
+            let initIndex = 0;
             while (gindex >= 0) {
                 initIndex += this.groups[gindex].ques.length;
                 gindex--;
             };
-            return initIndex + index;
+            return initIndex + this.index;
         },
+    },
+    mounted: function () { },
+    methods: {
         //选项的序号转字母
         toletter: function (index) {
             return String.fromCharCode(65 + index);
@@ -177,10 +179,10 @@ Vue.component('question', {
             return ques.state['correct'] == 'succ';
         }
     },
-    template: `<dd :qid="ques.Qus_ID" :render="init">
+    template: `<dd :qid="ques.Qus_ID" :render="init" :index="index" :quesindex="quesindex">
     <template v-if="init">
         <info>
-            {{calcIndex(index+1)}}/{{total}}
+            {{quesindex+1}}/{{total}}
             [ {{this.types[ques.Qus_Type - 1]}}题 ] 
             <span>（{{ques.Qus_Number}} 分）</span>       
         </info>
