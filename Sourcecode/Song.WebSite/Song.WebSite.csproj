@@ -2595,7 +2595,6 @@
     <Content Include="Templates\Manage\Default\Platform\Menutree.html" />
     <Content Include="Templates\Manage\Default\Platform\Sysmenu.html" />
     <Content Include="Templates\Manage\Default\Scripts\Manage.js" />
-    <Content Include="Templates\Manage\Default\Scripts\hanzi2pinyin.js" />
     <Content Include="Templates\Manage\Default\Scripts\Index.js" />
     <Content Include="Templates\Manage\Default\Scripts\Public.js" />
     <Content Include="Templates\Manage\Default\Startpage.html" />
@@ -2609,7 +2608,6 @@
     <Content Include="Templates\OrgAdmin\Default\Help\Startpage.html" />
     <Content Include="Templates\OrgAdmin\Default\Help\Styles\Startpage.css" />
     <Content Include="Templates\OrgAdmin\Default\Scripts\Admin.js" />
-    <Content Include="Templates\OrgAdmin\Default\Scripts\hanzi2pinyin.js" />
     <Content Include="Templates\OrgAdmin\Default\Scripts\Public.js" />
     <Content Include="Templates\OrgAdmin\Default\Styles\Admin.css" />
     <Content Include="Templates\OrgAdmin\Default\Styles\Login.css" />

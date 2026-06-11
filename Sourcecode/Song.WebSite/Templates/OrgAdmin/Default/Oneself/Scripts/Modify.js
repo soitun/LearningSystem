@@ -1,5 +1,5 @@
 
-$ready(["../Scripts/hanzi2pinyin.js"], function () {
+$ready(["/Utilities/Scripts/hanzi2pinyin.js"], function () {
 window.vapp = new Vue({
         el: '#vapp',
         data: {

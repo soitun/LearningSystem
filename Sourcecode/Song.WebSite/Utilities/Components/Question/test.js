@@ -35,8 +35,12 @@ Vue.component('question', {
         'swipeindex': {
             handler: function (nv, ov) {
                 if (nv == null) return;
-                var index = this.quesindex;
-                this.current = index == nv;
+                //是否为当前显示的试题
+                this.current = this.quesindex == nv;
+                //仅渲染当前试题的临近几个试题
+                if (this.quesindex < nv - this.render_maxcount
+                    || this.quesindex > nv + this.render_maxcount)
+                    this.init = false;
             }, immediate: true
         },
         //是否是当前显示的试题
@@ -61,9 +65,7 @@ Vue.component('question', {
     },
     computed: {
         //是否试题加载完成
-        existques: function () {
-            return JSON.stringify(this.ques) != '{}' && this.ques != null;
-        },
+        existques: t => !$api.isnull(t.ques),
         //试题在试卷中的索引,整个试卷采用一个序号，跨题型排序
         quesindex: function () {
             let gindex = this.groupindex - 1;
@@ -74,6 +76,11 @@ Vue.component('question', {
             };
             return initIndex + this.index;
         },
+        //渲染的数量，当前索引之前或之后的数量
+        render_maxcount: t => {
+            let count = 3;
+            return Math.floor(count / 2);
+        }
     },
     mounted: function () { },
     methods: {
@@ -179,7 +186,7 @@ Vue.component('question', {
             return ques.state['correct'] == 'succ';
         }
     },
-    template: `<dd :qid="ques.Qus_ID" :render="init" :index="index" :quesindex="quesindex">
+    template: `<dd :qid="ques.Qus_ID" :render="init" :index="index" :swipeindex="swipeindex" :quesindex="quesindex">
     <template v-if="init">
         <info>
             {{quesindex+1}}/{{total}}
