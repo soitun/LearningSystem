@@ -334,6 +334,6 @@ row[arrow]::before {
 	font-family: "webdesk_icon" !important;
 }
 
-.header {
-	background-color: #fff;
+.van-cell{
+	background-color: transparent;
 }

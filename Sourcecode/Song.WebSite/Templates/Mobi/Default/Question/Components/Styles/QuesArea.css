@@ -7,8 +7,7 @@ dl.quesArea {
     z-index: 4;
     left: 0px;
     position: relative;
-    transition: left 0.5s;
-    overflow: hidden;
+    transition: left 0.5s;  
     /* 禁止iOS浏览器默认双击缩放、滚动回弹，交给Hammer接管 */
     touch-action: manipulation;
     /* 允许触摸事件穿透子元素冒泡 */
@@ -21,9 +20,6 @@ dl.quesArea, .quesArea dd {
 }
  .quesArea dd {
     touch-action: pan-y;
-}
-.quesArea * {
-    touch-action:none;     
 }
 
 /*没有试题的提示*/

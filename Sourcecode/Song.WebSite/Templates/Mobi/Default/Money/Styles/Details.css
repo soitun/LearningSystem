@@ -7,6 +7,7 @@ html, body, #vapp {
 	overflow: hidden;
 	position: relative;
 	background-color: #fff;
+	background: linear-gradient(150deg, #ffd5e5 0%, #d6ffec 30%, #ffffff 60%, #c7dfff 100%);
 }
 
 #vapp {
@@ -14,12 +15,10 @@ html, body, #vapp {
 }
 
 .header {
-	height: 70px;
-	background-color: #069;
+	height: 70px;	
 	position: relative;
 	z-index: 1;
-	padding: 60px 20px 0px 20px;
-	background: linear-gradient(rgb(255 216 147), rgba(255, 255, 255, 1));
+	padding: 60px 20px 0px 20px;	
 	overflow: hidden;
 }
 
@@ -74,7 +73,7 @@ html, body, #vapp {
 	right: 0px;
 	top: 10px;
 	transform: rotate(180deg);
-	color: #fff;
+	color: #777;
 	z-index: -1;
 }
 
