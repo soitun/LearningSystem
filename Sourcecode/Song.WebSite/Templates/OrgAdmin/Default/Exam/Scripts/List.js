@@ -103,7 +103,7 @@ $ready(function () {
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(t => {                          
-                        this.deleteExam(obj.Exam_ID);
+                        this.deleteExam(obj);
                     }).catch(action => { });
                 }                    
             },
