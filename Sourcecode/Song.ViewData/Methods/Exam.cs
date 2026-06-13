@@ -188,14 +188,15 @@ namespace Song.ViewData.Methods
         /// <param name="orgid">机构id</param>
         /// <param name="start">时间范围查询的开始时间</param>
         /// <param name="end"></param>
+        /// <param name="use"></param>
         /// <param name="search">按考试主题检索</param>
         /// <param name="size"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public ListResult ThemePager(int orgid, DateTime? start, DateTime? end, string search, int size, int index)
+        public ListResult ThemePager(int orgid, DateTime? start, DateTime? end, bool? use, string search, int size, int index)
         {
             int count;
-            List<Examination> datas = Business.Do<IExamination>().ThemePager(orgid, start, end, true, search, size, index, out count);
+            List<Examination> datas = Business.Do<IExamination>().ThemePager(orgid, start, end, use, search, size, index, out count);
             ListResult result = new ListResult(datas);
             result.Index = index;
             result.Size = size;

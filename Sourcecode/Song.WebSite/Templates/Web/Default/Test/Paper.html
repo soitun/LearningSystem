@@ -126,7 +126,7 @@
                         </template>
                         <template v-else>
                             <span class="index">{{i+1}}.</span>
-                            <span class="score">{{item.Tr_Score}}分
+                            <span class="score">{{item.Tr_Score|scoreFix}}分
                                 <score :class="scoreStyle(item.Tr_Score)"></score>
                             </span>
                             <span class="time">{{item.Tr_CrtTime|date("yyyy-MM-dd HH:mm")}}</span>

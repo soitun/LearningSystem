@@ -74,6 +74,7 @@ $ready(["../Components/courses.js",
                     form['orgid'] = this.org.Org_ID;
                     form['start'] = '';
                     form['end'] = '';
+                    form['use'] = true;
                     th.loading = true;
                     $api.get('Exam/ThemePager', form).then(function (req) {
                         if (req.data.success) {
@@ -365,7 +366,7 @@ $ready(["../Components/courses.js",
                     return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Count : this.paper.Etp_Count;
                 },
                 tpname: function () {
-                     return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Name : this.paper.Etp_Name;
+                    return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Name : this.paper.Etp_Name;
                 }
             },
             mounted: function () {
@@ -373,11 +374,11 @@ $ready(["../Components/courses.js",
                 $api.cache('Exam/ForID', { 'id': th.result.Exam_ID }).then(req => {
                     if (req.data.success) {
                         th.exam = req.data.result;
-                        if (th.exam.Exam_Purpose == 0) { 
-                            $api.cache('TestPaper/ForID', { 'id': th.exam.Tp_Id }).then(req =>th.paper = req.data.result);
-                            $api.cache('Subject/ForID', { 'id': th.result.Sbj_ID }).then(req =>th.subject = req.data.result);
-                        }else
-                            $api.cache('ExamTestPaper/ForID', { 'id': th.exam.Etp_Id }).then(req =>th.paper = req.data.result);
+                        if (th.exam.Exam_Purpose == 0) {
+                            $api.cache('TestPaper/ForID', { 'id': th.exam.Tp_Id }).then(req => th.paper = req.data.result);
+                            $api.cache('Subject/ForID', { 'id': th.result.Sbj_ID }).then(req => th.subject = req.data.result);
+                        } else
+                            $api.cache('ExamTestPaper/ForID', { 'id': th.exam.Etp_Id }).then(req => th.paper = req.data.result);
                     } else {
                         console.error(req.data.exception);
                         throw req.data.message;

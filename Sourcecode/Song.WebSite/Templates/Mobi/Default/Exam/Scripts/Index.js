@@ -77,7 +77,7 @@ $ready(['Components/exam_tabs.js'], function () {
             all_exam: function () {
                 var th = this;
                 var form = {
-                    'orgid': th.org.Org_ID, 'start': '', 'end': '', 'search': th.search.all_exam,
+                    'orgid': th.org.Org_ID, 'start': '', 'end': '', 'search': th.search.all_exam, 'use': true,
                     'size': th.size, 'index': ++th.index
                 }
                 th.loading = true;

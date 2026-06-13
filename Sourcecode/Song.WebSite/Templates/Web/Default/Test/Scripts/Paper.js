@@ -248,6 +248,15 @@ $ready(["../Components/courses.js",
                     }).catch(err => console.error(err))
                         .finally(() => th.loading_id = -1);
                 }
+            },
+            filters: {
+                //分数保留两位小数
+                scoreFix: function (val) {
+                    const num = Number(val);
+                    if (isNaN(num)) return 0;
+                    const two = Math.round(num * 100) / 100;
+                    return Number.isInteger(two) ? two : two.toFixed(2);
+                },
             }
         });
     });

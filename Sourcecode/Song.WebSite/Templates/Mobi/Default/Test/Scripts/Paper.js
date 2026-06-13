@@ -1,6 +1,6 @@
 
 $ready(['Components/TestHeader.js'], function () {
-window.vapp = new Vue({
+    window.vapp = new Vue({
         el: '#vapp',
         data: {
             tpid: $api.dot(),   //试卷id
@@ -191,6 +191,15 @@ window.vapp = new Vue({
                 if (score >= total * 0.8) return "fine";
                 return "";
             }
+        },
+        filters: {
+            //分数保留两位小数
+            scoreFix: function (val) {
+                const num = Number(val);
+                if (isNaN(num)) return 0;
+                const two = Math.round(num * 100) / 100;
+                return Number.isInteger(two) ? two : two.toFixed(2);
+            },
         }
     });
 });

@@ -52,7 +52,7 @@
                             <van-cell :border="false" class="cour-box" @click="godetail(item)">
                                 <template #title>
                                     <div class="trscore"> {{i+1}}. <icon style="font-size: 22px;">&#xf008f</icon>
-                                        <span>{{item.Tr_Score}}</span> 分 </div>
+                                        <span>{{item.Tr_Score|scoreFix}}</span> 分 </div>
                                     <score :class="scoreStyle(item.Tr_Score)"></score>
                                     <div class="row_foot">
                                         <span class="stname">{{item.Ac_Name}}</span>
