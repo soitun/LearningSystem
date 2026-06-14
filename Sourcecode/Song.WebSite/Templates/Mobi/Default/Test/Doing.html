@@ -21,7 +21,8 @@
                 <div id="btnCard" icon="&#xe75e" @click="showCard=true">
                     <span>{{answertotal}}</span>/<span>{{questotal}}</span>
                 </div>
-                <div id="btnSubmit" icon="&#xe6cf" @click="submitManual">
+                <loading asterisk v-if="loading.paper">试题加载中...</loading>
+                <div id="btnSubmit" icon="&#xe6cf" @click="submitManual" v-show="!loading.paper">
                     交&nbsp;卷</div>
             </footer>
 

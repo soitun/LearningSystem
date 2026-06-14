@@ -47,6 +47,7 @@ $ready(['/Utilities/Components/question/test.js',
                 result: {},                  //答题成绩信息
                 //加载中的状态
                 loading: {
+                    buy: false,
                     init: true,             //初始化主要参数           
                     submit: false,           //成绩提交中
                     paper: true             //试卷生成中
@@ -60,13 +61,10 @@ $ready(['/Utilities/Components/question/test.js',
             created: function () { },
             computed: {
                 //学员是否登录
-                islogin: function () {
-                    return this.account != null && JSON.stringify(this.account) != '{}' && this.account.Ac_ID > 0;
-                },
+                islogin: t => !$api.isnull(t.account) && t.account.Ac_ID > 0,
                 //是否过期，过期返回true
-                isoverdue: function () {
-                    var isbuy = JSON.stringify(this.purchase) != '{}' && this.purchase != null;
-                    if (!isbuy) return true;
+                isoverdue: function () {                  
+                    if ($api.isnull(this.purchase)) return true;
                     if (this.purchase.Stc_IsFree) return false;
                     if (this.purchase.Stc_EndTime > new Date()) return false;
                     return true;
@@ -115,8 +113,7 @@ $ready(['/Utilities/Components/question/test.js',
                 },
                 //试卷内容，试题列表，按题型分开
                 'paperQues': {
-                    handler(nv, ov) {
-                        //if (JSON.stringify(nv) == JSON.stringify(ov)) return;                   
+                    handler(nv, ov) {                                    
                         //生成答题信息（Json格式）
                         this.paperAnswer = this.generateAnswerJson(nv);
                     },
@@ -204,7 +201,7 @@ $ready(['/Utilities/Components/question/test.js',
                 getpurchase: function (stid, couid) {
                     var th = this;
                     if (th.couid <= 0 || stid <= 0) return;
-                    th.loading = true;
+                    th.loading.buy = true;
                     $api.get('Course/Purchaselog:5', { 'stid': stid, 'couid': couid }).then(function (req) {
                         if (req.data.success) {
                             th.purchase = req.data.result;
@@ -214,7 +211,7 @@ $ready(['/Utilities/Components/question/test.js',
                             throw req.data.message;
                         }
                     }).catch(err => console.error(err))
-                        .finally(() => th.loading = false);
+                        .finally(() => th.loading.buy = false);
                 },
                 //获取历史成绩
                 getresults: function (stid) {
@@ -241,14 +238,12 @@ $ready(['/Utilities/Components/question/test.js',
                 },
                 //生成试卷内容
                 generatePaper: function () {
-                    if (JSON.stringify(this.paper) == '{}' && this.paper == null) return;
+                    if ($api.isnull(this.paper)) return;
                     if (this.paperQues.length > 0) return;
                     var th = this;
                     th.loading.paper = true;
+                    //return;
                     $api.get('TestPaper/GenerateRandom', { 'tpid': this.tpid }).then(function (req) {
-                        window.setTimeout(function () {
-                            th.loading.paper = false;
-                        }, 1000);
                         if (req.data.success) {
                             var paper = req.data.result;
                             th.paperQues = paper;
@@ -268,6 +263,10 @@ $ready(['/Utilities/Components/question/test.js',
                     }).catch(function (err) {
                         alert(err);
                         console.error(err);
+                    }).finally(() => {
+                        window.setTimeout(function () {
+                            th.loading.paper = false;                           
+                        }, 1000);
                     });
                 },
                 //跳转到试卷页
@@ -290,7 +289,7 @@ $ready(['/Utilities/Components/question/test.js',
                 //交卷
                 // patter:交卷方式，1为自动提交，2为交卷
                 submit: function (patter) {
-                    if (JSON.stringify(this.paperAnswer) == '{}') return;
+                    if ($api.isnull(this.paperAnswer)) return;
                     if (this.submitState.submited) return;
                     var th = this;
                     th.submitState.show = true;

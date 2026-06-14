@@ -128,10 +128,7 @@ $ready(['/Utilities/Components/question/test.js',
                     if (this.paperQues.length > 0) return;
                     var th = this;
                     th.loading.paper = true;
-                    $api.get('TestPaper/GenerateRandom', { 'tpid': this.tpid }).then(function (req) {
-                        window.setTimeout(function () {
-                            th.loading.paper = false;
-                        }, 1000);
+                    $api.get('TestPaper/GenerateRandom', { 'tpid': this.tpid }).then(function (req) {                      
                         if (req.data.success) {
                             var paper = req.data.result;
                             th.paperQues = paper;
@@ -151,6 +148,10 @@ $ready(['/Utilities/Components/question/test.js',
                     }).catch(function (err) {
                         alert(err);
                         console.error(err);
+                    }).finally(() => {
+                        window.setTimeout(function () {
+                            th.loading.paper = false;                          
+                        }, 1000);
                     });
                 },
                 //计算时间，参数：初始时间、考试时长

@@ -44,7 +44,8 @@
                     </div>
                     <answercard ref='answercard' :questions="paperAnswer.ques" :types="types" :index="swipeIndex">
                     </answercard>
-                    <div id="btnSubmit" icon="&#xe6cf" @click="submitManual">
+                    <loading asterisk class="loading_paper" v-if="loading.paper">试题加载中...</loading>
+                    <div id="btnSubmit" icon="&#xe6cf" @click="submitManual" v-show="!loading.paper">
                         交&nbsp;卷</div>
                 </template>
             </div>
