@@ -47,6 +47,10 @@ Vue.component('upload-excel', {
         this.getconfig();
     },
     methods: {
+        //设置步进数
+        setstep: function (step) {
+            this.step = step;
+        },
         //获取字段匹配的配置信息
         getconfig: function () {
             var th = this;

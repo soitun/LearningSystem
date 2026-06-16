@@ -40,16 +40,22 @@ $ready(['/Utilities/Components/upload-excel.js',
             },
             methods: {
                 updatepart: function (parts, partid) {
-                    this.form.parts = parts;                   
+                    this.form.parts = parts;
                 },
                 updateknl: function (knl, knlid) {
                     this.form.knls = knl;
-                    //console.error(knl);
-                    //console.error(knlid);
                 },
                 //完成导入的事件
                 finish: function (count) {
                     //console.log(count);
+                },
+                goback: function () {
+                    this.maintstep = 0;
+                    this.$refs['upload'].setstep(0);
+                },
+                nextstep: function () {
+                    this.maintstep++;
+                     //this.$refs['upload'].setstep(1);
                 },
             }
         });

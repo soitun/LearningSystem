@@ -52,3 +52,9 @@
     display: inline-block;
     transform: scale(1.2);
 }
+
+.second{
+    padding-top: 20px;
+    width: 100%;
+    height: calc(100% - 60px);
+}

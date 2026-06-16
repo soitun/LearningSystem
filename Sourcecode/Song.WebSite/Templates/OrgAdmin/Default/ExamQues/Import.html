@@ -41,7 +41,7 @@
         <!--底部按钮-->
         <div class="footer">
             <el-button type="primary" native-type="submit" :loading="loading" plain v-if="maintstep>0"
-                @click="maintstep--">
+                @click="goback">
                 <icon>&#xe748</icon>返 回
             </el-button>
             <el-button type="primary" native-type="submit" :loading="loading" plain v-if="maintstep<1"

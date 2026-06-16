@@ -50,7 +50,7 @@ Vue.component('selectknl', {
                     if (req.data.success) {
                         let results = req.data.result;
                         th.calcSerial(results, null, '');
-                        console.error(results);
+                        //console.error(results);
                         th.datas = results;
                         if (th.selected && th.selected.length > 0)
                             th.datas = th.calcknls(results, th.selected);
