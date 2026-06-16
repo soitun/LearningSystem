@@ -554,7 +554,7 @@ namespace Song.ServiceImpls
         {
             Dictionary<string, Dictionary<string, string>> dic = new Dictionary<string, Dictionary<string, string>>();
             //Postgresql与C#对象的关联关系
-            Dictionary<string, string> dbtype_to_csharp = this._dbtype_to_csharp();
+            Dictionary<string, string[]> dbtype_to_csharp = this._dbtype_to_csharp();
             //所有实体,key为表名，
             Dictionary<string, Dictionary<string, Type>> entities = this.Entities();
             List<string> tables = this.Tables();    //所有表
@@ -578,7 +578,7 @@ namespace Song.ServiceImpls
         /// <param name="fields"></param>
         /// <param name="properties"></param>
         /// <returns></returns>
-        private Dictionary<string, string> _fields_error(Dictionary<string, string> pgtocsharp, Dictionary<string, string> fields, Dictionary<string, Type> properties)
+        private Dictionary<string, string> _fields_error(Dictionary<string, string[]> pgtocsharp, Dictionary<string, string> fields, Dictionary<string, Type> properties)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
             foreach (KeyValuePair<string, string> field in fields)
@@ -587,14 +587,14 @@ namespace Song.ServiceImpls
                 string dname = field.Key;
                 if (!properties.ContainsKey(dname)) continue;
                 //Postgresql数据类型，应该对应的C#对象
-                string targettype = _dbtype_to_csharp_value(pgtocsharp, dtype);               
+                string[] targettype = _dbtype_to_csharp_value(pgtocsharp, dtype);
                 Type prop = properties[dname];
                 Type nullableType = System.Nullable.GetUnderlyingType(prop);
                 string typename = nullableType != null ? nullableType.Name : prop.Name;
-                if (!typename.Equals(targettype))
+                if (Array.IndexOf(targettype, typename) < 0)
                 {
                     //应该对应的数据库类型
-                    string correcttype= _dbtype_for_csharp_value(pgtocsharp, typename);
+                    string correcttype = _dbtype_for_csharp_value(pgtocsharp, typename);
                     dic.Add(dname, $"{dtype},{correcttype},{typename}");
                 }
             }
@@ -605,20 +605,20 @@ namespace Song.ServiceImpls
         /// 获取数据库与C#对象的关联关系
         /// </summary>
         /// <returns></returns>
-        private Dictionary<string, string> _dbtype_to_csharp()
+        private Dictionary<string, string[]> _dbtype_to_csharp()
         {  
             string dbmsname = this.DBMSName;
             string filename = $"{dbmsname}_to_csharp.txt";
             string filepath = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "Utilities", "Database", filename);           
             if (!File.Exists(filepath)) throw new Exception(filename + "不存在");
             string text = File.ReadAllText(filepath);
-            Dictionary<string, string> dic = new Dictionary<string, string>();
+            Dictionary<string, string[]> dic = new Dictionary<string, string[]>();
             foreach(string row in text.Split('\n'))
             {
                 if (string.IsNullOrWhiteSpace(row)|| row.Trim().Length<1) continue;
                 if (row.IndexOf("->") < 0) continue;
                 string pg = row.Substring(0, row.IndexOf("->")).Trim();
-                string csharp = row.Substring(row.IndexOf("->")+2).Trim();
+                string[] csharp = row.Substring(row.IndexOf("->")+2).Trim().Split(',');
                 dic.Add(pg, csharp);
             }
             return dic;
@@ -629,12 +629,12 @@ namespace Song.ServiceImpls
         /// <param name="dbtype_to_csharp"></param>
         /// <param name="field"></param>
         /// <returns></returns>
-        private string _dbtype_to_csharp_value(Dictionary<string, string> dbtype_to_csharp, string field)
+        private string[] _dbtype_to_csharp_value(Dictionary<string, string[]> dbtype_to_csharp, string field)
         {
-            string objtype = string.Empty;
-            foreach (KeyValuePair<string, string> item in dbtype_to_csharp)
-            {
-                if (item.Key.Equals(field, StringComparison.CurrentCultureIgnoreCase))
+            string[] objtype = new string[] { };
+            foreach (KeyValuePair<string, string[]> item in dbtype_to_csharp)
+            {   
+                if (item.Key.Equals(field, StringComparison.CurrentCultureIgnoreCase) &&  item.Value.Length >0)
                 {
                     objtype = item.Value;
                     break;
@@ -648,16 +648,16 @@ namespace Song.ServiceImpls
         /// <param name="dbtype_to_csharp"></param>
         /// <param name="prop"></param>
         /// <returns></returns>
-        private string _dbtype_for_csharp_value(Dictionary<string, string> dbtype_to_csharp, string prop)
+        private string _dbtype_for_csharp_value(Dictionary<string, string[]> dbtype_to_csharp, string prop)
         {
             string fieldtype = string.Empty;
-            foreach (KeyValuePair<string, string> item in dbtype_to_csharp)
+            foreach (KeyValuePair<string, string[]> item in dbtype_to_csharp)
             {
-                if (item.Value.Equals(prop, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    fieldtype = item.Key;
-                    break;
-                }
+                if (item.Value.Length < 1) continue;
+                int index = Array.IndexOf(item.Value, prop);
+                if (index < 0) continue;
+                fieldtype = item.Value[index];
+                break;
             }
             return fieldtype;
         }

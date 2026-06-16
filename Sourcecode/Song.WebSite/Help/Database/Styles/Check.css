@@ -2,7 +2,9 @@ header:first-child {
     display: flex;
     justify-content: space-between;
 }
-
+.database{
+    padding: 10px;
+}
 .database icon {
     font-size: 25px;
     line-height: 20px;

@@ -91,13 +91,15 @@ $ready(function () {
             //检测完整性
             checkFully: function () {
                 var th = this;
+                th.error = '';
                 th.loadstate.checkfully = true;
-                th.checkState='checkFully';
+                th.checkState = 'checkFully';
                 th.missingDatas = [];
                 $api.post('DataBase/CheckFully').then(function (req) {
                     if (req.data.success) {
                         th.missingDatas = req.data.result;
                     } else {
+                        th.error = req.data.message;
                         console.error(req.data.exception);
                         throw req.data.message;
                     }
@@ -107,13 +109,15 @@ $ready(function () {
             //检测冗余
             checkRedundancy: function () {
                 var th = this;
+                th.error = '';
                 th.loadstate.redundancy = true;
-                th.checkState='checkRedundancy';
+                th.checkState = 'checkRedundancy';
                 th.redundancyDatas = [];
                 $api.post('DataBase/CheckRedundancy').then(function (req) {
                     if (req.data.success) {
                         th.redundancyDatas = req.data.result;
                     } else {
+                        th.error = req.data.message;
                         console.error(req.data.exception);
                         throw req.data.message;
                     }
@@ -123,15 +127,17 @@ $ready(function () {
             //检测正确性，即字段与设计类型是否一致
             checkCorrect: function () {
                 var th = this;
+                th.error = '';
                 th.loadstate.correct = true;
-                th.checkState='checkCorrect';
+                th.checkState = 'checkCorrect';
                 th.redundancyDatas = [];
                 $api.get("DataBase/CheckCorrect")
                     .then(req => {
                         if (req.data.success) {
                             th.errorfields = req.data.result;
-                            console.error(th.errorfields);
+                            //console.error(th.errorfields);
                         } else {
+                            th.error = req.data.message;
                             console.error(req.data.exception);
                             throw req.config.way + ' ' + req.data.message;
                         }

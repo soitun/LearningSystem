@@ -3,6 +3,6 @@ boolean-> Boolean
 timestamp-> DateTime
 numeric->  Decimal
 text -> String
-integer->  Int32
+integer->  Int32,Int16
 real -> Single
 bigint->  Int64
