@@ -396,7 +396,7 @@ namespace Song.ViewData.Methods
             Examination theme = Business.Do<IExamination>().ExamTheme(exam.Exam_UID);
             jo.Add("theme", theme.ToJObject());
             jo.Add("subject", exam.Sbj_ID.ToString());  //专业id
-            jo.Add("paperid", tpid);     //试卷id
+            jo.Add("paperid", tpid.ToString());     //试卷id
             //默认是0，表示关联的试卷来自课程，如果是1，则表示关联的试卷来自考试专用试卷
             jo.Add("purpose", exam.Exam_Purpose);       //
 
@@ -600,7 +600,7 @@ namespace Song.ViewData.Methods
             }
             XmlNode xn = getAttrBase64(resXml.SelectSingleNode("results"));
             //试卷id，考试id      
-            int examid = xn.GetAttr<int>("examid");
+            long examid = xn.GetAttr<long>("examid");
 
             DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
             ////考试开始时间,结束时间
@@ -618,7 +618,7 @@ namespace Song.ViewData.Methods
 
             Song.Entities.ExamResults exr = new ExamResults();
             exr.Exr_IsSubmit = patter == 2;
-            exr.Exam_ID = xn.GetAttr<int>("examid");    //考试id
+            exr.Exam_ID = xn.GetAttr<long>("examid");    //考试id
             exr.Exam_Name = exam.Exam_Name;
             exr.Tp_Id = xn.GetAttr<long>("tpid");       //试卷id
             exr.Ac_ID = xn.GetAttr<int>("stid");        //学员id

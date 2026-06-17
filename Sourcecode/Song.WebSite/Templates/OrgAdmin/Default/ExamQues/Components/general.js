@@ -142,8 +142,8 @@ Vue.component('general', {
             this.parts = [];
             this.parts=parts;
             this.question.Parts = parts;
-            console.error(parts);
-            console.error(partid);
+            //console.error(parts);
+            //console.error(partid);
         }
     },
     template: `<div class="general">

@@ -213,7 +213,7 @@ $ready(['../Question/Components/ques_type.js',
                                     ques.number = Number(ques.number);
                                     ques.percent = Number(ques.percent);
                                 }
-                                th.qtypeitems = questions.length<1 ? th.qtypeitems : questions;
+                                th.qtypeitems = questions.length<1 ? th.qtypeitems : questions;                                
                                 //试卷出卷范围的题量，如选中的试题分类的试题数
                                 th.quescount = result.quescount;
                             } else {
