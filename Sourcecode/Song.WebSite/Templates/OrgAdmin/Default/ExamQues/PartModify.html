@@ -25,10 +25,10 @@
                     <el-form-item label="上级分类">
                         <el-cascader style="width: 100%;" v-model="selectedparts" :options="datas" separator="／"
                             :props="defaultProps" filterable>
-                            <template slot-scope="{ node, data }">
-                                <span class="serial">{{data.serial}}</span>
-                                <span>{{ data.Qp_Name }}</span>
-                            </template>
+                            <div slot-scope="{ node, data }" class="custom-tree-node" :title="data.Qp_Name">
+                                 <span class="serial">{{data.serial}}</span>
+                                <span>{{ data.Qp_Name }}</span></span>                               
+                            </div>
                         </el-cascader>
                     </el-form-item>
                     <el-form-item label="状态" prop="Qp_IsUse">
