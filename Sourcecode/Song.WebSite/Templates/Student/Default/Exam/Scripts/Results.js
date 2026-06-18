@@ -22,7 +22,7 @@ $ready(function () {
             $api.login.current('account', acc => {
                 th.account = acc;
                 th.form.acid = th.account.Ac_ID;
-                 th.$refs['query_panel'].setmodel(th.form);
+                th.$refs['query_panel'].setmodel(th.form);
                 th.handleCurrentChange(1);
             }, err => { });
 
@@ -102,6 +102,7 @@ $ready(function () {
                     var th = this;
                     $api.get('Exam/ForID', { 'id': th.result.Exam_ID }).then(req => {
                         th.exam = req.data.result;
+                        if (th.exam == null) throw '考试不存在！';
                         if (th.exam.Exam_Purpose == 0) th.getCourseTestpaper();
                         else th.getExamTestpaper();
                     });

@@ -38,10 +38,21 @@ namespace Song.ServiceInterfaces
         /// <param name="objs">fiels对应的值</param>
         int ExamUpdate(long examid, Field[] fiels, object[] objs);
         /// <summary>
-        /// 删除，按主键ID；
+        /// 删除考试主题，按主键ID；
+        /// </summary>
+        /// <param name="examid">实体的主键</param>
+        int ExamThemeDelete(long examid);
+        /// <summary>
+        /// 删除考试场次，按主键ID；
         /// </summary>
         /// <param name="examid">实体的主键</param>
         int ExamDelete(long examid);
+        /// <summary>
+        /// 删除考试场次，按主键ID；
+        /// </summary>
+        /// <param name="examid">实体的主键</param>
+        /// <param name="tran"></param>
+        int ExamDelete(long examid, DbTrans tran);
         /// <summary>
         /// 获取单一实体对象，按主键ID；此处获取的是考试主题或场次
         /// </summary>
@@ -64,13 +75,13 @@ namespace Song.ServiceInterfaces
         /// </summary>
         /// <param name="uid">考试主题的uid</param>
         /// <returns></returns>
-        List<Examination> ExamItem(string uid);
+        List<Examination> ExamItems(string uid);
         /// <summary>
         /// 获取当前考试主题的考试项目
         /// </summary>
         /// <param name="id">考试主题的id</param>
         /// <returns></returns>
-        List<Examination> ExamItem(long id);
+        List<Examination> ExamItems(long id);
         /// <summary>
         /// 当前考试主题关联的学员组
         /// </summary>
@@ -227,7 +238,13 @@ namespace Song.ServiceInterfaces
         /// 删除考试下的所有成绩
         /// </summary>
         /// <param name="examid">考试id</param>
-        void ResultClear(long examid);
+        int ResultClear(long examid);
+        /// <summary>
+        /// 删除考试下的所有成绩
+        /// </summary>
+        /// <param name="examid">考试id</param>
+        /// <param name="tran"></param>
+        int ResultClear(long examid, DbTrans tran);
         /// <summary>
         /// 获取最新的答题信息（正式答题信息）
         /// </summary>

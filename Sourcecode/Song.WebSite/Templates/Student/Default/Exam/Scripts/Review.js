@@ -45,6 +45,7 @@ $ready(['/Utilities/Components/question/review.js',
                     th.platinfo = plat.data.result;
                     th.config = $api.organ(th.organ).config;
                     th.exam = exam.data.result;
+                    if (th.exam == null) throw '考试不存在！';
                     th.result = result.data.result;
                     th.scoreFinal = th.result.Exr_ScoreFinal;
                     //解析答题信息

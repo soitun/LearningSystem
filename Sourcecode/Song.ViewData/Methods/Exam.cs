@@ -127,7 +127,7 @@ namespace Song.ViewData.Methods
             if (string.IsNullOrWhiteSpace(id)) return i;
             List<long> list = id.ToList<long>();
             foreach (long s in list)
-                i += Business.Do<IExamination>().ExamDelete(s);
+                i += Business.Do<IExamination>().ExamThemeDelete(s);
             return i;
         }
         /// <summary>
@@ -257,7 +257,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         public List<Examination> Exams(string uid)
         {
-            List<Examination> exams = Business.Do<IExamination>().ExamItem(uid);
+            List<Examination> exams = Business.Do<IExamination>().ExamItems(uid);
             for (int i = 0; i < exams.Count; i++)
             {
                 DateTime examDate = exams[i].Exam_Date < DateTime.Now.AddYears(-100) ? DateTime.Now : (DateTime)exams[i].Exam_Date;

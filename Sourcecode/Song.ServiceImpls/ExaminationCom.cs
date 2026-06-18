@@ -141,7 +141,7 @@ namespace Song.ServiceImpls
                                     break;
                                 }
                             }
-                            if (!isexist) tran.Delete<Examination>(Examination._.Exam_ID == old.Exam_ID);
+                            if (!isexist)this.ExamDelete(old.Exam_ID);
                         }
 
                         //考试主题时间
@@ -230,18 +230,25 @@ namespace Song.ServiceImpls
         {
             return Gateway.Default.Update<Examination>(fiels, objs, Examination._.Exam_ID == examid);
         }
-        public int ExamDelete(long examid)
+        /// <summary>
+        /// 删除考试主题
+        /// </summary>
+        /// <param name="examid"></param>
+        /// <returns></returns>
+        public int ExamThemeDelete(long examid)
         {
             int count = 0;
-            Song.Entities.Examination exam = this.ExamSingle(examid);
+            Song.Entities.Examination theme = this.ExamSingle(examid);
+            if (theme == null || !theme.Exam_IsTheme) return count;
+            List<Examination> exams = this.ExamItems(theme.Exam_UID);
+
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
                 {
                     count = tran.Delete<Examination>(Examination._.Exam_ID == examid);
-                    tran.Delete<Examination>(Examination._.Exam_UID == exam.Exam_UID && Examination._.Exam_IsTheme == false);
-                    tran.Delete<ExamGroup>(ExamGroup._.Exam_UID == exam.Exam_UID);
-                    tran.Delete<ExamResults>(ExamResults._.Exam_ID == exam.Exam_ID);
+                    foreach (Examination it in exams) 
+                        this.ExamDelete(it.Exam_ID, tran);
                     tran.Commit();
                     return count;
                 }
@@ -252,7 +259,40 @@ namespace Song.ServiceImpls
                 }
             }
         }
-
+        /// <summary>
+        /// 删除考试场次，按主键ID；
+        /// </summary>
+        /// <param name="examid">实体的主键</param>
+        public int ExamDelete(long examid)
+        {
+            int count = 0;
+            using (DbTrans tran = Gateway.Default.BeginTrans())
+            {
+                try
+                {
+                    count += ExamDelete(examid, tran);                  
+                    tran.Commit();
+                    return count;
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                    throw ex;
+                }
+            }
+        }
+        /// <summary>
+        /// 删除考试场次，按主键ID；
+        /// </summary>
+        /// <param name="examid">实体的主键</param>
+        /// <param name="tran"></param>
+        public int ExamDelete(long examid, DbTrans tran)
+        {
+            int count = tran.Delete<Examination>(Examination._.Exam_ID == examid && Examination._.Exam_IsTheme == false);
+            tran.Delete<ExamResults>(ExamResults._.Exam_ID == examid);
+            this.ResultClear(examid, tran);
+            return count;
+        }
         public Examination ExamSingle(long examid)
         {
             return Gateway.Default.From<Examination>().Where(Examination._.Exam_ID == examid).ToFirst<Examination>();
@@ -339,18 +379,18 @@ namespace Song.ServiceImpls
             }
             return true;
         }
-        public List<Examination> ExamItem(string uid)
+        public List<Examination> ExamItems(string uid)
         {
             return Gateway.Default.From<Examination>()
                 .Where(Examination._.Exam_UID == uid && Examination._.Exam_IsTheme == false)
                 .OrderBy(Examination._.Exam_Order.Asc).ToList<Examination>();
         }
 
-        public List<Examination> ExamItem(long examid)
+        public List<Examination> ExamItems(long examid)
         {
             Song.Entities.Examination exam = this.ExamSingle(examid);
             if (exam == null) return null;
-            return this.ExamItem(exam.Exam_UID);
+            return this.ExamItems(exam.Exam_UID);
         }
 
         /// <summary>
@@ -679,7 +719,7 @@ namespace Song.ServiceImpls
             List<ExamResults> results = Gateway.Default.From<ExamResults>()
                 .Where(ExamResults._.Exam_ID == exr.Exam_ID && ExamResults._.Ac_ID == exr.Ac_ID)
                 .ToList<ExamResults>();
-            if (results.Count <= 1)return ResultDelete(exr.Ac_ID, exr.Exam_ID);
+            if (results.Count <= 1) return ResultDelete(exr.Ac_ID, exr.Exam_ID);
             else
                 return Gateway.Default.Delete<ExamResults>(ExamResults._.Exr_ID == exrid);
         }
@@ -707,19 +747,14 @@ namespace Song.ServiceImpls
         /// 删除考试下的所有成绩
         /// </summary>
         /// <param name="examid">考试id</param>
-        public void ResultClear(long examid)
+        public int ResultClear(long examid)
         {
+            int count = 0;
             using (DbTrans tran = Gateway.Default.BeginTrans())
             {
                 try
-                {                   
-                    Cache.ExamResultsCache.Delete(examid);
-                    tran.Delete<ExamResults>(ExamResults._.Exam_ID == examid);
-
-                    //删除上传的附件
-                    string filepath = Upload.Get["Exam"].Physics + examid;
-                    if (System.IO.Directory.Exists(filepath)) System.IO.Directory.Delete(filepath, true);
-                 
+                {
+                    count += this.ResultClear(examid, tran);               
                     tran.Commit();
                 }
                 catch (Exception ex)
@@ -728,6 +763,22 @@ namespace Song.ServiceImpls
                     throw ex;
                 }
             }
+            return count;
+        }
+        /// <summary>
+        /// 删除考试下的所有成绩
+        /// </summary>
+        /// <param name="examid">考试id</param>
+        /// <param name="tran"></param>
+        public int ResultClear(long examid, DbTrans tran)
+        {
+            if (tran == null) return 0;
+            Cache.ExamResultsCache.Delete(examid);
+            int count = tran.Delete<ExamResults>(ExamResults._.Exam_ID == examid);
+            //删除上传的附件
+            string filepath = Upload.Get["Exam"].Physics + examid;
+            if (System.IO.Directory.Exists(filepath)) System.IO.Directory.Delete(filepath, true);
+            return count;
         }
         /// <summary>
         /// 获取最新的答题信息（正式答题信息），获取时并不进行计算状态的判断
@@ -1056,7 +1107,7 @@ namespace Song.ServiceImpls
         public DataTable Result4Theme(long examid, long stsid)
         {
             Examination theme = this.ExamSingle(examid);
-            List<Examination> exams = this.ExamItem(theme.Exam_UID);    //当前考试下的多场考试
+            List<Examination> exams = this.ExamItems(theme.Exam_UID);    //当前考试下的多场考试
             DataTable dt = new DataTable("DataBase");
             //人员id与姓名
             dt.Columns.Add(new DataColumn("ID", typeof(int)));
@@ -1202,7 +1253,7 @@ namespace Song.ServiceImpls
         {
             if (!isAll) return Result4Theme(examid, stsid);
             Examination theme = this.ExamSingle(examid);
-            List<Examination> exams = this.ExamItem(theme.Exam_UID);    //当前考试下的多场考试
+            List<Examination> exams = this.ExamItems(theme.Exam_UID);    //当前考试下的多场考试
             //构建表结构
             DataTable dt = new DataTable("DataBase");
             //人员id与姓名
@@ -1425,7 +1476,7 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public double PassRate4Theme(string uid)
         {
-            List<Examination> exam = this.ExamItem(uid);
+            List<Examination> exam = this.ExamItems(uid);
             double rate = 0;
             foreach (Examination ex in exam) rate += this.PassRate4Exam(ex);
             return rate / exam.Count;
@@ -1466,7 +1517,7 @@ namespace Song.ServiceImpls
         /// <returns></returns>
         public double Avg4Theme(string uid)
         {
-            List<Examination> exam = this.ExamItem(uid);
+            List<Examination> exam = this.ExamItems(uid);
             double avg = 0;
             foreach (Examination ex in exam)
             {
@@ -1532,7 +1583,7 @@ namespace Song.ServiceImpls
                             MAX(""Exr_OverTime"") as Exr_OverTime, MAX(""Sts_ID"") as Sts_ID
             from ""ExamResults"" where {where} and ({examid}) group by ""Ac_ID""";
             //考试id的判断条件            
-            List<Examination> items = this.ExamItem(examid);
+            List<Examination> items = this.ExamItems(examid);
             //if (items.Length < 1) return null;
             string exam_id = string.Empty;
             for (int i = 0; items != null && i < items.Count; i++)
@@ -2241,7 +2292,7 @@ namespace Song.ServiceImpls
             Examination exam = this.ExamSingle(examid);
             if (!exam.Exam_IsTheme) return this.Numbertimes4Exam(examid);
             //考试主题下的所有考试场次
-            List<Examination> exams = this.ExamItem(exam.Exam_UID);
+            List<Examination> exams = this.ExamItems(exam.Exam_UID);
             if (exams.Count < 1) return 0;
             WhereClip wc = new WhereClip();
             foreach (Examination em in exams) wc.Or(ExamResults._.Exam_ID == em.Exam_ID);
@@ -2257,7 +2308,7 @@ namespace Song.ServiceImpls
             Examination exam = this.ExamSingle(examid);
             if (!exam.Exam_IsTheme) return this.Number4Exam(examid);
             //考试主题下的所有考试场次
-            List<Examination> exams = this.ExamItem(exam.Exam_UID);
+            List<Examination> exams = this.ExamItems(exam.Exam_UID);
             if (exams.Count < 1) return 0;
             WhereClip wc = new WhereClip();
             foreach (Examination em in exams) wc.Or(ExamResults._.Exam_ID == em.Exam_ID);
