@@ -143,5 +143,10 @@
     "mark": "",
     "intro": "",
     "relation": "Organization"
+  },
+  "Etp_DeleteTime": {
+    "mark": "删除时间",
+    "intro": "逻辑删除的时间，用于在回收站的排序显示",
+    "relation": ""
   }
 }
