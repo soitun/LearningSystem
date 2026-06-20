@@ -67,7 +67,8 @@ $ready(function () {
                     .finally(() => th.loading = false);
             },
             //查看成绩
-            review: function (result) {
+            review: function (result, exam) {
+                if (exam != null && !exam?.Exam_IsAllowReview) return;
                 if (!window.top || !window.top.vapp) return;
                 var url = $api.url.set("/student/exam/review", {
                     "examid": result.Exam_ID,
@@ -141,8 +142,18 @@ $ready(function () {
                 }).catch(err => console.error(err))
                     .finally(() => th.loading = false);
             },
+        },
+        template: `<slot :paper="paper" :exam="exam" :subject="subject" :th="this"></slot>`
+    });
+    //成绩得分的显示
+    Vue.component("score", {
+        //成绩，考试场次对象,试卷对象，专业
+        props: ["result", "exam", "paper", "subject"],
+        methods: {
             //得分样式
             scoreStyle: function (score) {
+                if (this.exam == null) return "";
+                if (!this.exam.Exam_IsShowScore) return "noshowscore";
                 //总分和及格分
                 var total = this.exam ? this.exam.Exam_Total : -1;
                 var passscore = this.paper ? this.paper.Tp_PassScore : -1;
@@ -151,8 +162,17 @@ $ready(function () {
                 if (score < total * 0.8) return "general";
                 if (score >= total * 0.8) return "fine";
                 return "";
+            },
+            btnclick: function (result) {
+                this.$emit('click', result, this.exam);
             }
         },
-        template: `<slot :paper="paper" :exam="exam" :subject="subject" :th="this"></slot>`
-    });
+        template: `<span score :class="scoreStyle(result.Exr_ScoreFinal)"
+                           @click="btnclick(result)">
+                        <template v-if="exam==null || exam?.Exam_IsShowScore">
+                            {{result.Exr_ScoreFinal}}  分
+                        </template>
+                        <alert v-else>成绩暂不显示</alert>                           
+            </span>`
+    })
 });

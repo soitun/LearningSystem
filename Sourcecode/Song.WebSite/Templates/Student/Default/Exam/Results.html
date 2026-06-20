@@ -36,7 +36,8 @@
                         :result="result" :index="index" :account="account">
                         <template scope="item">
                             <el-card shadow="hover">
-                                <div slot="header" @click="review(result)">
+                                <div slot="header"
+                                    @click="review(result,item.exam)">
                                     <div class="exam_name">
                                         <span>{{(form.index - 1) * form.size +
                                             index + 1}}.</span>
@@ -44,9 +45,8 @@
                                         {{result.Exam_Name ? result.Exam_Name :
                                         result.Exam_Title}}
                                     </div>
-                                    <score
-                                        :class="item.th.scoreStyle(result.Exr_ScoreFinal)">{{result.Exr_ScoreFinal}}
-                                        分
+                                    <score :result="result" :exam="item.exam"
+                                        :paper="item.paper">
                                     </score>
                                 </div>
                                 <div class="items" v-if="item.exam!=null">
@@ -86,26 +86,26 @@
                                     <div>
                                         <span>
                                             <icon>&#xe816</icon> 得分：
-                                            <score
-                                                :class="item.th.scoreStyle(result.Exr_ScoreFinal)"
-                                                @click="review(result)">
-                                                {{result.Exr_ScoreFinal}} 分
+                                            <score :result="result"
+                                                :exam="item.exam"
+                                                :paper="item.paper"
+                                                @click="review(result,item.exam)">
                                             </score>
                                             <help v-if="item.exam">
                                                 （满分{{item.exam.Exam_Total}}分，{{item.exam.Exam_PassScore}}分及格）</help>
                                         </span>
                                     </div>
                                 </div>
-                                <div v-else>                                   
+                                <div v-else>
                                     <div>
                                         <icon>&#xe816</icon> 得分：
-                                        <score
-                                            :class="item.th.scoreStyle(result.Exr_ScoreFinal)"
-                                            @click="review(result)">
-                                            {{result.Exr_ScoreFinal}} 分
+                                        <score :result="result"
+                                            :exam="item.exam"
+                                            :paper="item.paper"
+                                            @click="review(result,item.exam)">
                                         </score>
                                     </div>
-                                     <alert>考试已经被删除</alert>
+                                    <alert>考试已经被删除</alert>
                                 </div>
                             </el-card>
                         </template>

@@ -22,9 +22,13 @@ namespace Song.Entities {
     		
     		protected Int32 _Exam_DateType;
     		
+    		protected DateTime _Exam_DeleteTime;
+    		
     		protected Int32 _Exam_GroupType;
     		
     		protected String _Exam_Intro;
+    		
+    		protected Boolean _Exam_IsAllowReview;
     		
     		protected Boolean _Exam_IsDeleted;
     		
@@ -33,6 +37,8 @@ namespace Song.Entities {
     		protected Boolean _Exam_IsRightClick;
     		
     		protected Boolean _Exam_IsShowBtn;
+    		
+    		protected Boolean _Exam_IsShowScore;
     		
     		protected Boolean _Exam_IsTheme;
     		
@@ -144,6 +150,16 @@ namespace Song.Entities {
     			}
     		}
     		
+    		public DateTime Exam_DeleteTime {
+    			get {
+    				return this._Exam_DeleteTime;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Exam_DeleteTime, _Exam_DeleteTime, value);
+    				this._Exam_DeleteTime = value;
+    			}
+    		}
+    		
     		public Int32 Exam_GroupType {
     			get {
     				return this._Exam_GroupType;
@@ -161,6 +177,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Exam_Intro, _Exam_Intro, value);
     				this._Exam_Intro = value;
+    			}
+    		}
+    		
+    		public Boolean Exam_IsAllowReview {
+    			get {
+    				return this._Exam_IsAllowReview;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Exam_IsAllowReview, _Exam_IsAllowReview, value);
+    				this._Exam_IsAllowReview = value;
     			}
     		}
     		
@@ -201,6 +227,16 @@ namespace Song.Entities {
     			set {
     				this.OnPropertyValueChange(_.Exam_IsShowBtn, _Exam_IsShowBtn, value);
     				this._Exam_IsShowBtn = value;
+    			}
+    		}
+    		
+    		public Boolean Exam_IsShowScore {
+    			get {
+    				return this._Exam_IsShowScore;
+    			}
+    			set {
+    				this.OnPropertyValueChange(_.Exam_IsShowScore, _Exam_IsShowScore, value);
+    				this._Exam_IsShowScore = value;
     			}
     		}
     		
@@ -431,12 +467,15 @@ namespace Song.Entities {
     					_.Exam_Date,
     					_.Exam_DateOver,
     					_.Exam_DateType,
+    					_.Exam_DeleteTime,
     					_.Exam_GroupType,
     					_.Exam_Intro,
+    					_.Exam_IsAllowReview,
     					_.Exam_IsDeleted,
     					_.Exam_IsManual,
     					_.Exam_IsRightClick,
     					_.Exam_IsShowBtn,
+    					_.Exam_IsShowScore,
     					_.Exam_IsTheme,
     					_.Exam_IsToggle,
     					_.Exam_IsUse,
@@ -471,12 +510,15 @@ namespace Song.Entities {
     					this._Exam_Date,
     					this._Exam_DateOver,
     					this._Exam_DateType,
+    					this._Exam_DeleteTime,
     					this._Exam_GroupType,
     					this._Exam_Intro,
+    					this._Exam_IsAllowReview,
     					this._Exam_IsDeleted,
     					this._Exam_IsManual,
     					this._Exam_IsRightClick,
     					this._Exam_IsShowBtn,
+    					this._Exam_IsShowScore,
     					this._Exam_IsTheme,
     					this._Exam_IsToggle,
     					this._Exam_IsUse,
@@ -524,11 +566,17 @@ namespace Song.Entities {
     			if ((false == reader.IsDBNull(_.Exam_DateType))) {
     				this._Exam_DateType = reader.GetInt32(_.Exam_DateType);
     			}
+    			if ((false == reader.IsDBNull(_.Exam_DeleteTime))) {
+    				this._Exam_DeleteTime = reader.GetDateTime(_.Exam_DeleteTime);
+    			}
     			if ((false == reader.IsDBNull(_.Exam_GroupType))) {
     				this._Exam_GroupType = reader.GetInt32(_.Exam_GroupType);
     			}
     			if ((false == reader.IsDBNull(_.Exam_Intro))) {
     				this._Exam_Intro = reader.GetString(_.Exam_Intro);
+    			}
+    			if ((false == reader.IsDBNull(_.Exam_IsAllowReview))) {
+    				this._Exam_IsAllowReview = reader.GetBoolean(_.Exam_IsAllowReview);
     			}
     			if ((false == reader.IsDBNull(_.Exam_IsDeleted))) {
     				this._Exam_IsDeleted = reader.GetBoolean(_.Exam_IsDeleted);
@@ -541,6 +589,9 @@ namespace Song.Entities {
     			}
     			if ((false == reader.IsDBNull(_.Exam_IsShowBtn))) {
     				this._Exam_IsShowBtn = reader.GetBoolean(_.Exam_IsShowBtn);
+    			}
+    			if ((false == reader.IsDBNull(_.Exam_IsShowScore))) {
+    				this._Exam_IsShowScore = reader.GetBoolean(_.Exam_IsShowScore);
     			}
     			if ((false == reader.IsDBNull(_.Exam_IsTheme))) {
     				this._Exam_IsTheme = reader.GetBoolean(_.Exam_IsTheme);
@@ -664,6 +715,11 @@ namespace Song.Entities {
     			public static WeiSha.Data.Field Exam_DateType = new WeiSha.Data.Field<Examination>("Exam_DateType");
     			
     			/// <summary>
+    			/// 字段名：Exam_DeleteTime - 数据类型：DateTime
+    			/// </summary>
+    			public static WeiSha.Data.Field Exam_DeleteTime = new WeiSha.Data.Field<Examination>("Exam_DeleteTime");
+    			
+    			/// <summary>
     			/// 字段名：Exam_GroupType - 数据类型：Int32
     			/// </summary>
     			public static WeiSha.Data.Field Exam_GroupType = new WeiSha.Data.Field<Examination>("Exam_GroupType");
@@ -672,6 +728,11 @@ namespace Song.Entities {
     			/// 字段名：Exam_Intro - 数据类型：String
     			/// </summary>
     			public static WeiSha.Data.Field Exam_Intro = new WeiSha.Data.Field<Examination>("Exam_Intro");
+    			
+    			/// <summary>
+    			/// 字段名：Exam_IsAllowReview - 数据类型：Boolean
+    			/// </summary>
+    			public static WeiSha.Data.Field Exam_IsAllowReview = new WeiSha.Data.Field<Examination>("Exam_IsAllowReview");
     			
     			/// <summary>
     			/// 字段名：Exam_IsDeleted - 数据类型：Boolean
@@ -692,6 +753,11 @@ namespace Song.Entities {
     			/// 字段名：Exam_IsShowBtn - 数据类型：Boolean
     			/// </summary>
     			public static WeiSha.Data.Field Exam_IsShowBtn = new WeiSha.Data.Field<Examination>("Exam_IsShowBtn");
+    			
+    			/// <summary>
+    			/// 字段名：Exam_IsShowScore - 数据类型：Boolean
+    			/// </summary>
+    			public static WeiSha.Data.Field Exam_IsShowScore = new WeiSha.Data.Field<Examination>("Exam_IsShowScore");
     			
     			/// <summary>
     			/// 字段名：Exam_IsTheme - 数据类型：Boolean

@@ -72,43 +72,43 @@ context .el-card__header>div>div:first-child {
 
 /*得分样式*/
 
-score {
+span[score] {
 	font-size: 16px;
 	line-height: 20px;
 	height: 20px;
 	cursor: pointer;
 }
 
-score.general {
+span[score].general {
 	color: #07c160;
 }
 
-score.praise {
+span[score].praise {
 	color: coral;
 	font-weight: bold;
 }
 
-score::before {
+span[score]::before {
 	font-family: "webdesk_icon" !important;
 	margin-right: 5px;
 	font-size: 22px;
 }
 
-score.nopass::before {
+span[score].nopass::before {
 	content: '\e774';
 	color: #ff0000;
 }
 
-score.general::before {
+span[score].general::before {
 	content: '\e829';
 }
 
-score.fine::before {
+span[score].fine::before {
 	content: '\e850';
 	color: #409EFF;
 }
 
-score.praise::before {
+span[score].praise::before {
 	content: '\e8c9';
 	font-size: 20px;
 	color: coral;

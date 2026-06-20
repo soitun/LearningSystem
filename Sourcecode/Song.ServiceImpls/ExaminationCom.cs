@@ -37,6 +37,7 @@ namespace Song.ServiceImpls
                     theme.Org_Name = org.Org_Name;
                 }
             }
+
             //创建时间
             theme.Exam_CrtTime = DateTime.Now;
             using (DbTrans tran = Gateway.Default.BeginTrans())
@@ -49,6 +50,11 @@ namespace Song.ServiceImpls
                         DateTime examDate = DateTime.MaxValue;
                         foreach (Song.Entities.Examination it in items)
                         {
+                            it.Exam_IsAllowReview = theme.Exam_IsAllowReview;                         
+                            it.Exam_IsRightClick = theme.Exam_IsRightClick;
+                            it.Exam_IsShowBtn = theme.Exam_IsShowBtn;
+                            it.Exam_IsShowScore = theme.Exam_IsShowScore;
+
                             it.Exam_DateType = theme.Exam_DateType;
                             if (theme.Exam_DateType == 1)   //	1为固定时间，即准点考试
                             {
@@ -149,6 +155,11 @@ namespace Song.ServiceImpls
                         //保存场次
                         foreach (Song.Entities.Examination it in items)
                         {
+                            it.Exam_IsAllowReview = theme.Exam_IsAllowReview;
+                            it.Exam_IsRightClick = theme.Exam_IsRightClick;
+                            it.Exam_IsShowBtn = theme.Exam_IsShowBtn;
+                            it.Exam_IsShowScore = theme.Exam_IsShowScore;
+
                             it.Exam_DateType = theme.Exam_DateType;
                             if (theme.Exam_DateType == 1)
                             {

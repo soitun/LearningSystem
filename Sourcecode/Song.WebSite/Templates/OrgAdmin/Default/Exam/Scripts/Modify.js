@@ -11,14 +11,16 @@ $ready(["Components/group_select.js",
             org: {},
             tabs: [
                 { title: '基本信息', name: 'general', icon: 'e6b0' },
-                { title: '参考人员', name: 'range', icon: 'e67d' }],
+                { title: '参考人员', name: 'range', icon: 'e67d' },
+                { title: '功能设置', name: 'config', icon: 'a038' },
+                { title: '删除的场次', name: 'deleted', icon: 'e800', color: '#E6A23C', show: false }],
             activeName: 'general',     //选项卡
 
             //当前数据实体，这里是考试主题
             entity: {
                 Exam_ID: 0,
                 Exam_IsTheme: true,
-                Exam_DateType: 1,                
+                Exam_DateType: 1,
                 Exam_IsRightClick: true,
                 Exam_IsUse: true,
                 Exam_GroupType: 1,
@@ -83,8 +85,6 @@ $ready(["Components/group_select.js",
             var th = this;
             th.org = window.org;
             th.getTheme();
-
-
         },
         mounted: function () {
 
@@ -111,6 +111,11 @@ $ready(["Components/group_select.js",
             },
         },
         methods: {
+            //选项卡标签的颜色
+            labelColor: function (item) {
+                if (item.color && item.color != '') return 'color:' + item.color;
+                return null;
+            },
             //获取考试主题
             getTheme: function () {
                 var th = this;
@@ -380,9 +385,9 @@ $ready(["Components/group_select.js",
                     //试卷是否存在
                     tpexist: function () {
                         if ($api.isnull(this.paper)) return false;
-                        return this.exam.Exam_Purpose == 0 ? 
-                        this.paper.Tp_Id > 0  && this.paper.Tp_IsUse && !this.paper.Tp_IsDeleted  : 
-                        this.paper.Etp_Id > 0  && this.paper.Etp_IsUse && !this.paper.Etp_IsDeleted ;
+                        return this.exam.Exam_Purpose == 0 ?
+                            this.paper.Tp_Id > 0 && this.paper.Tp_IsUse && !this.paper.Tp_IsDeleted :
+                            this.paper.Etp_Id > 0 && this.paper.Etp_IsUse && !this.paper.Etp_IsDeleted;
                     }
                 },
                 methods: {
