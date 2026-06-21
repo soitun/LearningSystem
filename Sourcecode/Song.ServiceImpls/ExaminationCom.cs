@@ -514,13 +514,15 @@ namespace Song.ServiceImpls
             Song.Entities.Examination[] all = Gateway.Default.From<Examination>().Where(wc && Examination._.Exam_GroupType == 1).ToArray<Examination>();
             //所在学生组的考试            
             Song.Entities.Examination[] group = Gateway.Default.From<Examination>().InnerJoin<ExamGroup>(ExamGroup._.Exam_UID == Examination._.Exam_UID)
-                .Where(wc && Examination._.Exam_GroupType == 2 && ExamGroup._.Sts_ID == acc.Sts_ID).ToArray<Examination>();          
+                .Where(wc && Examination._.Exam_GroupType == 2 && ExamGroup._.Sts_ID == acc.Sts_ID).ToArray<Examination>();
+            //学员的考试
+            Song.Entities.Examination[] accself = Gateway.Default.From<Examination>().InnerJoin<Exam_Accounts>(Exam_Accounts._.Exam_UID == Examination._.Exam_UID)
+               .Where(wc && Examination._.Exam_GroupType == 3 && Exam_Accounts._.Ac_ID == acc.Ac_ID).ToArray<Examination>();
             //合并到一起
             List<Song.Entities.Examination> exams = new List<Examination>();
-            foreach (Song.Entities.Examination t in all)
-                _GetSelfExam_Add(exams, t);
-            foreach (Song.Entities.Examination t in group)
-                _GetSelfExam_Add(exams, t);
+            foreach (Song.Entities.Examination t in all) _GetSelfExam_Add(exams, t);
+            foreach (Song.Entities.Examination t in group) _GetSelfExam_Add(exams, t);
+            foreach (Song.Entities.Examination t in accself) _GetSelfExam_Add(exams, t);
             //排序
             for (int i = 0; i < exams.Count; i++)
             {
