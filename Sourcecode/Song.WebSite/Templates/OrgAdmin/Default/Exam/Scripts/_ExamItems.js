@@ -109,7 +109,7 @@ $ready([
                     this.theme = theme;     //考试主题
                     //新增时，创建场次
                     if (exam == null) this.exam = await this.createexam();
-                    else this.exam = $api.clone(exam);                 
+                    else this.exam = $api.clone(exam);
                     this.papertype = this.exam.Exam_Purpose;
                     return this.exam;
                 }
@@ -122,6 +122,7 @@ $ready([
                     Exam_Name: '',
                     Tp_Id: '', Etp_Id: '',        //试卷id
                     Cou_ID: '',      //临时字段，数据实体中并不存在
+                    Sbj_ID: '',      //所属专业的ID,其实是所属中试卷关联的专业
                     Exam_DateType: this.theme.Exam_DateType,
                     Exam_Date: this.theme.Exam_Date,
                     Exam_DateOver: this.theme.Exam_DateOver,
@@ -475,6 +476,7 @@ $ready([
                             this.exam.Exam_Span = 0;
                             this.examtpid = '';
                         }
+                        this.exam.Sbj_ID = paper.Sbj_ID;
                         this.$emit('change', val, paper, this.exam);
                     }
                 },

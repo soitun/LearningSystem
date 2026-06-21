@@ -173,28 +173,32 @@ $ready(["../Components/courses.js",
                 }
             },
             template: `<card  shadow="hover" class="my_exam">
-        <card-title>
-            <span>{{index+1}}.《{{exam.Exam_Name}}》</span>
-            <a type="button" :examid="exam.Exam_ID" :href="goexaming(exam)">
-                参加考试<icon>&#xe6c6</icon>
-            </a>
-        </card-title>
-        <card-content>
-        <div class="item"> {{exam.Exam_Title}}</div>
-          <div class="item">时间：
-            <span v-if="exam.Exam_DateType==1">
-              <!--准时开始-->
-              {{exam.Exam_Date|date("yyyy-M-dd HH:mm")}} （准时开始）
-            </span>
-            <span v-else>
-              <!--区间时间-->
-              {{exam.Exam_Date|date("yyyy-M-dd HH:mm")}} 至
-              {{exam.Exam_DateOver|date("yyyy-M-dd HH:mm")}} 之间
-            </span>
-          </div>
-          <div class="item" v-if="paper">限时：{{exam.Exam_Span}}分钟 &nbsp; 题量：{{tpcount}}道</div>
-          <div class="item">总分：{{exam.Exam_Total}}分（{{exam.Exam_PassScore}}分及格）</div>
-        </card-content>
+            <card-title>
+                <span>{{index+1}}.《{{exam.Exam_Name}}》</span>
+                <a type="button" :examid="exam.Exam_ID" :href="goexaming(exam)">
+                    参加考试<icon>&#xe6c6</icon>
+                </a>
+            </card-title>
+            <card-content>
+            <div class="item"> {{exam.Exam_Title}}</div>
+            <div class="item">时间：
+                <span v-if="exam.Exam_DateType==1">
+                <!--准时开始-->
+                {{exam.Exam_Date|date("yyyy-M-dd HH:mm")}} （准时开始）
+                </span>
+                <span v-else>
+                <!--区间时间-->
+                {{exam.Exam_Date|date("yyyy-M-dd HH:mm")}} 至
+                {{exam.Exam_DateOver|date("yyyy-M-dd HH:mm")}} 之间
+                </span>
+            </div>
+            <div class="item" v-if="paper">限时：{{exam.Exam_Span}}分钟 &nbsp; 题量：{{tpcount}}道</div>
+            <div class="item">总分：{{exam.Exam_Total}}分（{{exam.Exam_PassScore}}分及格）</div>
+            <template v-if="exam?.Exam_Purpose==0">     
+                <div class="item" v-if="paper">专业：{{paper.Sbj_Name}} </div>
+                <div class="item" v-if="paper">课程：{{paper.Cou_Name}}</div>    
+            </template>    
+            </card-content>
       </card>`
         });
         //考试主题（用于所有考试）

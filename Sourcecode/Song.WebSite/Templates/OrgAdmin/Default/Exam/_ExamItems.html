@@ -39,13 +39,15 @@
             </el-form-item>
             <el-divider content-position="left">采用的试卷</el-divider>
             <el-form-item label="">
-                <el-radio-group v-model="papertype" >
+                <el-radio-group v-model="papertype">
                     <el-radio-button :label="1">考试专用试卷</el-radio-button>
                     <el-radio-button :label="0">课程模拟测试的试卷</el-radio-button>
                 </el-radio-group>
-            </el-form-item>         
-            <select_papertype1 v-show="papertype==1" :org="org" :exam="exam" @change="selectexampaper"></select_papertype1>
-            <select_papertype0 v-show="papertype==0" :org="org" :exam="exam" ></select_papertype0> 
+            </el-form-item>
+            <select_papertype1 v-show="papertype==1" :org="org" :exam="exam" @change="selectexampaper">
+            </select_papertype1>
+            <select_papertype0 v-show="papertype==0" :org="org" :exam="exam" @change="selectcourpaper">
+            </select_papertype0>
         </el-form>
         <div class="footer">
             <el-button type="primary" define="enter" native-type="submit" :loading="loading" plain

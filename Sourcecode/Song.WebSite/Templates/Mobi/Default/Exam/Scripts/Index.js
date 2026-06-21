@@ -181,7 +181,7 @@ $ready(['Components/exam_tabs.js'], function () {
             ).then(([paper, subject]) => {
                 //获取结果
                 th.paper = paper.data.result;
-                th.subject = subject.data.result;
+                th.subject = subject.data.result;              
             }).catch(err => console.error(err));
         },
         methods: {
@@ -210,8 +210,8 @@ $ready(['Components/exam_tabs.js'], function () {
           <div class="item" v-if="paper">限时：{{exam.Exam_Span}}分钟 &nbsp; 题量：{{exam.Exam_QuesCount}}道</div>
           <div class="item">总分：{{exam.Exam_Total}}分（{{paper.Exam_PassScore}}分及格）</div>   
           <template v-if="exam?.Exam_Purpose==0">     
-            <div class="item">专业：{{subject.Sbj_Name}} </div>
-            <div class="item">课程：{{paper.Cou_Name}}</div>    
+            <div class="item" v-if="subject">专业：{{subject.Sbj_Name}} </div>
+            <div class="item" v-if="paper">课程：{{paper.Cou_Name}}</div>    
           </template>    
         </card-content>
       </card>`
