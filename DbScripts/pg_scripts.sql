@@ -1,4 +1,4 @@
--- to PostgreSQL  --  2026-6-16 10:37:53  --
+-- to PostgreSQL  --  2026-6-21 15:57:37  --
 
 -- 创建表 Accessory --
 DROP TABLE IF EXISTS "Accessory" CASCADE;
@@ -753,12 +753,15 @@ CREATE TABLE IF NOT EXISTS "Examination"
 	"Exam_Date" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	"Exam_DateOver" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	"Exam_DateType" integer NOT NULL DEFAULT 0,
+	"Exam_DeleteTime" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	"Exam_GroupType" integer NOT NULL DEFAULT 0,
 	"Exam_Intro" text,
+	"Exam_IsAllowReview" boolean NOT NULL DEFAULT false,
 	"Exam_IsDeleted" boolean NOT NULL DEFAULT false,
 	"Exam_IsManual" boolean NOT NULL DEFAULT false,
 	"Exam_IsRightClick" boolean NOT NULL DEFAULT false,
 	"Exam_IsShowBtn" boolean NOT NULL DEFAULT false,
+	"Exam_IsShowScore" boolean NOT NULL DEFAULT false,
 	"Exam_IsTheme" boolean NOT NULL DEFAULT false,
 	"Exam_IsToggle" boolean NOT NULL DEFAULT false,
 	"Exam_IsUse" boolean NOT NULL DEFAULT false,
@@ -784,8 +787,11 @@ CREATE TABLE IF NOT EXISTS "Examination"
 CREATE INDEX IF NOT EXISTS "Examination_IX_Acc_Id" ON "Examination" ("Acc_Id" ASC);
 CREATE INDEX IF NOT EXISTS "Examination_IX_Etp_Id" ON "Examination" ("Etp_Id" ASC);
 CREATE INDEX IF NOT EXISTS "Examination_IX_Exam_Date" ON "Examination" ("Exam_Date" ASC);
+CREATE INDEX IF NOT EXISTS "Examination_IX_DeleteTime" ON "Examination" ("Exam_DeleteTime" ASC);
+CREATE INDEX IF NOT EXISTS "Examination_IX_IsAllowReview" ON "Examination" ("Exam_IsAllowReview" ASC);
 CREATE INDEX IF NOT EXISTS "Examination_IX_IsDeleted" ON "Examination" ("Exam_IsDeleted" ASC);
 CREATE INDEX IF NOT EXISTS "Examination_Exam_IsManual" ON "Examination" ("Exam_IsManual" ASC);
+CREATE INDEX IF NOT EXISTS "Examination_IX_IsShowScore" ON "Examination" ("Exam_IsShowScore" ASC);
 CREATE INDEX IF NOT EXISTS "Examination_IX_Exam_IsTheme" ON "Examination" ("Exam_IsTheme" ASC);
 CREATE INDEX IF NOT EXISTS "Examination_IX_Exam_IsUse" ON "Examination" ("Exam_IsUse" ASC);
 CREATE INDEX IF NOT EXISTS "Examination_IX_Order" ON "Examination" ("Exam_Order" ASC);
