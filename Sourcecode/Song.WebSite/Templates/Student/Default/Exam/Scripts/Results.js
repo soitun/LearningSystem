@@ -4,7 +4,7 @@ $ready(function () {
         el: '#vapp',
         data: {
             account: {},     //当前登录账号          
-            organ: {},
+            org: {},
             config: {},      //当前机构配置项        
             //查询项
             form: { 'acid': '', 'orgid': '', 'sbjid': '', 'search': '', 'size': 10, 'index': 0 },
@@ -17,8 +17,9 @@ $ready(function () {
         },
         mounted: function () {
             var th = this;
-            th.organ = window.org;
+            th.org = window.org;
             th.config = window.config;
+            th.form.orgid = th.org.Org_ID;
             $api.login.current('account', acc => {
                 th.account = acc;
                 th.form.acid = th.account.Ac_ID;
@@ -68,7 +69,14 @@ $ready(function () {
             },
             //查看成绩
             review: function (result, exam) {
-                if (exam != null && !exam?.Exam_IsAllowReview) return;
+                if ($api.isnull(exam)) {
+                    alert('考试不存在，可能已经删除！');
+                    return;
+                }
+                if (exam != null && !exam?.Exam_IsAllowReview) {
+                    alert('此考试不允许查看！');
+                    return;
+                }
                 if (!window.top || !window.top.vapp) return;
                 var url = $api.url.set("/student/exam/review", {
                     "examid": result.Exam_ID,

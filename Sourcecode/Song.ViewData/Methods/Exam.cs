@@ -639,6 +639,9 @@ namespace Song.ViewData.Methods
             exr.Exr_OverTime = xn.GetAttr<DateTime>("overtime");
             exr.Exr_CrtTime = xn.GetAttr<DateTime>("starttime");
             exr.Exr_LastTime = DateTime.Now;
+            //
+            exr.Org_ID = exam.Org_ID;
+            exr.Org_Name = exam.Org_Name;
 
             //缓存当前答题信息
 

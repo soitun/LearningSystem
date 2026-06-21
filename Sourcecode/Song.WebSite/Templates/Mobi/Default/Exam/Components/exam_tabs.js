@@ -11,7 +11,7 @@ Vue.component('exam_tabs', {
                 { 'name': '所有考试', 'tag': 'all_exam', 'icon': 'e810', 'curr': false, 'search': '', 'login': false },
                 { 'name': '成绩查看', 'tag': 'score_exam', 'icon': 'e6ef', 'curr': false, 'search': '', 'login': true },
             ],
-            tabmenu: ''     //当前选项卡
+            tabmenu: $api.querystring('tab', 'my_exam'),     //选项卡          
         }
     },
     watch: {
@@ -28,9 +28,7 @@ Vue.component('exam_tabs', {
         'tabmenu': {
             handler: function (nv, ov) {
                 let tag = this.tabs.find(t => t.tag == nv);
-                if (tag != null)
-                    this.search(tag);
-
+                if (tag != null) this.search(tag);
             }, immediate: false
         }
     },
@@ -39,7 +37,9 @@ Vue.component('exam_tabs', {
         islogin: t => !$api.isnull(t.account)
     },
     mounted: function () {
-
+        let tag = this.tabs.find(t => t.tag == this.tabmenu);
+        this.$emit('change', this.tabmenu, tag);
+        this.search(tag);
     },
     methods: {
         //选项卡点击事件

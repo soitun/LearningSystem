@@ -8,7 +8,7 @@ $ready(['Components/exam_tabs.js'], function () {
             org: {},
             config: {},      //当前机构配置项        
             datas: {},
-            tabmenu: $api.querystring('tab', 'my_exam'),     //选项卡
+            tabmenu: '',     //选项卡
 
             loading: true,
             loading_login: false,       //是否请求过登录      
@@ -40,10 +40,11 @@ $ready(['Components/exam_tabs.js'], function () {
         watch: {
             'account': {
                 handler: function (nv, ov) {
+                    //console.error(nv);
                     //this.loading_init = false;
                     //if ($api.isnull(nv)) return;
                     //this.my_exam();
-                }, immediate: true
+                }, immediate: false
             },
         },
         methods: {
@@ -103,9 +104,15 @@ $ready(['Components/exam_tabs.js'], function () {
             //成绩回顾的加载
             score_exam: function () {
                 var th = this;
+                if ($api.isnull(th.account)) {
+                    window.setTimeout(function () {
+                        th.score_exam();
+                    }, 200);
+                    return;
+                }
                 var form = {
                     'acid': th.account.Ac_ID,
-                    'orgid': -1, 'sbjid': -1, 'search': th.search.score_exam,
+                    'orgid': 0, 'sbjid': -1, 'search': th.search.score_exam,
                     'size': th.size, 'index': ++th.index
                 }
                 th.loading = true;
@@ -196,7 +203,7 @@ $ready(['Components/exam_tabs.js'], function () {
           </div>
           <div class="item" v-if="paper">限时：{{exam.Exam_Span}}分钟 &nbsp; 题量：{{exam.Exam_QuesCount}}道</div>
           <div class="item">总分：{{exam.Exam_Total}}分（{{paper.Exam_PassScore}}分及格）</div>   
-          <template v-if="exam.Exam_Purpose==0">     
+          <template v-if="exam?.Exam_Purpose==0">     
             <div class="item">专业：{{subject.Sbj_Name}} </div>
             <div class="item">课程：{{paper.Cou_Name}}</div>    
           </template>    
@@ -327,48 +334,53 @@ $ready(['Components/exam_tabs.js'], function () {
             return {
                 paper: {},       //试卷
                 subject: {},     //专业
-                exam: {},        //考试
+                exam: null,        //考试
                 loading: false
             }
         },
-        watch: {},
+        watch: {
+            'exam': function (val) {
+                //console.error(this.exam);
+            }
+        },
         computed: {
             tpcount: function () {
+                if ($api.isnull(this.exam)) return 0;
                 return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Count : this.paper.Etp_Count;
             },
             tpname: function () {
+                if ($api.isnull(this.exam)) return '';
                 return this.exam.Exam_Purpose == 0 ? this.paper.Tp_Name : this.paper.Etp_Name;
-            }
+            },
+            //考试不存在
+            noexam: t => $api.isnull(t.exam)
         },
         mounted: function () {
             var th = this;
+            //console.error(this.result);
             $api.cache('Exam/ForID', { 'id': th.result.Exam_ID }).then(req => {
                 if (req.data.success) {
                     th.exam = req.data.result;
+                    if ($api.isnull(th.exam)) throw '考试不存在！';
                     if (th.exam.Exam_Purpose == 0) {
                         $api.cache('TestPaper/ForID', { 'id': th.exam.Tp_Id }).then(req => th.paper = req.data.result);
                         $api.cache('Subject/ForID', { 'id': th.result.Sbj_ID }).then(req => th.subject = req.data.result);
                     } else
                         $api.cache('ExamTestPaper/ForID', { 'id': th.exam.Etp_Id }).then(req => th.paper = req.data.result);
-                } else {
-                    console.error(req.data.exception);
-                    throw req.data.message;
-                }
-            });
+                } else throw req.data.message;
+            }).catch(err => console.error(err))
+                .finally(() => { });
         },
         methods: {
-            //得分样式
-            scoreStyle: function (score) {
-                //总分和及格分
-                var total = this.exam ? this.exam.Exam_Total : -1;
-                var passscore = this.exam ? this.exam.Exam_PassScore : -1;
-                if (score == total) return "praise";
-                if (score < passscore) return "nopass";
-                if (score < total * 0.8) return "general";
-                if (score >= total * 0.8) return "fine";
-                return "";
-            },
             gourl: function () {
+                if ($api.isnull(this.exam)) {
+                    alert('考试不存在，可能已经删除！');
+                    return;
+                }
+                if (!this.exam.Exam_IsAllowReview) {
+                    alert('此考试不允许查看！');
+                    return;
+                }
                 let url = $dom.routepath() + 'Review';
                 url = $api.url.set(url, {
                     "examid": this.result.Exam_ID,
@@ -379,25 +391,56 @@ $ready(['Components/exam_tabs.js'], function () {
         },
         template: `<card @click="gourl">
         <card-title>{{index+1}}.《 {{result.Exam_Name ? result.Exam_Name : result.Exam_Title}}》
-        <score :class="scoreStyle(result.Exr_ScoreFinal)">{{result.Exr_ScoreFinal}} 分</score>
+        <score :result="result" :exam="exam" :paper="paper"></score>
         </card-title>
         <card-content>
-          <div class="item" v-if="exam">考试：{{exam.Exam_Title}}</div>      
-           <div class="item">试卷： {{tpname}}</div>  
-            <template v-if="exam.Exam_Purpose==0">  
+          <div class="item" v-if="!noexam">考试：{{exam.Exam_Title}}</div>      
+           <div class="item" v-if="tpname!=''">试卷： {{tpname}}</div>  
+            <template v-if="exam?.Exam_Purpose==0">  
                 <div class="item">专业：{{subject.Sbj_Name}}</div>  
                 <div class="item">课程：{{paper.Cou_Name}}</div>  
             </template>        
           <div class="item" v-if="exam">限时：{{exam.Exam_Span}}分钟 &nbsp; 题量：{{exam.Exam_QuesCount}}道</div>
           <div class="item">交卷时间：{{result.Exr_SubmitTime|date("yyyy-MM-dd HH:mm:ss")}}</div>
-          <div class="item">得分：{{result.Exr_ScoreFinal}} 分
-          <template v-if="exam">
-          （满分{{exam.Exam_Total}}分，{{exam.Exam_PassScore}}分及格）</div> 
-          </template>
-          <span title="考试主题" v-else>
-                <alert>考试不存在，可能被删除，仅留下考试成绩</alert>
-           </span>
+          <div class="item">
+                <template v-if="!noexam">
+                    （满分{{exam.Exam_Total}}分，{{exam.Exam_PassScore}}分及格）
+                </template>
+                <span title="考试主题" v-if="noexam">
+                        <alert>考试不存在，可能被删除，仅留下考试成绩</alert>
+                </span>
+           </div> 
         </card-content>
       </card>`
     });
+    //成绩得分的显示
+    Vue.component("score", {
+        //成绩，考试场次对象,试卷对象，专业
+        props: ["result", "exam", "paper", "subject"],
+        methods: {
+            //得分样式
+            scoreStyle: function (score) {
+                if (this.exam == null) return "";
+                if (!this.exam.Exam_IsShowScore) return "noshowscore";
+                //总分和及格分
+                var total = this.exam ? this.exam.Exam_Total : -1;
+                var passscore = this.paper ? this.paper.Tp_PassScore : -1;
+                if (score == total) return "praise";
+                if (score < passscore) return "nopass";
+                if (score < total * 0.8) return "general";
+                if (score >= total * 0.8) return "fine";
+                return "";
+            },
+            btnclick: function (result) {
+                this.$emit('click', result, this.exam);
+            }
+        },
+        template: `<span score :class="scoreStyle(result.Exr_ScoreFinal)"
+                           @click="btnclick(result)">
+                        <template v-if="exam==null || exam?.Exam_IsShowScore">
+                            {{result.Exr_ScoreFinal}}  分
+                        </template>
+                        <alert v-else>成绩暂不显示</alert>                           
+            </span>`
+    })
 });
