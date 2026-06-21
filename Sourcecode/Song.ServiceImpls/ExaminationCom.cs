@@ -1773,6 +1773,9 @@ namespace Song.ServiceImpls
             if (result == null) return null;
             if (string.IsNullOrWhiteSpace(result.Exr_Results)) return result;
             Exam.Results examresult = new Song.ServiceImpls.Exam.Results(result.Exr_Results);
+            result.Sbj_ID = examresult.SubjectID;
+            result.Sbj_Name = examresult.SubjectName;
+
             float exrscore = examresult.SetScore(score);
             result.Exr_Score = result.Exr_ScoreFinal = (float)Math.Round(exrscore * 100) / 100;
             result.Exr_Results = examresult.OutputXML(false);
@@ -1811,6 +1814,9 @@ namespace Song.ServiceImpls
             result.Exr_Score = result.Exr_ScoreFinal = (float)Math.Round(exrscore * 100) / 100;
             result.Exr_Results = examresult.OutputXML(false);
             result.Exr_IsCalc = true;
+            //专业
+            result.Sbj_ID = exam.Sbj_ID;
+            result.Sbj_Name = exam.Sbj_Name;
             Gateway.Default.Save<ExamResults>(result);
             return result;
         }
@@ -1864,20 +1870,28 @@ namespace Song.ServiceImpls
                 if (exam.Exam_Purpose == 0)
                 {
                     exr.Tp_Id = exam.Tp_Id;
-                    TestPaper tp = tpCom.PaperSingle(exam.Tp_Id);
-                    if (tp != null)
+                    //专业ID的设置
+                    if (exam.Sbj_ID <= 0)
                     {
-                        //专业信息
-                        Subject subject = sbjCom.SubjectSingle(tp.Sbj_ID);
-                        if (subject != null)
+                        TestPaper tp = tpCom.PaperSingle(exam.Tp_Id);
+                        if (tp != null)
                         {
-                            exr.Sbj_ID = subject.Sbj_ID;
-                            exr.Sbj_Name = subject.Sbj_Name;
+                            //专业信息
+                            Subject subject = sbjCom.SubjectSingle(tp.Sbj_ID);
+                            if (subject != null)
+                            {
+                                exr.Sbj_ID = subject.Sbj_ID;
+                                exr.Sbj_Name = subject.Sbj_Name;
+                            }
                         }
                     }
+                    else
+                    {
+                        exr.Sbj_ID = exam.Sbj_ID;
+                        exr.Sbj_Name = exam.Sbj_Name;
+                    }
                 }
-                else
-                    exr.Tp_Id = exam.Etp_Id;
+                else exr.Tp_Id = exam.Etp_Id;
                 //IP与Mac
                 exr.Exr_IP = WeiSha.Core.IP.Random();
                 exr.Exr_Mac = WeiSha.Core.Request.UniqueID();   //原本是网卡的mac地址,此处不再记录
