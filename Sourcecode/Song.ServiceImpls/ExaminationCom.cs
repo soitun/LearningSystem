@@ -1660,6 +1660,12 @@ namespace Song.ServiceImpls
                 List<StudentSort> sts = this.ScopeForStudentSort(exam.Exam_UID);
                 foreach (StudentSort ss in sts) wc.Or(Accounts._.Sts_ID == ss.Sts_ID);
             }
+            //如果参考人员为指定学员
+            if (exam.Exam_GroupType == 3)
+            {
+                List<Accounts> acclist = this.ScopeForAccounts(exam.Exam_UID);              
+                foreach (Accounts ss in acclist) wc.Or(Accounts._.Ac_ID == ss.Ac_ID);
+            }
             if (!string.IsNullOrWhiteSpace(name)) wc.And(Accounts._.Ac_Name.Contains(name));
             if (!string.IsNullOrWhiteSpace(idcard)) wc.And(Accounts._.Ac_IDCardNumber.Contains(idcard));
             if (!string.IsNullOrWhiteSpace(phone)) wc.And(Accounts._.Ac_MobiTel1.Contains(phone));
