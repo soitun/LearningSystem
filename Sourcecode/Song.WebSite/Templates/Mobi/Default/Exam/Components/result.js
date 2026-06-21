@@ -20,6 +20,8 @@ Vue.component('result', {
         },
         //跳转到查看成绩
         goreview: function (url) {
+            if (!this.exam.Exam_IsAllowReview)
+                return '/mobi/exam/index';
             return $api.url.set(url, {
                 "examid": this.exam.Exam_ID,
                 "exrid": this.state.result.exrid
@@ -37,7 +39,8 @@ Vue.component('result', {
         </card-title>
         <template v-if="!state.result.async">
             <row>
-            得分：<score :class="scoreStyle(state.result.score)">{{Math.floor(state.result.score*100)/100}}</score>
+            得分：<score v-if="exam.Exam_IsShowScore" :class="scoreStyle(state.result.score)">{{scoreClac(state.result.score)}}</score>
+            <alert v-else>成绩计算中，请后续查看</alert>
             </row>
             <row>总分：{{exam.Exam_Total}}分（{{paper.Tp_PassScore}}分及格）</row>
             <a class="btnEnter" :href="goreview('review')">确 定</a>

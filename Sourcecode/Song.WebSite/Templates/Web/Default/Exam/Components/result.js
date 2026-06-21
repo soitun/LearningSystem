@@ -31,6 +31,15 @@ Vue.component('result', {
         },
         //跳转页面
         btnEnter: function () {
+            if (!this.exam.Exam_IsAllowReview) {
+                this.$alert('当前考试不允许回顾考试成绩！', '此考试不允许查看！', {
+                    confirmButtonText: '确定',
+                    callback: action => {
+                       window.location.href = '/';
+                    }
+                });              
+                return;
+            }
             let examid = this.state.result.examid;
             let exrid = this.state.result.exrid;
             if (examid == null || exrid == null) {
@@ -56,7 +65,8 @@ Vue.component('result', {
         </card-title>
         <template v-if="!state.result.async">
             <row>
-            得分：<score :class="scoreStyle(state.result.score)">{{scoreClac(state.result.score)}}</score>
+            得分：<score v-if="exam.Exam_IsShowScore" :class="scoreStyle(state.result.score)">{{scoreClac(state.result.score)}}</score>
+            <alert v-else>成绩计算中，请后续查看</alert>
             </row>
             <row>总分：{{exam.Exam_Total}}分（{{paper.Tp_PassScore}}分及格）</row>
             <div class="btnEnter" @click="btnEnter">确 定</div>

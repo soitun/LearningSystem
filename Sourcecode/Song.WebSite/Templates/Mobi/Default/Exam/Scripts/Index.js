@@ -51,6 +51,10 @@ $ready(['Components/exam_tabs.js'], function () {
             //当前学员今天以及之后的考试
             my_exam: function () {
                 var th = this;
+                if ($api.isnull(th.account)) {
+                    window.setTimeout(th.my_exam, 200);
+                    return;
+                }
                 th.loading = true;
                 th.index++;
                 $api.get('Exam/SelfExam4Todaylate', {
@@ -77,6 +81,10 @@ $ready(['Components/exam_tabs.js'], function () {
             //获取所有考试
             all_exam: function () {
                 var th = this;
+                if ($api.isnull(th.account)) {
+                    window.setTimeout(th.all_exam, 200);
+                    return;
+                }
                 var form = {
                     'orgid': th.org.Org_ID, 'start': '', 'end': '', 'search': th.search.all_exam, 'use': true,
                     'size': th.size, 'index': ++th.index
@@ -105,9 +113,7 @@ $ready(['Components/exam_tabs.js'], function () {
             score_exam: function () {
                 var th = this;
                 if ($api.isnull(th.account)) {
-                    window.setTimeout(function () {
-                        th.score_exam();
-                    }, 200);
+                    window.setTimeout(th.score_exam, 200);
                     return;
                 }
                 var form = {
