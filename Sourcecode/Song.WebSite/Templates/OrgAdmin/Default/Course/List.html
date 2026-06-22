@@ -19,7 +19,7 @@
                         @change="id=>{form.sbjids=id;handleCurrentChange(1);}"> </sbj_cascader>
                 </el-form-item>
                 <el-form-item label="课程">
-                    <el-input v-model="form.search" placeholder="课程名称" clearable style="width:200px"></el-input>
+                    <el-input v-model="form.search" placeholder="课程名称" clearable style="width:200px" @clear="handleCurrentChange(1)"></el-input>
                 </el-form-item>
                 <template v-slot:more>
                     <el-form-item label="教师">
