@@ -206,7 +206,8 @@ $ready(['../Components/score.js'],function () {
             review: function (score, account, exam) {
                 console.log(score);
                 var boxid = "ResultsReview_" + score.exrid + "_" + score.examid;
-                var url = $api.url.set("/student/exam/review", {
+                console.error(score);
+                var url = $api.url.set("review", {
                     "examid": score.examid,
                     "exrid": score.exrid
                 });
@@ -219,7 +220,7 @@ $ready(['../Components/score.js'],function () {
                     width: '80%', height: '80%',
                     resize: true, id: boxid,
                     pid: window.name,
-                    url: url,
+                    url: $dom.routepath() + url,
                     id: boxid,
                     'showmask': true, 'min': false, 'ico': 'e696'
                 });

@@ -839,6 +839,7 @@
     <Content Include="Templates\OrgAdmin\Default\Exam\ResultsManual.html" />
     <Content Include="Templates\OrgAdmin\Default\Exam\ResultsReview.html" />
     <Content Include="Templates\OrgAdmin\Default\Exam\ResultsSummarize.html" />
+    <Content Include="Templates\OrgAdmin\Default\Exam\Review.html" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\AbsenceList.js" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\Analysis.js" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\Archives.js" />
@@ -851,6 +852,7 @@
     <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\ResultsManual.js" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\ResultsReview.js" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\ResultsSummarize.js" />
+    <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\Review.js" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\Sharp.js" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Scripts\_ExamItems.js" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Sharp.html" />
@@ -866,6 +868,7 @@
     <Content Include="Templates\OrgAdmin\Default\Exam\Styles\ResultsManual.css" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Styles\ResultsReview.css" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Styles\ResultsSummarize.css" />
+    <Content Include="Templates\OrgAdmin\Default\Exam\Styles\Review.css" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Styles\Sharp.css" />
     <Content Include="Templates\OrgAdmin\Default\Exam\Styles\_ExamItems.css" />
     <Content Include="Templates\OrgAdmin\Default\Exam\_ExamItems.html" />

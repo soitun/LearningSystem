@@ -1106,8 +1106,8 @@ namespace Song.ViewData.Methods
         public JObject ResultScore(int acid, long examid)
         {
             JObject jo = new JObject();
-            jo.Add("examid",examid);
-            jo.Add("acid", acid);
+            jo.Add("examid",examid.ToString());
+            jo.Add("acid", acid.ToString());
 
             ExamResults result = Business.Do<IExamination>().ResultSingle(acid, examid);
             if (result == null)
@@ -1119,8 +1119,8 @@ namespace Song.ViewData.Methods
             double score = result.Exr_ScoreFinal;
             score = Math.Round(Math.Round(score * 10000) / 10000, 2, MidpointRounding.AwayFromZero);
             jo.Add("score", score);
-            jo.Add("testpaper", result.Tp_Id);
-            jo.Add("exrid", result.Exr_ID);
+            jo.Add("testpaper", result.Tp_Id.ToString());
+            jo.Add("exrid", result.Exr_ID.ToString());
             return jo;
         }
         /// <summary>

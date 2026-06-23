@@ -428,10 +428,12 @@ namespace Song.ServiceImpls
                 item.TPI_Count = quesnode.Attributes["count"].Value.Convert<int>();     //试题数量，这是xml中记录的数量，不是实际数量
                 item.TPI_Percent = quesnode.Attributes["percent"].Value.Convert<int>();     //当前题型的分数占比
                 item.TPI_Number = quesnode.Attributes["number"].Value.Convert<int>();
-                //
-                List<Questions> queslist = Business.Do<IExamQues>().QuesRandom(0, qpid, tagid, knlid, item.TPI_Type, tp.Etp_Diff, tp.Etp_Diff2, true, item.TPI_Count);
-               
-                item.TPI_Count = queslist.Count;
+                List<Questions> queslist = new List<Questions>();
+                if (item.TPI_Count > 0)
+                {
+                    queslist = Business.Do<IExamQues>().QuesRandom(0, qpid, tagid, knlid, item.TPI_Type, tp.Etp_Diff, tp.Etp_Diff2, true, item.TPI_Count);
+                    item.TPI_Count = queslist.Count;
+                }
                 dic.Add(item, queslist);
             }
             //计算每道试题的分数
@@ -512,6 +514,7 @@ namespace Song.ServiceImpls
             if (q.Qus_Type == 1 || q.Qus_Type == 2)
             {
                 XmlDocument doc = new XmlDocument();
+                q.Qus_Items = q.Qus_Items.Replace((char)0x0B, ' ');
                 doc.LoadXml(q.Qus_Items);
                 foreach (XmlElement n in doc.SelectNodes("Items/item"))
                     n.SelectSingleNode("Ans_IsCorrect").InnerText = string.Empty;
@@ -524,6 +527,7 @@ namespace Song.ServiceImpls
             if (q.Qus_Type == 5)
             {
                 XmlDocument doc = new XmlDocument();
+                q.Qus_Items = q.Qus_Items.Replace((char)0x0B, ' ');
                 doc.LoadXml(q.Qus_Items);
                 foreach (XmlElement n in doc.SelectNodes("Items/item"))
                     n.SelectSingleNode("Ans_Context").InnerText = string.Empty;

@@ -316,13 +316,13 @@ $ready(['Components/setscore.js',
                     const obj = this.datas.find(item => item.Exr_ID === exrid);
                     //试卷预览
                     if (command == 'review') {
-                        let url = $api.url.set("/student/exam/review", {
+                        let url = $api.url.set("review", {
                             "examid": obj.Exam_ID,
                             "exrid": obj.Exr_ID
                         });
                         let boxid = "ResultsReview_" + obj.Exr_ID + "_" + obj.Exam_ID;
                         let title = obj.Ac_Name + '在“' + this.entity.Exam_Name + "”中的成绩回顾";
-                        this._openbox(url, title, boxid, '80%', '80%', 'e696');
+                        this._openbox($dom.routepath() + url, title, boxid, '80%', '80%', 'e696');
                     }
                     //重新计算
                     if (command == 'calc') this.clacResultScore(obj);
