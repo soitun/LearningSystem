@@ -1531,7 +1531,7 @@ namespace Song.ServiceImpls
             if (qus.Qus_Type == 1) return _determineQues1(qus, ans) ? num : 0;
             if (qus.Qus_Type == 2) return _determineQues2(qus, ans) ? num : 0;
             if (qus.Qus_Type == 3) return _determineQues3(qus, ans) ? num : 0;
-            if (qus.Qus_Type == 4) _calcScoreQues4(qus, ans, num);
+            if (qus.Qus_Type == 4) return _calcScoreQues4(qus, ans, num);
             if (qus.Qus_Type == 5) return _determineQues5(qus, ans) ? num : 0;
             return 0;
         }
