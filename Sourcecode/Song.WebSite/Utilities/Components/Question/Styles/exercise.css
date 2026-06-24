@@ -369,14 +369,18 @@ dl.quesArea textarea {
 
 	dl.quesArea dd {
 		height: 100%;
+		z-index: 0;
 	}
 
-	dl.quesArea dd section {
-		overflow-y: auto;
+	dl.quesArea dd section {		
 		margin-bottom: 50px;
 		padding-bottom: 50px;
 		box-sizing: border-box;
 		height: calc(100% - 40px);
+		-webkit-overflow-scrolling: touch;
+		touch-action: auto;
+		overflow-y: auto;	
+		z-index: 0;
 	}
 
 	table {
