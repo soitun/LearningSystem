@@ -18,8 +18,7 @@ $ready(function () {
             //获取所有供选择的菜单项
             $api.get('ManageMenu/OrganMenus', { 'marker': ''}).then(function (req) {
                 if (req.data.success) {
-                    th.datas = req.data.result;
-                    console.error(th.datas);
+                    th.datas = req.data.result;                  
                     //获取已经选择的菜单项
                     $api.get('ManageMenu/OrganLevelPurview', { 'lvid': th.id }).then(function (req) {
                         if (req.data.success) {

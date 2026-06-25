@@ -64,7 +64,8 @@ namespace Song.ViewData.Attri
                 if (exists) continue;
                 //检测是否存在危险字符
                 string val = letter.GetParameter(param.Name).Value;
-                if (_isSqlInjectionSafe(val)) throw new Exception($"参数 {param.Name} 的内容“{val}”存在危险字符");               
+                string danger = _getSqlInjectionWord(val);
+                if (!string.IsNullOrWhiteSpace(danger)) throw new Exception($"参数 {param.Name} 的内容“{val}”存在危险字符:{danger}");               
             }               
             return true;
         }
@@ -100,6 +101,26 @@ namespace Song.ViewData.Attri
             foreach (string pattern in sqlInjectionPatterns)            
                 if (Regex.IsMatch(input, pattern, RegexOptions.IgnoreCase)) return true;            
             return false;
+        }
+        /// <summary>
+        /// 检索字符串出中带有SQL注入特征的字符
+        /// </summary>
+        /// <param name="input">被校验的字符串</param>
+        /// <returns>SQL注的字符</returns>
+        private static string _getSqlInjectionWord(string input)
+        {
+            if (string.IsNullOrEmpty(input)) return string.Empty;
+            // 使用HashSet去重，避免重复字符
+            HashSet<string> foundPatterns = new HashSet<string>();
+            //sqlInjectionPatterns，是Sql敏感字符串，静态变量
+            foreach (string pattern in sqlInjectionPatterns)
+            {
+                // 使用正则表达式进行匹配（需要转义特殊字符）
+                string escapedPattern = Regex.Escape(pattern);
+                if (Regex.IsMatch(input, escapedPattern, RegexOptions.IgnoreCase))                
+                    foundPatterns.Add(pattern);                
+            }
+            return foundPatterns.Count > 0 ? string.Join("; ", foundPatterns) : string.Empty;
         }
         /// <summary>
         /// 过滤SQL注入

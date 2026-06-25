@@ -247,7 +247,6 @@ namespace Song.ViewData.Methods
             bool islocal = WeiSha.Core.Server.IsLocalIP;
             foreach (Song.Entities.ManageMenu m in items)
             {
-
                 if (item == null)
                 {
                     if (m.MM_PatId != "0") continue;
@@ -293,7 +292,7 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         [HttpPost]
         [SuperAdmin]
-        public bool SystemMenuUpdate(string tree)
+        public bool SystemMenuUpdate(JArray tree)
         {
             List<Song.Entities.ManageMenu> mlist = new List<Entities.ManageMenu>();
             _MenuUpdate(tree, "0", mlist);
@@ -310,20 +309,20 @@ namespace Song.ViewData.Methods
         /// <returns></returns>
         [HttpPost]
         [SuperAdmin]
-        public bool FuncMenuUpdate(string uid, string tree)
+        public bool FuncMenuUpdate(string uid, JArray tree)
         {
             List<Song.Entities.ManageMenu> mlist = new List<Entities.ManageMenu>();
             _MenuUpdate(tree, uid, mlist);
             Business.Do<IManageMenu>().UpdateFunctionTree(uid, mlist.ToArray());
             return true;
         }
-        private void _MenuUpdate(string tree, string pid, List<Song.Entities.ManageMenu> mlist)
+        private void _MenuUpdate(JArray tree, string pid, List<Song.Entities.ManageMenu> mlist)
         {
-            JArray jarr = JArray.Parse(tree);
-            for (int i = 0; i < jarr.Count; i++)
+            //JArray jarr = JArray.Parse(tree);
+            for (int i = 0; i < tree.Count; i++)
             {
-                string childJson = string.Empty;
-                Song.Entities.ManageMenu m = _MenuParse((JObject)jarr[i], out childJson);
+                JArray childJson = new JArray();
+                Song.Entities.ManageMenu m = _MenuParse((JObject)tree[i], ref childJson);
                 if (string.IsNullOrWhiteSpace(m.MM_UID))
                     m.MM_UID = WeiSha.Core.Request.UniqueID();
                 m.MM_Order = i;
@@ -335,9 +334,8 @@ namespace Song.ViewData.Methods
                 }
             }
         }
-        private Song.Entities.ManageMenu _MenuParse(JObject jo, out string childJson)
-        {
-            childJson = string.Empty;
+        private Song.Entities.ManageMenu _MenuParse(JObject jo, ref JArray childJson)
+        {  
             Song.Entities.ManageMenu mm = new Entities.ManageMenu();
             Type target = mm.GetType();
             IEnumerable<JProperty> properties = jo.Properties();
@@ -354,14 +352,12 @@ namespace Song.ViewData.Methods
                 }
                 if (key.Equals("children", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    childJson = item.Value.ToString();
-                    if (childJson != "[]")
-                        mm.MM_IsChilds = true;
+                    childJson = (JArray)item.Value;
+                    if (childJson.ToString() != "[]") mm.MM_IsChilds = true;
                 }
             }
             return mm;
         }
-
         #region 菜单操作权限相关
         /// <summary>
         /// 当前管理员的菜单项
