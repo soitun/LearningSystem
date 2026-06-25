@@ -13,29 +13,30 @@
             <el-card shadow="never" type="info" class="theme">
                 <template slot="header">
                     <papertype type="1"></papertype>
-                    <el-button type="primary" :disabled="loadstate.update" plain
-                        @click="openpaperinfo('SetupPaperInfo','设置试卷信息','e667',600)">设置试卷信息
+                    <el-button type="primary" :disabled="loadstate.update" plain @click="openpaperinfo()">设置试卷信息
                     </el-button>
                 </template>
                 <el-form ref="form1" :model="entity" :rules="rules1" v-loading="loading" @submit.native.prevent
                     label-width="100px">
-                    <p class="tpname">
-                        <span v-if="entity.Etp_Name==''" class="null">(试卷名称-未命名)</span>
-                        <template v-else>{{entity.Etp_Name}}</template>
-                        <el-form-item label="" prop="Etp_Name" label-width="0"></el-form-item>
-                    </p>
-                    <p class="tpsubname">
-                        <span v-if="entity.Etp_SubName==''" class="null">(未编写副标题)</span>
-                        <template v-else>{{entity.Etp_SubName}}</template>
-                    <div class="tpinfo">
-                        <span>考试时间 {{entity.Etp_Span}} 分钟</span>
-                        <span>满分 {{entity.Etp_Total}} 分</span>
-                        <span> {{entity.Etp_PassScore}} 分 及格</span>
-                    </div>
-                    <div class="tpremind">
-                        注意事项:<br />
-                        <span v-if="entity.Etp_Remind==''" class="null">(未编写注意事项)</span>
-                        <span v-else v-html="entity.Etp_Remind"></span>
+                    <div @dblclick="openpaperinfo()" title="双击编辑">
+                        <p class="tpname">
+                            <span v-if="entity.Etp_Name==''" class="null">(试卷名称-未命名)</span>
+                            <span v-else>{{entity.Etp_Name}}</span>
+                            <el-form-item label="" prop="Etp_Name" label-width="0"></el-form-item>
+                        </p>
+                        <p class="tpsubname">
+                            <span v-if="entity.Etp_SubName==''" class="null">(未编写副标题)</span>
+                            <span v-else>{{entity.Etp_SubName}}</span>
+                        <div class="tpinfo">
+                            <span>考试时间 {{entity.Etp_Span}} 分钟</span>
+                            <span>满分 {{entity.Etp_Total}} 分</span>
+                            <span> {{entity.Etp_PassScore}} 分 及格</span>
+                        </div>
+                        <div class="tpremind">
+                            注意事项:<br />
+                            <span v-if="entity.Etp_Remind==''" class="null">(未编写注意事项)</span>
+                            <span v-else v-html="entity.Etp_Remind"></span>
+                        </div>
                     </div>
                 </el-form>
             </el-card>
@@ -47,7 +48,7 @@
                             <span v-if="m.byname!='' && m.byname!='undefined'">{{m.byname}} -
                                 <span class="truename">{{types[m.type-1]}}题</span></span>
                             <span v-else>{{types[m.type-1]}}题</span>
-                            </span>                           
+                        </span>
                         </span>
                         <div class="qtype_btns" remark="题型按钮区">
                             <el-link icon="el-icon-edit-outline" type="primary" @click="$refs['editbyname'].show(m)">
@@ -122,7 +123,7 @@
                                 <el-col :span="8">
                                     <el-form-item label="" :prop="'percent'+m.type" label-width="0">
                                         <el-input v-model.number="m.percent" type="number" :min="0" :max="100"
-                                            @input="chanageTotal">                                            
+                                            @input="chanageTotal">
                                             <template slot="append">%</template>
                                         </el-input>
                                     </el-form-item>

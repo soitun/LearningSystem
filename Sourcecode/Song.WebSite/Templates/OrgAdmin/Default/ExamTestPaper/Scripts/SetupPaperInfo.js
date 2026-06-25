@@ -30,12 +30,11 @@ $ready(function () {
                     }
                 ],
                 Etp_Span: [
-                    { required: true, message: '限时不得为空', trigger: 'blur' },
+                    { required: true, message: '时长不得为空', trigger: 'blur' },
                     {
                         validator: function (rule, value, callback) {
                             if (!(/^[1-9]\d*$/.test(value))) return callback(new Error('请输入大于零的整数'));;
-                            if (Number(value) < Number(vapp.entity.Etp_PassScore))
-                                return callback(new Error('试卷总分不得小于及格分'));;
+                            if (Number(value) > 600) return callback(new Error('时长不能超过6小时'));;
                             callback();
                         }, trigger: 'blur'
                     }

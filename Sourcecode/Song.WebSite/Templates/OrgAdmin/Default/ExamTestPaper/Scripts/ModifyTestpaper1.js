@@ -110,12 +110,12 @@ $ready([
                     //题型分数点比的验证
                     let rulepercent = [{
                         validator: function (rule, value, callback) {
-                            let field = rule.field;  
+                            let field = rule.field;
                             let type = Number(field.substring(field.length - 1));   //题型
                             let item = vapp.qtypeitems.find(i => i.type == type);
                             if (item.percent < 0) return callback(new Error('请输入大于零的整数'));
                             //分数占比大于零，试题不得为零
-                            if (item.percent == 0 && item.ques.length > 0) return callback(new Error("不可为零"));                           
+                            if (item.percent == 0 && item.ques.length > 0) return callback(new Error("不可为零"));
                             //分数占比大于零，试题不得为零
                             if (item.percent > 0 && item.ques.length <= 0) return callback(new Error("不可大于零"));
                             //
@@ -177,15 +177,15 @@ $ready([
                             //试题题型分配数据
                             let questions = result?.questions ?? [];
                             for (let i = 0; i < questions.length; i++) {
-                                const ques = questions[i];                              
+                                const ques = questions[i];
                                 const item = th.qtypeitems.find(el => Number(el.type) == Number(ques.type));
                                 ques.total = Number(ques.total);
                                 ques.count = Number(ques.count);
                                 ques.number = Number(ques.number);
                                 ques.percent = Number(ques.percent);
                                 //解析答案，将xml转为json
-                                for (let j = 0; j < ques.ques.length; j++) 
-                                    ques.ques[j]=window.ques.parseAnswer(ques.ques[j]);
+                                for (let j = 0; j < ques.ques.length; j++)
+                                    ques.ques[j] = window.ques.parseAnswer(ques.ques[j]);
                             }
 
                             th.qtypeitems = questions.length < 1 ? th.qtypeitems : questions;
@@ -197,13 +197,14 @@ $ready([
                     .finally(() => th.loadstate.get = false);
             },
             //打开试卷基础信息的页面
-            openpaperinfo: function (page, title, icon, height) {
+            openpaperinfo: function () {
                 if (!window.top.$pagebox) return;
+                let page = 'SetupPaperInfo'
                 var suburl = $dom.routepath() + page;    //子窗口页面路径                   
                 var curbox = window.top.$pagebox.get(window.name);   //当前窗口
                 //创建新窗口中
                 var subbox = window.top.$pagebox.create({
-                    height: height, id: page, ico: icon, title: title,
+                    height: 600, id: page, ico: 'e667', title: '设置试卷信息 - 固定试卷',
                     url: suburl
                 });
                 curbox.opensub(subbox, 'top');
@@ -247,7 +248,7 @@ $ready([
                     }
                 }
                 this.$refs['form2'].validate();
-                this.$refs['form3'].validate();              
+                this.$refs['form3'].validate();
             },
             /***************************
              * 试题编辑
@@ -310,7 +311,7 @@ $ready([
                     this.submitData(isclose)
                 } catch (error) {
                     console.log('表单验证失败');
-       
+
                     this.$message.error('表单验证失败');
                     return false
                 }

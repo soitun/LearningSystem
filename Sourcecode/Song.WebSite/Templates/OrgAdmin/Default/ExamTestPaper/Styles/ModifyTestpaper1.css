@@ -68,17 +68,21 @@ section.right .el-form .el-card:last-child {
 .el-form-item:last-child {
     margin-bottom: 0 !important;
 }
+
 section.right .quescard {
     display: flex;
     flex-direction: column;
 }
+
 section.right .quescard .el-form-item__error {
     left: -10px !important;
     white-space: nowrap;
 }
-section.right .quescard .el-card__body{
+
+section.right .quescard .el-card__body {
     overflow-y: auto;
 }
+
 /*试题主题区*/
 .theme .el-card__body {
     color: #333;
@@ -91,10 +95,11 @@ section.right .quescard .el-card__body{
     font-family: var(--chinese-font);
 }
 
-.tpname {
+.tpname>span {
     font-size: 2rem;
     font-family: var(--chinese-font);
     margin: .5rem;
+    cursor: pointer;
 }
 
 .tpsubname {
@@ -142,15 +147,18 @@ section.content>.el-card:has(.el-card__body:empty) .el-card__header {
     display: flex;
     justify-content: space-between;
 }
+
 /*题卡区域*/
-.scoreitems>div.ques_type{
+.scoreitems>div.ques_type {
     height: 33px;
-    margin-bottom: 10px; 
+    margin-bottom: 10px;
 }
-.scoreitems>div.ques_type>div:first-child *{
+
+.scoreitems>div.ques_type>div:first-child * {
     line-height: 33px;
     height: 33px;
 }
-.quescard  .el-card__body{
+
+.quescard .el-card__body {
     padding: 15px;
 }
