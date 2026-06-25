@@ -7,20 +7,28 @@ dl.quesArea {
     z-index: 4;
     left: 0px;
     position: relative;
-    transition: left 0.5s;  
+    transition: left 0.5s;
+    overflow: hidden;
     /* 禁止iOS浏览器默认双击缩放、滚动回弹，交给Hammer接管 */
     touch-action: manipulation;
     /* 允许触摸事件穿透子元素冒泡 */
-    pointer-events: auto;
+    pointer-events: auto;  
+
 }
 
-dl.quesArea, .quesArea dd {
+dl.quesArea,
+.quesArea dd {
     padding: 0px;
     margin: 0px;
 }
- .quesArea dd {
+
+.quesArea dd {
     touch-action: pan-y;
 }
+.quesArea * {
+    touch-action:none;     
+}
+
 
 /*没有试题的提示*/
 dl.quesArea .noques {
