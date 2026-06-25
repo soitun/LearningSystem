@@ -23,8 +23,7 @@ $ready(
 
                 entity: {},      //当前试题            
                 ansitems: [],       //试题的选项
-                ans_min: 4,          //选项最少几个
-                ans_max_id: 0,       //答案项的最大id      
+                ans_min: 4,          //选项最少几个            
 
                 loading: false
             },
@@ -43,25 +42,37 @@ $ready(
             created: function () { },
             mounted: function () { },
             methods: {
-                //创建新的选项
-                newitem: function () {
-                    return {
-                        'Ans_ID': ++this.ans_max_id,
+                 //创建新的选项
+                newitem: async function () {
+                    let obj = {
+                        'Ans_ID': '',
                         'Qus_ID': 0,
                         'Qus_UID': '',
                         'Ans_Context': '',
                         'Ans_IsCorrect': false
                     };
+                    let req = await $api.get('Snowflake/Generate');
+                    if (req.data.success) {
+                        let snowid = req.data.result;
+                        obj.Ans_ID = snowid;
+                    }
+                    return obj;
                 },
+                //添加新的选项行
+                additemrow: async function () {
+                    let obj = await this.newitem();
+                    this.$set(this.ansitems, this.ansitems?.length ?? 0, obj);
+                },              
                 //解析选项的数据
-                analysisitem: function () {
+                analysisitem: async function () {
                     this.ansitems = this.entity.Qus_Items;
                     for (let i = 0; i < this.ansitems.length; i++) {
                         if (this.ansitems[i].Ans_ID > this.ans_max_id)
                             this.ans_max_id = this.ansitems[i].Ans_ID;
                     }
                     while (this.ansitems.length < this.ans_min) {
-                        this.$set(this.ansitems, this.ansitems.length, this.newitem());
+                         let obj = await this.newitem();
+                        this.$set(this.ansitems, this.ansitems.length, obj);                      
                     }
                     this.$nextTick(function () {
                         this.rowdrop();

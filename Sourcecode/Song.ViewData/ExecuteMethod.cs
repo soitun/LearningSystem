@@ -467,26 +467,7 @@ namespace Song.ViewData
                             switch (opi.PropertyType.Name)
                             {
                                 case "DateTime":
-                                    if (string.IsNullOrWhiteSpace(val))
-                                    {
-                                        piValue = DateTime.MinValue;
-                                        break;
-                                    }
-                                    //如果字符为 2023-01-07 16:20:08 的格式
-                                    string patternWithGroups = @"^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$";
-                                    Match match = Regex.Match(val, patternWithGroups);
-                                    if (match.Success)
-                                    {
-                                        piValue = DateTime.Parse(val);
-                                    }
-                                    else
-                                    {
-                                        DateTime dt = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
-                                        if (val.IndexOf(".") > -1) val = val.Substring(0, val.IndexOf("."));
-                                        long lTime = long.Parse(val + "0000");
-                                        //piValue = lTime > 0 ? dt.Add(new TimeSpan(lTime)) : dt;
-                                        piValue = dt.Add(new TimeSpan(lTime));
-                                    }
+                                    piValue = val.ToDateTime();                                  
                                     break;
                                 default:
                                     piValue = string.IsNullOrEmpty(val) ? null : WeiSha.Core.DataConvert.ChangeType(val.Trim(), opi.PropertyType);

@@ -13,8 +13,9 @@
             <!-- 编辑区域-->
             <el-form ref="entity" :model="entity" @submit.native.prevent label-width="60px">
                 <el-form-item label="题干" prop="Qus_Title">
-                    <editor ref="editor_title" :content="entity.Qus_Title" id="title" :menubar="false" model="question" upload="ques"
-                        :dataid="entity.Qus_ID" style="height: 300px;" @change="text=>entity.Qus_Title=text"></editor>
+                    <editor ref="editor_title" :content="entity.Qus_Title" id="title" :menubar="false" model="question"
+                        upload="ques" :dataid="entity.Qus_ID" style="height: 300px;"
+                        @change="text=>entity.Qus_Title=text"></editor>
                 </el-form-item>
                 <el-form-item label="选项" prop="Qus_Items">
                     <dl class="ans" id="ansitems">
@@ -37,15 +38,14 @@
                             </div>
                         </dd>
                         <dt>
-                            <el-link type="success" plain icon="el-icon-circle-plus-outline"
-                                @click='$set(ansitems, ansitems.length, newitem())'>添加新项
+                            <el-link type="success" plain icon="el-icon-circle-plus-outline" @click='additemrow'>添加新项
                             </el-link>
                         </dt>
                     </dl>
                 </el-form-item>
 
             </el-form>
-            <ques_ansitem ref="ques_ansitem"  :question="entity" @close="ansEnter"></ques_ansitem>
+            <ques_ansitem ref="ques_ansitem" :question="entity" @close="ansEnter"></ques_ansitem>
         </modify_main>
         <ques_ansedit ref="ques_ansedit" :question="entity" @enter="ansEnter"> </ques_ansedit>
         <enter_button ref="enterbutton" :question="entity" :verify="verify" :org="org"></enter_button>

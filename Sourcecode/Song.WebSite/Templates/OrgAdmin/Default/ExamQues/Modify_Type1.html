@@ -26,7 +26,7 @@
                             </div>
                             <div class="text" v-html="item.Ans_Context" :id="'ans_'+item.Ans_ID"
                                 @click="$refs['ques_ansitem'].set(item)">
-                            </div>
+                            </div>                            
                             <div class="btns">
                                 <el-link type="primary" plain icon="el-icon-edit"
                                     @click="$refs['ques_ansedit'].set(item,index)">编辑</el-link>
@@ -37,7 +37,7 @@
                             </div>
                         </dd>
                         <dt>
-                            <el-link type="success" @click='$set(ansitems, ansitems?.length ?? 0, newitem())'>
+                            <el-link type="success" @click='additemrow'>
                                 <icon>&#xe6ea</icon>添加新项
                             </el-link>
                         </dt>
