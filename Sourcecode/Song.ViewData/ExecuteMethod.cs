@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using WeiSha.Core;
 
 namespace Song.ViewData
 {
@@ -494,9 +495,7 @@ namespace Song.ViewData
                 object o = ts.GetProperty(props[n].Name).GetValue(entity, null);
                 if (o != null) continue;
                 //属性的类型
-                Type ptype = props[n].PropertyType;
-                if (props[n].PropertyType.IsGenericType && props[n].PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
-                    ptype = props[n].PropertyType.GetGenericArguments()[0];
+                Type ptype = props[n].PropertyType.PrimaryType();               
 
                 string tname = ptype.Name;
                 //如果为空，则设置初始值

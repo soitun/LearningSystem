@@ -51,11 +51,8 @@ $ready(
                         'Ans_Context': '',
                         'Ans_IsCorrect': false
                     };
-                    let req = await $api.get('Snowflake/Generate');
-                    if (req.data.success) {
-                        let snowid = req.data.result;
-                        obj.Ans_ID = snowid;
-                    }
+                    await $api.get('Snowflake/Generate')
+                        .then(req => req.data.success && (obj.Ans_ID = req.data.result));
                     return obj;
                 },
                 //添加新的选项行

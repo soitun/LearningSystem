@@ -53,11 +53,8 @@ $ready(
                         'Ans_Context': '',
                         'Ans_IsCorrect': false
                     };
-                    let req = await $api.get('Snowflake/Generate');
-                    if (req.data.success) {
-                        let snowid = req.data.result;
-                        obj.Ans_ID = snowid;
-                    }
+                    await $api.get('Snowflake/Generate')
+                        .then(req => req.data.success && (obj.Ans_ID = req.data.result));
                     return obj;
                 },
                 //添加新的选项行
@@ -67,7 +64,7 @@ $ready(
                 },
                 //解析选项的数据
                 analysisitem: async function () {
-                    this.ansitems = this.entity.Qus_Items;          
+                    this.ansitems = this.entity.Qus_Items;
                     while (this.ansitems.length < this.ans_min) {
                         let obj = await this.newitem();
                         this.$set(this.ansitems, this.ansitems.length, obj);
