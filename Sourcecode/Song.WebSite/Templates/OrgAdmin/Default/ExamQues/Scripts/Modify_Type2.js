@@ -42,7 +42,7 @@ $ready(
             created: function () { },
             mounted: function () { },
             methods: {
-                 //创建新的选项
+                //创建新的选项
                 newitem: async function () {
                     let obj = {
                         'Ans_ID': '',
@@ -62,17 +62,13 @@ $ready(
                 additemrow: async function () {
                     let obj = await this.newitem();
                     this.$set(this.ansitems, this.ansitems?.length ?? 0, obj);
-                },              
+                },
                 //解析选项的数据
                 analysisitem: async function () {
                     this.ansitems = this.entity.Qus_Items;
-                    for (let i = 0; i < this.ansitems.length; i++) {
-                        if (this.ansitems[i].Ans_ID > this.ans_max_id)
-                            this.ans_max_id = this.ansitems[i].Ans_ID;
-                    }
                     while (this.ansitems.length < this.ans_min) {
-                         let obj = await this.newitem();
-                        this.$set(this.ansitems, this.ansitems.length, obj);                      
+                        let obj = await this.newitem();
+                        this.$set(this.ansitems, this.ansitems.length, obj);
                     }
                     this.$nextTick(function () {
                         this.rowdrop();
