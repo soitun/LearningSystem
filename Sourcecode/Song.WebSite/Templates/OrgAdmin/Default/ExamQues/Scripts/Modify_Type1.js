@@ -36,11 +36,6 @@ $ready(
                         }
                     }, immediate: false
                 },
-                'ansitems': {
-                    handler: function (nv, ov) {
-                        console.error(nv);
-                    }, deep: false
-                }
             },
             updated: function () {
                 this.$mathjax();

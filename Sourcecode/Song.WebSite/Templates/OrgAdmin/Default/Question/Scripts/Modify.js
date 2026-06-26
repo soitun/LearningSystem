@@ -1,31 +1,28 @@
 
 $ready(['Components/ques_type.js'], function () {
-window.vapp = new Vue({
+    window.vapp = new Vue({
         el: '#vapp',
         data: {
             id: $api.querystring('id'),
+            org: {},
             config: {},      //当前机构配置项    
             types: [],        //试题类型，来自web.config中配置项
 
             entity: {},         //当前试题实体
-            loading: false,
-            loading_init: true,
+            loading: false,        
         },
         watch: {
         },
         created: function () {
             var th = this;
-            th.loading_init = true;
-            $api.bat(
-                $api.get('Organization/Current'),
-                $api.cache('Question/Types:99999')
-            ).then(([organ, types]) => {
-                th.organ = organ.data.result;
-                th.config = $api.organ(th.organ).config;
-                th.types = types.data.result;
-            }).catch(err => console.error(err))
-                .finally(() => th.loading_init = false);
-            this.getEntity();
+            th.org = window.org;
+            th.config = window.config;
+            $api.cache('Question/Types:99999').then(req => {
+                if (req.data.success) {
+                    th.types = req.data.result;
+                    th.getEntity();
+                }
+            });
         },
         mounted: function () {
 
@@ -40,7 +37,7 @@ window.vapp = new Vue({
                     if (req.data.success) {
                         var result = req.data.result;
                         th.entity = result;
-                        th.gourl(th.entity.Qus_Type, th.types[th.entity.Qus_Type]);
+                        th.gourl(th.entity.Qus_Type, th.types[th.entity.Qus_Type - 1]);
                     } else {
                         throw '未查询到数据';
                     }
